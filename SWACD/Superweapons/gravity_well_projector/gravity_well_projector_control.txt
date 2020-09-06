@@ -1,0 +1,261 @@
+/* ----------------------------------------------------------------------------
+Introduction: SW:ACD 0.3.6
+Author: Lafiel
+Description:
+Control part for controlling and firing of a network of Gravity Well Projectors.
+The network is limited to 4 Gravity Well Projectors!
+The buff system is delicate. Do not change values if you don't know what you are doing.
+Versions:
+ * 1.0 for Cosmoteer 0.15.3
+ * 1.1 for Cosmoteer 0.15.7
+---------------------------------------------------------------------------- */
+Part : /BASE_PART
+{
+	NameKey = "Parts/GravityWellProjectorControl";
+	IconNameKey = "Parts/GravityWellProjectorControlIcon";
+	ID = Lafiel.gravity_well_projector_control
+	DescriptionKey = "Parts/GravityWellProjectorControlDesc";
+	EditorGroup = "TechI"
+	RequiresCategories = [bridge1]
+	Cost = 10000;
+	AIValue = &Cost
+	Size = [2, 2];
+	SelectionPriority = 1;
+	MaxHealth = 4000;
+	TypeCategories = [gravity_well_control,uses_power];
+	ReceivableBuffs = [BuffGravityWellGenerator]
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [64, 64]
+	}
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles
+			[
+				PowerToggle
+				BatteryStorage
+				PartCrew
+			]
+			Mode = All
+		}
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+		BatteryStorage
+		{
+			Type = AmmoStorage
+			AmmoType = battery
+			MaxAmmo = 4000
+		}
+		BatteryConsumer
+		{
+			Type = AmmoConsumer
+			AmmoType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+
+			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		ManualDischargeTrigger
+		{
+			Type = UITrigger
+			TriggerID = "detonate"
+		}
+		ControlModeToggle
+		{
+			Type = UIToggle;
+			ToggleID = "ftl_jammer_mode"
+			Default = 0;
+			ToggledOnChoices = [0, 1]
+			RememberValue = false
+		}
+		Mode0Toggle
+		{
+			Type = ModeToggle
+			Mode = ControlModeToggle
+			OnMode = 0
+		}
+		Mode0Components
+		{
+			Type = ToggledComponents
+			Toggle = Mode0Toggle
+			Components = &<auto.txt>/Components
+		}
+		Mode1Toggle
+		{
+			Type = ModeToggle
+			Mode = ControlModeToggle
+			OnMode = 1
+		}
+		Mode1Components
+		{
+			Type = ToggledComponents
+			Toggle = Mode1Toggle
+			Components = &<manual.txt>/Components
+		}
+
+//-----------------------------------------------------------------------------
+		CrewLocation
+		{
+			Type = CrewLocation
+			Location = [1, 0.89]
+			Rotation = 180d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 1
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				[1, 0.89]
+			]
+			CrewLocations
+			[
+				CrewLocation
+			]
+		}
+		Graphics
+		{
+			Type = Graphics
+			Location = [1, 1]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor02[2,2]01.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/crew_quarters_med/walls.png"
+						Size = [2, 2]
+					}
+					{
+						File = "./Data/ships/terran/crew_quarters_med/walls_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "./Data/ships/terran/crew_quarters_med/walls_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "empty_roof02[1,1].png"
+						Size = [2, 2]
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [1, 1]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [1, 1]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower;
+						Size = [1.5, 1.5];
+					}
+				}
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [1.5, 1.5]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints2x2.png"
+			Size = [2, 2]
+		}
+	}
+/*
+	Stats
+	{
+		
+	}
+
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/IonBeam"
+			Stats
+			{
+			}
+		}
+	]
+*/
+}
+

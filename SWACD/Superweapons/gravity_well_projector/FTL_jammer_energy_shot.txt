@@ -1,0 +1,55 @@
+ID = "Lafiel.FTL_jammer_energy_shot"
+Range = 500
+IdealRange = 500
+Speed = 1
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.4
+		Density = 0.1
+	}
+	Death
+	{
+		Type = DeathByLifetime
+		//DeathByDistanceTraveled = 1
+		Lifetime = 0
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	Hit
+	{
+		Type = SimpleHit
+		HitShield = &HitOperational
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveAmmoDrain
+					AmmoType = FTL_jammer_juice
+					TotalDrain = -4000
+					Radius = 50
+					Slices = 1
+
+					Filter
+					{
+						Friendlies = true
+						Self = true
+						Enemies = false
+						OnlyPartCategories = [gravity_well_projector]
+					}
+
+					MediaEffectsOnDrainFactor = .00025
+					MediaEffectsOnDrain
+					[
+						&<./Data/shots/electro_bolt/particles/electro_bolt_discharge.txt>
+						&<./Data/shots/missile_emp/particles/missile_emp_lightning.txt>
+					]
+
+				}
+			]
+		}
+		HitStructural = &HitOperational
+	}
+}

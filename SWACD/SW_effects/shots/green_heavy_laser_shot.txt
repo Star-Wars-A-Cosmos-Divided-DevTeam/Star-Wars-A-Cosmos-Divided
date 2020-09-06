@@ -1,0 +1,169 @@
+ID = SW.green_heavy_laser_shot_common
+OtherIDs = ["green_heavy_laser_shot"]
+Range = 600
+IdealRange = [60, 400]
+IdealRadius = [5, 50]
+Speed = 80
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.1
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 3200
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		Penetration = 0 // Enough to get through one shield and lose half penetration.
+		PenetratesOperational = false
+		SourceShipCollisionDelay = 10
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 1000
+					DamagesShips = false
+					DamagesShields = true
+					DamagesBullets = false
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 1500
+					DamagesShips = true
+					DamagesShields = false
+					DamagesBullets = false
+					TreatShieldAsPart = true
+				}
+				{
+					Type = Impulse
+					Impulse = 2.5
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/GreenLaserHit
+				&/COMMON_PARTICLES/GreenLaserFlash
+				&/COMMON_PARTICLES/GreenLaserSparks
+	
+				&/COMMON_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+					Type = AreaDamage
+					Damage = 750
+					Radius = 3
+					DamagesShips = true
+					DamagesOperationalHealth = false
+					DamagesStructuralHealth = true
+					DamagesShields = false
+					DamagesBullets = false
+				}
+				{
+					Type = Impulse
+					Impulse = 1.25
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/GreenLaserHitStruct
+
+				&/COMMON_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational
+		{
+			// No effect.
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational
+		{
+			// No effect.
+		}
+		FinishedPenetratingStructural
+		{
+			// No effect.
+		}
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = Upper
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "lasershotgreen.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [2, 1]
+			}
+			FrameCount = 2
+			FrameSize = [64, 32]
+			FramesPerRow = 1
+			FramesPerSecond = 60
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/GreenLaserShotGlow
+		]
+	}
+}
