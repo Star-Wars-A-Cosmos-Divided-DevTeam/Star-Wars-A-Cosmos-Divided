@@ -1,0 +1,106 @@
+Type = Particles
+Def = &<./Data/common_effects/particles/spark_def.txt>
+EmitterDef
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 60
+	PreInitializers
+	[
+		{
+			Type = SetValue
+			VelocityOut = base_velocity
+			Speed
+			{
+				Min = 0
+				Max = 4
+			}
+			Direction
+			{
+				Min = 0d
+				Max = 360d
+			}
+			Name = "Color"
+			Enabled = true
+			UpdateAfterInit = false
+			DataOut = color
+			ValueType = Color
+			Value
+			{
+				Rf = 0.09803922
+				Gf = 0.09803922
+				Bf = 1
+				Af = 1
+			}
+		}
+		{
+			Type = SetRandomCircle
+			DataOut = color
+			ValueType = Color
+			Value
+			{
+				Rf = 0.09803922
+				Gf = 0.09803922
+				Bf = 1
+				Af = 1
+			}
+			Name = "Init location"
+			Enabled = true
+			UpdateAfterInit = false
+			LocationOut = location
+			Circle
+			{
+				Center
+				{
+					X = 0
+					Y = 0
+				}
+				Radius = 0.5
+			}
+			Perimeter = true
+		}
+		{
+			Type = SetRandomVelocityFromPoint
+			LocationOut = location
+			Circle
+			{
+				Center
+				{
+					X = 0
+					Y = 0
+				}
+				Radius = 2
+			}
+			Name = "Initial velocity"
+			Enabled = true
+			UpdateAfterInit = false
+			Perimeter = true
+			LocationIn = location
+			VelocityOut = base_velocity
+			Speed
+			{
+				Min = 0
+				Max = 4
+			}
+			AwayFromPoint
+			{
+				X = 0
+				Y = 0
+			}
+		}
+	]
+	PostInitializers[]
+}
+Bucket = Lower2
+PenetratingBucket
+MinIntensity = 0
+IsFancy = true
+Sharing = Global
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 3
+Delay = 0
+IgnoreIntensity = false
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 15
+ScaleEmissionWithIntensity = true
+UnsharedRenderInWorldSpace = false
+ScaleEmissionWithBeamLength = false
