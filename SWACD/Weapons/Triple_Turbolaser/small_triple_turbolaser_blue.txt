@@ -1,0 +1,218 @@
+Components
+	{
+		SwitchTimerTrigger
+		{
+			Type = Timer
+			Duration = 4
+			AutoStart = true
+			Repeats = false
+		}
+		SwitchTimerProgressBar
+		{
+			Type = ProgressBar
+			ShowProgressFor = SwitchTimerTrigger
+			Invert = true
+			OperationalToggle = SwitchCooldownToggle
+			InvertOperationalToggle = true
+		}
+		SwitchCooldownToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = SwitchTimerTrigger
+			StartsOn = false
+		}
+		WeaponIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, SwitchCooldownToggle]
+			Mode = All
+		}	
+	
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [1.5, 1.5]
+			Rotation = -90d// Relative to unrotated part.
+			OperationalToggle = WeaponIsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 1
+			FireDelay = .15
+			FiringArc = 130d
+			RotateSpeed = 180d
+			FireThresholdAngle = 1d
+			TargetSearchTriesPerFrame = 1
+			AIFirepowerRating = 1600
+			Emitter = BulletEmitterBase
+            IgnoreSourceShipLOSChecks = true
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = FireModeToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = WeaponIsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitterBase
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger
+			GetTargetFrom = Turret
+			Location = [1.5, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/bluetriplelasershot
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 100
+		}
+
+		BulletEmitterLeft : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.05, -0.2]
+		}
+
+		BulletEmitterMid : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.05, 0]
+		}
+
+		BulletEmitterRight : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.05, 0.2]
+		}
+
+		ChargeEffectBase
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterBase
+			Trigger = Turret
+			AnchorMediaEffects = true
+		
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/LaserRecharge
+			]
+		}
+
+		FireEffectBase
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterBase
+			Trigger = BulletEmitterMid
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		FireEffectMid
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterMid
+			Trigger = BulletEmitterMid
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/SmallBlueLaserShoot
+			]
+		}
+
+		FireEffectLeft : FireEffectMid
+		{
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+		}
+
+
+		FireEffectRight : FireEffectMid
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = BulletEmitterRight
+		}
+
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .8
+			Density = 1.5
+		}
+		
+		WeaponSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [0, 0]
+			Rotation = 90d
+			Layer = "roof_turrets"
+			ResetAnimationTrigger = Turret
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"Icon.png"
+				]
+				Size = [2, 2]
+				AnimationInterval = 0.1
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+
+		
+	}
+LaserStats
+{
+	NameKey = "StatCategories/TripleBlueLasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		ROF = 3 / (&~/Components/Turret/FireInterval)
+		Range = &~/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Components/Turret/RotateSpeed)
+		ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
+		ShotHP = &~/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+		PowerPerShot = (&~/Components/BulletEmitterBase/AmmoUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+	}
+}
