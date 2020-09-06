@@ -1,0 +1,54 @@
+ID = "Lafiel.FTL_jammer_shot"
+Range = 500
+IdealRange = 500
+Speed = 1
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.4
+		Density = 0.1
+	}
+	Death
+	{
+		Type = DeathByLifetime
+		//DeathByDistanceTraveled = 1
+		Lifetime = 0
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	Hit
+	{
+		Type = SimpleHit
+		HitShield = &HitOperational
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveAmmoDrain
+					AmmoType = battery
+					TotalDrain = 125664000 //16000 per 100sq tile
+					Radius = 500
+					Slices = 1
+
+					Filter
+					{
+						Friendlies = false
+						Enemies = true
+						OnlyPartCategories = [ftl]
+					}
+
+					MediaEffectsOnDrainFactor = .00025
+					MediaEffectsOnDrain
+					[
+						&<./Data/shots/electro_bolt/particles/electro_bolt_discharge.txt>
+						&<./Data/shots/missile_emp/particles/missile_emp_lightning.txt>
+					]
+
+				}
+			]
+		}
+		HitStructural = &HitOperational
+	}
+}

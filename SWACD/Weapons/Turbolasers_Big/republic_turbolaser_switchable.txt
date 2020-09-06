@@ -1,0 +1,406 @@
+Part : /BASE_PART
+{	
+	ID = SW.republic_turbolaser_switchable
+	OtherIDs = ["republic_turbolaser","republic_turbolaser2"]
+	NameKey = "Parts/Republicturbolaserswitchable"
+	IconNameKey = "Parts/Republicturbolaserswitchable"
+	EditorGroup = "TechI"
+	DescriptionKey = "Parts/RepublicturbolaserswitchableDesc"
+	Cost = 60000 
+	AIValue = &Cost
+	TypeCategories = [weapon, uses_power, uses_laser_parts, is_crewed]
+	Size = [4, 4]
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "cannons"
+	MaxHealth = 42000  
+	RequiresCategories = [bridge1]
+	InitialPenetrationResistance = 5
+	PenetrationRectType = Normal
+	AutoDoorMaxPathLength = 8
+	AllowedDoorLocations
+	[
+		[-1, 2]
+		[4, 2]
+		[-1, 3]
+		[4, 3]
+		[0, 4]
+		[1, 4]
+		[2, 4]
+		[3, 4]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "Republic/icon_republic_a.png"
+			SampleMode = Linear
+		}
+		Size = [64, 80]
+	}
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
+
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+		}
+
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+
+		RepublicLaserType
+		{
+			Type = UIToggle
+			ToggleID = "SW.republiclaser_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
+		}
+
+		RepublicLaserBlueToggle
+		{
+			Type = ModeToggle
+			Mode = RepublicLaserType
+			OnMode = 0
+		}
+
+		HeavyLaserBlueComponents
+		{
+			Type = ToggledComponents
+			Toggle = RepublicLaserBlueToggle
+			IncludeInBlueprints = true
+			Components = &<republic/republic_turbolaser_blue.txt>/Components
+		}
+
+		RepublicLaserBlueGreyToggle
+		{
+			Type = ModeToggle
+			Mode = RepublicLaserType
+			OnMode = 1
+		}
+
+		RepublicLaserBlueGreyComponents
+		{
+			Type = ToggledComponents
+			Toggle = RepublicLaserBlueGreyToggle
+			IncludeInBlueprints = true
+			Components = &<republic/republic_turbolaser_blue_grey.txt>/Components
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			Location = [2,2]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [4,4]
+					}
+					{
+						File = "floor_33.png"
+						Size = [4,4]
+					}
+					{
+						File = "floor_66.png"
+						Size = [4,4]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [4,4]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"console on1.png"
+							"console on2.png"
+							"console on3.png"
+						]
+						Size = [4,4]
+						AnimationInterval = 0.50
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "console off.png"
+						Size = [4,4]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [4,4]
+					}
+					{
+						File = "walls_33.png"
+						Size = [4,4]
+					}
+					{
+						File = "walls_66.png"
+						Size = [4,4]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						Size = [4,4]
+					}
+					{
+						File = "roof_33.png"
+						Size = [4,4]
+					}
+					{
+						File = "roof_66.png"
+						Size = [4,4]
+					}
+				]
+			}
+		}
+
+		BatteryStorage
+		{
+			Type = AmmoStorage
+			AmmoType = battery
+			MaxAmmo = 10000
+		}
+
+		BatteryConsumer
+		{
+			Type = AmmoConsumer
+			AmmoType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 2800
+			OperationalToggle = PowerToggle
+			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [1.55, 1.6]
+			Rotation = 180d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [2.45, 1.6]
+			Rotation = 180d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 2
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				[1.55, 1.6]
+				[2.45, 1.6]
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+			]
+		}
+
+		BatterySprites
+		{
+			Type = AmmoSprites
+			Location = [2,2]
+			AmmoStorage = BatteryStorage
+			Layer = "doodads_high"
+			AmmoLevels
+			[
+				{
+					File = "batteries01.png"
+					Size = [4,4]
+				}
+				{
+					File = "batteries02.png"
+					Size = [4,4]
+				}
+				{
+					File = "batteries03.png"
+					Size = [4,4]
+				}
+				{
+					File = "batteries04.png"
+					Size = [4,4]
+				}
+				{
+					File = "batteries05.png"
+					Size = [4,4]
+				}
+				{
+					File = "batteries06.png"
+					Size = [4,4]
+				}
+				{
+					File = "batteries07.png"
+					Size = [4,4]
+				}
+				{
+					File = "batteries08.png"
+					Size = [4,4]
+				}
+				{
+					File = "batteries09.png"
+					Size = [4,4]
+				}
+				{
+					File = "batteries10.png"
+					Size = [4,4]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational,
+			Location = [2, 2]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [2, 2]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [2, 2]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [2, 2]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [2, 2]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [2, 2]
+					}
+				}
+			]
+		}
+
+		BlueprintsBlue
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [4, 4]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.republiclaser_type
+				Mode = 0
+			}
+		}
+
+		BlueprintsBlueGrey
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [4, 4]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.republiclaser_type
+				Mode = 1
+			}
+		}
+	}
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
+
+		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+	StatsByCategory
+	[
+		&<republic/republic_turbolaser_blue.txt>/LaserStats
+	]
+}
