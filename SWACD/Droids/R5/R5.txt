@@ -1,0 +1,325 @@
+Part : /BASE_PART
+{
+	NameKey = "Parts/R5"
+	IconNameKey = "Parts/R5Icon"
+	ID = SW.R5
+	EditorGroup = "Droids"
+	DescriptionKey = "Parts/R5Desc"
+	Cost = 10300
+	Size = [1, 1]
+	MaxHealth = 4000
+	InitialPenetrationResistance = 1
+	PenetrationRectType = Normal
+	CrewSpeedFactor = 1
+	Density = 1
+//	AllowedDoorLocations = []
+	TypeCategories = [astromech]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+
+	Components
+	{
+
+		MyRepeatingTimerTrigger
+		{
+			Type = Timer
+			Duration = 35
+			AutoStart = true
+			Repeats = true
+		}
+		MyTriggeredEffects
+		{
+			Type = TriggeredEffects
+			Trigger = MyRepeatingTimerTrigger
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "../Astromech_Base/R2 Chatter 1.wav"
+					Volume = 0.2
+				}
+			]
+		}
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "../Astromech_Base/blueprints.png"
+			Size = [1, 1]
+		}
+
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
+
+		//******* Repairing **********
+		RepairRepeatingTimerTrigger
+		{
+			Type = Timer
+			Duration = 1
+			AutoStart = true
+			Repeats = true
+		}
+		RepairProgressBar
+		{
+			Type = ProgressBar
+			ShowProgressFor = RepairRepeatingTimerTrigger
+			Invert = true
+		}
+		RepairEffects
+		{
+			Type = TriggeredEffects
+			Trigger = RepairRepeatingTimerTrigger
+			Location = [.5, .5]
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = -500
+					Radius = 3
+					Slices = 1
+					Filter
+					{
+						Ships = true
+						Shields = false
+						Friendlies = true
+						Enemies = false
+						Self = true
+					}
+				}
+			]
+		}
+		//*******************************
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "../Astromech_Base/floor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../Astromech_Base/floor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../Astromech_Base/floor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "../Astromech_Base/walls.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../Astromech_Base/walls_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../Astromech_Base/walls_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "../Astromech_Base/roof.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../Astromech_Base/roof_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../Astromech_Base/roof_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "../Astromech_Base/shadow.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on2.png"
+							"R2D2on3.png"
+							"R2D2on4.png"
+							"R2D2on4.png"
+							"R2D2on4.png"
+							"R2D2on4.png"
+							"R2D2on4.png"
+							"R2D2on4.png"
+							"R2D2on4.png"
+							"R2D2on4.png"
+							"R2D2on4.png"
+							"R2D2on5.png"
+							"R2D2on4.png"
+							"R2D2on3.png"
+							"R2D2on2.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on16.png"
+							"R2D2on15.png"
+							"R2D2on14.png"
+							"R2D2on15.png"
+							"R2D2on16.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on1.png"
+							"R2D2on2.png"
+							"R2D2on3.png"
+							"R2D2on4.png"
+							"R2D2on5.png"
+							"R2D2on6.png"
+							"R2D2on7.png"
+							"R2D2on8.png"
+							"R2D2on9.png"
+							"R2D2on10.png"
+							"R2D2on11.png"
+							"R2D2on12.png"
+							"R2D2on13.png"
+							"R2D2on14.png"
+							"R2D2on15.png"
+							"R2D2on16.png"
+						     "R2D2on1.png"
+						]
+						Size = [1, 1]
+						AnimationInterval = 0.05
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, .5]
+		}
+
+		Sensor
+		{
+			Type = Sensor
+			SightRadius = 400
+		}
+
+	}
+}
