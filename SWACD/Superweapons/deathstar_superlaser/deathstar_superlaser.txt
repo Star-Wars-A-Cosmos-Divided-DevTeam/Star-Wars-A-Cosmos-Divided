@@ -1,20 +1,13 @@
 /* ----------------------------------------------------------------------------
-
 Introduction: SW:ACD (2017 July 24)
-
 Author : Lafiel
 Description:
 This part is the main laser emitter.
-
 Versions:
-
  o 1.0 Cosmoteer 0.12.8
-
    o based on ion-emitter
-
-[ o 2.0 experimental version Cosmoteer 0.15.8
-
-   o based on railgun, ion_prism, new sprites]
+ o 2.0 Cosmoteer 0.15.8
+   o based on railgun, ion_prism, new sprites
 
 ---------------------------------------------------------------------------- */
 Part : /BASE_PART
@@ -23,7 +16,6 @@ Part : /BASE_PART
 	IconNameKey = "Parts/DeathstarSuperlaserIcon"
 	ID = SW.deathstar_superlaser
 	OtherIDs = ["deathstar_superlaser"]
-
 	EditorGroup = "TechII"
 	DescriptionKey = "Parts/DeathstarSuperlaserDesc"
 	Cost = 25000000
@@ -36,9 +28,12 @@ Part : /BASE_PART
 	MaxHealth = 42000
 	InitialPenetrationResistance = 1
 	PenetrationRectType = Normal
-	ProhibitAbove = 24
+//	ProhibitAbove = 24
 	TypeCategories = [weapon, weapon_using_power, deathstarlasermain]
 	RequiresCategories = [WarRoom, deathstarlasersect1L, deathstarlasersect1R, deathstarlasersect2L, deathstarlasersect2R, deathstarlaserheadL, deathstarlaserheadR]
+//	RequiresCategories = [WarRoom]
+	ReceivableBuffs = [DSLReverseOperation,DSLaserBuff]
+
 	BlockedTravelCells
 	[
 		[0, 0]
@@ -83,34 +78,30 @@ Part : /BASE_PART
 	}
 	Components
 	{
+		ShotDamageBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = DSLaserBuff
+			BuffAmount = { BaseValue=1; BuffType=DSLaserBuff; BuffMode=Multiply; }
+		}
 		BlueprintSprite0
-
 		{
 			File = "blueprints.png"
 			Size = [6, 7]
 			Type=BlueprintSprite;
 		}
 
-		IsOperational
-
+		BuffOperational
 		{
-
 			Type = MultiToggle
-
-			Toggles
-
-			[
-
-				PowerToggle
-
-				BatteryStorage
-
-				PartCrew
-
-			]
-
+			Toggles = [PowerToggle, PartCrew]
 			Mode = All
-
+		}
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [BuffOperational, DSLReverseOperationBuffToggle]
+			Mode = All
 		}
 
 		PowerToggle
@@ -120,6 +111,12 @@ Part : /BASE_PART
 			Default = 1
 			ToggledOnChoices = [1]
 		}
+		DSLReverseOperationBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = DSLReverseOperation
+		}
+
 		FireModeToggle
 		{
 			Type = UIToggle;
@@ -139,37 +136,48 @@ Part : /BASE_PART
 			Type = AmmoStorage
 			AmmoType = battery
 			MaxAmmo = 84000
+			ToggleOnAmmo = 80001
 		}
 		BatteryConsumer
 		{
 			Type = AmmoConsumer
 			AmmoType = battery
 			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 500
+			DefaultPriority = &/PRIORITIES/Utility_Supply
+			ResupplyThreshold = 1000
 			OperationalToggle = PowerToggle
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+		OperationBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = DSLOperation
+			BuffArea = [0, -1, 6, 1]
+			OperationalToggle = BuffOperational
+			Criteria
+			{
+				Rot = 0
+				//Left = 0
+				//Right = 2
+				//Bottom = 0
+			}
+		}
 
+		Targetor
+		{
+			Type = UITargetor
+			TargetorID = dsl_aim
+			Weapons = [Weapon]
+		}
 		Weapon
 		{
-
 			Type = FixedWeapon
-
-			Location
- = [
-3, 0]
-
+			Location = [3, 0]
 			Rotation = -90d
-
 			OperationalToggle = IsOperational
-
 			AutoFireToggle = AutoFireToggle
 			FireInterval = .2
-
 			AIFirepowerRating = 240000
-
-
 			Emitter = BeamEmitter
 
 			AutoTarget
@@ -180,29 +188,18 @@ Part : /BASE_PART
 
 			CoverageLine
 			{
-				LineSprite
+				Sprite
 				{
 					Texture = &/INDICATORS/RadialGradient
-					VertexColor = [255, 255, 255, 191]
-					UVRect = [.5, 0, 0, 1]
+					VertexColor = [255, 255, 255, 127]
 				}
-				LineThickness = 2
-
-				BeginCapSprite : LineSprite
-				{
-					UVRect = [0, 0, .5, 1]
-				}
-				BeginCapSize = [1, 2]
-
-				EndCapSprite : LineSprite
-				{
-					UVRect = [.5, 0, .5, 1]
-				}
-				EndCapSize = [1, 2]
+				Thickness = 2
+				CapBeginPixels = 12
+				CapEndPixels = 12
 			}
 		}
 
-		BeamEmitter : &/COMMON_SHOTS/SuperLaserBeamGreen/SuperLaser_beam_green
+		BeamEmitter : &/COMMON_SHOTS/DSLaserInternalBeamGreen/DSLaser_internal_beam_green
 		{
 			Type = BeamEmitter
 			ChainedTo = Weapon
@@ -210,9 +207,9 @@ Part : /BASE_PART
 			GetTargetFrom = Weapon
 			OperationalToggle = IsOperational
 			SourceShipCollisions = false  //roof shot
-
 			AmmoStorage = BatteryStorage
 			AmmoUsed =  { BaseValue=2000; BuffType=DSLaserBuff; BuffMode=Multiply; }
+			MinAmmoUsed = 1000
 		}
 
 		CrewLocation1
@@ -244,7 +241,8 @@ Part : /BASE_PART
 			Type = PartCrew
 			Crew = 4
 			DefaultPriority = &/PRIORITIES/Weapon_Crew
-			PrerequisitesBeforeCrewing = [BatteryStorage, PowerToggle]
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
 			CrewDestinations
 			[
 				[.921875, 3.15]
@@ -854,11 +852,10 @@ Part : /BASE_PART
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
 
-		MinPower = (&../StatsByCategory/0/Stats/PowerUsageContinuous) / 2
 		RecPower = &../StatsByCategory/0/Stats/PowerUsageContinuous
-		MinCrew = (&CrewRequired) + (&MinPower) * 2
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
+
 
 	StatsByCategory
 	[
@@ -866,16 +863,16 @@ Part : /BASE_PART
 			NameKey = "StatCategories/IonBeam"
 			Stats
 			{
-/*
-				DamagePerShotNear = (&~/Part/Components/BeamEmitter/HitOperational/HitEffects/0/Damage/BaseValue) * (&~/Part/Components/BeamEmitter/HitEffectsScaleOverRange/0)
-				DamagePerShotFar = (&~/Part/Components/BeamEmitter/HitOperational/HitEffects/0/Damage/BaseValue) * (&~/Part/Components/BeamEmitter/HitEffectsScaleOverRange/1)
+
+			//	DamagePerShotNear = (&~/Part/Components/BeamEmitter/HitOperational/HitEffects/0/Damage) * (&~/Part/Components/BeamEmitter/HitEffectsScaleOverRange/0)
+			//	DamagePerShotFar = (&~/Part/Components/BeamEmitter/HitOperational/HitEffects/0/Damage) * (&~/Part/Components/BeamEmitter/HitEffectsScaleOverRange/1)
+			//	HitInterval = &~/Part/Components/BeamEmitter/HitInterval
+			//	DamageContinuousNear = (&DamagePerShotNear) / (&HitInterval)
+			//	DamageContinuousFar = (&DamagePerShotFar) / (&HitInterval)
+
+			//	DamagePerShot = &~/Part/Components/BeamEmitter/HitOperational/HitEffects/0/Damage
 				HitInterval = &~/Part/Components/BeamEmitter/HitInterval
-				DamageContinuousNear = (&DamagePerShotNear) / (&HitInterval)
-				DamageContinuousFar = (&DamagePerShotFar) / (&HitInterval)
-*/
-				DamagePerShot = &~/Part/Components/BeamEmitter/HitOperational/HitEffects/0/Damage/BaseValue
-				HitInterval = &~/Part/Components/BeamEmitter/HitInterval
-				DamageContinuous = (&DamagePerShot) / (&HitInterval)
+			//	DamageContinuous = (&DamagePerShot) / (&HitInterval)
 
 				Range = &~/Part/Components/BeamEmitter/Range
 				Arc = 0
@@ -888,3 +885,9 @@ Part : /BASE_PART
 
 	StatsNotesKey = "Stats/DeathStar_Notes"
 }
+
+
+
+
+
+
