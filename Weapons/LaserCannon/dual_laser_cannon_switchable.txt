@@ -1,0 +1,506 @@
+Part : /BASE_PART
+{	
+	ID = SW.SW.dual_laser_cannon_switchable
+	OtherIDs = ["dual_laser_cannon","dual_laser_cannonblue","dual_laser_cannongreen"]
+	NameKey = "Parts/DualLaserCannonSwitchable"
+	IconNameKey = "Parts/DualLaserCannonSwitchableIcon"
+	EditorGroup = "WeaponsEnergy"
+	DescriptionKey = "Parts/DualLaserCannonSwitchableDesc"
+	Cost = 5000
+	AIValue = &Cost
+	TypeCategories = [weapon, uses_power, uses_laser_parts, is_crewed]
+	Size = [2, 2]
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "cannons"
+	MaxHealth = 6000
+	InitialPenetrationResistance = 5
+	PenetrationRectType = Normal
+	AllowedDoorLocations
+	[
+		[-1, 1]
+		[2, 1]
+                [1, 2]
+                [0, 2]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [40, 60]
+	}
+	
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+		
+		DualLaserCannonType
+		{
+			Type = UIToggle
+			ToggleID = "SW.dualasercannon_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+
+		DualLaserCannonRedToggle
+		{
+			Type = ModeToggle
+			Mode = DualLaserCannonType
+			OnMode = 0
+		}
+
+		DualLaserCannonRedComponents
+		{
+			Type = ToggledComponents
+			Toggle = DualLaserCannonRedToggle
+			IncludeInBlueprints = true
+			Components = &<dual_laser_cannon_red.txt>/Components
+		}
+
+		DualLaserCannonBlueToggle
+		{
+			Type = ModeToggle
+			Mode = DualLaserCannonType
+			OnMode = 1
+		}
+
+		DualLaserCannonBlueComponents
+		{
+			Type = ToggledComponents
+			Toggle = DualLaserCannonBlueToggle
+			IncludeInBlueprints = true
+			Components = &<dual_laser_cannon_blue.txt>/Components
+		}
+
+		DualLaserCannonGreenToggle
+		{
+			Type = ModeToggle
+			Mode = DualLaserCannonType
+			OnMode = 2
+		}
+
+		DualLaserCannonGreenComponents
+		{
+			Type = ToggledComponents
+			Toggle = DualLaserCannonGreenToggle
+			IncludeInBlueprints = true
+			Components = &<dual_laser_cannon_green.txt>/Components
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			Location = [1, 1]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [2, 2]
+					}
+					{
+						File = "floor_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "floor_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"console on1.png"
+							"console on2.png"
+							"console on3.png"
+						]
+						Size = [2, 2]
+						//Offset = [0, 0]//-0.67]
+						AnimationInterval = 0.50
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "console off.png"
+						Size = [2, 2]
+						//Offset = [0, 0]//-0.67]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [2, 2]
+					}
+					{
+						File = "walls_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "walls_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			OperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "roof_windows.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_windows_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_windows_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+		}
+		Graphics2
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			Location = [1, 1]
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof_windows.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_windows_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_windows_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+		}
+		
+		BatteryStorage
+		{
+			Type = AmmoStorage
+			AmmoType = battery
+			MaxAmmo = 4000
+		}
+
+		BatteryConsumer
+		{
+			Type = AmmoConsumer
+			AmmoType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 1000
+			OperationalToggle = PowerToggle
+			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [0.55, 0.6]
+			Rotation = 180d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [1.45, 0.6]
+			Rotation = 180d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 2
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				[0.55, 0.5]
+				[1.45, 0.5]
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+			]
+		}
+
+		BatterySprites
+		{
+			Type = AmmoSprites
+			Location = [1, 1]
+			AmmoStorage = BatteryStorage
+			Layer = "doodads_high"
+			AmmoLevels
+			[
+				{
+					File = "batteries1.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries2.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries3.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries4.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries5.png"
+					Size = [2, 2]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Location = [1, 1]
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [1, 1]
+			
+			FactorHitEffectsWith = BatteryStorage
+			HitEffects
+			[
+				{
+					Type = AreaDamage
+					Damage = 400
+					Radius = 2
+					Delay = .05
+					AllowFriendlyDamage = true
+					DamagesShips = true
+					DamagesOperationalHealth = true
+					DamagesStructuralHealth = false
+					DamagesShields = false
+					DamagesBullets = false
+				}
+				{
+					Type = AreaDamage
+					Damage = 200
+					Radius = 2
+					Delay = .05
+					AllowFriendlyDamage = true
+					DamagesShips = true
+					DamagesOperationalHealth = false
+					DamagesStructuralHealth = true
+					DamagesShields = false
+					DamagesBullets = false
+				}{
+					Type = AreaFires
+					FireChancePerTile = .1
+					Radius = 4
+					Falloff = 0
+					Delay = .05
+					AllowFriendlyFires = true
+				}
+			]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [1, 1]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [2, 2]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [2, 2]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [2, 2]
+					}
+				}
+			]
+		}
+		BlueprintsRed
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.dualasercannon_type
+				Mode = 0
+			}
+		}
+
+		BlueprintsBlue
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.dualasercannon_type
+				Mode = 1
+			}
+		}
+		
+		BlueprintsGreen
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.dualasercannon_type
+				Mode = 2
+			}
+		}
+
+		BlueprintsYellow
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.dualasercannon_type
+				Mode = 3
+			}
+		}
+	}
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
+
+		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+	StatsByCategory
+	[
+		&<dual_laser_cannon_red.txt>/LaserStats
+		&<dual_laser_cannon_blue.txt>/LaserStats
+		&<dual_laser_cannon_green.txt>/LaserStats
+	]
+}
