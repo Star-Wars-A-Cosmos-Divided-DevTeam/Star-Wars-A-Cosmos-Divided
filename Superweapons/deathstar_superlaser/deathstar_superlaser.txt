@@ -125,7 +125,13 @@ Part : /BASE_PART
 			Type = UIToggle;
 			ToggleID = "fire_mode";
 			Default = 1;
-			ToggledOnChoices = [1];
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
 		}
 		AutoFireToggle
 		{
@@ -153,29 +159,20 @@ Part : /BASE_PART
 
 		Weapon
 		{
-
 			Type = FixedWeapon
-
-			Location
- = [
-3, 0]
-
+			Location = [3, 0]
 			Rotation = -90d
-
 			OperationalToggle = IsOperational
-
 			AutoFireToggle = AutoFireToggle
 			FireInterval = .2
-
 			AIFirepowerRating = 240000
-
-
+			FirePermissionToggle = FireModeToggle
 			Emitter = BeamEmitter
 
 			AutoTarget
 			{
 				TargetType = ShipParts
-				Toggle = FireModeToggle
+				Toggle = AutoTargetToggle
 			}
 
 			CoverageLine
