@@ -1,14 +1,14 @@
 Part : /BASE_PART
-{
-	NameKey = "Parts/LightTurbolaserG"
-	IconNameKey = "Parts/LightTurbolaserGIcon"
-	ID = SW.light_turbolasergreen
-	OtherIDs = ["light_turbolasergreen"]
+{	
+	ID = SW.light_turbolaser_switchable
+	OtherIDs = ["light_turbolaser","light_turbolaserblue","light_turbolasergreen"]
+	NameKey = "Parts/LightTurbolaserSwitchable"
+	IconNameKey = "Parts/LightTurbolaserSwitchableIcon"
 	EditorGroup = "WeaponsEnergy"
-	DescriptionKey = "Parts/LightTurbolaserGDesc"
+	DescriptionKey = "Parts/LightTurbolaserSwitchableDesc"
 	Cost = 8000
 	AIValue = &Cost
-	TypeCategories = [weapon, weapon_using_power]
+	TypeCategories = [weapon, uses_power, uses_laser_parts, is_crewed]
 	Size = [2, 2]
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
@@ -23,40 +23,22 @@ Part : /BASE_PART
                 [1, 2]
                 [0, 2]
 	]
-
 	EditorIcon
 	{
 		Texture
 		{
-			File = "icon2.png"
+			File = "icon3.png"
 			SampleMode = Linear
 		}
-		Size = [40, 60]
+		Size = [60, 60]
 	}
-	Components
+	
+	Components : ^/0/Components
 	{
-		AutoFireToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnMode = 2
-		}
-		BlueprintSprite0
-		{
-			File = "blueprints.png"
-			Size = [2, 2]
-			Type=BlueprintSprite;
-		}
-
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles
-			[
-				PowerToggle
-				BatteryStorage
-				PartCrew
-			]
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
 		PowerToggle
@@ -64,14 +46,26 @@ Part : /BASE_PART
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
 		}
-
 		FireModeToggle
 		{
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+		
+		LightTurbolaserType
+		{
+			Type = UIToggle
+			ToggleID = "SW.lightturbolaser_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
 			ToggledOnChoices = [0, 1, 2]
 		}
 		AutoTargetToggle
@@ -81,21 +75,49 @@ Part : /BASE_PART
 			OnModes = [1, 2]
 		}
 
-		BatteryStorage
+		LightTurbolaserRedToggle
 		{
-			Type = AmmoStorage
-			AmmoType = battery
-			MaxAmmo = 5000
+			Type = ModeToggle
+			Mode = LightTurbolaserType
+			OnMode = 0
 		}
-		BatteryConsumer
+
+		LightTurbolaserRedComponents
 		{
-			Type = AmmoConsumer
-			AmmoType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 1000
-			OperatinalToggle = PowerToggle
-			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			Type = ToggledComponents
+			Toggle = LightTurbolaserRedToggle
+			IncludeInBlueprints = true
+			Components = &<light_turbolaser_red.txt>/Components
+		}
+
+		LightTurbolaserBlueToggle
+		{
+			Type = ModeToggle
+			Mode = LightTurbolaserType
+			OnMode = 1
+		}
+
+		LightTurbolaserBlueComponents
+		{
+			Type = ToggledComponents
+			Toggle = LightTurbolaserBlueToggle
+			IncludeInBlueprints = true
+			Components = &<light_turbolaser_blue.txt>/Components
+		}
+
+		LightTurbolaserGreenToggle
+		{
+			Type = ModeToggle
+			Mode = LightTurbolaserType
+			OnMode = 2
+		}
+
+		LightTurbolaserGreenComponents
+		{
+			Type = ToggledComponents
+			Toggle = LightTurbolaserGreenToggle
+			IncludeInBlueprints = true
+			Components = &<light_turbolaser_green.txt>/Components
 		}
 
 		Graphics
@@ -201,6 +223,25 @@ Part : /BASE_PART
 					}
 				]
 			}
+			OperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "roof_windows.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_windows_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_windows_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
 		}
 		Graphics2
 		{
@@ -227,111 +268,23 @@ Part : /BASE_PART
 				]
 			}
 		}
-
-		Turret
+		
+		BatteryStorage
 		{
-			Type = TurretWeapon
-			OperationalToggle = IsOperational
-			AutoFireToggle = AutoFireToggle
-			Location = [1, 1]
-			Rotation = -90d
-			FireInterval = .6
-			FiringArc = 180d
-			RotateSpeed = 90d
-			FireThresholdAngle = 1d
-			AIFirepowerRating = 1600
-			FirePermissionToggle = FireModeToggle
-			AllowFireWithBlockedLOS = true
-			Emitter = BulletEmitter
-
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
+			Type = AmmoStorage
+			AmmoType = battery
+			MaxAmmo = 5000
 		}
 
-		ReloadProgressBar
+		BatteryConsumer
 		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = Turret
-		}
-
-		BulletEmitter
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger = Turret
-			GetTargetFrom = Turret
-			Location = [1.75, 0]
-			OperationalToggle = IsOperational
-			Bullet = &<light_turbolaser_shot_Green.txt>
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 250
-		}
-
-		FireEffect1
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [1.2, -0.45]//[1.35, -0.25]
-
-			MediaEffects
-			[
-				: /PARTICLES/GreenLaserShoot
-				{
-					Delay = 0
-				}
-
-				:/BASE_SOUNDS/AudioExterior
-				{
-					Sound = "../Turbolaser SFX.wav"
-					Volume = .75
-					SpeedVariation = .25
-				}
-
-				:/BASE_SHAKE
-				{
-					ShakeAmount = .025
-					Duration = .25
-				}
-			]
-		}
-
-		FireEffect2
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [1.2, 0.45]//[1.35, 0.25]
-
-			MediaEffects
-			[
-				: /PARTICLES/GreenLaserShoot
-				{
-					Delay = 0
-				}
-			]
+			Type = AmmoConsumer
+			AmmoType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 1000
+			OperationalToggle = PowerToggle
+			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
 		CrewLocation1
@@ -363,35 +316,6 @@ Part : /BASE_PART
 				CrewLocation1
 				CrewLocation2
 			]
-		}
-
-		TurretCollider
-		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .8
-			Density = 1.5
-		}
-
-		BarrelSprite
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [0.20, 0]
-			Rotation = 90d
-			Layer = "roof_doodads"
-			ResetAnimationTrigger = BulletEmitter
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"icon2.png"
-				]
-				Size = [2.5, 2.5]
-				AnimationInterval = 0.0625
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
 		}
 
 		BatterySprites
@@ -428,8 +352,8 @@ Part : /BASE_PART
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
 			Location = [1, 1]
+			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
@@ -439,7 +363,7 @@ Part : /BASE_PART
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 			Location = [1, 1]
-
+			
 			FactorHitEffectsWith = BatteryStorage
 			HitEffects
 			[
@@ -490,7 +414,7 @@ Part : /BASE_PART
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 				}
 
@@ -500,22 +424,71 @@ Part : /BASE_PART
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 				}
+
 				// No crew.
 				{
 					Toggle = PartCrew
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 				}
 			]
 		}
-	}
+		BlueprintsRed
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
 
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.lightturbolaser_type
+				Mode = 0
+			}
+		}
+
+		BlueprintsBlue
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.lightturbolaser_type
+				Mode = 1
+			}
+		}
+		
+		BlueprintsGreen
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.lightturbolaser_type
+				Mode = 2
+			}
+		}
+
+		BlueprintsYellow
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.lightturbolaser_type
+				Mode = 3
+			}
+		}
+	}
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -524,29 +497,10 @@ Part : /BASE_PART
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
-
 	StatsByCategory
 	[
-		{
-			NameKey = "StatCategories/LaserBoltSmall"
-			Stats
-			{
-				ShieldDamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
-				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-				DamagePerSecond = (&DamagePerShot) * (&ROF)
-				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				ROF = 1 / (&~/Part/Components/Turret/FireInterval)
-				Range = &~/Part/Components/BulletEmitter/Bullet/Range
-				Arc = deg(&~/Part/Components/Turret/FiringArc)
-				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-				ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Speed
-				ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Targetable/Health
-				PowerPerShot = (&~/Part/Components/BulletEmitter/AmmoUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&ROF)
-				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
-			}
-		}
+		&<light_turbolaser_red.txt>/LaserStats
+		&<light_turbolaser_blue.txt>/LaserStats
+		&<light_turbolaser_green.txt>/LaserStats
 	]
 }
