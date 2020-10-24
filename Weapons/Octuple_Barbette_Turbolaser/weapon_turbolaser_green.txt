@@ -1,0 +1,165 @@
+Components
+{
+		Weapon
+		{
+			Type = TurretWeapon
+			Location = [4, 4] // Relative to upper-left corner of unrotated part.
+			Rotation = -90d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 1.35
+			FiringArc = 160d
+			RotateSpeed = 45d
+			FireThresholdAngle = 1d
+			IgnoreSourceShipLOSChecks = true
+			HoldTargetAfterCancel = 0.5
+			AIFirepowerRating = 6400
+			FirePermissionToggle = FireModeToggle
+
+			Emitter = WeaponEmitter
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Weapon
+		}
+
+		WeaponEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Weapon
+			FireTrigger = ShootLeftTriggerProxy
+			GetTargetFrom = Weapon
+			Location = [2.75, 1.609375]  //-103,-176
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/greenmedlasershot
+			SourceShipCollisions = false
+			//Spread = [-2.5d, 2.5d]
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 200 //250-350?
+			//Recoil = 10
+		}
+		WeaponEmitter2 : WeaponEmitter
+		{
+			Location = [2.75, 2.734375]  //-103,-176; -36x
+			FireTrigger = ShootRightTriggerProxy
+			AmmoStorage = BatteryStorage
+		}
+		WeaponEmitter3 : WeaponEmitter
+		{
+			Location = [2.75, 2.171875]  //-103,-176; -36x
+			FireTrigger = ShootLeftTriggerProxy
+			AmmoStorage = BatteryStorage
+		}
+		WeaponEmitter4 : WeaponEmitter
+		{
+			Location = [2.75, 3.296875]  //-103,-176; -36x
+			FireTrigger = ShootRightTriggerProxy
+			AmmoStorage = BatteryStorage
+		}
+		WeaponEmitter5 : WeaponEmitter
+		{
+			Location = [2.75, -1.609375]  //-103,-176; -36x
+			FireTrigger = ShootLeftTriggerProxy
+			AmmoStorage = BatteryStorage
+		}
+		WeaponEmitter6 : WeaponEmitter
+		{
+			Location = [2.75, -2.171875]  //-103,-176; -36x
+			FireTrigger = ShootRightTriggerProxy
+			AmmoStorage = BatteryStorage
+		}
+		WeaponEmitter7 : WeaponEmitter
+		{
+			Location = [2.75, -2.734375]  //-103,-176; -36x
+			FireTrigger = ShootLeftTriggerProxy
+			AmmoStorage = BatteryStorage
+		}
+		WeaponEmitter8 : WeaponEmitter
+		{
+			Location = [2.75, -3.296875]  //-103,-176; -36x
+			FireTrigger = ShootRightTriggerProxy
+			AmmoStorage = BatteryStorage
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+
+			ChainedTo = BulletEmitterLeft
+
+			Trigger = BulletEmitterLeft
+
+			AnchorMediaEffects = true
+
+			MediaEffects
+
+			[
+
+				&/COMMON_PARTICLES/SmallGreenLaserShoot
+
+			] 
+		}
+		FireEffect2 : FireEffect
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = WeaponEmitter2
+		}
+		FireEffect3 : FireEffect
+		{
+			ChainedTo = WeaponEmitter3
+			Trigger = WeaponEmitter3
+		}
+		FireEffect4 : FireEffect
+		{
+			ChainedTo = WeaponEmitter4
+			Trigger = WeaponEmitter4
+		}
+		FireEffect5 : FireEffect
+		{
+			ChainedTo = WeaponEmitter5
+			Trigger = WeaponEmitter5
+		}
+		FireEffect6 : FireEffect
+		{
+			ChainedTo = WeaponEmitter6
+			Trigger = WeaponEmitter6
+		}
+		FireEffect7 : FireEffect
+		{
+			ChainedTo = WeaponEmitter7
+			Trigger = WeaponEmitter7
+		}
+		FireEffect8 : FireEffect
+		{
+			ChainedTo = WeaponEmitter8
+			Trigger = WeaponEmitter8
+		}
+
+}
