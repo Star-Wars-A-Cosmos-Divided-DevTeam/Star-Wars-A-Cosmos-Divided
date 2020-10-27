@@ -1,3 +1,22 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+Description:
+Currently prototyping
+
+It offers synchronized and alternate firing modes.
+This requires the inheritance of the firing logic found in SW_weapon_fire_alternate_2.txt (See details).
+In alternate fire on each sides the guns are divided in od and even groups and overall mirrored.
+
+The timer component (WeaponTimerBuffProvider) is needed to adjust the timing individually for the weapon.
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.12
+
+---------------------------------------------------------------------------- */ 
 Part : /BASE_PART
 {
 	NameKey = "Parts/TurbolaserCarronade"
@@ -81,6 +100,12 @@ Part : /BASE_PART
 			ToggledOnChoices = [1]
 		}
 
+		WeaponTimerBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SWWeaponTimerBuff
+			BuffAmount = 60%
+		}
 		BatteryStorage
 		{
 			Type = AmmoStorage
@@ -242,13 +267,14 @@ Part : /BASE_PART
 			FireThresholdAngle = 1d
 			AIFirepowerRating = 1600
 			AllowFireWithBlockedLOS = true
+			FirePermissionToggle = FirePermissionToggle
 			Emitter = BulletEmitter
 
 			AutoTargets
 			[
 				{
 					TargetType = ShipParts
-					Toggle = FireModeToggle
+					Toggle = AutoTargetToggle
 				}
 			]
 
@@ -280,16 +306,21 @@ Part : /BASE_PART
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
-			FireTrigger = Turret
+			FireTrigger = ShootLeftTriggerProxy
 			GetTargetFrom = Turret
-			Location = [1.3125, 0]
+			Location = [1.3125, -0.40625]
 			OperationalToggle = IsOperational
 			Bullet = &<../Light_Turbolaser/light_turbolaser_shot_Green.txt>
 			AmmoStorage = BatteryStorage
 			AmmoUsed = 250
 		}
+		BulletEmitter2 : &BulletEmitter
+		{
+			FireTrigger = ShootRightTriggerProxy
+			Location = [1.3125, 0.40625]
+		}
 
-		FireEffect1
+		FireEffect
 		{
 			Type = TriggeredEffects
 			ChainedTo = Turret
@@ -318,20 +349,9 @@ Part : /BASE_PART
 			]
 		}
 
-		FireEffect2
+		FireEffect2 : &FireEffect1
 		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
 			Location = [1.3125, 0.40625]
-
-			MediaEffects
-			[
-				: /PARTICLES/GreenLaserShoot
-				{
-					Delay = 0
-				}
-			]
 		}
 
 		CrewLocation1
@@ -551,4 +571,3 @@ Part : /BASE_PART
 		}
 	]
 } 
-
