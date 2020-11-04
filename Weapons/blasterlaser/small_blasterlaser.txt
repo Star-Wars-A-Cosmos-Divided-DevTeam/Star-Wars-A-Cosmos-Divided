@@ -31,7 +31,7 @@ Part : /BASE_PART
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [21.33, 42.66]
+		Size = [21.33, 64]
 	}
 			BlueprintSprite0
 		{
@@ -60,6 +60,13 @@ Part : /BASE_PART
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
 		}
 		AutoFireToggle
 		{
@@ -67,7 +74,7 @@ Part : /BASE_PART
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-		
+
 		LaserType
 		{
 			Type = UIToggle
@@ -457,6 +464,15 @@ Part : /BASE_PART
 
 		RecPower = 2
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
+		
+		Range = &<red_blasterlaser.txt>/Components/BulletEmitter/Bullet/Range
+		Arc = deg(&<red_blasterlaser.txt>/Components/Turret/FiringArc)
+		TurretSpeed = deg(&<red_blasterlaser.txt>/Components/Turret/RotateSpeed)
+		ShotSpeed = &<red_blasterlaser.txt>/Components/BulletEmitter/Bullet/Speed
+		ShotHP = &<red_blasterlaser.txt>/Components/BulletEmitter/Bullet/Components/Targetable/Health
+		PowerPerShot = (&<red_blasterlaser.txt>/Components/BulletEmitter/AmmoUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&<red_blasterlaser.txt>/Components/Turret/FireInterval)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	StatsByCategory
 	[
