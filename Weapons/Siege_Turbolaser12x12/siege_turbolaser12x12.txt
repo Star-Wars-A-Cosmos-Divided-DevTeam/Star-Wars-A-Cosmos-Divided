@@ -1,0 +1,200 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+Description:
+Currently prototyping
+
+First of a line of weapons type: siege weapons
+Turret found on Nebula-class SD
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.12
+
+---------------------------------------------------------------------------- */ 
+Part : /BASE_PART
+{
+	NameKey = "Parts/SiegeTurbolaser12x12"
+	IconNameKey = "Parts/SiegeTurbolaser12x12Icon"
+	ID = SW.siege_turbolaser12x12
+	DescriptionKey = "Parts/SiegeTurbolaser12x12Desc"
+	EditorGroup = "TechI"
+	Cost = 130000
+	AIValue = &Cost
+	TypeCategories = [weapon, uses_power, is_crewed]
+	RequiresCategories = [bridge1]
+	Size = [12, 12]
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "cannons" 
+	MaxHealth = 168000
+	Density = 1 + (&~/Part/TurretDensity)
+	InitialPenetrationResistance = 5
+	PenetrationRectType = Normal
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [92, 92]
+	}
+	Components : ^/0/Components
+	{
+		Weapon
+		{
+			Type = TurretWeapon
+			Location = [6, 6] // Relative to upper-left corner of unrotated part.
+			Rotation = -90d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 1.2
+			FiringArc = 160d
+			RotateSpeed = 45d
+			FireThresholdAngle = 1d
+			IgnoreSourceShipLOSChecks = true
+			HoldTargetAfterCancel = 0.5
+			AIFirepowerRating = 6400
+			FirePermissionToggle = FirePermissionToggle
+
+			Emitter = WeaponEmitterBase
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Weapon
+		}
+
+		WeaponEmitterBase // Doesn't actually fire; only used for targeting and as a base for the left and right emitters.
+		{
+			Type = BulletEmitter
+			ChainedTo = Weapon
+			FireTrigger // none, but field is required
+			GetTargetFrom = Weapon
+			Location = [0, 0]
+			OperationalToggle = IsOperational
+			FireDelay = .6
+			Bullet = &/COMMON_SHOTS/greenmedlasershot
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 500
+		}
+		TurretGraphics
+		{
+			Type = Graphics
+			ChainedTo = Weapon
+			Location = [0, 0]
+			Rotation = 90d
+			//OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "roof_turrets"
+				DamageLevels
+				[
+					{
+						File = "turret[12,12].png"
+						Size = [12, 12]
+					}
+				]
+			}
+		}
+		BarrelGraphics
+		{
+			Type = Graphics
+			ChainedTo = Weapon
+			Location = [0, 0]
+			Rotation = 90d
+			//OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "roof_turrets"
+				Offset = [7.8125, -1] //-64,-500 //midwidth42
+				DamageLevels
+				[
+					{
+						File = "barrel4.png"
+						Size = [1, 4]
+					}
+				]
+			}
+			Walls : &Floor
+			{
+				Offset = [7.8125, 1]
+			}
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [12, 12]
+		}
+	}
+
+/*
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
+
+		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/MedGreenLasershot"
+			Stats
+			{
+				DamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
+				DamagePerSecond = (&DamagePerShot) * (&ROF)
+				Damage = [&../DamagePerShot, &../DamagePerSecond]
+				Penetration = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/Penetration
+				FireChance = (&~/Part/Components/WeaponEmitter/Bullet/Components/Hit/PenetratingOperational/HitEffects/1/FireChance) * 100
+				ROF = 1 / (&~/Part/Components/Weapon/FireInterval)
+				Range = &~/Part/Components/WeaponEmitter/Bullet/Range/BaseValue
+				Arc = deg(&~/Part/Components/Weapon/FiringArc)
+				//Spread = deg(&~/Part/Components/WeaponEmitter/Spread/1)
+				TurretSpeed = deg(&~/Part/Components/Weapon/RotateSpeed)
+				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
+//				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
+				PowerPerShot = (&~/Part/Components/WeaponEmitter/AmmoUsed) / 1000
+				PowerPerSecond = (&PowerPerShot) * (&ROF)
+				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+			}
+		}
+	]
+
+*/
+
+}
