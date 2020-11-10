@@ -1,0 +1,158 @@
+ID = SW.cyan_heavy_ion_cannon_shot
+OtherIDs = ["heavy_ion_cannon_shot"]
+
+Range = 700
+IdealRange = 400
+Speed = 75
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 4000
+		TargetCategory = "laser"
+	}
+
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		SourceShipCollisionDelay = 10.01
+
+		HitShield
+		{
+			HitEffects
+			[
+				{
+
+					Type = Damage
+
+					Damage = 4000
+
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+
+					Type = Damage
+
+					Damage = 250
+
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+
+			MediaEffects
+			[
+				&/PARTICLES/CyanHit
+				&/PARTICLES/CyanFlash
+				&/PARTICLES/CyanSparks
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/laser_bolt_small/laser_bolt_small_hit.wav"
+					Volume = .5
+					SpeedVariation = .4
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+
+					Type = Damage
+
+					Damage = 175
+
+				}
+				{
+					Type = Impulse;
+					Impulse = 1.25;
+				}
+			]
+
+			MediaEffects
+			[
+				&/PARTICLES/CyanHit
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/laser_bolt_small/laser_bolt_small_hit.wav"
+					Volume = .3
+					SpeedVariation = .4
+				}
+			]
+		}
+		PenetratingOperational
+		{
+		}
+		PenetratingStructural
+		{
+		}
+		FinishedPenetratingOperational
+		{
+		}
+		FinishedPenetratingStructural
+		{
+		}
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		RenderBucket = Upper
+		Sprite
+		{
+			Texture = "cyan_ion.png"
+			Size = [1, 2]
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		InheritVelocityFrom = Physics
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/PARTICLES/CyanLaserShotGlow
+		]
+	}
+}
