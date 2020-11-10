@@ -2,11 +2,11 @@ Part : /BASE_PART
 {
 	NameKey = "Parts/HeavyIonCannon"
 	IconNameKey = "Parts/HeavyIonCannonIcon"
-	ID = SW.heavy_ion_cannon_test
-	OtherIDs = ["heavy_ion_cannon_test"]
+	ID = SW.heavy_ion_cannon_switchable
+	OtherIDs = ["heavy_ion_cannon", "heavy_ion_cannonb"]
 	EditorGroup = "TechI"
 	DescriptionKey = "Parts/HeavyIonCannonDesc"
-	Cost = 1000000
+	Cost = 35000
 	AIValue = &Cost
 	TypeCategories = [weapon, uses_power,is_crewed]
 	Size = [4, 4]
@@ -38,7 +38,7 @@ Part : /BASE_PART
 		}
 		Size = [64, 80]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		AutoFireToggle
 		{
@@ -83,6 +83,44 @@ Part : /BASE_PART
 			Type = ModeToggle
 			Mode = FireModeToggle
 			OnModes = [1, 2]
+		}
+
+		HeavyIonCannonType
+		{
+			Type = UIToggle
+			ToggleID = "SW.heavyioncannon_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
+		}
+
+		HeavyIonCannonToggle
+		{
+			Type = ModeToggle
+			Mode = HeavyIonCannonType
+			OnMode = 0
+		}
+
+		HeavyIonCannonComponents
+		{
+			Type = ToggledComponents
+			Toggle = HeavyIonCannonToggle
+			IncludeInBlueprints = true
+			Components = &<heavy_ion_cannon_cyan.txt>/Components
+		}
+
+		HeavyIonCannonGreyToggle
+		{
+			Type = ModeToggle
+			Mode = HeavyIonCannonType
+			OnMode = 1
+		}
+
+		HeavyIonCannonGreyComponents
+		{
+			Type = ToggledComponents
+			Toggle = HeavyIonCannonGreyToggle
+			IncludeInBlueprints = true
+			Components = &<heavy_ion_cannon_cyan_grey.txt>/Components
 		}
 
 		BatteryStorage
@@ -206,112 +244,6 @@ Part : /BASE_PART
 				]
 			}
 		}
-		Turret
-		{
-			Type = TurretWeapon
-			OperationalToggle = IsOperational
-			AutoFireToggle = AutoFireToggle
-			Location = [2, 2]
-			Rotation = -90d
-			FireInterval = 1
-			FiringArc = 180d
-			RotateSpeed = 90d
-			FireThresholdAngle = 1d
-			AIFirepowerRating = 1600
-			AllowFireWithBlockedLOS = true
-			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitterBase
-
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = Turret
-		}
-
-		BulletEmitterBase
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger
-			GetTargetFrom = Turret
-			Location = [0,0]
-			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/cyanheavyioncannonshot
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 1000
-		}
-
-		BulletEmitterLeft : BulletEmitterBase
-		{
-			Type = BulletEmitter
-			FireTrigger = Turret
-			Location = [2.375, 0.21]
-		}
-
-		BulletEmitterRight : BulletEmitterBase
-		{
-			Type = BulletEmitter
-			FireTrigger = Turret
-			Location = [2.375, -0.21]
-		}
-
-		FireEffectBase
-		{
-			Type = TriggeredEffects
-			ChainedTo = BulletEmitterBase
-			Trigger = Turret
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/IonCannonShot
-			]
-		}
-
-		FireEffectLeft
-		{
-			Type = TriggeredEffects
-			ChainedTo = BulletEmitterLeft
-			Trigger = BulletEmitterLeft
-			AnchorMediaEffects = true
-	
-			MediaEffects
-			[
-				&/COMMON_PARTICLES/CyanShoot
-			]
-		}
-
-		FireEffectRight : FireEffectLeft
-		{
-			ChainedTo = BulletEmitterRight
-			Trigger = BulletEmitterRight
-		}
 
 		CrewLocation1
 		{
@@ -342,36 +274,6 @@ Part : /BASE_PART
 				CrewLocation1
 				CrewLocation2
 			]
-		}
-
-		TurretCollider
-		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .8
-			Density = 1.5
-		}
-
-		BarrelSprite
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [0.40, 0]
-			Rotation = 90d
-			Layer = "roof_doodads"
-			ResetAnimationTrigger = BulletEmitterBase
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"Barrel2.png"
-					"Barrel1.png"
-				]
-				Size = [4, 5]
-				AnimationInterval = 0.0625
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
 		}
 
 		BatterySprites
@@ -514,8 +416,31 @@ Part : /BASE_PART
 				}
 			]
 		}
-	}
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
 
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.heavyioncannon_type
+				Mode = 0
+			}
+		}
+		BlueprintsGrey
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.heavyioncannon_type
+				Mode = 1
+			}
+		}
+	}
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -524,31 +449,9 @@ Part : /BASE_PART
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
-
 	StatsByCategory
 	[
-		{
-			NameKey = "StatCategories/HeavyCyanIoncannonshot"
-			Stats
-			{
-				ShieldDamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
-				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-				DamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-				DamagePerSecond = (&DamagePerShot) * (&ROF)
-				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				ROF = 2 / (&~/Part/Components/Turret/FireInterval)
-				Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
-				Arc = deg(&~/Part/Components/Turret/FiringArc)
-				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-				ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
-				ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
-				PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&ROF)
-				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
-			}
-		}
+		&<heavy_ion_cannon_cyan.txt>/LaserStats
 	]
-
 	StatsNotesKey = "Stats/CommandBridge_Notes"
 }
