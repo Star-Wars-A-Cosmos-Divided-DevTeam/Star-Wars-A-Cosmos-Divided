@@ -86,7 +86,7 @@ Components
 			GetTargetFrom = Turret
 			Location = [2, 0]
 			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/redmedlasershot
+			Bullet = &/COMMON_SHOTS/bluemedlasershot
 			AmmoStorage = BatteryStorage
 			AmmoUsed = 200
 		}
@@ -122,7 +122,7 @@ Components
 		{
 			Type = TriggeredEffects
 			ChainedTo = BulletEmitterBase
-			Trigger = BulletEmitterLeft
+			Trigger = BulletEmitterBase
 			AnchorMediaEffects = true
 	
 			MediaEffects
@@ -140,7 +140,7 @@ Components
 	
 			MediaEffects
 			[
-				&/COMMON_PARTICLES/SmallRedLaserShoot
+				&/COMMON_PARTICLES/SmallBlueLaserShoot
 			]
 		}
 
@@ -156,11 +156,34 @@ Components
 			ChainedTo = Turret
 			Radius = .8
 			Density = 1.5
+		}
+		
+		WeaponSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [0, 0]
+			Rotation = 90d
+			Layer = "roof_turrets"
+			ResetAnimationTrigger = Turret
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"Barrel_A2.png"
+					"Barrel_A3.png"
+					"Barrel_A1.png" // Loop back to beginning and clamp there.
+				]
+				Size = [2, 3]
+				AnimationInterval = 0.625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
 		}	
 	}
 LaserStats
 {
-	NameKey = "StatCategories/MedRedLasershot"
+	NameKey = "StatCategories/MedBlueLasershot"
 	Stats
 	{
 		ShieldDamagePerShot = &~/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
