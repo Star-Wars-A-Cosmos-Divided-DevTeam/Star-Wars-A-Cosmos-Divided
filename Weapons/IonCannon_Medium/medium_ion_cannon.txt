@@ -33,7 +33,7 @@ Part : /BASE_PART
 		}
 		Size = [40, 40]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		AutoFireToggle
 		{
@@ -200,15 +200,9 @@ Part : /BASE_PART
 					}
 				]
 			}
-		}
-		Graphics2
-		{
-			Type = Graphics
-			OperationalToggle = IsOperational,
-			Location = [1, 1]
-			Roof
+			OperationalRoofWindows
 			{
-				Layer = "roofs"
+				Layer = "roof_windows"
 				DamageLevels
 				[
 					{
@@ -225,6 +219,7 @@ Part : /BASE_PART
 					}
 				]
 			}
+			NonOperationalRoofWindows=&OperationalRoofWindows
 		}
 		Turret
 		{
@@ -237,7 +232,7 @@ Part : /BASE_PART
 			FiringArc = 180d
 			RotateSpeed = 90d
 			FireThresholdAngle = 1d
-			AIFirepowerRating = 1600
+			AIFirepowerRating = 800
 			FirePermissionToggle = FireModeToggle
 			AllowFireWithBlockedLOS = true
 			Emitter = BulletEmitter
@@ -282,38 +277,64 @@ Part : /BASE_PART
 			GetTargetFrom = Turret
 			Location = [1.75,0]
 			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/bluemediumioncannonshot
+			Bullet = &/COMMON_SHOTS/cyanmediumioncannonshot
 			AmmoStorage = BatteryStorage
 			AmmoUsed = 200
 		}
 
-		FireEffect1
+		FireEffectBase
 		{
 			Type = TriggeredEffects
 			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [1.5, 0]
+			Trigger = Turret
+			AnchorMediaEffects = true
 
 			MediaEffects
 			[
-				:/PARTICLES/BlueLaserShoot
-				{
-					Bucket = Upper1
-				}
-
-				:/BASE_SOUNDS/AudioExterior
-				{
-					Sound = "IonCannonShot.wav"
-					Volume = .75
-					SpeedVariation = .25
-				}
-
-				:/BASE_SHAKE
-				{
-					ShakeAmount = .025
-					Duration = .25
-				}
+				&/COMMON_SOUNDS/IonCannonShot
 			]
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitter
+			Trigger = BulletEmitter
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/CyanShoot
+			]
+		}
+
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .8
+			Density = 1.5
+		}
+
+		BarrelSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [0.20, 0]
+			Rotation = 90d
+			Layer = "roof_turrets"
+			ResetAnimationTrigger = BulletEmitter
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"icon.png"
+				]
+				Size = [2, 2]
+				AnimationInterval = 0.0625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
 		}
 
 		CrewLocation1
@@ -347,34 +368,6 @@ Part : /BASE_PART
 			]
 		}
 
-		TurretCollider
-		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .8
-			Density = 1.5
-		}
-
-		BarrelSprite
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [0.20, 0]
-			Rotation = 90d
-			Layer = "roof_turrets"
-			ResetAnimationTrigger = BulletEmitter
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"icon.png"
-				]
-				Size = [2, 2]
-				AnimationInterval = 0.0625
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
-		}
 		BatterySprites
 		{
 			Type = AmmoSprites
@@ -447,7 +440,8 @@ Part : /BASE_PART
 					DamagesStructuralHealth = true
 					DamagesShields = false
 					DamagesBullets = false
-				}{
+				}
+				{
 					Type = AreaFires
 					FireChancePerTile = .1
 					Radius = 4
@@ -504,28 +498,29 @@ Part : /BASE_PART
 
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
+		
+		ROF = 1 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitter/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 	}
 
 	StatsByCategory
 	[
 		{
-			NameKey = "StatCategories/LaserBoltSmall"
+			NameKey = "StatCategories/MediumCyanIoncannonshot"
 			Stats
 			{
 				ShieldDamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
 				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-				DamagePerSecond = (&DamagePerShot) * (&ROF)
+				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				ROF = 1 / (&~/Part/Components/Turret/FireInterval)
-				Range = &~/Part/Components/BulletEmitter/Bullet/Range
-				Arc = deg(&~/Part/Components/Turret/FiringArc)
-				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 				ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Speed
 				ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Targetable/Health
 				PowerPerShot = (&~/Part/Components/BulletEmitter/AmmoUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&ROF)
+				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
 				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 			}
 		}

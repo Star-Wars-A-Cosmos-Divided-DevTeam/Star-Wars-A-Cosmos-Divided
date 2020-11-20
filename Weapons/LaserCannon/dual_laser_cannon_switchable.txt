@@ -59,15 +59,6 @@ Part : /BASE_PART
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-		
-		DualLaserCannonType
-		{
-			Type = UIToggle
-			ToggleID = "SW.duallasercannon_type"
-			Default = 0
-			AlwaysAllowInBuildMode = true
-			ToggledOnChoices = [0, 1, 2]
-		}
 		AutoTargetToggle
 		{
 			Type = ModeToggle
@@ -75,47 +66,49 @@ Part : /BASE_PART
 			OnModes = [1, 2]
 		}
 
-		DualLaserCannonRedToggle
+		MunitionType
+		{
+			Type = UIToggle
+			ToggleID = "SW.munition_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
+		}
+		RedMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = DualLaserCannonType
+			Mode = MunitionType
 			OnMode = 0
 		}
-
-		DualLaserCannonRedComponents
+		RedMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = DualLaserCannonRedToggle
+			Toggle = RedMunitionToggle
 			IncludeInBlueprints = true
 			Components = &<dual_laser_cannon_red.txt>/Components
 		}
-
-		DualLaserCannonBlueToggle
+		BlueMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = DualLaserCannonType
+			Mode = MunitionType
 			OnMode = 1
 		}
-
-		DualLaserCannonBlueComponents
+		BlueMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = DualLaserCannonBlueToggle
+			Toggle = BlueMunitionToggle
 			IncludeInBlueprints = true
 			Components = &<dual_laser_cannon_blue.txt>/Components
 		}
-
-		DualLaserCannonGreenToggle
+		GreenMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = DualLaserCannonType
+			Mode = MunitionType
 			OnMode = 2
 		}
-
-		DualLaserCannonGreenComponents
+		GreenMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = DualLaserCannonGreenToggle
+			Toggle = GreenMunitionToggle
 			IncludeInBlueprints = true
 			Components = &<dual_laser_cannon_green.txt>/Components
 		}
@@ -364,7 +357,8 @@ Part : /BASE_PART
 					DamagesStructuralHealth = true
 					DamagesShields = false
 					DamagesBullets = false
-				}{
+				}
+				{
 					Type = AreaFires
 					FireChancePerTile = .1
 					Radius = 4
@@ -421,6 +415,92 @@ Part : /BASE_PART
 
 			ShowOnlyInToggleMode
 			{
+				ToggleID = SW.munition_type
+				Mode = 0
+			}
+		}
+		BlueprintsBlue
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.munition_type
+				Mode = 1
+			}
+		}
+		BlueprintsGreen
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.munition_type
+				Mode = 2
+			}
+		}
+		/*
+		BlueprintsWhite
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.exterior_type
+				Mode = 0
+			}
+		}
+		BlueprintsGrey
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.exterior_type
+				Mode = 1
+			}
+		}
+		*/
+	}
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
+
+		RecPower = (&PowerPerSecond)
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 2 / (&<dual_laser_cannon_red.txt>/Components/Turret/FireInterval)
+		Range = &<dual_laser_cannon_red.txt>/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&<dual_laser_cannon_red.txt>/Components/Turret/FiringArc)
+		TurretSpeed = deg(&<dual_laser_cannon_red.txt>/Components/Turret/RotateSpeed)
+		ShotSpeed = &<dual_laser_cannon_red.txt>/Components/BulletEmitterBase/Bullet/Speed
+		ShotHP = &<dual_laser_cannon_red.txt>/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+		PowerPerShot = (&<dual_laser_cannon_red.txt>/Components/BulletEmitterBase/AmmoUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+	}
+	StatsByCategory
+	[
+		&<dual_laser_cannon_red.txt>/LaserStats
+		&<dual_laser_cannon_blue.txt>/LaserStats
+		&<dual_laser_cannon_green.txt>/LaserStats
+	]
+}
+/*
+
+		BlueprintsRed
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+
+			ShowOnlyInToggleMode
+			{
 				ToggleID = SW.duallasercannon_type
 				Mode = 0
 			}
@@ -450,31 +530,4 @@ Part : /BASE_PART
 				Mode = 2
 			}
 		}
-
-		BlueprintsYellow
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.duallasercannon_type
-				Mode = 3
-			}
-		}
-	}
-	Stats
-	{
-		CrewRequired = &~/Part/Components/PartCrew/Crew
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
-
-		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
-		RecCrew = (&CrewRequired) + (&RecPower) * 4
-	}
-	StatsByCategory
-	[
-		&<dual_laser_cannon_red.txt>/LaserStats
-		&<dual_laser_cannon_blue.txt>/LaserStats
-		&<dual_laser_cannon_green.txt>/LaserStats
-	]
-}
+*/
