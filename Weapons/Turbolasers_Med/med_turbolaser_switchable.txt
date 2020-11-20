@@ -30,7 +30,7 @@ Part : /BASE_PART
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [64, 64]
+		Size = [54, 64]
 	}
 	
 	Components : ^/0/Components
@@ -74,14 +74,12 @@ Part : /BASE_PART
 			Default = 0
 			AlwaysAllowInBuildMode = true
 		}
-
 		RedMunitionToggle
 		{
 			Type = ModeToggle
 			Mode = MunitionType
 			OnMode = 0
 		}
-
 		RedMunitionComponents
 		{
 			Type = ToggledComponents
@@ -89,14 +87,12 @@ Part : /BASE_PART
 			IncludeInBlueprints = true
 			Components = &<med_turbolaser_red.txt>/Components
 		}
-
 		BlueMunitionToggle
 		{
 			Type = ModeToggle
 			Mode = MunitionType
 			OnMode = 1
 		}
-
 		BlueMunitionComponents
 		{
 			Type = ToggledComponents
@@ -104,14 +100,12 @@ Part : /BASE_PART
 			IncludeInBlueprints = true
 			Components = &<med_turbolaser_blue.txt>/Components
 		}
-
 		GreenMunitionToggle
 		{
 			Type = ModeToggle
 			Mode = MunitionType
 			OnMode = 2
 		}
-
 		GreenMunitionComponents
 		{
 			Type = ToggledComponents
@@ -127,14 +121,12 @@ Part : /BASE_PART
 			Default = 0
 			AlwaysAllowInBuildMode = true
 		}
-
 		WhiteExteriorToggle
 		{
 			Type = ModeToggle
 			Mode = ExteriorType
 			OnMode = 0
 		}
-
 		WhiteExteriorComponents
 		{
 			Type = ToggledComponents
@@ -142,14 +134,12 @@ Part : /BASE_PART
 			IncludeInBlueprints = true
 			Components = &<med_turbolaser_white.txt>/Components
 		}
-
 		GreyExteriorToggle
 		{
 			Type = ModeToggle
 			Mode = ExteriorType
 			OnMode = 1
 		}
-
 		GreyExteriorComponents
 		{
 			Type = ToggledComponents
@@ -469,7 +459,6 @@ Part : /BASE_PART
 				Mode = 2
 			}
 		}
-
 		BlueprintsWhite
 		{
 			Type = BlueprintSprite
@@ -481,7 +470,6 @@ Part : /BASE_PART
 				Mode = 0
 			}
 		}
-
 		BlueprintsGrey
 		{
 			Type = BlueprintSprite
@@ -496,11 +484,21 @@ Part : /BASE_PART
 	}
 	Stats
 	{
-		CrewRequired = &~/Part/Components/PartCrew/Crew
+		CrewRequired = &../Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
 
-		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecPower = (&PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 2 / (&<med_turbolaser_red.txt>/Components/Turret/FireInterval)
+		Range = &<med_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&<med_turbolaser_red.txt>/Components/Turret/FiringArc)
+		TurretSpeed = deg(&<med_turbolaser_red.txt>/Components/Turret/RotateSpeed)
+		ShotSpeed = &<med_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Speed
+		ShotHP = &<med_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+		PowerPerShot = (&<med_turbolaser_red.txt>/Components/BulletEmitterBase/AmmoUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * 2 / (&<med_turbolaser_red.txt>/Components/Turret/FireInterval)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	StatsByCategory
 	[
