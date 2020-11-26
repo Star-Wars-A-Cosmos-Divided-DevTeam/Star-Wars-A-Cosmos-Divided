@@ -32,7 +32,7 @@ Part : /BASE_PART
 		}
 		Size = [64, 64]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		
 		AutoFireToggle
@@ -70,67 +70,88 @@ Part : /BASE_PART
 			OnModes = [1, 2]
 		}
 
-		TripleLaserType
+		MunitionType
 		{
 			Type = UIToggle
-			ToggleID = "SW.smalltripleturbolaser_type"
+			ToggleID = "SW.munition_type"
 			Default = 0
 			AlwaysAllowInBuildMode = true
 		}
-
-		TripleLaserRedToggle
+		RedMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = TripleLaserType
+			Mode = MunitionType
 			OnMode = 0
 		}
-		TripleLaserRedComponents
+		RedMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = TripleLaserRedToggle
+			Toggle = RedMunitionToggle
+			IncludeInBlueprints = true
 			Components = &<small_triple_turbolaser_red.txt>/Components
-			IncludeInBlueprintsInToggleMode
-			{
-				ToggleID = SW.smalltripleturbolaser_type
-				Mode = 0
-			}
 		}
-
-		TripleLaserBlueToggle
+		BlueMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = TripleLaserType
+			Mode = MunitionType
 			OnMode = 1
 		}
-		TripleLaserBlueComponents
+		BlueMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = TripleLaserBlueToggle
+			Toggle = BlueMunitionToggle
+			IncludeInBlueprints = true
 			Components = &<small_triple_turbolaser_blue.txt>/Components
-			IncludeInBlueprintsInToggleMode
-			{
-				ToggleID = SW.smalltripleturbolaser_type
-				Mode = 1
-			}
 		}
-
-		TripleLaserGreenToggle
+		GreenMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = TripleLaserType
+			Mode = MunitionType
 			OnMode = 2
 		}
-		TripleLaserGreenComponents
+		GreenMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = TripleLaserGreenToggle
+			Toggle = GreenMunitionToggle
+			IncludeInBlueprints = true
 			Components = &<small_triple_turbolaser_green.txt>/Components
-			IncludeInBlueprintsInToggleMode
-			{
-				ToggleID = SW.smalltripleturbolaser_type
-				Mode = 2
-			}
 		}
+
+		ExteriorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.exterior_type"
+			Default = 2
+			ToggledOnChoices = [0,1]
+			AlwaysAllowInBuildMode = true
+		}
+		WhiteExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 0
+		}
+		WhiteExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<small_triple_turbolaser_white.txt>/Components
+		}
+		GreyExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 1
+		}
+		GreyExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreyExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<small_triple_turbolaser_grey.txt>/Components
+		}
+
 
 		BatteryStorage
 		{
@@ -180,7 +201,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "lights.png"
-						Size = [3, 3]
+						Size = [2, 2]
 					}
 				]
 			}
@@ -313,23 +334,23 @@ Part : /BASE_PART
 			[
 				{
 					File = "batteries1.png"
-					Size = [3, 3]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries2.png"
-					Size = [3, 3]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries3.png"
-					Size = [3, 3]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries4.png"
-					Size = [3, 3]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries5.png"
-					Size = [3, 3]
+					Size = [2, 2]
 				}
 			]
 		}
@@ -399,7 +420,7 @@ Part : /BASE_PART
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [1.5, 1.5]
 					}
 				}
 
@@ -409,7 +430,7 @@ Part : /BASE_PART
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [1, 1]
+						Size = [1.5, 1.5]
 					}
 				}
 				// No crew.
@@ -418,7 +439,7 @@ Part : /BASE_PART
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
+						Size = [1.5, 1.5]
 					}
 				}
 			]
@@ -427,11 +448,11 @@ Part : /BASE_PART
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [3, 3]
+			Size = [2, 2]
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.smalltripleturbolaser_type
+				ToggleID = SW.munition_type
 				Mode = 0
 			}
 		}
@@ -439,11 +460,10 @@ Part : /BASE_PART
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [3, 3]
-
+			Size = [2, 2]
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.smalltripleturbolaser_type
+				ToggleID = SW.munition_type
 				Mode = 1
 			}
 		}
@@ -451,12 +471,33 @@ Part : /BASE_PART
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [3, 3]
-
+			Size = [2, 2]
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.smalltripleturbolaser_type
+				ToggleID = SW.munition_type
 				Mode = 2
+			}
+		}
+		BlueprintsWhite
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [3, 3]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.exterior_type
+				Mode = 0
+			}
+		}
+		BlueprintsGrey
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [3, 3]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.exterior_type
+				Mode = 1
 			}
 		}
 	}
