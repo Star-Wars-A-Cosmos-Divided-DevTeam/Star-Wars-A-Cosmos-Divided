@@ -85,7 +85,7 @@ Components
 			GetTargetFrom = Turret
 			Location = [1.75, 0]
 			OperationalToggle = IsOperational
-			Bullet = &<light_turbolaser_shot_Blue.txt>
+			Bullet = &/COMMON_SHOTS/bluelightlasershot
 			AmmoStorage = BatteryStorage
 			AmmoUsed = 250
 		}
@@ -94,14 +94,14 @@ Components
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.4, 0.25]
+			Location = [1.4, 0.49]
 		}
 
 		BulletEmitterRight : BulletEmitterBase
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.4, -0.25]
+			Location = [1.4, -0.49]
 		}
 
 		ChargeEffectBase
@@ -163,7 +163,7 @@ Components
 			ChainedTo = Turret
 			Location = [0.20, 0]
 			Rotation = 90d
-			Layer = "roof_doodads"
+			Layer = "roof_turrets"
 			ResetAnimationTrigger = Turret
 			AtlasSprite
 			{
@@ -180,23 +180,14 @@ Components
 	}
 LaserStats
 {
-	NameKey = "StatCategories/LaserBoltSmall"
+	NameKey = "StatCategories/LightBlueTurbolasershot"
 	Stats
 	{
 		ShieldDamagePerShot = &~/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 2 / (&~/Components/Turret/FireInterval)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 		DamagePerShot = &~/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-		DamagePerSecond = (&DamagePerShot) * (&ROF)
+		DamagePerSecond = (&DamagePerShot) * 2 / (&~/Components/Turret/FireInterval)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
-		ROF = 1 / (&~/Components/Turret/FireInterval)
-		Range = &~/Components/BulletEmitterBase/Bullet/Range
-		Arc = deg(&~/Components/Turret/FiringArc)
-		TurretSpeed = deg(&~/Components/Turret/RotateSpeed)
-		ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
-		ShotHP = &~/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
-		PowerPerShot = (&~/Components/BulletEmitterBase/AmmoUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * (&ROF)
-		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 }

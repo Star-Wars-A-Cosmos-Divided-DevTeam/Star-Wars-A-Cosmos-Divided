@@ -458,8 +458,18 @@ Part : /BASE_PART
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
 
-		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecPower = (&PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 2 / (&<tower/xx9_turbolaser_red.txt>/Components/Turret/FireInterval)
+		Range = &<tower/xx9_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&<tower/xx9_turbolaser_red.txt>/Components/Turret/FiringArc)
+		TurretSpeed = deg(&<tower/xx9_turbolaser_red.txt>/Components/Turret/RotateSpeed)
+		ShotSpeed = &<tower/xx9_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Speed
+		ShotHP = &<tower/xx9_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+		PowerPerShot = (&<tower/xx9_turbolaser_red.txt>/Components/BulletEmitterBase/AmmoUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * 2 / (&<tower/xx9_turbolaser_red.txt>/Components/Turret/FireInterval)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	StatsByCategory
 	[

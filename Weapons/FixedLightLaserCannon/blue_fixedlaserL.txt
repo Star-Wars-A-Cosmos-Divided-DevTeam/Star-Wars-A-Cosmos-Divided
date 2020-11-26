@@ -31,7 +31,7 @@ Components
 		Turret
 		{
 			Type = TurretWeapon
-			OperationalToggle = IsOperational
+			OperationalToggle = WeaponIsOperational
 			AutoFireToggle = AutoFireToggle
 			Location = [-0.25, 0.625]  //[-0.140625, 0.75]
 			Rotation = -90d
@@ -70,7 +70,7 @@ Components
 		ReloadProgressBar
 		{
 			Type = ProgressBar
-			OperationalToggle = IsOperational
+			OperationalToggle = WeaponIsOperational
 			ShowProgressFor = Turret
 		}
 
@@ -116,6 +116,7 @@ Components
 				&/COMMON_SOUNDS/SmallLaserFire
 			]
 		}
+
 		TurretCollider
 		{
 			Type = CircleCollider
@@ -167,6 +168,7 @@ Components
 					"weapon.png"
 				]
 				Size = [1, 1]
+				
 				AnimationInterval = 0.01
 				AnimationStartTime = MinValue
 				ClampAnimation = true
@@ -179,19 +181,10 @@ LaserStats
 	Stats
 	{
 		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-		DamagePerSecond = (&DamagePerShot) * (&ROF)
+		DamagePerSecond = (&DamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
-		ROF = 1 / (&~/Components/Turret/FireInterval)
-		Range = &~/Components/BulletEmitter/Bullet/Range
-		Arc = deg(&~/Components/Turret/FiringArc)
-		TurretSpeed = deg(&~/Components/Turret/RotateSpeed)
-		ShotSpeed = &~/Components/BulletEmitter/Bullet/Speed
-		ShotHP = &~/Components/BulletEmitter/Bullet/Components/Targetable/Health
-		PowerPerShot = (&~/Components/BulletEmitter/AmmoUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * (&ROF)
-		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 }

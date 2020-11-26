@@ -256,17 +256,18 @@ Part : /BASE_PART
 		Turret
 		{
 			Type = TurretWeapon
-			OperationalToggle = IsOperational
-			AutoFireToggle = AutoFireToggle
 			Location = [0.5, 0.66]
 			Rotation = -90d
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
 			FireInterval = .15
 			FiringArc = 15d
 			RotateSpeed = 90d
 			FireThresholdAngle = 1d
+			TargetSearchTriesPerFrame = 1
 			AIFirepowerRating = 400
 			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitter
+			Emitter = BulletEmitterBase
 
 			AutoTargets
 			[
@@ -300,47 +301,51 @@ Part : /BASE_PART
 			ShowProgressFor = Turret
 		}
 
-		BulletEmitter
+		BulletEmitterBase
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
-			FireTrigger = Turret
+			FireTrigger
 			GetTargetFrom = Turret
-			Location = [1, 0]
+			Location = [1.1, 0]
 			OperationalToggle = IsOperational
-			Bullet = &<small_pointlaser_shot.txt>
+			Bullet = &/COMMON_SHOTS/redsmalllasershot
 			AmmoStorage = BatteryStorage
 			AmmoUsed = 40
+		}
+
+		BulletEmitter : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [3.6, 0]
+		}
+
+		ChargeEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterBase
+			Trigger = Turret
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/SmallLaserCharge
+			]
 		}
 
 		FireEffect
 		{
 			Type = TriggeredEffects
-			ChainedTo = Turret
+			ChainedTo = BulletEmitter
 			Trigger = BulletEmitter
-			Location = [3.2, 0]
 			AnchorMediaEffects = true
 
 			MediaEffects
 			[
-				: <./Data/ships/terran/laser_blaster_small/particles/laser_blaster_small_shoot.txt>
-				{
-					Delay = .13
-				}
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/ships/terran/laser_blaster_small/charge.wav"
-					Volume = .6
-				}
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "XWingLaser_fire.wav"
-					Volume = .3
-					Delay = .13
-					SpeedVariation = .25
-				}
+				&/COMMON_PARTICLES/SmallRedLaserShoot
+				
+				&/COMMON_SOUNDS/SmallLaserFire
 			]
 		}
 
@@ -547,7 +552,6 @@ Part : /BASE_PART
 			]
 		}
 	}
-
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -555,28 +559,29 @@ Part : /BASE_PART
 
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
-	}
 
+		ROF = 1 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		
+	}
 	StatsByCategory
 	[
 		{
-			NameKey = "StatCategories/LaserBoltSmall"
+			NameKey = "StatCategories/SingleRedLasershot"
 			Stats
 			{
-				ShieldDamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
+				ShieldDamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
 				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-				DamagePerSecond = (&DamagePerShot) * (&ROF)
+				DamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				ROF = 1 / (&~/Part/Components/Turret/FireInterval)
-				Range = &~/Part/Components/BulletEmitter/Bullet/Range
-				Arc = deg(&~/Part/Components/Turret/FiringArc)
-				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-				ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Speed
-				ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Targetable/Health
-				PowerPerShot = (&~/Part/Components/BulletEmitter/AmmoUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&ROF)
+				ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
+				ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+				PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsed) / 1000
+				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
 				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 			}
 		}
