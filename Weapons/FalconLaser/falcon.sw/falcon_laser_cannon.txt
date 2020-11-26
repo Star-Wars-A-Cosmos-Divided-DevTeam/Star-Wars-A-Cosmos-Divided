@@ -8,7 +8,7 @@ Part : /BASE_PART
 	DescriptionKey = "Parts/FalconLaserCannonDesc"
 	Cost = 7000
 	AIValue = &Cost
-	TypeCategories = [weapon, weapon_using_power]
+	TypeCategories = [weapon, uses_power,is_crewed]
 	Size = [2, 2]
 	SelectionPriority = 1.0
 	SelectionTypeByRotation = true
@@ -254,6 +254,7 @@ Part : /BASE_PART
 		}
 
 
+
 		BulletEmitterBase
 		{
 			Type = BulletEmitter
@@ -300,7 +301,7 @@ Part : /BASE_PART
 		{
 			Type = TriggeredEffects
 			ChainedTo = BulletEmitterLeftUpper
-			Trigger = Turret
+			Trigger = BulletEmitterLeftUpper
 			AnchorMediaEffects = true
 		
 			MediaEffects
@@ -312,19 +313,19 @@ Part : /BASE_PART
 		ChargeEffectRightUpper : ChargeEffectLeftUpper
 		{
 			ChainedTo = BulletEmitterRightUpper
-			Trigger = Turret
+			Trigger = BulletEmitterRightUpper
 		}
 
 		ChargeEffectLeftUnder : ChargeEffectLeftUpper
 		{
 			ChainedTo = BulletEmitterLeftUnder
-			Trigger = Turret
+			Trigger = BulletEmitterLeftUnder
 		}
 
 		ChargeEffectRightUnder : ChargeEffectLeftUpper
 		{
 			ChainedTo = BulletEmitterRightUnder
-			Trigger = Turret
+			Trigger = BulletEmitterRightUnder
 		}
 
 		FireEffectLeftUpper
@@ -338,13 +339,7 @@ Part : /BASE_PART
 			[
 				&/COMMON_PARTICLES/SmallRedLaserShoot
 	
-				:/BASE_SOUNDS/AudioExterior
-				{
-					Sound = "FalconShot.wav"
-					Volume = .1
-					SpeedVariation = .35
-				}
-
+				&/COMMON_SOUNDS/FalconShot
 			]
 		}
 
@@ -498,7 +493,8 @@ Part : /BASE_PART
 					DamagesStructuralHealth = true
 					DamagesShields = false
 					DamagesBullets = false
-				}{
+				}
+				{
 					Type = AreaFires
 					FireChancePerTile = .1
 					Radius = 4
@@ -561,28 +557,29 @@ Part : /BASE_PART
 
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 4 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 	}
 
 	StatsByCategory
 	[
 		{
-			NameKey = "StatCategories/LaserBoltSmall"
+			NameKey = "StatCategories/SingleRedLasershot"
 			Stats
 			{
 				ShieldDamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
 				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 				DamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-				DamagePerSecond = (&DamagePerShot) * (&ROF)
+				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				ROF = 4 / (&~/Part/Components/Turret/FireInterval)
-				Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
-				Arc = deg(&~/Part/Components/Turret/FiringArc)
-				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 				ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
 				ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
-				PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsed)  / 1000
-				PowerPerSecond = (&PowerPerShot) * (&ROF)
+				PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsed) / 1000
+				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
 				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 			}
 		}
