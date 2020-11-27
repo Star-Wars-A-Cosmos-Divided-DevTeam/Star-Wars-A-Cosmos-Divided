@@ -74,72 +74,87 @@ Part : /BASE_PART
 			OnMode = 2
 		}
 
-		XX9LaserType
+		MunitionType
 		{
 			Type = UIToggle
-			ToggleID = "SW.xx9laser_type"
+			ToggleID = "SW.munition_type"
 			Default = 0
+			ToggledOnChoices = [0,2]
 			AlwaysAllowInBuildMode = true
 		}
-
-		XX9LaserRedToggle
+		RedMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = XX9LaserType
+			Mode = MunitionType
 			OnMode = 0
 		}
-
-		XX9LaserRedComponents
+		RedMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = XX9LaserRedToggle
+			Toggle = RedMunitionToggle
 			IncludeInBlueprints = true
 			Components = &<tower/xx9_turbolaser_red.txt>/Components
 		}
-
-		XX9LaserRedGreyToggle
+		BlueMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = XX9LaserType
+			Mode = MunitionType
 			OnMode = 1
 		}
-
-		XX9LaserRedGreyComponents
+		BlueMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = XX9LaserRedGreyToggle
+			Toggle = BlueMunitionToggle
 			IncludeInBlueprints = true
-			Components = &<tower/xx9_turbolaser_red_grey.txt>/Components
+			Components = &<tower/xx9_turbolaser_red.txt>/Components
 		}
-
-		XX9LaserGreenToggle
+		GreenMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = XX9LaserType
+			Mode = MunitionType
 			OnMode = 2
 		}
-
-		XX9LaserGreenComponents
+		GreenMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = XX9LaserGreenToggle
+			Toggle = GreenMunitionToggle
 			IncludeInBlueprints = true
 			Components = &<tower/xx9_turbolaser_green.txt>/Components
 		}
 
-		XX9LaserGreenGreyToggle
+		ExteriorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.exterior_type"
+			Default = 2
+			ToggledOnChoices = [0,1]
+			AlwaysAllowInBuildMode = true
+		}
+		WhiteExteriorToggle
 		{
 			Type = ModeToggle
-			Mode = XX9LaserType
-			OnMode = 3
+			Mode = ExteriorType
+			OnMode = 0
 		}
-
-		XX9LaserGreenGreyComponents
+		WhiteExteriorComponents
 		{
 			Type = ToggledComponents
-			Toggle = XX9LaserGreenGreyToggle
-			IncludeInBlueprints = true
-			Components = &<tower/xx9_turbolaser_green_grey.txt>/Components
+			Toggle = WhiteExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<tower/xx9_turbolaser_white.txt>/Components
+		}
+		GreyExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 1
+		}
+		GreyExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreyExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<tower/xx9_turbolaser_grey.txt>/Components
 		}
 
 		Graphics
@@ -296,8 +311,10 @@ Part : /BASE_PART
 
 		BatterySprites
 		{
+			ChainedTo = Turret
+			Rotation = 90d
 			Type = AmmoSprites
-			Location = [2,2]
+			Location = [0,0]//2,2
 			AmmoStorage = BatteryStorage
 			Layer = "doodads_high"
 			AmmoLevels
@@ -400,7 +417,6 @@ Part : /BASE_PART
 				}
 			]
 		}
-
 		BlueprintsRed
 		{
 			Type = BlueprintSprite
@@ -409,47 +425,52 @@ Part : /BASE_PART
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.xx9laser_type
+				ToggleID = SW.munition_type
 				Mode = 0
 			}
 		}
-
-		BlueprintsRedGrey
+		BlueprintsBlue
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [4, 4]
-
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.xx9laser_type
+				ToggleID = SW.munition_type
 				Mode = 1
 			}
 		}
-
 		BlueprintsGreen
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [4, 4]
-
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.xx9laser_type
+				ToggleID = SW.munition_type
 				Mode = 2
 			}
 		}
-
-		BlueprintsGreenGrey
+		BlueprintsWhite
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [4, 4]
-
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.xx9laser_type
-				Mode = 3
+				ToggleID = SW.exterior_type
+				Mode = 0
+			}
+		}
+		BlueprintsGrey
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [4, 4]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.exterior_type
+				Mode = 1
 			}
 		}
 	}
