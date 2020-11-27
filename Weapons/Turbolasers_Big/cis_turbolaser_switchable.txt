@@ -76,48 +76,48 @@ Part : /BASE_PART
 			OnMode = 2
 		}
 
-		CISLaserType
+		ExteriorType
 		{
 			Type = UIToggle
-			ToggleID = "SW.cislaser_type"
-			Default = 0
-			AlwaysAllowInBuildMode = true
+			ToggleID = "SW.exterior_type"
+			Default = 2
+			ToggledOnChoices = [0,1]
 		}
 
-		CISLaserRedToggle
+		WhiteExteriorToggle
 		{
 			Type = ModeToggle
-			Mode = CISLaserType
+			Mode = ExteriorType
 			OnMode = 0
 		}
 
-		CISLaserRedComponents
+		WhiteExteriorComponents
 		{
 			Type = ToggledComponents
-			Toggle = CISLaserRedToggle
+			Toggle = WhiteExteriorToggle
 			IncludeInBlueprints = true
-			Components = &<cis/cis_turbolaser_red.txt>/Components
+			Components = &<cis/cis_turbolaser_white.txt>/Components
 		}
 
-		CISLaserRedGreyToggle
+		GreyExteriorToggle
 		{
 			Type = ModeToggle
-			Mode = CISLaserType
+			Mode = ExteriorType
 			OnMode = 1
 		}
 
-		CISLaserRedGreyComponents
+		GreyExteriorComponents
 		{
 			Type = ToggledComponents
-			Toggle = CISLaserRedGreyToggle
+			Toggle = GreyExteriorToggle
 			IncludeInBlueprints = true
-			Components = &<cis/cis_turbolaser_red_grey.txt>/Components
+			Components = &<cis/cis_turbolaser_grey.txt>/Components
 		}
 		
 		Graphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational,
+			OperationalToggle = IsOperational
 			Location = [2,2]
 			Floor
 			{
@@ -144,35 +144,7 @@ Part : /BASE_PART
 				DamageLevels
 				[
 					{
-						File = "lights.png"
-						Size = [4,4]
-					}
-				]
-			}
-			OperationalDoodad
-			{
-				Layer = "doodads_low"
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"console on1.png"
-							"console on2.png"
-							"console on3.png"
-						]
-						Size = [4,4]
-						AnimationInterval = 0.50
-					}
-				]
-			}
-			NonOperationalDoodad
-			{
-				Layer = "doodads_low"
-				DamageLevels
-				[
-					{
-						File = "console off.png"
+						File = "lights5.png"
 						Size = [4,4]
 					}
 				]
@@ -216,6 +188,184 @@ Part : /BASE_PART
 				]
 			}
 		}
+		GraphicsTurret
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [0,0]
+			ChainedTo = Turret
+			Rotation = 90d
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights4.png"
+						Size = [1.625,1.125]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"console on1.png"
+							"console on2.png"
+							"console on3.png"
+						]
+						Size = [4,4]
+						AnimationInterval = 0.50
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "console off.png"
+						Size = [4,4]
+					}
+				]
+			}
+		}
+
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [2, 2]
+			Rotation = -90d// Relative to unrotated part.
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 1
+			FireDelay = .15
+			FiringArc = 120d
+			RotateSpeed = 180d
+			FireThresholdAngle = 1d
+			TargetSearchTriesPerFrame = 1
+			AIFirepowerRating = 3200
+			FirePermissionToggle = FireModeToggle
+			Emitter = BulletEmitterBase
+			IgnoreSourceShipLOSChecks = true
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitterBase
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger
+			GetTargetFrom = Turret
+			Location = [0, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/redcislasershot
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 400
+		}
+
+		BulletEmitterLeft : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [2.785, -0.7251]
+		}
+
+		BulletEmitterRight : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [2.785, 0.7251]
+		}
+
+		ChargeEffectBase
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterBase
+			Trigger = Turret
+			AnchorMediaEffects = true
+		
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/LaserReCharge
+			]
+		}
+
+		FireEffectBase
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterBase
+			Trigger = BulletEmitterLeft
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		FireEffectLeft
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/LargeRedLaserShoot
+			]
+		}
+
+		FireEffectRight : FireEffectLeft
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = BulletEmitterRight
+		}
+
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = 1.64
+			Density = 1.5
+		}
+
 
 		BatteryStorage
 		{
@@ -238,14 +388,16 @@ Part : /BASE_PART
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [1.55, 1.6]
-			Rotation = 180d
+			Location = [0.4, 0.45]
+			ChainedTo = Turret
+			Rotation = 270d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
-			Location = [2.45, 1.6]
-			Rotation = 180d
+			Location = [0.4, -0.45]
+			ChainedTo = Turret
+			Rotation = 270d
 		}
 		PartCrew
 		{
@@ -268,8 +420,10 @@ Part : /BASE_PART
 
 		BatterySprites
 		{
+			ChainedTo = Turret
+			Rotation = 90d
 			Type = AmmoSprites
-			Location = [2,2]
+			Location = [0,0]//2,2
 			AmmoStorage = BatteryStorage
 			Layer = "doodads_high"
 			AmmoLevels
@@ -372,8 +526,7 @@ Part : /BASE_PART
 				}
 			]
 		}
-
-		BlueprintsRed
+		Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
@@ -381,12 +534,11 @@ Part : /BASE_PART
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.cislaser_type
+				ToggleID = SW.exterior_type
 				Mode = 0
 			}
 		}
-
-		BlueprintsRedGrey
+		BlueprintsGrey
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
@@ -394,7 +546,7 @@ Part : /BASE_PART
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.cislaser_type
+				ToggleID = SW.exterior_type
 				Mode = 1
 			}
 		}
@@ -404,21 +556,33 @@ Part : /BASE_PART
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
 
-		RecPower = (&PowerPerSecond) * 1
+		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 2 / (&<cis/cis_turbolaser_red.txt>/Components/Turret/FireInterval)
-		Range = &<cis/cis_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Range
-		Arc = deg(&<cis/cis_turbolaser_red.txt>/Components/Turret/FiringArc)
-		TurretSpeed = deg(&<cis/cis_turbolaser_red.txt>/Components/Turret/RotateSpeed)
-		ShotSpeed = &<cis/cis_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Speed
-		ShotHP = &<cis/cis_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
-		PowerPerShot = (&<cis/cis_turbolaser_red.txt>/Components/BulletEmitterBase/AmmoUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * 2 / (&<cis/cis_turbolaser_red.txt>/Components/Turret/FireInterval)
-		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+		ROF = 2 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		
 	}
 	StatsByCategory
 	[
-		&<cis/cis_turbolaser_red.txt>/LaserStats
+		{
+			NameKey = "StatCategories/CISLasershot"
+			Stats
+			{
+				ShieldDamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
+				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+				DamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
+				Damage = [&../DamagePerShot, &../DamagePerSecond]
+				ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
+				ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+				PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsed) / 1000
+				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
+				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+			}
+		}
 	]
 }
