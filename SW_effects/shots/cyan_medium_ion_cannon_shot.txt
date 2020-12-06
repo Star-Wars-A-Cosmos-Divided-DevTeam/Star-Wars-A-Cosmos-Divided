@@ -51,7 +51,20 @@ Components
 				}
 			]
 
-			MediaEffects = &../HitOperational/MediaEffects
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/CyanHit
+				&/COMMON_PARTICLES/CyanFlash
+				&/COMMON_PARTICLES/CyanSparks
+
+				&/COMMON_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
 		}
 		HitOperational
 		{
@@ -72,16 +85,11 @@ Components
 
 			MediaEffects
 			[
-				&/COMMON_PARTICLES/CyanHit
-				&/COMMON_PARTICLES/CyanFlash
-				&/COMMON_PARTICLES/CyanSparks
+				&/COMMON_PARTICLES/SmallCyanHit
+				&/COMMON_PARTICLES/SmallCyanFlash
+				&/COMMON_PARTICLES/SmallCyanSparks
 
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/laser_bolt_small/laser_bolt_small_hit.wav"
-					Volume = .5
-					SpeedVariation = .4
-				}
+				&/COMMON_SOUNDS/SmallLaserHit
 
 				: /BASE_SHAKE
 				{
@@ -132,8 +140,33 @@ Components
 		{
 		}
 	}
-
+	
 	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = Upper
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "cyan_ion.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [0.96, 0.72]
+			}
+			FrameCount = 1
+			FrameSize = [128, 64]
+			FramesPerRow = 1
+			FramesPerSecond = 60
+		}
+	}
+
+	/*Sprite
 	{
 		Type = Sprite
 		RenderBucket = Upper
@@ -142,7 +175,7 @@ Components
 			Texture = "cyan_ion.png"
 			Size = [0.96, 0.72]
 		}
-	}
+	}*/
 
 	MediaEffects
 	{
