@@ -1,29 +1,44 @@
 /* ----------------------------------------------------------------------------
-Introduction: SW:ACD (2020 April)
+
+Introduction: SW:ACD 
+DSL Prism version
+
 Author : Lafiel
+
 Description:
+Quick and dirty fast prototyping version, based on prism.
 This part is for re-directing the beam to another or as standalone weapon.
+This part is not physical. It has no hitbox. It does not need destruction components. 
+This part does not need graphics, only blueprints and indicators at most.
+
 Versions:
+
  o 1.0 Cosmoteer 0.15.8
    o based on ion-prism
+ o 1.1 Cosmoteer 0.15.12b
+
 ---------------------------------------------------------------------------- */
+
 Part : /BASE_PART
 {
 	NameKey = "Parts/DSLaserDirector"
 	IconNameKey = "Parts/DSLaserDirectorIcon"
 	ID = SW.DSlaser_director
-	SelectionTypeID = SW.DSlaser_director
-	EditorGroup = "TechII"
 	DescriptionKey = "Parts/DSLaserDirectorDesc"
-	Cost = 5000
-	AIValue = (&Cost)
-	Size = [2, 2]
+	EditorGroup = "TechII"
+	Cost = 50000
+	AIValue = (&Cost) * 5
+	Size = [6, 6]
+	Density = 2
+	SelectionTypeID = "DSLII"
 	SelectionPriority = 1
-	MaxHealth = 2000
-	TypeCategories = [weapon, deathstarlaser_director, ion, ion_beam_prism]
-	RequiresCategories = [DSL_command]
+	SelectionTypeByRotation = true
+	MaxHealth = 18000
+	TypeCategories = [weapon, deathstarlaser_director]
+
 	Flammable = false
 	IsWalled = false
+	IgnoreRotationForMirroredSelection = true
 	CrewSpeedFactor = 0
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
@@ -34,7 +49,6 @@ Part : /BASE_PART
 	GenerateRectCollider = false
 	CreatePartPerTileWhenGrabbed = structure
 	EditorReplacementPartID = structure
-	ReceivableBuffs = [DSLOperation,DSLaserBuff]
 
 	EditorIcon
 	{
@@ -43,17 +57,10 @@ Part : /BASE_PART
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [64, 64]
+		Size = [92, 92]
 	}
 	Components : ^/0/Components
 	{
-		DSLOperationBuffToggle
-		{
-			Type = BuffToggle
-			BuffType = DSLOperation
-		}
-
-
 		PowerToggle
 		{
 			Type = UIToggle
@@ -76,6 +83,13 @@ Part : /BASE_PART
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
 		}
 		AutoFireToggle
 		{
@@ -83,7 +97,7 @@ Part : /BASE_PART
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-
+/*
 		Collider
 		{
 			Type = CircleCollider
@@ -91,12 +105,12 @@ Part : /BASE_PART
 			Radius = .7
 			Density = 5
 		}
-
+*/
 		IonEnergy
 		{
 			Type = IonEnergyStorage
 			AmmoType = ion_energy
-			ReductionFactorPerBeam = 1.0
+			ReductionFactorPerBeam = .75
 			ProvidedValuePerAmmo = 1/1000
 			IsDrainable = true
 		}
@@ -119,15 +133,15 @@ Part : /BASE_PART
 		Turret
 		{
 			Type = TurretWeapon
-			Location = [1, 1] // Relative to upper-left corner of unrotated part.
+			Location = [3, 3] // Relative to upper-left corner of unrotated part.
 			Rotation = -90d // Relative to unrotated part.
 			OperationalToggle = TurretToggle
-			FireInterval = 0.2
+			FireInterval = &<../ion_beam_emitter/ion_beam_emitter.txt>/Part/Components/Weapon/FireInterval
 			FiringArc = 360d
-			RotateSpeed = 10d
+			RotateSpeed = 20d
 			FireThresholdAngle = 1d
 			AIFirepowerRating = 0
-			AddAIFirepowerRatingsWhenTargetedByPartCategories = [deathstarlaser_director]
+			AddAIFirepowerRatingsWhenTargetedByPartCategories = [deathstarlaser_emitter, deathstarlaser_director]
 			TargetingEmitter = BeamEmitter
 			SuppressWholeShipTargetOverlaysForPartsFilter = &FriendlyPrismFilter
 			SuppressWholeShipTargetOverlaysWhenTargetingShipRelativePoints = true
@@ -139,6 +153,7 @@ Part : /BASE_PART
 			SaveSelfTargetPartCategories = [deathstarlaser_director]
 			SaveShipRelativeTargets = true
 			HoldTargetAfterCancel = 3.0
+			FirePermissionToggle = FireModeToggle
 
 			FriendlyPrismFilter
 			{
@@ -151,7 +166,7 @@ Part : /BASE_PART
 			[
 				{
 					TargetType = ShipParts
-					Toggle = FireModeToggle
+					Toggle = AutoTargetToggle
 				}
 			]
 
@@ -173,6 +188,7 @@ Part : /BASE_PART
 			AIFirepowerRating = 0
 			TargetingEmitter = BeamEmitter
 			ChainFireToggleComponent = IonBeamChainToggle
+			AllowEnemyStructureAutoTargeting = true
 			ProhibitTargetPartsFilter = &../Turret/FriendlyPrismFilter // Don't force fire on friendly ion prisms!
 			ProhibitShipRelativePointTargets = true
 			SuppressWholeShipTargetOverlaysForPartsFilter = &../Turret/FriendlyPrismFilter
@@ -184,17 +200,18 @@ Part : /BASE_PART
 			SuppressFirepowerEstimationWhenNotTargetingShipRelativePoints = true
 			SaveSelfTargetPartCategories = [deathstarlaser_director]
 			SaveShipRelativeTargets = true
-			AddAIFirepowerRatingsWhenTargetedByPartCategories = [deathstarlaser_director]
+			AddAIFirepowerRatingsWhenTargetedByPartCategories = [deathstarlaser_emitter, deathstarlaser_director]
 			DefaultDirectControlBinding = 0
+			FirePermissionToggle = FireModeToggle
 
 			AutoTarget
 			{
 				TargetType = ShipParts
-				Toggle = FireModeToggle
+				Toggle = AutoTargetToggle
 			}
 		}
 
-		BeamEmitter : &/COMMON_SHOTS/SuperLaserBeamGreen/SuperLaser_beam_green
+		BeamEmitter : &/COMMON_SHOTS/SuperLaserBeamGreen2/SuperLaser_beam_green2
 		{
 			Type = BeamEmitter
 			ChainedTo = Turret
@@ -211,37 +228,108 @@ Part : /BASE_PART
 			UpdateScaleFactorsPerEmit = true
 		}
 
+//----------- No Graphics needed ----------------------------------------------
+/*
 		Graphics
 		{
 			Type = Graphics
 			Location = [1, 1]
 			Floor
 			{
-				Layer = "floors"
+				Layer = "structure"
 				DamageLevels
 				[
 					{
-						File = "director_floor.png"
+						File = "structure.png"
 						Size = [2, 2]
 					}
 					{
-						File = "director_floor.png"
+						File = "structure_33.png"
 						Size = [2, 2]
 					}
 					{
-						File = "director_floor.png"
+						File = "structure_66.png"
 						Size = [2, 2]
 					}
 				]
 			}
 		}
 
+		TurretGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [.5, 0]
+			Rotation = 90d
+			OperationalToggle = BeamEmitter
+			Floor
+			{
+				Layer = "weapons"
+				DamageLevels
+				[
+					{
+						File = "prism.png"
+						Size = [2, 3]
+					}
+					{
+						File = "prism_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "prism_66.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "lights_add"
+				Offset = [0, .25]
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"energy1.png"
+							"energy2.png"
+							"energy3.png"
+							"energy4.png"
+						]
+						Size = [3, 3]
+						AnimationInterval = 0.075
+						AnimationStartTime = Zero
+					}
+				]
+			}
+		}
+*/
 
-		DestroyedEffects
+/*
+		DestroyedEffectsCold
 		{
 			Type = DeathEffects
-			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 			Location = [1, 1]
+			OperationalToggle = BeamEmitter
+			InvertOperationalToggle = true
+
+			MediaEffects
+			[
+				&<./Data/common_effects/particles/explosions/small_part_explode_dry.txt>
+				&<particles/prism_explode_shrapnel.txt>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/common_effects/sounds/small_part_destroyed.wav"
+					Volume = .5
+					SpeedVariation = .25
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .05
+					Duration = .5
+				}
+			]
 		}
 
 		DestroyedEffectsHot
@@ -249,6 +337,27 @@ Part : /BASE_PART
 			Type = DeathEffects
 			Location = [1, 1]
 			OperationalToggle = BeamEmitter
+
+			MediaEffects
+			[
+				&<./Data/common_effects/particles/explosions/small_part_explode.txt>
+				&<particles/prism_explode_shrapnel_hot.txt>
+				&<particles/prism_explode_flash.txt>
+				&<particles/prism_explode_shockwave.txt>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/common_effects/sounds/small_part_destroyed.wav"
+					Volume = .75
+					SpeedVariation = .25
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .1
+					Duration = .75
+				}
+			]
 			
 			FactorHitEffectsWith = BeamEmitter
 			HitEffects
@@ -284,7 +393,7 @@ Part : /BASE_PART
 				}
 			]
 		}
-
+*/
 		Indicators
 		{
 			Type = IndicatorSprites
@@ -308,10 +417,12 @@ Part : /BASE_PART
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [2, 2]
+			Size = [6, 6]
 		}
 	}
 
+
+/*
 	Stats
 	{
 		
@@ -331,14 +442,16 @@ Part : /BASE_PART
 				ReductionFactorPerBeam = &~/Part/Components/IonEnergy/ReductionFactorPerBeam
 				BeamDamageFalloff
 				[
-					(1 - (&../ReductionFactorPerBeam)) * 100,
-					"(&../ReductionFactorPerBeam)^0 * 100",
-					"(&../ReductionFactorPerBeam)^1 * 100",
-					"(&../ReductionFactorPerBeam)^2 * 100",
-					"(&../ReductionFactorPerBeam)^3 * 100",
-					"(&../ReductionFactorPerBeam)^4 * 100",
+					(1 - (&../ReductionFactorPerBeam)) * 100
+					(&../ReductionFactorPerBeam)^0 * 100
+					(&../ReductionFactorPerBeam)^1 * 100
+					(&../ReductionFactorPerBeam)^2 * 100
+					(&../ReductionFactorPerBeam)^3 * 100
+					(&../ReductionFactorPerBeam)^4 * 100
 				]
 			}
 		}
 	]
+*/
+
 }
