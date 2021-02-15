@@ -527,28 +527,29 @@ Part : /BASE_PART
 
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 1 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitter/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 	}
 
 	StatsByCategory
 	[
 		{
-			NameKey = "StatCategories/LaserBoltSmall"
+			NameKey = "StatCategories/FalconLaserCannonShot"
 			Stats
 			{
 				ShieldDamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
 				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-				DamagePerSecond = (&DamagePerShot) * (&ROF)
+				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				ROF = 1 / (&~/Part/Components/Turret/FireInterval)
-				Range = &~/Part/Components/BulletEmitter/Bullet/Range
-				Arc = deg(&~/Part/Components/Turret/FiringArc)
-				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 				ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Speed
 				ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Targetable/Health
 				PowerPerShot = (&~/Part/Components/BulletEmitter/AmmoUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&ROF)
+				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
 				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 			}
 		}
