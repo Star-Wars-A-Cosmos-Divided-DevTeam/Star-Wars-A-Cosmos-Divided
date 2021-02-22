@@ -1,24 +1,27 @@
 Part : /BASE_PART
 {
-	NameKey = "Parts/Armor1x1_TriangleBig"
-	IconNameKey = "Parts/Armor1x1_TriangleBigIcon"
-	ID = SW.Armor1x1_TriangleBig
-	OtherIDs = ["Armor1x1_TriangleBig"]
+	NameKey = "Parts/DooniumArmor_1x1_TriangleBig"
+	IconNameKey = "Parts/DooniumArmor_1x1_TriangleBigIcon"
+	ID = SW.doonium_armor_1x1_TriangleBig
+	OtherIDs = ["SW.Armor1x1_TriangleBig"]
 	EditorGroup = "Defenses"
-	DescriptionKey = "Parts/Armor1x1_TriangleBigDesc"
-	Cost = 150
+	DescriptionKey = "Parts/DooniumArmor_1x1_TriangleBigDesc"
+	Cost = 675
 	Size = [1, 1]
 	AllowedContiguity = [Bottom]
 	SelectionTypeID = "armor"
 	MaxHealth = 2000
-	AreaDamageBlockFactor = .25
+	ExplosiveDamageAbsorption = 100%
+	ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
 	Flammable = false
 	CreatePartPerTileWhenDestroyed = ""
-	CreatePartWhenDestroyed = structure1x1_TriangleBig
+	CreatePartWhenDestroyed = Kroom.Structure_1x1_TriangleBig
 	CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 4
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	CrewSpeedFactor = 0
-	Density = 2
+	Density = 1
 	IsRotateable = true
 	IsWalled = true
 	ExternalWalls = [BottomRight, Bottom, BottomLeft]
@@ -40,20 +43,25 @@ Part : /BASE_PART
 		}
 		Size = [32, 32]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		EmpAbsorber
 		{
 			Type = ExplosiveAmmoDrainSink
 			AmmoType = battery
-			AbsorbsAmmoDrain = 1000
+			AbsorbsAmmoDrain = floor((&~/Part/MaxHealth)/4)
 		}
+
 		BlueprintSprite0
+
 		{
 			File = "blueprints.png"
 			Size = [1, 1]
-		Type=BlueprintSprite;}
+			Type=BlueprintSprite;
+		}
+
 		BlueprintBlendSprite0
+
 		{
 			OnlyWithRotation = 0
 			Location = [1.5, .5]
