@@ -1,24 +1,26 @@
 Part : /BASE_PART
 {
-	NameKey = "Parts/Armor1x1_RoundBig"
-	IconNameKey = "Parts/Armor1x1_RoundBigIcon"
-	ID = SW.Armor1x1_RoundBig
-	OtherIDs = ["Armor1x1_RoundBig"]
+	NameKey = "Parts/DooniumArmor_1x1_RoundBig"
+	IconNameKey = "Parts/DooniumArmor_1x1_RoundBigIcon"
+	ID = SW.doonium_armor_1x1_RoundBig
+	OtherIDs = ["SW.Armor1x1_RoundBig"]
 	EditorGroup = "Defenses"
-	DescriptionKey = "Parts/Armor1x1_RoundBigDesc"
-	Cost = 285
+	DescriptionKey = "Parts/DooniumArmorDesc"
+	Cost = 420
 	Size = [1, 1]
 	AllowedContiguity = [Bottom]
 	SelectionTypeID = "armor"
-	MaxHealth = 3800
-	AreaDamageBlockFactor = .25
+	MaxHealth = 2800
+	ExplosiveDamageAbsorption = 100%
+	ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
 	Flammable = false
-	CreatePartPerTileWhenDestroyed = ""
-	CreatePartWhenDestroyed = structure1x1_RoundBig
+	CreatePartWhenDestroyed = SW.structure1x1_RoundBig
 	CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 5
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	CrewSpeedFactor = 0
-	Density = 2
+	Density = 1
 	IsRotateable = true
 	IsWalled = true
 	ExternalWalls = [BottomRight, Bottom, BottomLeft]
@@ -28,14 +30,14 @@ Part : /BASE_PART
 	CustomCollider
 	[
 		[.5, 0]
-		[0.95,0.7]
-		[0.875,0.4]
 		[0.64,0.08]
+		[0.875,0.4]
+		[0.95,0.7]
 		[1, 1]
 		[0, 1]
 		[0.05,0.7]
 		[0.125,0.4]
-		[0.35,0.08]
+		[0.36,0.08]
 	]
 	EditorIcon
 	{
@@ -46,21 +48,26 @@ Part : /BASE_PART
 		}
 		Size = [32, 32]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		EmpAbsorber
 		{
 			Type = ExplosiveAmmoDrainSink
 			AmmoType = battery
-			AbsorbsAmmoDrain = 1000
+			AbsorbsAmmoDrain = floor((&~/Part/MaxHealth)/4)
 		}
+
 		BlueprintSprite0
+
 		{
 			File = "blueprints.png"
 			Size = [1, 1]
-		Type=BlueprintSprite;}
-		BlueprintBlendSprite0
+			Type = BlueprintSprite;
+		}
+
+		Blueprint0a
 		{
+			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 0
 			Location = [1.5, .5]
 			BlendCheckRectType = Physical
@@ -81,9 +88,11 @@ Part : /BASE_PART
 					]
 				}
 			]
-		Type=BlueprintBlendSprite;}
-		BlueprintBlendSprite1
+		}
+
+		Blueprint0b
 		{
+			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 0
 			Location = [-.5, .5]
 			BlendCheckRectType = Physical
@@ -104,9 +113,11 @@ Part : /BASE_PART
 					]
 				}
 			]
-		Type=BlueprintBlendSprite;}
-		BlueprintBlendSprite2
+		}
+
+		Blueprint1a
 		{
+			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 1
 			Location = [1.5, .5]
 			BlendCheckRectType = Physical
@@ -127,9 +138,11 @@ Part : /BASE_PART
 					]
 				}
 			]
-		Type=BlueprintBlendSprite;}
-		BlueprintBlendSprite3
+		}
+
+		Blueprint1b
 		{
+			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 1
 			Location = [-.5, .5]
 			BlendCheckRectType = Physical
@@ -150,9 +163,11 @@ Part : /BASE_PART
 					]
 				}
 			]
-		Type=BlueprintBlendSprite;}
-		BlueprintBlendSprite4
+		}
+
+		Blueprint2a
 		{
+			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 2
 			Location = [1.5, .5]
 			BlendCheckRectType = Physical
@@ -173,9 +188,11 @@ Part : /BASE_PART
 					]
 				}
 			]
-		Type=BlueprintBlendSprite;}
-		BlueprintBlendSprite5
+		}
+
+		Blueprint2b
 		{
+			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 2
 			Location = [-.5, .5]
 			BlendCheckRectType = Physical
@@ -196,9 +213,11 @@ Part : /BASE_PART
 					]
 				}
 			]
-		Type=BlueprintBlendSprite;}
-		BlueprintBlendSprite6
+		}
+
+		Blueprint3a
 		{
+			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 3
 			Location = [1.5, .5]
 			BlendCheckRectType = Physical
@@ -219,9 +238,11 @@ Part : /BASE_PART
 					]
 				}
 			]
-		Type=BlueprintBlendSprite;}
-		BlueprintBlendSprite7
+		}
+
+		Blueprint3b
 		{
+			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 3
 			Location = [-.5, .5]
 			BlendCheckRectType = Physical
@@ -242,7 +263,9 @@ Part : /BASE_PART
 					]
 				}
 			]
-		Type=BlueprintBlendSprite;}
+		}
+
+
 		Graphics
 		{
 			Type = Graphics
