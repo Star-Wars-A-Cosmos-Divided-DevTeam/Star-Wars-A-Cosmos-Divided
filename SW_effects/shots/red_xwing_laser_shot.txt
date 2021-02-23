@@ -1,9 +1,9 @@
-ID = SW.small_pointlaser_shot11
-OtherIDs = ["small_pointlaser_shot11"]
-
-Range = 150
-IdealRange = 100
-Speed = 100
+ID = SW.red_xwing_shot_common
+OtherIDs = ["red_xwing_shot_common"]
+Range = 300
+IdealRange = [60, 250]
+IdealRadius = [5, 50]
+Speed = 95
 
 Components
 {
@@ -11,7 +11,7 @@ Components
 	{
 		Type = CirclePhysics
 		Radius = 0.01
-		Density = 0.0001
+		Density = 0.1
 	}
 
 	Death
@@ -19,11 +19,11 @@ Components
 		Type = DeathByLifetime
 		// Lifetime will be auto-calculated based on range and speed.
 	}
-
+	
 	Targetable
 	{
 		Type = Targetable
-		Health = 100
+		Health = 400
 		TargetCategory = "laser"
 	}
 
@@ -31,23 +31,10 @@ Components
 	{
 		Type = PenetratingHit
 		FactorEffectsWith = Targetable
-
-		HitShield
-		{
-			HitEffects
-			[
-				{
-					Type = Damage
-					Damage = 200
-				}
-				{
-					Type = Impulse;
-					Impulse = 2.5;
-				}
-			]
-
-			MediaEffects = &../HitOperational/MediaEffects
-		}
+		Penetration = 0 // Enough to get through one shield and lose half penetration.
+		PenetratesOperational = false
+		SourceShipCollisionDelay = 0.01
+		HitShield = &HitOperational
 		HitOperational
 		{
 			HitEffects
@@ -64,16 +51,11 @@ Components
 
 			MediaEffects
 			[
-				&<./Data/shots/laser_bolt_small/particles/laser_bolt_small_hit.txt>
-				&<./Data/shots/laser_bolt_small/particles/laser_bolt_small_flash.txt>
-				&<./Data/shots/laser_bolt_small/particles/laser_bolt_small_sparks.txt>
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/laser_bolt_small/laser_bolt_small_hit.wav"
-					Volume = .4
-					SpeedVariation = .4
-				}
+				&/COMMON_PARTICLES/RedLaserHit
+				&/COMMON_PARTICLES/RedLaserFlash
+				&/COMMON_PARTICLES/RedLaserSparks
+	
+				&/COMMON_SOUNDS/SmallLaserHit
 
 				: /BASE_SHAKE
 				{
@@ -98,56 +80,62 @@ Components
 
 			MediaEffects
 			[
-				&<./Data/shots/laser_bolt_small/particles/laser_bolt_small_hit_struct.txt>
+				&/COMMON_PARTICLES/RedLaserHitStruct
 
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/laser_bolt_small/laser_bolt_small_hit.wav"
-					Volume = .3
-					SpeedVariation = .4
-				}
+				&/COMMON_SOUNDS/SmallLaserHit
 			]
 		}
 		PenetratingOperational
 		{
+			// No effect.
 		}
 		PenetratingStructural
 		{
+			// No effect.
 		}
 		FinishedPenetratingOperational
 		{
+			// No effect.
 		}
 		FinishedPenetratingStructural
 		{
+			// No effect.
 		}
 	}
 
 	Sprite
 	{
 		Type = AnimatedSprite
+		RenderBucket = Upper
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
 		Animation
 		{
 			AtlasSprite
 			{
-				Texture = "laser.png"
-				Size = [1.75, 1.75]
+				Texture
+				{
+					File = "red_laser.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [0.64, 0.64]
 			}
 			FrameCount = 8
 			FrameSize = [128, 128]
 			FramesPerRow = 2
-			FramesPerSecond = 60
+			FramesPerSecond = 32
 		}
 	}
 
 	MediaEffects
 	{
 		Type = MediaEffects
-		InheritVelocityFrom = Physics
 		FactorEffectsWith = Hit
 		FactorEffectsExponent = 0.5
 		MediaEffects
 		[
-			&<./Data/shots/laser_bolt_small/particles/laser_bolt_small_glow.txt>
+			&/COMMON_PARTICLES/SmallRedLaserShotGlow
 		]
 	}
 }
