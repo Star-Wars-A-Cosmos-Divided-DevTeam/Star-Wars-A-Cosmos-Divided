@@ -31,14 +31,23 @@ Def
 			ToValue = 360d
 		}
 		{
-			Type = InheritVelocity
+			Type = AddFrameOfReference
+			Name = "Add frame of reference"
 			VelocityIn = velocity
 			VelocityOut = velocity
-			Name = "Inherit velocity"
 			Enabled = true
 			VelocityInOut = velocity
 			RotationIn = rot
 			RotationOut = rot
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleFromIntensity
+			ScaleOut = scale
+			ScaleFactor = 1
+			IntensityExponent = 0.5
+			Name = "Scale from intensity"
+			Enabled = true
 			UpdateAfterInit = false
 		}
 	]
@@ -106,7 +115,7 @@ Def
 	{
 		Type = StandardQuadRenderer
 		LocationIn = location
-		ScaleIn
+		ScaleIn = scale
 		RotationIn = rot
 		ColorIn
 		BaseSize
@@ -132,8 +141,8 @@ Def
 			File = red_laser_hit.png
 			FixTransparentColors = false
 			PreMultiplyByAlpha = false
-			SampleMode = Point
 			MipLevels = 8
+			SampleMode = Linear
 		}
 		TargetBlendMode
 		{
@@ -145,7 +154,6 @@ Def
 			AlphaOperator = Add
 			ChannelWriteMask
 			[
-				None
 				Red
 				Green
 				Blue
@@ -164,6 +172,7 @@ Def
 	DeleteMode = Fast
 	UpdatedEmittedParticles = false
 	EnableMultithreading = false
+	InitCapacity = 256
 }
 EmitterDef
 {
@@ -182,3 +191,8 @@ MinIntensity = 0
 IsFancy = false
 DontEmitWhenOffScreen = true
 DontEmitWhenOffScreenSizeInflate = 1
+UnsharedRenderInWorldSpace = false
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.40282347E+38
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
