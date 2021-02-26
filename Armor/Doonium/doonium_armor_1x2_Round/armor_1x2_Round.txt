@@ -1,24 +1,27 @@
 Part : /BASE_PART
 {
-	NameKey = "Parts/Armor1x2_Round"
-	IconNameKey = "Parts/Armor1x2_RoundIcon"
-	ID = SW.Armor1x2_Round
-	OtherIDs = ["Armor1x2_Round"]
+	NameKey = "Parts/DooniumArmor_1x2_Round"
+	IconNameKey = "Parts/DooniumArmor_1x2_RoundIcon"
+	ID = SW.doonium_armor_1x2_Round
+	OtherIDs = ["SW.Armor1x2_Round"]
 	EditorGroup = "Defenses"
-	DescriptionKey = "Parts/Armor1x2_RoundDesc"
-	Cost = 450
+	DescriptionKey = "Parts/DooniumArmorDesc"
+	Cost = 600
 	Size = [1, 2]
 	AllowedContiguity = [Bottom]
 	SelectionTypeID = "armor"
 	MaxHealth = 6000
-	AreaDamageBlockFactor = .25
+	ExplosiveDamageAbsorption = 100%
+	ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
 	Flammable = false
-	CreatePartPerTileWhenDestroyed = ""
-	CreatePartWhenDestroyed = structure1x2_Round
+	CreatePartWhenDestroyed = SW.structure1x2_Round
 	CreatePartPerTileWhenGrabbed = ""
-	InitialPenetrationResistance = 4
+	InitialPenetrationResistance = 5
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	UsePerTilePenetrationResistance = true
 	CrewSpeedFactor = 0
-	Density = 2
+	Density = 1
 	IsRotateable = true
 	IsWalled = true
 	ExternalWallsByCell
@@ -66,14 +69,15 @@ Part : /BASE_PART
 		}
 		Size = [32, 64]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		EmpAbsorber
 		{
 			Type = ExplosiveAmmoDrainSink
 			AmmoType = battery
-			AbsorbsAmmoDrain = 1000
+			AbsorbsAmmoDrain = floor((&~/Part/MaxHealth)/4)
 		}
+
 		BlueprintSprite0
 		{
 			File = "blueprints.png"
