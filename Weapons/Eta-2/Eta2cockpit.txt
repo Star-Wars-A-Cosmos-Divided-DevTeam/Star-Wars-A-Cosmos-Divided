@@ -6,17 +6,15 @@ Part : /BASE_PART
 	OtherIDs = ["etacockpit"]
 	EditorGroup = "Flight"
 	DescriptionKey = "Parts/Eta2Desc"
-// lower cost 10k -> 8k
-	Cost = 8000
-//less likely to get hit 50->40
+	Cost = 10000
 	AIValueFactor = 5
 	AIValue = (&Cost) * 5
-	Size = [1, 5]
+	Size = [1, 2]
 	SelectionPriority = 0
-//less hp
 	MaxHealth = 6200
 	InitialPenetrationResistance = 2
 	PenetrationRectType = Normal
+	ProhibitAbove = 3
 	IsContiguityOrigin = true
 	IsShipForward = true
 	TypeCategories = [command, weapon, uses_power, is_crewed]
@@ -33,7 +31,7 @@ Part : /BASE_PART
 	[
 		[.5, 1.5]
 	]
-	RequiresCategories = []
+	
 	EditorIcon
 	{
 		Texture
@@ -83,7 +81,7 @@ Part : /BASE_PART
 		{
 			Type = AmmoStorage
 			AmmoType = battery
-			MaxAmmo = 2000
+			MaxAmmo = 3500
 		}
 		BatteryConsumer
 		{
@@ -91,7 +89,7 @@ Part : /BASE_PART
 			AmmoType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
-			ResupplyThreshold = 1000
+			ResupplyThreshold = 1500
 			OperationalToggle = PowerToggle
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
@@ -100,7 +98,7 @@ Part : /BASE_PART
 		{
 			Type = AmmoConverter
 			FromStorage = BatteryStorage
-			FromQuantity = 1000
+			FromQuantity = 1500
 //uses less power
 			Interval = 80// Drains 1.5 power every minute.
 		}
@@ -162,14 +160,6 @@ Part : /BASE_PART
 						AnimationFiles
 						[
 							"on.png"
-							"on2.png"
-							"on3.png"
-							"on4.png"
-							"on5.png"
-						    "on6.png"
-						    "on7.png"
-						    "on8.png"
-						    "on9.png"
                                                                                                              "on10.png"
 ]
 						Size = [1, 2]
@@ -217,100 +207,162 @@ Part : /BASE_PART
 						Size = [1, 2]
 					}
 					{
-						File = "Cockpit roof33.png"
+						File = "roof.png"
 						Size = [1, 2]
 					}
 					{
-						File = "Cockpit roof66.png"
+						File = "roof.png"
 						Size = [1, 2]
 					}
 				]
 			}
-			OperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				DamageLevels
-				[
-					{
-						File = "Cockpit Window.png"
-						Size = [1, 2]
-					}
-				    {
-						File = "Cockpit Window_33.png"
-						Size = [1, 2]
-					}
-				    {
-						File = "Cockpit Window_66.png"
-						Size = [1, 2]
-					}
-				]
-			}
-			NonOperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				DamageLevels
-				[
-					{
-						File = "Cockpit Window.png"
-						Size = [1, 2]
-					}
-				]
-			}
-		}
-
-		BatterySprites
+//			OperationalRoofWindows
+//			{
+//				Layer = "roof_windows"
+//				DamageLevels
+//				[
+//					{
+//						File = "Cockpit Window.png"
+//						Size = [1, 2]
+//					}
+//				    {
+//						File = "Cockpit Window_33.png"
+//						Size = [1, 2]
+//					}
+//				    {
+//						File = "Cockpit Window_66.png"
+//						Size = [1, 2]
+//					}
+//				]
+//			}
+//			NonOperationalRoofWindows
+//			{
+//				Layer = "roof_windows"
+//				DamageLevels
+//				[
+//					{
+//						File = "Cockpit Window.png"
+//						Size = [1, 2]
+//					}
+//				]
+//			}
+				Turret
 		{
-			Type = AmmoSprites
-			Location = [.5, 1]
-			AmmoStorage = BatteryStorage
-			Layer = "doodads_high"
-			AmmoLevels
+			Type = TurretWeapon
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			Location = [0.5, 0.66]
+			Rotation = -90d
+			FireInterval = .20
+			FiringArc = 15d
+			RotateSpeed = 90d
+			FireThresholdAngle = 1d
+			AIFirepowerRating = 400
+			FirePermissionToggle = FireModeToggle
+			Emitter = BulletEmitter
+
+			AutoTargets
 			[
 				{
-					File = "batteries_1.png"
-					Size = [1, 2]
-				}
-				{
-					File = "batteries_2.png"
-					Size = [1, 2]
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
 				}
 			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
 		}
 
-		OperationEffects
+		ReloadProgressBar
 		{
-			Type = ToggleEffects
-			Toggle = IsOperational,
-			Location = [1, 1]
-			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
-			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
-		}
-
-		DestroyedEffects
-		{
-			Type = DeathEffects
-			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [1, 1]
-		}
-
-		OperationSoundLoop
-		{
-			Type = ContinuousEffects
-			Location = [1, 1]
+			Type = ProgressBar
 			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = Turret
+			GetTargetFrom = Turret
+			Location = [1.92, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/xwinglasershot
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 40
+		}
+
+		ChargeEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = Turret
+			Location = [1.92, 0]
+			AnchorMediaEffects = true
+
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioInterior
-				{
-					Sound = "./Data/ships/terran/control_room_small/operating.wav"
-					Volume = .15
-					MaxConcurrentVolume = .3
-					Speed = .75
-					MaxConcurrent = 1
-				}
+				&/COMMON_SOUNDS/SmallLaserCharge
 			]
 		}
 
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = BulletEmitter
+			Location = [1.92, 0]
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/SmallRedLaserShoot
+				
+				&/COMMON_SOUNDS/XWingLaserFire
+			]
+		}
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .1
+			Density = .75
+		}
+				WeaponSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [1, 0]
+			Rotation = 90d
+			Layer = "weapons"
+			ResetAnimationTrigger = BulletEmitter
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"barrel.png"
+				]
+				Size = [1, 5]
+				AnimationInterval = 0.01
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+		}
 		Indicators
 		{
 			Type = IndicatorSprites
