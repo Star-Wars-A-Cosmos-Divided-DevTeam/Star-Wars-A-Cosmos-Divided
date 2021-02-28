@@ -1,70 +1,73 @@
 Part : /BASE_PART
 {
-	NameKey = "Parts/Armor1x2_RoundWedgeInvL"
-	IconNameKey = "Parts/Armor1x2_RoundWedgeInvLIcon"
-	ID = SW.Armor1x2_RoundWedgeInvL
-	OtherIDs = ["Armor1x2_RoundWedgeInvL"]
+	NameKey = "Parts/DooniumArmor_1x2_RoundWedgeInv_R"
+	IconNameKey = "Parts/DooniumArmor_1x2_RoundWedgeInv_RIcon"
+	ID = SW.doonium_armor_1x2_RoundWedgeInv_R
+	OtherIDs = ["SW.Armor1x2_RoundWedgeInvR"]
 	EditorGroup = "Defenses"
-	DescriptionKey = "Parts/Armor1x2_RoundWedgeInvLDesc"
-	EditorReplacementPartID = ""
-	Cost = 240
+	DescriptionKey = "Parts/DooniumArmorDesc"
+	Cost = 800
 	Size = [1, 2]
-	AllowedContiguity = [Right, Bottom]
+	AllowedContiguity = [Left, Bottom]
 	SelectionTypeID = "armor"
 	MaxHealth = 3200
-	AreaDamageBlockFactor = .25
+	ExplosiveDamageAbsorption = 100%
+	ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
 	Flammable = false
 	CreatePartPerTileWhenDestroyed = ""
-	CreatePartWhenDestroyed = Structure1x2_RoundWedgeInvL
+	CreatePartWhenDestroyed = SW.Structure1x2_RoundWedgeInvR
 	CreatePartPerTileWhenGrabbed = ""
-	InitialPenetrationResistance = 4
+	InitialPenetrationResistance = 3
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	UsePerTilePenetrationResistance = true
 	CrewSpeedFactor = 0
-	Density = 2
+	Density = 1
 	IsRotateable = true
 	IsWalled = true
 	ExternalWallsByCell
 	[
 		{
 			Key = [0, 0]
-			Value = [TopRight, Right]
+			Value = [TopLeft, Left]
 		}
 		{
 			Key = [0, 1]
-			Value = [Right, BottomRight, Bottom, BottomLeft]
+			Value = [Left, BottomLeft, Bottom, BottomRight]
 		}
 	]
 	InternalWallsByCell
 	[
 	 	{
 	 		Key = [0, 0]
-	 		Value = [BottomLeft, Left, TopLeft, Top]
+	 		Value = [BottomRight, Right, TopRight, Top]
 	 	}
 	 	{
 	 		Key = [0, 1]
-	 		Value = [Left, TopLeft]
+	 		Value = [Right, TopRight]
 	 	}
 	]
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
 	FlipHRotate = [0, 3, 2, 1]
 	FlipVRotate = [2, 1, 0, 3]
-	UsePartWhenFlipped = Armor1x2_RoundWedgeInvR
+	UsePartWhenFlipped = SW.doonium_armor_1x2_RoundWedgeInv_L
 	CustomCollider
 	[
-		/*[1, 0]
+		/*[0, 0]
+		[0.1, 0]
+		[0.14, 0.46]
+		[0.26, 1.04]
+		[0.43, 1.43]
+		[0.67, 1.73]
+		[0.86, 1.85]
+		[0.98, 1.89]
 		[1, 2]
-		[0, 2]
-		[0, 1.89]
-		[0.12, 1.85]
-		[0.31, 1.73]
-		[0.54, 1.43]
-		[0.71, 1.05]
-		[0.82, 0.46]
-		[0.87, 0]*/
+		[0, 2]*/
 
-		[1, 0.2]
-		[1, 2]
-		[0.1, 2]
+		[0, 0.2]
+		[0.9, 2]
+		[0, 2]
 	]
 	EditorIcon
 	{
@@ -73,22 +76,35 @@ Part : /BASE_PART
 			File = "icon.png"
 			SampleMode = Linear
 		}
+		UVRect
+		{
+			Left = 1
+			Right = 0
+			Top = 0
+			Bottom = 1
+		}
 		Size = [32, 64]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		EmpAbsorber
 		{
 			Type = ExplosiveAmmoDrainSink
 			AmmoType = battery
-			AbsorbsAmmoDrain = 1000
+			AbsorbsAmmoDrain = floor((&~/Part/MaxHealth)/4)
 		}
+
 		BlueprintSprite0
+
 		{
 			File = "blueprints.png"
+			MirrorU = true
 			Size = [1, 2]
-		Type=BlueprintSprite;}
+			Type=BlueprintSprite;
+		}
+
 		BlueprintBlendSprite0
+
 		{
 			OnlyWithRotation = 0
 			Location = [.5, -.5]
@@ -99,14 +115,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*0*0****"
+					SituationCode = "*0*****0"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
 							Size = [1, 1]
-							UVRotation = 0
+							UVRotation = 1
 						}
 					]
 				}
@@ -115,7 +131,7 @@ Part : /BASE_PART
 		BlueprintBlendSprite1
 		{
 			OnlyWithRotation = 0
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [0, 1]
 			BlendCheckRectType = Physical
 			AllowUndefinedBlendSprites = true
@@ -123,14 +139,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*****000"
+					SituationCode = "***000**"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
 							Size = [1, 1]
-							UVRotation = 0
+							UVRotation = 1
 						}
 					]
 				}
@@ -147,14 +163,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "***0*0**"
+					SituationCode = "*0*0****"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
 							Size = [1, 1]
-							UVRotation = 1
+							UVRotation = 2
 						}
 					]
 				}
@@ -163,7 +179,7 @@ Part : /BASE_PART
 		BlueprintBlendSprite3
 		{
 			OnlyWithRotation = 1
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [0, 0]
 			BlendCheckRectType = Physical
 			AllowUndefinedBlendSprites = true
@@ -171,14 +187,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "00*****0"
+					SituationCode = "*****000"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
 							Size = [1, 1]
-							UVRotation = 1
+							UVRotation = 2
 						}
 					]
 				}
@@ -195,14 +211,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*****0*0"
+					SituationCode = "***0*0**"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
 							Size = [1, 1]
-							UVRotation = 2
+							UVRotation = 3
 						}
 					]
 				}
@@ -211,7 +227,7 @@ Part : /BASE_PART
 		BlueprintBlendSprite5
 		{
 			OnlyWithRotation = 2
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [0, 0]
 			BlendCheckRectType = Physical
 			AllowUndefinedBlendSprites = true
@@ -219,14 +235,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*000****"
+					SituationCode = "00*****0"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
 							Size = [1, 1]
-							UVRotation = 2
+							UVRotation = 3
 						}
 					]
 				}
@@ -243,14 +259,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*0*****0"
+					SituationCode = "*****0*0"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
 							Size = [1, 1]
-							UVRotation = 3
+							UVRotation = 0
 						}
 					]
 				}
@@ -259,7 +275,7 @@ Part : /BASE_PART
 		BlueprintBlendSprite7
 		{
 			OnlyWithRotation = 3
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [1, 0]
 			BlendCheckRectType = Physical
 			AllowUndefinedBlendSprites = true
@@ -267,14 +283,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "***000**"
+					SituationCode = "*000****"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
 							Size = [1, 1]
-							UVRotation = 3
+							UVRotation = 0
 						}
 					]
 				}
@@ -291,14 +307,17 @@ Part : /BASE_PART
 				[
 					{
 						File = "Armor.png"
+						MirrorU = true
 						Size = [1, 2]
 					}
 					{
 						File = "Armor_33.png"
+						MirrorU = true
 						Size = [1, 2]
 					}
 					{
 						File = "Armor_66.png"
+						MirrorU = true
 						Size = [1, 2]
 					}
 				]
@@ -310,14 +329,17 @@ Part : /BASE_PART
 				[
 					{
 						File = "armor.png"
+						MirrorU = true
 						Size = [1, 2]
 					}
 					{
 						File = "armor_33.png"
+						MirrorU = true
 						Size = [1, 2]
 					}
 					{
 						File = "armor_66.png"
+						MirrorU = true
 						Size = [1, 2]
 					}
 				]
@@ -329,14 +351,17 @@ Part : /BASE_PART
 				[
 					{
 						File = "roof.png"
+						MirrorU = true
 						Size = [1, 2]
 					}
 					{
 						File = "roof_33.png"
+						MirrorU = true
 						Size = [1, 2]
 					}
 					{
 						File = "roof_66.png"
+						MirrorU = true
 						Size = [1, 2]
 					}
 				]
@@ -356,14 +381,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*0*0****"
+					SituationCode = "*0*****0"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
 							Size = [1, 1]
-							UVRotation = 0
+							UVRotation = 1
 						}
 					]
 				}
@@ -373,7 +398,7 @@ Part : /BASE_PART
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 0
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [0, 1]
 			Layer = "roofs"
 			BlendCheckRectType = Physical
@@ -382,14 +407,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*****000"
+					SituationCode = "***000**"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
 							Size = [1, 1]
-							UVRotation = 0
+							UVRotation = 1
 						}
 					]
 				}
@@ -408,14 +433,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "***0*0**"
+					SituationCode = "*0*0****"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
 							Size = [1, 1]
-							UVRotation = 1
+							UVRotation = 2
 						}
 					]
 				}
@@ -425,7 +450,7 @@ Part : /BASE_PART
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 1
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [0, 0]
 			Layer = "roofs"
 			BlendCheckRectType = Physical
@@ -434,14 +459,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "00*****0"
+					SituationCode = "*****000"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
 							Size = [1, 1]
-							UVRotation = 1
+							UVRotation = 2
 						}
 					]
 				}
@@ -460,14 +485,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*****0*0"
+					SituationCode = "***0*0**"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
 							Size = [1, 1]
-							UVRotation = 2
+							UVRotation = 3
 						}
 					]
 				}
@@ -477,7 +502,7 @@ Part : /BASE_PART
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 2
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [0, 0]
 			Layer = "roofs"
 			BlendCheckRectType = Physical
@@ -486,14 +511,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*000****"
+					SituationCode = "00*****0"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
 							Size = [1, 1]
-							UVRotation = 2
+							UVRotation = 3
 						}
 					]
 				}
@@ -512,14 +537,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*0*****0"
+					SituationCode = "*****0*0"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
 							Size = [1, 1]
-							UVRotation = 3
+							UVRotation = 0
 						}
 					]
 				}
@@ -529,7 +554,7 @@ Part : /BASE_PART
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 3
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [1, 0]
 			Layer = "roofs"
 			BlendCheckRectType = Physical
@@ -538,14 +563,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "***000**"
+					SituationCode = "*000****"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
 							Size = [1, 1]
-							UVRotation = 3
+							UVRotation = 0
 						}
 					]
 				}
@@ -565,14 +590,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*0*0****"
+					SituationCode = "*0*****0"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
 							Size = [1, 1]
-							UVRotation = 0
+							UVRotation = 1
 						}
 					]
 				}
@@ -582,7 +607,7 @@ Part : /BASE_PART
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 0
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [0, 1]
 			Layer = "walls"
 			BlendCheckRectType = Physical
@@ -591,14 +616,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*****000"
+					SituationCode = "***000**"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
 							Size = [1, 1]
-							UVRotation = 0
+							UVRotation = 1
 						}
 					]
 				}
@@ -617,14 +642,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "***0*0**"
+					SituationCode = "*0*0****"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
 							Size = [1, 1]
-							UVRotation = 1
+							UVRotation = 2
 						}
 					]
 				}
@@ -634,7 +659,7 @@ Part : /BASE_PART
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 1
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [0, 0]
 			Layer = "walls"
 			BlendCheckRectType = Physical
@@ -643,14 +668,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "00*****0"
+					SituationCode = "*****000"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
 							Size = [1, 1]
-							UVRotation = 1
+							UVRotation = 2
 						}
 					]
 				}
@@ -669,14 +694,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*****0*0"
+					SituationCode = "***0*0**"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
 							Size = [1, 1]
-							UVRotation = 2
+							UVRotation = 3
 						}
 					]
 				}
@@ -686,7 +711,7 @@ Part : /BASE_PART
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 2
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [0, 0]
 			Layer = "walls"
 			BlendCheckRectType = Physical
@@ -695,14 +720,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*000****"
+					SituationCode = "00*****0"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
 							Size = [1, 1]
-							UVRotation = 2
+							UVRotation = 3
 						}
 					]
 				}
@@ -721,14 +746,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "*0*****0"
+					SituationCode = "*****0*0"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
 							Size = [1, 1]
-							UVRotation = 3
+							UVRotation = 0
 						}
 					]
 				}
@@ -738,7 +763,7 @@ Part : /BASE_PART
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 3
-			Location = [-.5, 1.5]
+			Location = [1.5, 1.5]
 			CellOffset = [1, 0]
 			Layer = "walls"
 			BlendCheckRectType = Physical
@@ -747,14 +772,14 @@ Part : /BASE_PART
 			AmbiguousSprites
 			[
 				{
-					SituationCode = "***000**"
+					SituationCode = "*000****"
 					AllowRotation = false
 					DamageLevels
 					[
 						{
 							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
 							Size = [1, 1]
-							UVRotation = 3
+							UVRotation = 0
 						}
 					]
 				}
