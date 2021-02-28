@@ -17,7 +17,7 @@ Part : /BASE_PART
 	ProhibitAbove = 3
 	IsContiguityOrigin = true
 	IsShipForward = true
-	TypeCategories = [command, weapon, uses_power, is_crewed]
+	TypeCategories = [command, weapon, uses_power,uses_laser_parts, is_crewed]
 //doors only in the back
 	AllowedDoorLocations
 	[
@@ -39,7 +39,7 @@ Part : /BASE_PART
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [32, 160]
+		Size = [32, 256]
 	}
 	Components
 	{
@@ -47,6 +47,7 @@ Part : /BASE_PART
 		{
 			File = "blueprints.png"
 			Size = [1, 5]
+			Offset = [0, -1.5]
 			Type=BlueprintSprite;
 		}
 
@@ -62,6 +63,25 @@ Part : /BASE_PART
 			ToggleID = "on_off"
 			Default = 1
 			RequiresCommand = false
+		}
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
 		}
 		IsOperational
 		{
@@ -126,7 +146,123 @@ Part : /BASE_PART
 				CrewLocation
 			]
 		}
+				Turret
+		{
+			Type = TurretWeapon
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			Location = [0.5, 0.66]
+			Rotation = -90d
+			FireInterval = .30
+			FiringArc = 15d
+			FireDelay = .04
+			RotateSpeed = 90d
+			FireThresholdAngle = 1d
+			AIFirepowerRating = 500
+			FirePermissionToggle = FireModeToggle
+			Emitter = BulletEmitter
 
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = Turret
+			GetTargetFrom = Turret
+			Location = [2.92, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/xwinglasershot
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 40
+		}
+
+		ChargeEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = Turret
+			Location = [2.92, 0]
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/SmallLaserCharge
+			]
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = BulletEmitter
+			Location = [2.92, 0]
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/SmallRedLaserShoot
+				
+				&/COMMON_SOUNDS/XWingLaserFire
+			]
+		}
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .1
+			Density = .75
+		}
+				WeaponSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [2, 0]
+			Rotation = 90d
+			Layer = "weapons"
+			ResetAnimationTrigger = BulletEmitter
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"barrel.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = 0.01
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
 		Graphics
 		{
 			Type = Graphics
@@ -246,122 +382,6 @@ Part : /BASE_PART
 //					}
 //				]
 //			}
-				Turret
-		{
-			Type = TurretWeapon
-			OperationalToggle = IsOperational
-			AutoFireToggle = AutoFireToggle
-			Location = [0.5, 0.66]
-			Rotation = -90d
-			FireInterval = .20
-			FiringArc = 15d
-			RotateSpeed = 90d
-			FireThresholdAngle = 1d
-			AIFirepowerRating = 400
-			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitter
-
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = Turret
-		}
-
-		BulletEmitter
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger = Turret
-			GetTargetFrom = Turret
-			Location = [1.92, 0]
-			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/xwinglasershot
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 40
-		}
-
-		ChargeEffect
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = Turret
-			Location = [1.92, 0]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/SmallLaserCharge
-			]
-		}
-
-		FireEffect
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [1.92, 0]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/COMMON_PARTICLES/SmallRedLaserShoot
-				
-				&/COMMON_SOUNDS/XWingLaserFire
-			]
-		}
-		TurretCollider
-		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .1
-			Density = .75
-		}
-				WeaponSprite
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [1, 0]
-			Rotation = 90d
-			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitter
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"barrel.png"
-				]
-				Size = [1, 5]
-				AnimationInterval = 0.01
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
-		}
 		}
 		Indicators
 		{
@@ -412,4 +432,17 @@ Part : /BASE_PART
 		RecPower = &PowerUsageContinuous
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
+LaserStats
+{
+	NameKey = "StatCategories/SingleRedLasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}
 }
