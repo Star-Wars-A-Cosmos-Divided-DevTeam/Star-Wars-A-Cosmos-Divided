@@ -46,9 +46,9 @@ Part : <turbolaser_huge_base.txt>/Part
 		}
 		Size = [72, 91]
 	}
-	Components : ^/0/Components //, &<../SW_weapon_fire_alternate_2.txt>
+	Components : ^/0/Components, &<huge02green.txt>, &<../SW_weapon_fire_alternate_2.txt>
 	{
-		Weapon
+		Turret
 		{
 			Type = TurretWeapon
 			Location = [5, 5] // Relative to upper-left corner of unrotated part.
@@ -95,15 +95,15 @@ Part : <turbolaser_huge_base.txt>/Part
 		{
 			Type = ProgressBar
 			OperationalToggle = IsOperational
-			ShowProgressFor = Weapon
+			ShowProgressFor = Turret
 		}
 
 		WeaponEmitterBase // Doesn't actually fire; only used for targeting and as a base for the left and right emitters.
 		{
 			Type = BulletEmitter
-			ChainedTo = Weapon
+			ChainedTo = Turret
 			FireTrigger // none, but field is required
-			GetTargetFrom = Weapon
+			GetTargetFrom = Turret
 			Location = [0, 0]
 			OperationalToggle = IsOperational
 			FireDelay = .6
@@ -114,7 +114,7 @@ Part : <turbolaser_huge_base.txt>/Part
 		TurretGraphics
 		{
 			Type = Graphics
-			ChainedTo = Weapon
+			ChainedTo = Turret
 			Location = [0, 0]
 			Rotation = 90d
 			//OperationalToggle = IsOperational
@@ -133,7 +133,7 @@ Part : <turbolaser_huge_base.txt>/Part
 		BarrelGraphics
 		{
 			Type = Graphics
-			ChainedTo = Weapon
+			ChainedTo = Turret
 			Location = [0, 0]
 			Rotation = 90d
 			//OperationalToggle = IsOperational
@@ -184,11 +184,11 @@ Part : <turbolaser_huge_base.txt>/Part
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
 				Penetration = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/Penetration
 				FireChance = (&~/Part/Components/WeaponEmitter/Bullet/Components/Hit/PenetratingOperational/HitEffects/1/FireChance) * 100
-				ROF = 1 / (&~/Part/Components/Weapon/FireInterval)
+				ROF = 1 / (&~/Part/Components/Turret/FireInterval)
 				Range = &~/Part/Components/WeaponEmitter/Bullet/Range/BaseValue
-				Arc = deg(&~/Part/Components/Weapon/FiringArc)
+				Arc = deg(&~/Part/Components/Turret/FiringArc)
 				//Spread = deg(&~/Part/Components/WeaponEmitter/Spread/1)
-				TurretSpeed = deg(&~/Part/Components/Weapon/RotateSpeed)
+				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
 //				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
 				PowerPerShot = (&~/Part/Components/WeaponEmitter/AmmoUsed) / 1000
