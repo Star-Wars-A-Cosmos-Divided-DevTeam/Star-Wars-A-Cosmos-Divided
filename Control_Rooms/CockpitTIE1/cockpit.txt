@@ -4,7 +4,7 @@ Introduction: SW:ACD 0.3.7
 
 Author : Lafiel
 Description:
-Currently prototyping: may need to adjust weapons and thruster force
+Currently prototyping: may need to adjust thruster force
 
 needs walls sprites and lights
 
@@ -15,11 +15,11 @@ Versions:
 ---------------------------------------------------------------------------- */ 
 Part : /BASE_PART
 {
-	NameKey = "Parts/Cockpit2_2"
-	IconNameKey = "Parts/Cockpit2_2Icon"
-	ID = SW.tie_cockpit2
+	NameKey = "Parts/Cockpit2_1"
+	IconNameKey = "Parts/Cockpit2_1Icon"
+	ID = SW.tie_cockpit1
 	EditorGroup = "Flight"
-	DescriptionKey = "Parts/Cockpit2_2Desc"
+	DescriptionKey = "Parts/Cockpit2_1Desc"
 	Cost = 25000
 	AIValueFactor = 5
 	AIValue = (&Cost) * 5
@@ -32,7 +32,7 @@ Part : /BASE_PART
 	PenetrationRectType = Normal
 	IsContiguityOrigin = true
 	IsShipForward = true
-	TypeCategories = [command,weapon,provides_power, bounty_objective,thruster]
+	TypeCategories = [command,provides_power, bounty_objective,thruster]
 
 	ThrusterForce = 200
 	ThrustIncreaseTime = 0
@@ -105,12 +105,6 @@ Part : /BASE_PART
 			Toggles = [PowerToggle, PartCrew]
 			Mode = All
 		}
-		WeaponIsOperational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, WeaponAmmoPrereq, PartCrew]
-			Mode = All
-		}
 		ThrusterIsOperational
 		{
 			Type = MultiToggle
@@ -127,14 +121,6 @@ Part : /BASE_PART
 			//ToggleOffAmmo = 1000
 		}
 */
-		WeaponAmmoPrereq
-		{
-			Type = MultiAmmoStorage
-			AmmoType = battery
-			AmmoStorages = [BatteryStorage]
-			ToggleOnAmmo = 3001  // 3 batteries for use
-			ToggleOffAmmo = 3000
-		}
 		ThrusterAmmoPrereq //always available
 		{
 			Type = MultiAmmoStorage
@@ -401,157 +387,6 @@ Part : /BASE_PART
 					}
 				]
 			}
-		}
-		WeaponSprite
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [-.4, -0.75]
-			Rotation = 90d
-			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitter
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"../../Weapons/FixedLightLaserCannon/weapon2.png"
-					"../../Weapons/FixedLightLaserCannon/weapon.png"
-				]
-				Size = [1, 1]
-				AnimationInterval = 0.01
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
-		}
-		WeaponSprite2
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [-.4, 0.75]
-			Rotation = 90d
-			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitter
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"../../Weapons/FixedLightLaserCannon/weapon2.png"
-					"../../Weapons/FixedLightLaserCannon/weapon.png"
-				]
-				Size = [1, 1]
-				MirrorU = true
-				AnimationInterval = 0.01
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
-		}
-
-		Turret
-		{
-			Type = TurretWeapon
-			OperationalToggle = WeaponIsOperational
-			AutoFireToggle = AutoFireToggle
-			Location = [1, 22/64]
-			Rotation = -90d
-			FireInterval = .30
-			FiringArc = 15d
-			FireDelay = .04
-			RotateSpeed = 90d
-			FireThresholdAngle = 1d
-			AIFirepowerRating = 500
-			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitter
-
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = WeaponIsOperational
-			ShowProgressFor = Turret
-		}
-
-		BulletEmitter
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger = Turret
-			GetTargetFrom = Turret
-			Location = [24/64, -0.75]
-			OperationalToggle = WeaponIsOperational
-			Bullet = &/COMMON_SHOTS/xwinglasershot
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 40
-		}
-		BulletEmitter2
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger = Turret
-			GetTargetFrom = Turret
-			Location = [24/64, 0.75]
-			OperationalToggle = WeaponIsOperational
-			Bullet = &/COMMON_SHOTS/xwinglasershot
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 40
-		}
-
-		ChargeEffect
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = Turret
-			Location = [0, 0]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/SmallLaserCharge
-			]
-		}
-
-		FireEffect
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [10/64, -0.75]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/COMMON_PARTICLES/SmallRedLaserShoot
-				
-				&/COMMON_SOUNDS/XWingLaserFire
-			]
-		}
-		FireEffect2 : &FireEffect
-		{
-			Trigger = BulletEmitter2
-			Location = [10/64, 0.75]
 		}
 
 		ForwardThruster
