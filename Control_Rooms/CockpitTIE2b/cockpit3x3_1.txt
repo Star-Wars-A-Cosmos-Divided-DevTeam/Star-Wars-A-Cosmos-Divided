@@ -15,29 +15,30 @@ Versions:
 ---------------------------------------------------------------------------- */ 
 Part : /BASE_PART
 {
-	NameKey = "Parts/Cockpit2_2"
-	IconNameKey = "Parts/Cockpit2_2Icon"
-	ID = SW.tie_cockpit2
+	NameKey = "Parts/Cockpit2_1"
+	IconNameKey = "Parts/Cockpit2_1Icon"
+	ID = SW.tie_cockpit1b
 	EditorGroup = "Flight"
-	DescriptionKey = "Parts/Cockpit2_2Desc"
+	DescriptionKey = "Parts/Cockpit2_1Desc"
 	Cost = 25000
 	AIValueFactor = 5
 	AIValue = (&Cost) * 5
-	Size = [2, 3]
+	Size = [3, 3]
 	SelectionPriority = 0
 
-	Density = 0.7
-	MaxHealth = 4200 //(17090/4096)*1000=4172.36328125
+	Density = 0.77
+	MaxHealth = 9200 //(37572/4096)*1000=9172.8515625
 	InitialPenetrationResistance = 2
 	PenetrationRectType = Normal
 	IsContiguityOrigin = true
 	IsShipForward = true
-	TypeCategories = [command,weapon,provides_power, bounty_objective,thruster]
+	TypeCategories = [command,provides_power, bounty_objective,thruster]
 
 	ThrusterForce = 200
 	ThrustIncreaseTime = 0
 	ThrustRecoveryTime = 0
 	FuelUsage = 75
+	ProhibitTop = 1
 	ProhibitBelow = 3
 
 	ReceivableBuffs = [Engine]
@@ -66,16 +67,16 @@ Part : /BASE_PART
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [61, 92]
+		Size = [69, 92]
 	}
 	Components
 	{
 		TurretCollider
 		{
 			Type = CircleCollider
-			Location = [1,1.5]
-			Radius = 1.2
-			Density = 0.01
+			Location = [1.5,1.5]
+			Radius = 1.7
+			Density = 0
 		}
 
 		CrewSource
@@ -105,12 +106,6 @@ Part : /BASE_PART
 			Toggles = [PowerToggle, PartCrew]
 			Mode = All
 		}
-		WeaponIsOperational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, WeaponAmmoPrereq, PartCrew]
-			Mode = All
-		}
 		ThrusterIsOperational
 		{
 			Type = MultiToggle
@@ -127,21 +122,13 @@ Part : /BASE_PART
 			//ToggleOffAmmo = 1000
 		}
 */
-		WeaponAmmoPrereq
-		{
-			Type = MultiAmmoStorage
-			AmmoType = battery
-			AmmoStorages = [BatteryStorage]
-			ToggleOnAmmo = 3001  // 3 batteries for use
-			ToggleOffAmmo = 3000
-		}
 		ThrusterAmmoPrereq //always available
 		{
 			Type = MultiAmmoStorage
 			AmmoType = battery
 			AmmoStorages = [BatteryStorage]
 			ToggleOnAmmo = 2001
-			ToggleOffAmmo = 2000
+			ToggleOffAmmo = 1000
 		}
 		FireModeToggle
 		{
@@ -203,7 +190,7 @@ Part : /BASE_PART
 		CrewLocation
 		{
 			Type = CrewLocation
-			Location = [1, 1.275]
+			Location = [1.5, 0.775]
 			Rotation = 180d
 		}
 		PartCrew
@@ -216,7 +203,7 @@ Part : /BASE_PART
 			AbandonWhenOnFire = false
 			CrewDestinations
 			[
-				[1, 1.5]
+				[1.5, 1]
 			]
 			CrewLocations
 			[
@@ -228,7 +215,7 @@ Part : /BASE_PART
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational,
-			Location = [1, 1.5]
+			Location = [1.5, 1.5]
 			Floor
 			{
 				Layer = "floors"
@@ -236,16 +223,16 @@ Part : /BASE_PART
 				[
 					{
 						File = "floor.png"
-						Size = [2, 3]
+						Size = [3, 4]
 					}
 /*
 					{
 						File = "floor_33.png"
-						Size = [1, 2]
+						Size = [3, 4]
 					}
 					{
 						File = "floor_66.png"
-						Size = [1, 2]
+						Size = [3, 4]
 					}
 */
 				]
@@ -253,7 +240,7 @@ Part : /BASE_PART
 			OperationalDoodad
 			{
 				Layer = "doodads_low"
-				Offset = [0, -0.5]
+				Offset = [0, -1]
 				DamageLevels
 				[
 					{
@@ -276,7 +263,7 @@ Part : /BASE_PART
 			NonOperationalDoodad
 			{
 				Layer = "doodads_low"
-				Offset = [0, -0.5]
+				Offset = [0, -1]
 				DamageLevels
 				[
 					{
@@ -313,7 +300,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "roof.png"
-						Size = [2, 3]
+						Size = [3, 4]
 					}
 /*
 					{
@@ -365,11 +352,11 @@ Part : /BASE_PART
 			Type = Graphics
 			OperationalToggle = ThrusterIsOperational
 
-			Location = [1, 1.5]
+			Location = [1.5, 1.5]
 			OperationalDoodad
 			{
 				Layer = "doodads_high"
-				Offset = [0, 45/64]
+				Offset = [0, 84/64]
 				DamageLevels
 				[
 					{
@@ -392,7 +379,7 @@ Part : /BASE_PART
 			NonOperationalDoodad
 			{
 				Layer = "doodads_high"
-				Offset = [0, 45/64]
+				Offset = [0, 84/64]
 				DamageLevels
 				[
 					{
@@ -402,163 +389,12 @@ Part : /BASE_PART
 				]
 			}
 		}
-		WeaponSprite
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [-.4, -0.75]
-			Rotation = 90d
-			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitter
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"../../Weapons/FixedLightLaserCannon/weapon2.png"
-					"../../Weapons/FixedLightLaserCannon/weapon.png"
-				]
-				Size = [1, 1]
-				AnimationInterval = 0.01
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
-		}
-		WeaponSprite2
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [-.4, 0.75]
-			Rotation = 90d
-			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitter
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"../../Weapons/FixedLightLaserCannon/weapon2.png"
-					"../../Weapons/FixedLightLaserCannon/weapon.png"
-				]
-				Size = [1, 1]
-				MirrorU = true
-				AnimationInterval = 0.01
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
-		}
-
-		Turret
-		{
-			Type = TurretWeapon
-			OperationalToggle = WeaponIsOperational
-			AutoFireToggle = AutoFireToggle
-			Location = [1, 22/64]
-			Rotation = -90d
-			FireInterval = .30
-			FiringArc = 15d
-			FireDelay = .04
-			RotateSpeed = 90d
-			FireThresholdAngle = 1d
-			AIFirepowerRating = 500
-			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitter
-
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = WeaponIsOperational
-			ShowProgressFor = Turret
-		}
-
-		BulletEmitter
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger = Turret
-			GetTargetFrom = Turret
-			Location = [24/64, -0.75]
-			OperationalToggle = WeaponIsOperational
-			Bullet = &/COMMON_SHOTS/xwinglasershot
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 40
-		}
-		BulletEmitter2
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger = Turret
-			GetTargetFrom = Turret
-			Location = [24/64, 0.75]
-			OperationalToggle = WeaponIsOperational
-			Bullet = &/COMMON_SHOTS/xwinglasershot
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 40
-		}
-
-		ChargeEffect
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = Turret
-			Location = [0, 0]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/SmallLaserCharge
-			]
-		}
-
-		FireEffect
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [10/64, -0.75]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/COMMON_PARTICLES/SmallRedLaserShoot
-				
-				&/COMMON_SOUNDS/XWingLaserFire
-			]
-		}
-		FireEffect2 : &FireEffect
-		{
-			Trigger = BulletEmitter2
-			Location = [10/64, 0.75]
-		}
 
 		ForwardThruster
 		{
 			Type = Thruster
 			OperationalToggle = ThrusterIsOperational
-			Location = [0.5, 1.1]// Relative to upper-left corner of unrotated part.
+			Location = [1.5, 1.84375]// Relative to upper-left corner of unrotated part.
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
@@ -671,7 +507,7 @@ Part : /BASE_PART
 		BatterySprites
 		{
 			Type = AmmoSprites
-			Location = [1, 1]
+			Location = [1.5, 0.5]
 			AmmoStorage = BatteryStorage
 			Layer = "doodads_high"
 			RangeLow = 0
@@ -691,7 +527,7 @@ Part : /BASE_PART
 		ThrusterBatterySprites
 		{
 			Type = AmmoSprites
-			Location = [1, 141/64]
+			Location = [1.5, 180/64]
 			AmmoStorage = BatteryStorage
 			Layer = "doodads_low"
 			HasZeroAmmoSprite = true
@@ -712,7 +548,7 @@ Part : /BASE_PART
 		{
 			Type = ToggleEffects
 			Toggle = IsOperational,
-			Location = [1, 1.5]
+			Location = [1.5, 1.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -721,13 +557,13 @@ Part : /BASE_PART
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [1, 1.5]
+			Location = [1.5, 1.5]
 		}
 
 		OperationSoundLoop
 		{
 			Type = ContinuousEffects
-			Location = [1, 1.5]
+			Location = [1.5, 1.5]
 			OperationalToggle = IsOperational
 			MediaEffects
 			[
@@ -745,7 +581,7 @@ Part : /BASE_PART
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [1, 1.5]
+			Location = [1.5, 1.5]
 			Layer = "indicators"
 			Indicators
 			[
@@ -783,7 +619,7 @@ Part : /BASE_PART
 		{
 			Type=BlueprintSprite
 			File = "blueprints.png"
-			Size = [2, 3]
+			Size = [3, 4]
 		}
 	}
 
