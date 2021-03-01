@@ -87,12 +87,12 @@ Part : /BASE_PART
 			ToggleID = "on_off"
 			Default = 1
 		}
-
+//-----------------------------------------------------------------------------
 		BatteryStorage
 		{
 			Type = AmmoStorage
 			AmmoType = battery
-			MaxAmmo = 48000
+			MaxAmmo = 84000
 		}
 		BatteryConsumer
 		{
@@ -104,13 +104,28 @@ Part : /BASE_PART
 			OperationalToggle = PowerToggle
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-		CombinedBatteryStorage
+		CombinedBatteryStorage //transfer power
 		{
 			Type = MultiAmmoStorage
 			AmmoType = battery
 			AmmoStorages = [BatteryStorage]
+			ViaBuffs
+			{
+				OutgoingBuffProviders = [RailgunBuffProvider]
+				ComponentID = BatteryStorage
+			}
+			AddMode = PrioritizeLeastAmmo
 		}
 
+		AmmoPrereq
+		{
+			Type = MultiAmmoStorage
+			AmmoType = bullet
+			AmmoStorages = [BatteryStorage]
+			ToggleOnAmmo = 48000
+			ToggleOffAmmo = 999
+		}
+//-----------------------------------------------------------------------------
 
 		RailgunBuffProvider
 		{
@@ -123,7 +138,7 @@ Part : /BASE_PART
 				Category = DSLII
 				Rot = 0
 				Left = 0
-				Right = 2
+				Right = 6
 				Bottom = 0
 			}
 		}
@@ -150,10 +165,10 @@ Part : /BASE_PART
 			PartLocation = [0, -1]
 			PartCriteria
 			{
-				Category = railgun_power
+				Category = DSL_power
 				Rot = 0
 				Left = 0
-				Right = 2
+				Right = 6
 				Bottom = 0
 			}
 			ComponentID = Weapon
@@ -165,7 +180,7 @@ Part : /BASE_PART
 			PartLocation = [0, -1]
 			PartCriteria
 			{
-				Category = railgun_power
+				Category = DSL_power
 				Rot = 0
 				Left = 0
 				Right = 2
@@ -173,6 +188,7 @@ Part : /BASE_PART
 			}
 			ComponentID = BulletEmitter
 		}
+//-----------------------------------------------------------------------------
 
 		CrewLocation1
 		{
@@ -220,13 +236,13 @@ Part : /BASE_PART
 				CrewLocation4
 			]
 		}
+//-----------------------------------------------------------------------------
 
 
-/*
 		Graphics
 		{
 			Type = Graphics
-			Location = [1, 1.5]
+			Location = [3, 4]
 			OperationalToggle = IsOperational
 			Floor
 			{
@@ -235,47 +251,15 @@ Part : /BASE_PART
 				[
 					{
 						File = "floor.png"
-						Size = [2, 3]
+						Size = [6, 8]
 					}
 					{
 						File = "floor_33.png"
-						Size = [2, 3]
+						Size = [6, 8]
 					}
 					{
 						File = "floor_66.png"
-						Size = [2, 3]
-					}
-				]
-			}
-			OperationalDoodad
-			{
-				Layer = "weapons"
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"doodads_on1.png"
-							"doodads_on2.png"
-							"doodads_on3.png"
-							"doodads_on4.png"
-							"doodads_on5.png"
-							"doodads_on6.png"
-						]
-						Size = [2, 3]
-						AnimationInterval = 0.1
-						AnimationStartTime = Zero
-					}
-				]
-			}
-			NonOperationalDoodad
-			{
-				Layer = "weapons"
-				DamageLevels
-				[
-					{
-						File = "doodads_off.png"
-						Size = [2, 3]
+						Size = [6, 8]
 					}
 				]
 			}
@@ -285,8 +269,8 @@ Part : /BASE_PART
 				DamageLevels
 				[
 					{
-						File = "lights.png"
-						Size = [2, 3]
+						File = "../deathstar_superlaser/lights-r[3,4].png"
+						Size = [6, 8]
 					}
 				]
 			}
@@ -296,16 +280,16 @@ Part : /BASE_PART
 				DamageLevels
 				[
 					{
-						File = "walls.png"
-						Size = [2, 3]
+						File = "walls01[6,8].png"
+						Size = [6, 8]
 					}
 					{
-						File = "walls_33.png"
-						Size = [2, 3]
+						File = "walls01[6,8]_33.png"
+						Size = [6, 8]
 					}
 					{
-						File = "walls_66.png"
-						Size = [2, 3]
+						File = "walls01[6,8]_66.png"
+						Size = [6, 8]
 					}
 				]
 			}
@@ -316,303 +300,650 @@ Part : /BASE_PART
 				[
 					{
 						File = "roof.png"
-						Size = [2, 3]
+						Size = [6, 8]
 					}
 					{
 						File = "roof_33.png"
-						Size = [2, 3]
+						Size = [6, 8]
 					}
 					{
 						File = "roof_66.png"
-						Size = [2, 3]
+						Size = [6, 8]
 					}
 				]
 			}
-			OperationalRoofDoodad
+		}
+/*
+		CoreGraphics
+		{
+			Type = Graphics
+			Location = [3, 3.5]
+			OperationalToggle = IsOperational
+			Floor
 			{
-				Layer = "roof_doodads"
-				Offset = [0, -.5]
+				Layer = "doodads_high"
+				Offset = [-1.5, -1]
+				DamageLevels
+				[
+					{
+						File = "cannon_core_p1.png"
+						Size = [3, 5]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "doodads_high"
+				Offset = [1.5, -1]
+				DamageLevels
+				[
+					{
+						File = "cannon_core_p1.png"
+						Size = [3, 5]
+						MirrorU = true
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "doodads_low"
+				Offset = [0, 90/64]
+				DamageLevels
+				[
+					{
+						File = "power_core.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, -60/64]
 				DamageLevels
 				[
 					{
 						AnimationFiles
 						[
-							"roof_doodads_on1.png"
-							"roof_doodads_on2.png"
-							"roof_doodads_on3.png"
-							"roof_doodads_on4.png"
-							"roof_doodads_on5.png"
-							"roof_doodads_on6.png"
+							"core_flywheel01.png"
+							"core_flywheel02.png"
+							"core_flywheel03.png"
+							"core_flywheel04.png"
+							"core_flywheel05.png"
+							"core_flywheel06.png"
+							"core_flywheel07.png"
+							"core_flywheel08.png"
+							"core_flywheel09.png"
 						]
-						Size = [2, 2]
+						Size = [2, 1]
 						AnimationInterval = 0.1
+						AnimationStartTime = Zero
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, 90/64]
+				DamageLevels
+				[
+					{
+						File = "core_flywheel01.png"
+						Size = [2, 1]
+					}
+				]
+			}
+		}
+
+
+
+		BatterySpritesBottomRight
+		{
+			Type = AmmoSprites
+			Location = [3, 314/64]
+			AmmoStorage = BatteryStorage
+			Layer = "doodads_low"
+			HasZeroAmmoSprite = true
+			RangeLow = 0
+			RangeHigh = 41000
+			AmmoLevels
+			[
+				{
+					File = "power_indicator00.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator01.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator03.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator05.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator07.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator09.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator11.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator13.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator15.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator17.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator19.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator21.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator23.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator25.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator27.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator29.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator31.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator33.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator35.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator37.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator39.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator41.png"
+					Size = [2, 2]
+				}
+			]
+		}
+		BatterySpritesBottomLeft
+		{
+			Type = AmmoSprites
+			Location = [3, 314/64]
+			AmmoStorage = BatteryStorage
+			Layer = "doodads_low"
+			//HasZeroAmmoSprite = true
+			RangeLow = 1000
+			RangeHigh = 42000
+			AmmoLevels
+			[
+				{
+					File = "power_indicator00.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator02.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator04.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator06.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator08.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator10.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator12.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator14.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator16.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator18.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator20.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator22.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator24.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator26.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator28.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator30.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator32.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator34.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator36.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator38.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator40.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator42.png"
+					Size = [2, 2]
+				}
+			]
+		}
+
+		BatterySpritesTopRight //BatterySpritesBottomLeft
+		{
+			Type = AmmoSprites
+			Location = [3, 314/64]
+			AmmoStorage = BatteryStorage
+			Layer = "doodads_low"
+			//HasZeroAmmoSprite = true
+			RangeLow = 41000
+			RangeHigh = 83000
+			AmmoLevels
+			[
+				{
+					File = "power_indicator00.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator02.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator04.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator06.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator08.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator10.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator12.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator14.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator16.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator18.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator20.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator22.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator24.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator26.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator28.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator30.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator32.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator34.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator36.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator38.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator40.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "power_indicator42.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+			]
+		}
+
+		BatterySpritesTopLeft //BatterySpritesBottomLeft
+		{
+			Type = AmmoSprites
+			Location = [3, 314/64]
+			AmmoStorage = BatteryStorage
+			Layer = "doodads_low"
+			//HasZeroAmmoSprite = true
+			RangeLow = 42000
+			RangeHigh = 84000
+			AmmoLevels
+			[
+				{
+					File = "power_indicator00.png"
+					Size = [2, 2]
+				}
+				{
+					File = "power_indicator02.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator04.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator06.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator08.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator10.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator12.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator14.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator16.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator18.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator20.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator22.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator24.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator26.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator28.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator30.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator32.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator34.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator36.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator38.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator40.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "power_indicator42.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+			]
+		}
+
+		ConsoleGraphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+
+			Location = [3, 3.5]
+			//DoodadToggle = PowerToggle
+			//ShowToggledDoodadsWhenNotOperational = true
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [-2.078125, 0]; // [.921875, 0];
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../deathstar_superlaser/SW_console01_on1.png"
+							"../deathstar_superlaser/SW_console01_on2.png"
+							"../deathstar_superlaser/SW_console01_on3.png"
+						]
+						UVRotation = 1
+						Size = [1, 2]
+						AnimationInterval = 0.125
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [-2.078125, 0];
+				DamageLevels
+				[
+					{
+						File = "../deathstar_superlaser/SW_console01_off.png"
+						UVRotation = 1
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [2.078125, 0]; // [5.078125, 0];
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../deathstar_superlaser/SW_console01_on1.png"
+							"../deathstar_superlaser/SW_console01_on2.png"
+							"../deathstar_superlaser/SW_console01_on3.png"
+						]
+						UVRotation = 3
+						Size = [1, 2]
+						AnimationInterval = 0.125
 					}
 				]
 			}
 			NonOperationalRoofDoodad
 			{
-				Layer = "roof_doodads"
-				Offset = [0, -.5]
+				Layer = "doodads_low"
+				Offset = [2.078125, 0];
 				DamageLevels
 				[
 					{
-						File = "roof_doodads_off.png"
-						Size = [2, 2]
-					}
-				]
-			}
-			OperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				Offset = [0, .5]
-				DamageLevels
-				[
-					{
-						File = "roof_windows_on.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_on_33.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_on_66.png"
-						Size = [2, 2]
-					}
-				]
-			}
-			NonOperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				Offset = [0, .5]
-				DamageLevels
-				[
-					{
-						File = "roof_windows_off.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_off_33.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_off_66.png"
-						Size = [2, 2]
+						File = "../deathstar_superlaser/SW_console01_off.png"
+						UVRotation = 3
+						Size = [1, 2]
 					}
 				]
 			}
 		}
 */
 
-/*
-		BatterySprites
-		{
-			Type = AmmoSprites
-			Location = [3, 6.7421875]
-			AmmoStorage = BatteryStorage
-			Layer = "doodads_low"
-			HasZeroAmmoSprite = true
-			AmmoLevels
-			[
-				{
-					File = "power_indicator00.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator01.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator02.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator03.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator04.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator05.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator06.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator07.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator08.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator09.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator10.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator11.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator12.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator13.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator14.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator15.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator16.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator17.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator18.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator19.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator20.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator21.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator22.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator23.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator24.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator25.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator26.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator27.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator28.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator29.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator30.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator31.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator32.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator33.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator34.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator35.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator36.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator37.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator38.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator39.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator40.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator41.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator42.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator43.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator44.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator45.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator46.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator47.png"
-					Size = [3, .5]
-				}
-				{
-					File = "power_indicator48.png"
-					Size = [3, .5]
-				}
-			]
-		}
-*/
+//-----------------------------------------------------------------------------
+
 		OperationEffects
 		{
 			Type = ToggleEffects
@@ -663,7 +994,7 @@ Part : /BASE_PART
 			[
 				: /BASE_SOUNDS/AudioExterior
 				{
-					Sound = "shoot.wav"
+					Sound = "../deathstar_superlaser/DS_Superlaser_3.wav"
 					Volume = 2
 					SpeedVariation = .25
 				}
