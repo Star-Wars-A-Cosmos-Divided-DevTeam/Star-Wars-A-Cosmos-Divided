@@ -188,6 +188,50 @@ Part : /BASE_PART
 			}
 			ComponentID = BulletEmitter
 		}
+
+//-----------------------------------------------------------------------------
+		AutoFireToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = WeaponTrigger
+			OffTrigger = EmitTrigger
+			OperationalToggle = IsOperational
+		}
+
+		Weapon
+		{
+			Type = FixedWeapon
+			Location = [3, -0.1]// Relative to upper-left corner of unrotated part.
+			Rotation = -90d// Relative to unrotated part.
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = .2
+			AIFirepowerRating = 3000
+			Emitter = BeamEmitter
+
+			FirePermissionToggle = IsOperational
+
+			AutoTarget
+			{
+				TargetType = ShipParts
+				Toggle = AutoFireToggle
+			}
+		}
+
+
+		BeamEmitter : &/COMMON_SHOTS/SuperLaserBeamGreen/SuperLaser_beam_green
+		{
+			Type = BeamEmitter
+			ChainedTo = Weapon
+			FireTrigger = Weapon
+			GetTargetFrom = Weapon
+			OperationalToggle = IsOperational
+			SourceShipCollisions = false  //roof shot
+
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 2000 //{ BaseValue=2000; BuffType=DSLaserBuff; BuffMode=Multiply; }
+		}
+
 //-----------------------------------------------------------------------------
 
 		CrewLocation1
