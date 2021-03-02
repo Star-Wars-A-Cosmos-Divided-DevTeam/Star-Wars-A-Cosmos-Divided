@@ -63,7 +63,7 @@ Part : /BASE_PART
 			ShowProgressFor = SwitchCooldownTimer
 			Invert = true
 			OperationalToggle = SwitchCooldownTimer
-			InvertOperationalToggle = true
+			//InvertOperationalToggle = true
 		}
 
 		SwitchCooldownTimer
@@ -73,14 +73,28 @@ Part : /BASE_PART
 			AutoStart = false
 			Repeats = false
 			StartsOn = 0
-			ResetTrigger = SwitchCooldownTrigger
+			ResetTrigger = CommonCooldownResetTrigger //SwitchCooldownTrigger
+			TriggerWhenStarted = true
+			OperationalToggle = IsOperational
 		}
-		
+		CooldownInititalTrigger
+		{
+			Type = Timer
+			Duration = 0.0333
+			AutoStart = true
+			Repeats = false
+			//TriggerWhenStarted = true
+		}
 		SwitchCooldownTrigger
 		{
 			Type = ToggleTrigger
 			Toggle = MunitionType
 		}	
+		CommonCooldownResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [CooldownInititalTrigger,SwitchCooldownTrigger]
+		}
 
 		PowerToggle
 		{
