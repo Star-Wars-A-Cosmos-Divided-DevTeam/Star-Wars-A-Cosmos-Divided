@@ -53,30 +53,33 @@ Part : /BASE_PART
 		WeaponIsOperational
 		{
 			Type = MultiToggle
-			Toggles = [IsOperational, SwitchCooldownToggle]
+			Toggles = [IsOperational, SwitchCooldownTimer]
 			Mode = All
 		}
 
-		SwitchTimerTrigger
-		{
-			Type = Timer
-			Duration = 4
-			AutoStart = true
-			Repeats = false
-		}
 		SwitchTimerProgressBar
 		{
 			Type = ProgressBar
-			ShowProgressFor = SwitchTimerTrigger
+			ShowProgressFor = SwitchCooldownTimer
 			Invert = true
-			OperationalToggle = SwitchCooldownToggle
+			OperationalToggle = SwitchCooldownTimer
 			InvertOperationalToggle = true
 		}
-		SwitchCooldownToggle
+
+		SwitchCooldownTimer
 		{
-			Type = TriggeredToggle
-			OnTrigger = SwitchTimerTrigger
-			StartsOn = false
+			Type = Timer
+			Duration = 4
+			AutoStart = false
+			Repeats = false
+			StartsOn = 0
+			ResetTrigger = SwitchCooldownTrigger
+		}
+		
+		SwitchCooldownTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = MunitionType
 		}	
 
 		PowerToggle
@@ -105,6 +108,7 @@ Part : /BASE_PART
 			Type = UIToggle
 			ToggleID = "SW.munition_type"
 			Default = 0
+			ToggledOnChoices = [0,1,2]
 			AlwaysAllowInBuildMode = true
 		}
 		RedMunitionToggle
@@ -151,7 +155,7 @@ Part : /BASE_PART
 		{
 			Type = UIToggle
 			ToggleID = "SW.exterior_type"
-			Default = 2
+			Default = 0
 			ToggledOnChoices = [0,1]
 			AlwaysAllowInBuildMode = true
 		}
@@ -634,21 +638,21 @@ Part : /BASE_PART
 
 	Stats
 	{
-		/*CrewRequired = &~/Part/Components/PartCrew/Crew
+		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
 
 		RecPower = (&PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 3 / (&<small_triple_turbolaser_red.txt>/Components/Turret/FireInterval)
-		Range = &<small_triple_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Range
-		Arc = deg(&<small_triple_turbolaser_red.txt>/Components/Turret/FiringArc)
-		TurretSpeed = deg(&<small_triple_turbolaser_red.txt>/Components/Turret/RotateSpeed)
-		ShotSpeed = &<small_triple_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Speed
-		ShotHP = &<small_triple_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
-		PowerPerShot = (&<small_triple_turbolaser_red.txt>/Components/BulletEmitterBase/AmmoUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * 3 / (&<small_triple_turbolaser_red.txt>/Components/Turret/FireInterval)
-		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]*/
+		ROF = 3 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
+		ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+		PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	StatsByCategory
 	[
