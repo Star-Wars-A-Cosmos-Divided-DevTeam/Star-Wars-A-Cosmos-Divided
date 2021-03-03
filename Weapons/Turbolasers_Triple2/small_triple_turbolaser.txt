@@ -56,14 +56,34 @@ Part : /BASE_PART
 			Toggles = [IsOperational, CooldownToggle]
 			Mode = All
 		}
+	
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
 
-		SwitchTimerProgressBar
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+
+		CooldownProgressBar
 		{
 			Type = ProgressBar
+			OperationalToggle = SwitchCooldownTimer
 			ShowProgressFor = SwitchCooldownTimer
 			Invert = true
-			OperationalToggle = SwitchCooldownTimer
-			//InvertOperationalToggle = true
 		}
 
 		CooldownToggle //is inversed
@@ -96,14 +116,13 @@ Part : /BASE_PART
 			Repeats = false
 			//TriggerWhenStarted = true
 		}
-/*
-//never worked
-		SwitchCooldownTrigger
+
+		CommonCooldownResetTrigger
 		{
-			Type = ToggleTrigger
-			Toggle = MunitionType
+			Type = MultiTrigger
+			Triggers = [SwitchCooldownTrigger] //[SwitchCooldownTrigger,ExteriorTypeTrigger]
 		}
-*/
+
 		SwitchCooldownTrigger
 		{
 			Type = ModeTrigger
@@ -118,40 +137,6 @@ Part : /BASE_PART
 			TriggerInModes = [0,1]
 		}
 */
-		CommonCooldownResetTrigger
-		{
-			Type = MultiTrigger
-			Triggers = [SwitchCooldownTrigger] //[SwitchCooldownTrigger,ExteriorTypeTrigger]
-		}
-		CooldownProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = SwitchCooldownTimer
-			Invert = true
-		}
-
-		PowerToggle
-		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-		}
-
-		FireModeToggle
-		{
-			Type = UIToggle
-			ToggleID = "fire_mode"
-			Default = 1
-			ToggledOnChoices = [0, 1, 2]
-		}
-		AutoTargetToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnModes = [1, 2]
-		}
-
 		MunitionType
 		{
 			Type = UIToggle
@@ -209,13 +194,13 @@ Part : /BASE_PART
 			ToggledOnChoices = [0,1]
 			AlwaysAllowInBuildMode = true
 		}
+		
 		WhiteExteriorToggle
 		{
 			Type = ModeToggle
 			Mode = ExteriorType
 			OnMode = 0
 		}
-
 		WhiteExteriorComponents
 		{
 			Type = ToggledComponents
