@@ -18,9 +18,10 @@ Part : /BASE_PART
 	PenetrationRectType = Normal
 	AllowedDoorLocations
 	[
-		[1, -1]
 		[-1, 1]
+		[-1, 2]
 		[3, 1]
+		[3, 2]
 		[1, 3]
 	]
 
@@ -50,6 +51,13 @@ Part : /BASE_PART
 			Mode = All
 		}
 
+		WeaponIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, CooldownToggle]
+			Mode = All
+		}
+	
 		PowerToggle
 		{
 			Type = UIToggle
@@ -71,13 +79,76 @@ Part : /BASE_PART
 			OnModes = [1, 2]
 		}
 
+		CooldownProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = SwitchCooldownTimer
+			InvertOperationalToggle = true
+			ShowProgressFor = SwitchCooldownTimer
+			Invert = true
+		}
+
+		CooldownToggle //is inversed
+		{
+			Type = TriggeredToggle
+			OnTrigger = CooldownTrigger
+			OffTrigger = CommonCooldownResetTrigger
+			//OperationalToggle = IsOperational
+		}
+
+		SwitchCooldownTimer
+		{
+			Type = Timer
+			Duration = 4
+			AutoStart = true
+			Repeats = false
+			StartsOn = 0
+			StartTrigger = CommonCooldownResetTrigger
+		}
+
+		CooldownTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [CooldownInititalTrigger,SwitchCooldownTimer]
+		}
+		CooldownInititalTrigger
+		{
+			Type = Timer
+			Duration = 0.0333
+			AutoStart = true
+			Repeats = false
+			//TriggerWhenStarted = true
+		}
+
+		CommonCooldownResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [SwitchCooldownTrigger] //[SwitchCooldownTrigger,ExteriorTypeTrigger]
+		}
+
+		SwitchCooldownTrigger
+		{
+			Type = ModeTrigger
+			Mode = MunitionType
+			TriggerInModes = [0,1,2]
+		}
+/*
+		ExteriorTypeTrigger
+		{
+			Type = ModeTrigger
+			Mode = ExteriorType
+			TriggerInModes = [0,1]
+		}
+*/
 		MunitionType
 		{
 			Type = UIToggle
 			ToggleID = "SW.munition_type"
 			Default = 0
+			ToggledOnChoices = [0,1,2]
 			AlwaysAllowInBuildMode = true
 		}
+
 		RedMunitionToggle
 		{
 			Type = ModeToggle
@@ -122,10 +193,11 @@ Part : /BASE_PART
 		{
 			Type = UIToggle
 			ToggleID = "SW.exterior_type"
-			Default = 2
+			Default = 0
 			ToggledOnChoices = [0,1]
 			AlwaysAllowInBuildMode = true
 		}
+		
 		WhiteExteriorToggle
 		{
 			Type = ModeToggle
@@ -151,6 +223,103 @@ Part : /BASE_PART
 			Toggle = GreyExteriorToggle
 			IncludeInBlueprints = false
 			Components = &<small_triple_turbolaser_grey.txt>/Components
+		}
+
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [1.5, 1.5]
+			Rotation = -90d// Relative to unrotated part.
+			OperationalToggle = WeaponIsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 1
+			FireDelay = .15
+			FiringArc = 130d
+			RotateSpeed = 180d
+			FireThresholdAngle = 1d
+			TargetSearchTriesPerFrame = 1
+			AIFirepowerRating = 1600
+			FirePermissionToggle = FireModeToggle
+			Emitter = BulletEmitterBase
+            		IgnoreSourceShipLOSChecks = true
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		BulletEmitterBase
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger
+			GetTargetFrom = Turret
+			Location = [1, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/redtriplelasershot
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 130
+		}
+		
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = WeaponIsOperational
+			ShowProgressFor = Turret
+		}
+
+		ChargeEffectBase
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterBase
+			Trigger = Turret
+			AnchorMediaEffects = true
+		
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/LaserRecharge
+			]
+		}
+
+		FireEffectBase
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterBase
+			Trigger = Turret
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .8
+			Density = 1.5
 		}
 
 
@@ -202,7 +371,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "lights.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 				]
 			}
@@ -218,7 +387,7 @@ Part : /BASE_PART
 							"console on2.png"
 							"console on3.png"
 						]
-						Size = [2, 2]
+						Size = [3, 3]
 						AnimationInterval = 0.50
 					}
 				]
@@ -230,7 +399,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "console off.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 				]
 			}
@@ -297,13 +466,13 @@ Part : /BASE_PART
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [1.05, 1.1]
+			Location = [0.81, 0.92]
 			Rotation = 180d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
-			Location = [1.95, 1.1]
+			Location = [2.19, 0.92]
 			Rotation = 180d
 		}
 		PartCrew
@@ -514,14 +683,14 @@ Part : /BASE_PART
 		RecPower = (&PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 3 / (&<small_triple_turbolaser_red.txt>/Components/Turret/FireInterval)
-		Range = &<small_triple_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Range
-		Arc = deg(&<small_triple_turbolaser_red.txt>/Components/Turret/FiringArc)
-		TurretSpeed = deg(&<small_triple_turbolaser_red.txt>/Components/Turret/RotateSpeed)
-		ShotSpeed = &<small_triple_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Speed
-		ShotHP = &<small_triple_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
-		PowerPerShot = (&<small_triple_turbolaser_red.txt>/Components/BulletEmitterBase/AmmoUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * 3 / (&<small_triple_turbolaser_red.txt>/Components/Turret/FireInterval)
+		ROF = 3 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
+		ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+		PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	StatsByCategory

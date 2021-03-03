@@ -1,84 +1,6 @@
 Components
 	{
-		SwitchTimerTrigger
-		{
-			Type = Timer
-			Duration = 4
-			AutoStart = true
-			Repeats = false
-		}
-		SwitchTimerProgressBar
-		{
-			Type = ProgressBar
-			ShowProgressFor = SwitchTimerTrigger
-			Invert = true
-			OperationalToggle = SwitchCooldownToggle
-			InvertOperationalToggle = true
-		}
-		SwitchCooldownToggle
-		{
-			Type = TriggeredToggle
-			OnTrigger = SwitchTimerTrigger
-			StartsOn = false
-		}
-		WeaponIsOperational
-		{
-			Type = MultiToggle
-			Toggles = [IsOperational, SwitchCooldownToggle]
-			Mode = All
-		}	
-	
-		Turret
-		{
-			Type = TurretWeapon
-			Location = [1.5, 1.5]
-			Rotation = -90d// Relative to unrotated part.
-			OperationalToggle = WeaponIsOperational
-			AutoFireToggle = AutoFireToggle
-			FireInterval = 1
-			FireDelay = .15
-			FiringArc = 130d
-			RotateSpeed = 180d
-			FireThresholdAngle = 1d
-			TargetSearchTriesPerFrame = 1
-			AIFirepowerRating = 1600
-			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitterBase
-            		IgnoreSourceShipLOSChecks = true
-
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = WeaponIsOperational
-			ShowProgressFor = Turret
-		}
-
-		BulletEmitterBase
+		BulletEmitterRed
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
@@ -91,51 +13,25 @@ Components
 			AmmoUsed = 130
 		}
 
-		BulletEmitterLeft : BulletEmitterBase
+		BulletEmitterLeft : BulletEmitterRed
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.05, -0.2]
+			Location = [1.52, -0.3]//[1.05, -0.2]
 		}
 
-		BulletEmitterMid : BulletEmitterBase
+		BulletEmitterMid : BulletEmitterRed
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.05, 0]
+			Location = [1.52, 0]//[1.05, 0]
 		}
 
-		BulletEmitterRight : BulletEmitterBase
+		BulletEmitterRight : BulletEmitterRed
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.05, 0.2]
-		}
-
-		ChargeEffectBase
-		{
-			Type = TriggeredEffects
-			ChainedTo = BulletEmitterBase
-			Trigger = Turret
-			AnchorMediaEffects = true
-		
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/LaserRecharge
-			]
-		}
-
-		FireEffectBase
-		{
-			Type = TriggeredEffects
-			ChainedTo = BulletEmitterBase
-			Trigger = BulletEmitterMid
-			AnchorMediaEffects = true
-	
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/TurbolaserSFX
-			]
+			Location = [1.52, 0.3]//[1.05, 0.2]
 		}
 
 		FireEffectMid
@@ -164,24 +60,17 @@ Components
 			Trigger = BulletEmitterRight
 		}
 
-		TurretCollider
-		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .8
-			Density = 1.5
-		}
 	}
 LaserStats
 {
 	NameKey = "StatCategories/TripleRedLasershot"
 	Stats
 	{
-		ShieldDamagePerShot = &~/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 3 / (&~/Components/Turret/FireInterval)
+		ShieldDamagePerShot = &~/Components/BulletEmitterRed/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<small_triple_turbolaser.txt>/Part/Stats/ROF)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = &~/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-		DamagePerSecond = (&DamagePerShot) * 3 / (&~/Components/Turret/FireInterval)
+		DamagePerShot = &~/Components/BulletEmitterRed/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&<small_triple_turbolaser.txt>/Part/Stats/ROF)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 	}
 }
