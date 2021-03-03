@@ -53,7 +53,7 @@ Part : /BASE_PART
 		WeaponIsOperational
 		{
 			Type = MultiToggle
-			Toggles = [IsOperational, SwitchCooldownTimer]
+			Toggles = [IsOperational, CooldownToggle]
 			Mode = All
 		}
 
@@ -63,7 +63,15 @@ Part : /BASE_PART
 			ShowProgressFor = SwitchCooldownTimer
 			Invert = true
 			OperationalToggle = SwitchCooldownTimer
-			InvertOperationalToggle = true
+			//InvertOperationalToggle = true
+		}
+
+		CooldownToggle //is inversed
+		{
+			Type = TriggeredToggle
+			OnTrigger = CooldownTrigger
+			OffTrigger = CommonCooldownResetTrigger
+			//OperationalToggle = IsOperational
 		}
 
 		SwitchCooldownTimer
@@ -72,15 +80,56 @@ Part : /BASE_PART
 			Duration = 4
 			AutoStart = false
 			Repeats = false
-			StartsOn = 0
-			ResetTrigger = SwitchCooldownTrigger
+			StartTrigger = CommonCooldownResetTrigger
 		}
-		
+
+		CooldownTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [CooldownInititalTrigger,SwitchCooldownTimer]
+		}
+		CooldownInititalTrigger
+		{
+			Type = Timer
+			Duration = 0.0333
+			AutoStart = true
+			Repeats = false
+			//TriggerWhenStarted = true
+		}
+/*
+//never worked
 		SwitchCooldownTrigger
 		{
 			Type = ToggleTrigger
 			Toggle = MunitionType
-		}	
+		}
+*/
+		SwitchCooldownTrigger
+		{
+			Type = ModeTrigger
+			Mode = MunitionType
+			TriggerInModes = [0,1,2]
+		}
+/*
+		ExteriorTypeTrigger
+		{
+			Type = ModeTrigger
+			Mode = ExteriorType
+			TriggerInModes = [0,1]
+		}
+*/
+		CommonCooldownResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [SwitchCooldownTrigger] //[SwitchCooldownTrigger,ExteriorTypeTrigger]
+		}
+		CooldownProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = SwitchCooldownTimer
+			Invert = true
+		}
 
 		PowerToggle
 		{
@@ -111,6 +160,7 @@ Part : /BASE_PART
 			ToggledOnChoices = [0,1,2]
 			AlwaysAllowInBuildMode = true
 		}
+
 		RedMunitionToggle
 		{
 			Type = ModeToggle
@@ -165,6 +215,7 @@ Part : /BASE_PART
 			Mode = ExteriorType
 			OnMode = 0
 		}
+
 		WhiteExteriorComponents
 		{
 			Type = ToggledComponents
