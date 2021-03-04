@@ -3,7 +3,7 @@ Part : /BASE_PART
 	NameKey = "Parts/TripleTurbolaser"
 	IconNameKey = "Parts/TripleTurbolaserIcon"
 	ID = SW.small_triple_turbolaser
-	OtherIDs = ["small_triple_turbolaser"]
+	OtherIDs = ["small_triple_turbolaser","SW.small_triple_turbolaser_test"]
 	EditorGroup = "WeaponsEnergy"
 	DescriptionKey = "Parts/TripleTurbolaserDesc"
 	Cost = 10000
@@ -13,6 +13,7 @@ Part : /BASE_PART
 	Size = [3, 3]
 	SelectionPriority = 1.0
 	SelectionTypeByRotation = true
+	SelectionTypeID = "turbolaser"
 	MaxHealth = 5200
 	InitialPenetrationResistance = 6
 	PenetrationRectType = Normal
@@ -44,6 +45,13 @@ Part : /BASE_PART
 			OnMode = 2
 		}
 		
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		
 		IsOperational
 		{
 			Type = MultiToggle
@@ -71,12 +79,6 @@ Part : /BASE_PART
 			ToggleID = "fire_mode"
 			Default = 1
 			ToggledOnChoices = [0, 1, 2]
-		}
-		AutoTargetToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnModes = [1, 2]
 		}
 
 		CooldownProgressBar
@@ -162,6 +164,7 @@ Part : /BASE_PART
 			IncludeInBlueprints = true
 			Components = &<small_triple_turbolaser_red.txt>/Components
 		}
+
 		BlueMunitionToggle
 		{
 			Type = ModeToggle
@@ -175,6 +178,7 @@ Part : /BASE_PART
 			IncludeInBlueprints = true
 			Components = &<small_triple_turbolaser_blue.txt>/Components
 		}
+
 		GreenMunitionToggle
 		{
 			Type = ModeToggle
@@ -211,6 +215,7 @@ Part : /BASE_PART
 			IncludeInBlueprints = false
 			Components = &<small_triple_turbolaser_white.txt>/Components
 		}
+
 		GreyExteriorToggle
 		{
 			Type = ModeToggle
@@ -504,23 +509,23 @@ Part : /BASE_PART
 			[
 				{
 					File = "batteries1.png"
-					Size = [2, 2]
+					Size = [3, 3]
 				}
 				{
 					File = "batteries2.png"
-					Size = [2, 2]
+					Size = [3, 3]
 				}
 				{
 					File = "batteries3.png"
-					Size = [2, 2]
+					Size = [3, 3]
 				}
 				{
 					File = "batteries4.png"
-					Size = [2, 2]
+					Size = [3, 3]
 				}
 				{
 					File = "batteries5.png"
-					Size = [2, 2]
+					Size = [3, 3]
 				}
 			]
 		}
@@ -683,7 +688,8 @@ Part : /BASE_PART
 		RecPower = (&PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 3 / (&~/Part/Components/Turret/FireInterval)
+		Barrels = 3
+		ROF = (&~/Part/Stats/Barrels) / (&~/Part/Components/Turret/FireInterval)
 		Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/Part/Components/Turret/FiringArc)
 		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)

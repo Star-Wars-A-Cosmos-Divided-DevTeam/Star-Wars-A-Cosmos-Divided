@@ -6,32 +6,39 @@ Components
 			ChainedTo = Turret
 			FireTrigger
 			GetTargetFrom = Turret
-			Location = [2, 0]
+			Location = [1.5, 0]
 			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/bluemedlasershot
+			Bullet = &/COMMON_SHOTS/bluetriplelasershot
 			AmmoStorage = BatteryStorage
-			AmmoUsed = 250
+			AmmoUsed = 130
 		}
 
 		BulletEmitterLeft : BulletEmitterBlue
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.4, 0.3]
+			Location = [1.52, -0.3]//[1.05, -0.2]
+		}
+
+		BulletEmitterMid : BulletEmitterBlue
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.52, 0]//[1.05, 0]
 		}
 
 		BulletEmitterRight : BulletEmitterBlue
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.4, -0.3]
+			Location = [1.52, 0.3]//[1.05, 0.2]
 		}
 
-		FireEffectLeft
+		FireEffectMid
 		{
 			Type = TriggeredEffects
-			ChainedTo = BulletEmitterLeft
-			Trigger = BulletEmitterLeft
+			ChainedTo = BulletEmitterMid
+			Trigger = BulletEmitterMid
 			AnchorMediaEffects = true
 	
 			MediaEffects
@@ -40,22 +47,30 @@ Components
 			]
 		}
 
-		FireEffectRight : FireEffectLeft
+		FireEffectLeft : FireEffectMid
+		{
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+		}
+
+
+		FireEffectRight : FireEffectMid
 		{
 			ChainedTo = BulletEmitterRight
 			Trigger = BulletEmitterRight
 		}
+
 	}
 LaserStats
 {
-	NameKey = "StatCategories/MedBlueLasershot"
+	NameKey = "StatCategories/TripleBlueLasershot"
 	Stats
 	{
 		ShieldDamagePerShot = &~/Components/BulletEmitterBlue/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<med_turbolaser_switchable.txt>/Part/Stats/ROF)
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<small_triple_turbolaser.txt>/Part/Stats/ROF)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 		DamagePerShot = &~/Components/BulletEmitterBlue/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-		DamagePerSecond = (&DamagePerShot) * (&<med_turbolaser_switchable.txt>/Part/Stats/ROF)
+		DamagePerSecond = (&DamagePerShot) * (&<small_triple_turbolaser.txt>/Part/Stats/ROF)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 	}
 }
