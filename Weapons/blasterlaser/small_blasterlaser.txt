@@ -44,18 +44,41 @@ Part : /BASE_PART
 	
 	Components : ^/0/Components
 	{
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+		
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+
 		IsOperational
 		{
 			Type = MultiToggle
 			Toggles = [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
+		
+		WeaponIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, SwitchCooldownTimer]
+			Mode = All
+		}
+
 		PowerToggle
 		{
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
 		}
+
 		FireModeToggle
 		{
 			Type = UIToggle
@@ -63,65 +86,86 @@ Part : /BASE_PART
 			Default = 1
 			ToggledOnChoices = [0, 1, 2]
 		}
-		AutoTargetToggle
+
+		CooldownProgressBar
 		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnModes = [1, 2]
-		}
-		AutoFireToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnMode = 2
+			Type = ProgressBar
+			OperationalToggle = SwitchCooldownTimer
+			InvertOperationalToggle = true
+			ShowProgressFor = SwitchCooldownTimer
+			Invert = true
 		}
 
-		LaserType
+		SwitchCooldownTimer
+		{
+			Type = Timer
+			Duration = 2.7
+			AutoStart = true
+			Repeats = false
+			StartsOn = 0
+			StartTrigger = CommonCooldownResetTrigger
+		}
+
+		CommonCooldownResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [SwitchCooldownTrigger]
+		}
+
+		SwitchCooldownTrigger
+		{
+			Type = ModeTrigger
+			Mode = MunitionType
+			TriggerInModes = [0,1,2]
+		}
+
+		MunitionType
 		{
 			Type = UIToggle
-			ToggleID = "SW.blasterlaser_type"
+			ToggleID = "SW.munition_type"
 			Default = 0
+			ToggledOnChoices = [0,1,2]
 			AlwaysAllowInBuildMode = true
 		}
 
-		LaserRedToggle
+		RedMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = LaserType
+			Mode = MunitionType
 			OnMode = 0
 		}
-		LaserRedComponents
+		RedMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = LaserRedToggle
+			Toggle = RedMunitionToggle
 			IncludeInBlueprints = true
 			Components = &<red_blasterlaser.txt>/Components
 		}
 
-		LaserBlueToggle
+		BlueMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = LaserType
+			Mode = MunitionType
 			OnMode = 1
 		}
-		LaserBlueComponents
+		BlueMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = LaserBlueToggle
+			Toggle = BlueMunitionToggle
 			IncludeInBlueprints = true
 			Components = &<blue_blasterlaser.txt>/Components
 		}
 
-		LaserGreenToggle
+		GreenMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = LaserType
+			Mode = MunitionType
 			OnMode = 2
 		}
-		LaserGreenComponents
+		GreenMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = LaserGreenToggle
+			Toggle = GreenMunitionToggle
 			IncludeInBlueprints = true
 			Components = &<green_blasterlaser.txt>/Components
 		}
@@ -280,6 +324,145 @@ Part : /BASE_PART
 			}
 		}
 
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [.5, 0.66]// Relative to upper-left corner of unrotated part.
+			Rotation = -90d// Relative to unrotated part.
+			OperationalToggle = WeaponIsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = .25
+			FireDelay = .03
+			FiringArc = 200d
+			RotateSpeed = 90d
+			FireThresholdAngle = 1d
+			TargetSearchTriesPerFrame = 1
+			AIFirepowerRating = 400
+			FirePermissionToggle = FireModeToggle
+			Emitter = BulletEmitterBase
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = WeaponIsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitterBase
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger
+			GetTargetFrom = Turret
+			Location = [1, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/redsmalllasershot
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 50
+		}
+
+		ChargeEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = Turret
+			Location = [1.1, 0]
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/SmallLaserCharge
+			]
+		}
+
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .45
+			Density = .75
+		}
+
+		TurretGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [.5, 0]
+			Rotation = 90d
+			OperationalToggle = IsOperational
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						// None.
+					}
+					{
+						File = "turret damage_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "turret damage_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+
+		WeaponSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [.5, 0]
+			Rotation = 90d
+			Layer = "weapons"
+			ResetAnimationTrigger = Turret
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"blaster/weapon2.png"
+					"blaster/weapon3.png"
+					"blaster/weapon4.png"
+					"blaster/weapon5.png"
+					"blaster/weapon6.png"
+					"blaster/weapon7.png"
+					"blaster/weapon8.png"
+					"blaster/weapon1.png"// Loop back to beginning and clamp there.
+				]
+				Size = [1, 2]
+				AnimationInterval = 0.05
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+
 		BatteryStorage
 		{
 			Type = AmmoStorage
@@ -428,7 +611,7 @@ Part : /BASE_PART
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.blasterlaser_type
+				ToggleID = SW.munition_type
 				Mode = 0
 			}
 		}
@@ -440,7 +623,7 @@ Part : /BASE_PART
 			Offset = [0, -0.5]
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.blasterlaser_type
+				ToggleID = SW.munition_type
 				Mode = 1
 			}
 		}
@@ -453,7 +636,7 @@ Part : /BASE_PART
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.blasterlaser_type
+				ToggleID = SW.munition_type
 				Mode = 2
 			}
 		}
@@ -466,14 +649,14 @@ Part : /BASE_PART
 		RecPower = 2
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 		
-		ROF = 1 / (&<red_blasterlaser.txt>/Components/Turret/FireInterval)
-		Range = &<red_blasterlaser.txt>/Components/BulletEmitter/Bullet/Range
-		Arc = deg(&<red_blasterlaser.txt>/Components/Turret/FiringArc)
-		TurretSpeed = deg(&<red_blasterlaser.txt>/Components/Turret/RotateSpeed)
-		ShotSpeed = &<red_blasterlaser.txt>/Components/BulletEmitter/Bullet/Speed
-		ShotHP = &<red_blasterlaser.txt>/Components/BulletEmitter/Bullet/Components/Targetable/Health
-		PowerPerShot = (&<red_blasterlaser.txt>/Components/BulletEmitter/AmmoUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) / (&<red_blasterlaser.txt>/Components/Turret/FireInterval)
+		ROF = 1 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
+		ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+		PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	StatsByCategory
