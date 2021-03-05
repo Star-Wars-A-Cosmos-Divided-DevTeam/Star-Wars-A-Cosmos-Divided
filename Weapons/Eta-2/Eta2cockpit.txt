@@ -149,18 +149,19 @@ Part : /BASE_PART
 		Turret
 		{
 			Type = TurretWeapon
-			OperationalToggle = IsOperational
-			AutoFireToggle = AutoFireToggle
 			Location = [0.5, 0.66]
 			Rotation = -90d
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
 			FireInterval = .30
 			FiringArc = 1d
 			FireDelay = .04
 			RotateSpeed = 90d
 			FireThresholdAngle = 1d
+			TargetSearchTriesPerFrame = 1
 			AIFirepowerRating = 500
 			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitter
+			Emitter = BulletEmitterBase
 
 			AutoTargets
 			[
@@ -187,6 +188,19 @@ Part : /BASE_PART
 			}
 		}
 
+		BulletEmitterBase
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = 
+			GetTargetFrom = Turret
+			Location = [2, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/blueeta2lasershot
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 40
+		}
+
 		ReloadProgressBar
 		{
 			Type = ProgressBar
@@ -194,25 +208,25 @@ Part : /BASE_PART
 			ShowProgressFor = Turret
 		}
 
-		BulletEmitter
+		BulletEmitterLeft : BulletEmitterBase
 		{
 			Type = BulletEmitter
-			ChainedTo = Turret
 			FireTrigger = Turret
-			GetTargetFrom = Turret
-			Location = [3, 0.5]
-			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/blueeta2lasershot
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 40
+			Location = [1.4, 0.3]
 		}
 
-		ChargeEffect
+		BulletEmitterRight : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.4, -0.3]
+		}
+
+		ChargeEffectBase
 		{
 			Type = TriggeredEffects
-			ChainedTo = Turret
+			ChainedTo = BulletEmitterBase
 			Trigger = Turret
-			Location = [2.92, 0]
 			AnchorMediaEffects = true
 
 			MediaEffects
@@ -221,21 +235,38 @@ Part : /BASE_PART
 			]
 		}
 
-		FireEffect
+		FireEffectBase
 		{
 			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [3, 0]
+			ChainedTo = BulletEmitterBase
+			Trigger = Turret
 			AnchorMediaEffects = true
 
 			MediaEffects
 			[
-				&/COMMON_PARTICLES/BlueLaserShoot
-				
 				&/COMMON_SOUNDS/Eta2SFX
 			]
 		}
+
+		FireEffectLeft
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/BlueLaserShoot
+			]
+		}
+
+		FireEffectRight : FireEffectLeft
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = BulletEmitterRight
+		}
+
 		TurretCollider
 		{
 			Type = CircleCollider
@@ -243,7 +274,8 @@ Part : /BASE_PART
 			Radius = .1
 			Density = .75
 		}
-				WeaponSprite
+		
+		WeaponSprite
 		{
 			Type = Sprite
 			ChainedTo = Turret
@@ -296,7 +328,7 @@ Part : /BASE_PART
 						AnimationFiles
 						[
 							"on.png"
-                                                                                                             "on10.png"
+                        	"on10.png"
 ]
 						Size = [1, 2]
 						AnimationInterval = 0.100
