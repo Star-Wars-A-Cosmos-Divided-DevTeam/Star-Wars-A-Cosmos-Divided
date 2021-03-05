@@ -149,7 +149,7 @@ Part : /BASE_PART
 		Turret
 		{
 			Type = TurretWeapon
-			Location = [0.5, 0.66]
+			Location = [0.5, 0.5]
 			Rotation = -90d
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
@@ -194,7 +194,7 @@ Part : /BASE_PART
 			ChainedTo = Turret
 			FireTrigger 
 			GetTargetFrom = Turret
-			Location = [2, 0]
+			Location = [0.5, 0]
 			OperationalToggle = IsOperational
 			Bullet = &/COMMON_SHOTS/blueeta2lasershot
 			AmmoStorage = BatteryStorage
@@ -212,14 +212,14 @@ Part : /BASE_PART
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.4, 0.3]
+			Location = [3.2, 0.245]
 		}
 
 		BulletEmitterRight : BulletEmitterBase
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.4, -0.3]
+			Location = [3.2, -0.245]
 		}
 
 		ChargeEffectBase
@@ -240,6 +240,7 @@ Part : /BASE_PART
 			Type = TriggeredEffects
 			ChainedTo = BulletEmitterBase
 			Trigger = Turret
+			Location = [3, 0]
 			AnchorMediaEffects = true
 
 			MediaEffects
@@ -282,7 +283,7 @@ Part : /BASE_PART
 			Location = [2, 0]
 			Rotation = 90d
 			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitter
+			ResetAnimationTrigger = Turret
 			AtlasSprite
 			{
 				AnimationFiles
@@ -463,16 +464,27 @@ Part : /BASE_PART
 
 		RecPower = &PowerUsageContinuous
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		Barrels = 2
+		ROF = (&~/Part/Stats/Barrels) / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
+		ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+		PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 LaserStats
 {
 	NameKey = "StatCategories/SingleRedLasershot"
 	Stats
 	{
-		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerShot = &~/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
 		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerShot = &~/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
 		DamagePerSecond = (&DamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 	}
