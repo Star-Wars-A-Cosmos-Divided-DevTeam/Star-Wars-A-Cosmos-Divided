@@ -319,14 +319,33 @@ Part : /BASE_PART
 			Size = [6, 6]
 		}
 	}
-/*
+
 	Stats
 	{
-		
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
+
+		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecCrew = (&RecPower) * 4	
 	}
 
 	StatsByCategory
 	[
+		{
+			NameKey = "StatCategories/MissileEMP"
+			Stats
+			{
+				PowerDrainPerShot = (&~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/TotalDrain) / 1000
+				PowerDrainPerSecond = (&PowerDrainPerShot) * (&ROF)
+				PowerDrainArea = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
+				PowerDrain = [&../PowerDrainPerShot, &../PowerDrainPerSecond]
+				ROF = 1 / (&~/Part/Components/Weapon/FireInterval)
+				Arc = deg(&~/Part/Components/Weapon/FiringArc)
+				Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
+				PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsage/0/AmmoUsed) / 1000
+				PowerPerSecond = (&PowerPerShot) * (&ROF)
+				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+			}
+		}
 	]
-*/
+
 }
