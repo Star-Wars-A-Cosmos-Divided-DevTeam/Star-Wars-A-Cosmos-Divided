@@ -40,14 +40,17 @@ Part : /BASE_PART
 	TypeCategories = [weapon, uses_power,DSLII,DSL_power,deathstarlaser_emitter]
 	ProhibitAbove = 2
 	ReceivableBuffs = [Railgun, DSLaserBuff, RailgunOperation]
+
+	ProhibitRects
+	[
+		[0, -8, 2, 4]
+		[2, -8, 2, 6]
+		[4, -8, 2, 4]
+	]
 	AllowedDoorLocations
 	[
 		[-1, 6]
-		[-1, 7]
 		[6, 6]
-		[6, 7]
-		[0, 8]
-		[5, 8]
 	]
 
 /*
@@ -177,7 +180,9 @@ Part : /BASE_PART
 		{
 			Type = AmmoStorage
 			AmmoType = battery
-			MaxAmmo = 8000
+			MaxAmmo = 28000
+			ToggleOnAmmo = 28000
+			ToggleOffAmmo = 7000
 		}
 		BatteryConsumer
 		{
@@ -226,6 +231,22 @@ Part : /BASE_PART
 			}
 		}
 
+		AmmoProxy
+		{
+			Type = AmmoStorageProxy
+			AmmoType = battery
+			PartLocation = [0, 9]
+			PartCriteria
+			{
+				Category = DSL_ammo
+				Rot = 0
+				Left = 0
+				Right = 6
+				Top = 9
+			}
+			ComponentID = LoadedAmmo
+		}
+
 /*
 		CombinedBatteryStorageProxy
 		{
@@ -252,15 +273,16 @@ Part : /BASE_PART
 
 		Weapon
 		{
-			Type = FixedWeapon
-			Location = [3, 0]// Relative to upper-left corner of unrotated part.
+			Type = TurretWeapon
+			Location = [3, -0.01]// Relative to upper-left corner of unrotated part.
 			Rotation = -90d// Relative to unrotated part.
 			OperationalToggle = IsOperational
-			AutoFireToggle = AutoFireToggle
 			FireInterval = .2
+			FiringArc = 360d
+			RotateSpeed = 20d
+			FireThresholdAngle = 1d
 			AIFirepowerRating = 12000
 
-			Emitter = BeamEmitter
 			TargetingEmitter = BeamEmitter
 			SuppressWholeShipTargetOverlaysForPartsFilter = &FriendlyPrismFilter
 			SuppressWholeShipTargetOverlaysWhenTargetingShipRelativePoints = true
@@ -281,11 +303,13 @@ Part : /BASE_PART
 				OnlyPartCategories = [deathstarlaser_director]
 			}
 
-			AutoTarget
-			{
-				TargetType = ShipParts
-				Toggle = AutoTargetToggle
-			}
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
 
 			CoverageLine
 			{
@@ -339,31 +363,32 @@ Part : /BASE_PART
 
 
 
-/*
-		Graphics
+		GraphicsLeft
 		{
 			Type = Graphics
-			Location = [1, 2.5]
+			Location = [3, 4]
 			OperationalToggle = IsOperational
 			Floor
 			{
 				Layer = "floors"
+				Offset = [-2.5, 0]
 				DamageLevels
 				[
 					{
-						File = "floor.png"
-						Size = [2, 3]
+						File = "../deathstar_superlaser/floor_side_B.png"
+						Size = [1, 8]
 					}
 					{
-						File = "floor_33.png"
-						Size = [2, 3]
+						File = "../deathstar_superlaser/floor_side_B_33.png"
+						Size = [1, 8]
 					}
 					{
-						File = "floor_66.png"
-						Size = [2, 3]
+						File = "../deathstar_superlaser/floor_side_B_66.png"
+						Size = [1, 8]
 					}
 				]
 			}
+/*
 			OperationalDoodad
 			{
 				Layer = "weapons"
@@ -379,8 +404,7 @@ Part : /BASE_PART
 							"doodads_on5.png"
 							"doodads_on6.png"
 						]
-						Size = [2, 4]
-						Offset = [0, -0.5]
+						Size = [2, 3]
 						AnimationInterval = 0.1
 						AnimationStartTime = Zero
 					}
@@ -393,8 +417,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "doodads_off.png"
-						Size = [2, 4]
-						Offset = [0, -0.5]
+						Size = [2, 3]
 					}
 				]
 			}
@@ -409,25 +432,24 @@ Part : /BASE_PART
 					}
 				]
 			}
+*/
 			Walls
 			{
 				Layer = "walls"
+				Offset = [-2.5, 0]
 				DamageLevels
 				[
 					{
-						File = "walls.png"
-						Size = [2, 4]
-						Offset = [0, -0.5]
+						File = "wall_side_C.png"
+						Size = [1, 8]
 					}
 					{
-						File = "walls_33.png"
-						Size = [2, 4]
-						Offset = [0, -0.5]
+						File = "wall_side_C_33.png"
+						Size = [1, 8]
 					}
 					{
-						File = "walls_66.png"
-						Size = [2, 4]
-						Offset = [0, -0.5]
+						File = "wall_side_C_66.png"
+						Size = [1, 8]
 					}
 				]
 			}
@@ -438,23 +460,114 @@ Part : /BASE_PART
 				[
 					{
 						File = "roof.png"
-						Size = [2, 4]
-						Offset = [0, -0.5]
+						Size = [6, 8]
 					}
 					{
 						File = "roof_33.png"
-						Size = [2, 4]
-						Offset = [0, -0.5]
+						Size = [6, 8]
 					}
 					{
 						File = "roof_66.png"
-						Size = [2, 4]
-						Offset = [0, -0.5]
+						Size = [6, 8]
 					}
 				]
 			}
 		}
+
+		GraphicsRight
+		{
+			Type = Graphics
+			Location = [3, 4]
+			OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "floors"
+				Offset = [2.5, 0]
+				DamageLevels
+				[
+					{
+						File = "../deathstar_superlaser/floor_side_B.png"
+						Size = [1, 8]
+					}
+					{
+						File = "../deathstar_superlaser/floor_side_B_33.png"
+						Size = [1, 8]
+					}
+					{
+						File = "../deathstar_superlaser/floor_side_B_66.png"
+						Size = [1, 8]
+					}
+				]
+			}
+/*
+			OperationalDoodad
+			{
+				Layer = "weapons"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads_on1.png"
+							"doodads_on2.png"
+							"doodads_on3.png"
+							"doodads_on4.png"
+							"doodads_on5.png"
+							"doodads_on6.png"
+						]
+						Size = [2, 3]
+						AnimationInterval = 0.1
+						AnimationStartTime = Zero
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "weapons"
+				DamageLevels
+				[
+					{
+						File = "doodads_off.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [2, 3]
+					}
+				]
+			}
 */
+			Walls
+			{
+				Layer = "walls"
+				Offset = [2.5, 0]
+				DamageLevels
+				[
+					{
+						File = "wall_side_C.png"
+						Size = [1, 8]
+						MirrorU = true
+					}
+					{
+						File = "wall_side_C_33.png"
+						Size = [1, 8]
+						MirrorU = true
+					}
+					{
+						File = "wall_side_C_66.png"
+						Size = [1, 8]
+						MirrorU = true
+					}
+				]
+			}
+		}
 
 /*
 		BatterySprites
