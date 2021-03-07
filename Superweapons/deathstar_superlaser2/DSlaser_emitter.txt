@@ -25,7 +25,7 @@ Part : /BASE_PART
 	ID = SW.DSlaser_emitter
 	DescriptionKey = "Parts/DSLaserEmitterDesc"
 	EditorGroup = "TechII"
-	Cost = 50000
+	Cost = 5000000
 	Size = [6, 8]
 	AIValueFactor = 5
 	AIValue = (&Cost) * 5
@@ -35,7 +35,7 @@ Part : /BASE_PART
 	SelectionTypeID = "DSLII"
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	MaxHealth = 40000
+	MaxHealth = 48000
 	Flammable = false
 	TypeCategories = [weapon, uses_power,DSLII,DSL_power,deathstarlaser_emitter]
 	RequiresCategories = [DSL_command]
@@ -225,7 +225,7 @@ Part : /BASE_PART
 		EndFireTimer
 		{
 			Type = Timer
-			Duration = .3  //interval + 0.1
+			Duration = 2.9  //x * interval + 0.1
 			//AutoStart = true
 			Repeats = false
 			StartTrigger = Weapon
@@ -367,7 +367,7 @@ Part : /BASE_PART
 			FiringArc = 360d
 			RotateSpeed = 20d
 			FireThresholdAngle = 1d
-			AIFirepowerRating = 12000
+			AIFirepowerRating = { BaseValue=5000; BuffType=DSLaserBuff; BuffMode=Multiply; }
 
 			TargetingEmitter = BeamEmitter
 
@@ -444,7 +444,7 @@ Part : /BASE_PART
 			OperationalToggle = IsOperational
 			Duration = .5
 			AmmoStorage = BatteryStorage
-			AmmoUsed = 1000
+			AmmoUsed = 2000
 			MinAmmoUsed = 1
 
 			BeamMediaEffects : ^/0/BeamMediaEffects
@@ -803,41 +803,41 @@ Part : /BASE_PART
 		}
 	}
 
-/*
+
 	Stats
 	{
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
 
-		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecPower = &../StatsByCategory/0/Stats/PowerUsageContinuous
 		RecCrew = (&RecPower) * 4
 	}
 
 	StatsByCategory
 	[
 		{
-			NameKey = "StatCategories/BulletRailgun"
+			NameKey = "StatCategories/IonBeam"
 			Stats
 			{
-				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/DamagePool/Damage/BaseValue
-				DamagePerSecond = (&DamagePerShot) * (&ROF)
-				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				Penetration = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/Penetration/BaseValue
-				ROF = 1 / (&~/Part/Components/Weapon/FireInterval)
-				RangeLimited = [&~/Part/Components/BulletEmitter/Bullet/Range/BaseValue, &~/Part/Components/BulletEmitter/Bullet/Range/MaxValue]
+				DamagePerShotNear = (&~/Part/Components/BeamEmitter/HitOperational/HitEffects/1/Damage/BaseValue) * (&~/Part/Components/BeamEmitter/HitEffectsScaleOverRange/0)
+				DamagePerShotFar = (&~/Part/Components/BeamEmitter/HitOperational/HitEffects/1/Damage/BaseValue) * (&~/Part/Components/BeamEmitter/HitEffectsScaleOverRange/1)
+				HitInterval = &~/Part/Components/BeamEmitter/HitInterval
+				DamageContinuousNear = (&DamagePerShotNear) / (&HitInterval)
+				DamageContinuousFar = (&DamagePerShotFar) / (&HitInterval)
+
+				DamagePerShot = &~/Part/Components/BeamEmitter/HitOperational/HitEffects/1/Damage/BaseValue
+				//HitInterval = &~/Part/Components/BeamEmitter/HitInterval
+				DamageContinuous = (&DamagePerShot) / (&HitInterval)
+
+				Range = &~/Part/Components/BeamEmitter/Range
 				Arc = 0
-				ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Speed/BaseValue
-				ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Targetable/Health
-				AmmoPerShot = &~/Part/Components/BulletEmitter/AmmoUsage/0/AmmoUsed
-				AmmoPerSecond = (&AmmoPerShot) * (&ROF)
-				ShotAmmoUsage = [&../AmmoPerShot, &../AmmoPerSecond]
-				PowerPerShot = (&~/Part/Components/BulletEmitter/AmmoUsage/1/AmmoUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&ROF)
-				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+				ShotSpeed = Infinity
+				PowerPerShot = (&~/Part/Components/BeamEmitter/AmmoUsed) / 1000
+				PowerUsageContinuous = (&PowerPerShot) / (&~/Part/Components/Weapon/FireInterval)
 			}
 		}
 	]
 
-	StatsNotesKey = "Stats/RailgunNotes"
-*/
+	StatsNotesKey = "Stats/DeathStar_Notes"
+
 
 }
