@@ -38,13 +38,14 @@ Part : /BASE_PART
 	MaxHealth = 40000
 	Flammable = false
 	TypeCategories = [weapon, uses_power,DSLII,DSL_power,deathstarlaser_emitter]
-	ProhibitAbove = 2
-	ReceivableBuffs = [Railgun, DSLaserBuff, RailgunOperation]
+	RequiresCategories = [DSL_command]
+
+	ReceivableBuffs = [Railgun, DSLaserBuff, RailgunOperation,DSLFireCMDBuff,PowerCellBuff]
 
 	ProhibitRects
 	[
 		[0, -8, 2, 4]
-		[2, -8, 2, 6]
+		[2, -8, 2, 8]
 		[4, -8, 2, 4]
 	]
 	AllowedDoorLocations
@@ -53,8 +54,9 @@ Part : /BASE_PART
 		[6, 6]
 	]
 
-/*
+
 	HasNonContiguousPathing = true
+/*
 	BlockedTravelCells
 	[
 		[0, 1]
@@ -62,6 +64,7 @@ Part : /BASE_PART
 		[0, 2]
 		[1, 2]
 	]
+*/
 	BlockedTravelCellDirections
 	[
 		{
@@ -73,7 +76,7 @@ Part : /BASE_PART
 			Value = [Left]
 		}
 	]
-*/
+
 
 /*
 	ExternalWallsByCell
@@ -135,7 +138,7 @@ Part : /BASE_PART
 	{
 		Texture
 		{
-			File = "icon.png"
+			File = "icon_emitter.png"
 			SampleMode = Linear
 		}
 		Size = [69, 92]
@@ -174,6 +177,57 @@ Part : /BASE_PART
 			Type = ModeToggle
 			Mode = FireModeToggle
 			OnMode = 2
+		}
+
+		FireCmdBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = DSLFireCMDBuff
+		}
+		FireCmdToggle
+		{
+			Type = MultiToggle
+			Toggles = [FireCmdBuffToggle,FireModeToggle]
+			Mode = All
+		}
+		EndFireTimer
+		{
+			Type = Timer
+			Duration = .3  //interval + 0.1
+			//AutoStart = true
+			Repeats = false
+			StartTrigger = Weapon
+		}
+		EndSignalEndFireTimer
+		{
+			Type = Timer
+			Duration = .2
+			//AutoStart = true
+			Repeats = false
+			StartTrigger = EndFireTimer
+		}
+		FireEndCmdToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = EndFireTimer
+			OffTrigger = EndSignalEndFireTimer
+		}
+
+		FireEndCmdProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = DSLEndFireCMDBuff
+			OperationalToggle = FireEndCmdToggle
+			BuffAmount = 1
+			BuffArea = [-500, 0, 1006, 1000]
+			Criteria
+			{
+				Category = DSL_command
+				//Rot = 0
+				//Left = 0
+				//Right = 2
+				//Bottom = 0
+			}
 		}
 
 		BatteryStorage
@@ -284,6 +338,17 @@ Part : /BASE_PART
 			AIFirepowerRating = 12000
 
 			TargetingEmitter = BeamEmitter
+
+			ChainFireToggleComponent = IonBeamChainToggle
+
+//			AllowEnemyStructureAutoTargeting = true
+//			ProhibitTargetPartsFilter = &FriendlyPrismFilter // Don't force fire on friendly ion prisms!
+//			SuppressWholeShipTargetOverlaysForPartsFilter = &FriendlyPrismFilter
+//			SuppressShipWideExplicitTargetsWhenTargetingPartsFilter = &FriendlyPrismFilter
+//			SuppressDirectControlWhenTargetingPartsFilter = &FriendlyPrismFilter
+//			SuppressFirepowerEstimationWhenTargetingPartsFilter = &FriendlyPrismFilter
+//			AutoExplicitTargetPartsFilter = &FriendlyPrismFilter
+
 			SuppressWholeShipTargetOverlaysForPartsFilter = &FriendlyPrismFilter
 			SuppressWholeShipTargetOverlaysWhenTargetingShipRelativePoints = true
 			SuppressShipWideExplicitTargetsWhenTargetingPartsFilter = &FriendlyPrismFilter
@@ -291,10 +356,13 @@ Part : /BASE_PART
 			SuppressDirectControlWhenTargetingPartsFilter = &FriendlyPrismFilter
 			SuppressDirectControlWhenTargetingShipRelativePoints = true
 			SuppressFirepowerEstimationWhenTargetingPartsFilter = &FriendlyPrismFilter
+
+			SuppressFirepowerEstimationWhenTargetingShipRelativePoints = true
+
 			SaveSelfTargetPartCategories = [deathstarlaser_director]
 			SaveShipRelativeTargets = true
 			HoldTargetAfterCancel = 3.0
-			FirePermissionToggle = FireModeToggle
+			FirePermissionToggle = FireCmdToggle
 
 			FriendlyPrismFilter
 			{
@@ -698,7 +766,7 @@ Part : /BASE_PART
 		Blueprints
 		{
 			Type = BlueprintSprite
-			File = "blueprints.png"
+			File = "blueprints_emitter.png"
 			Size = [6, 8]
 		}
 	}
