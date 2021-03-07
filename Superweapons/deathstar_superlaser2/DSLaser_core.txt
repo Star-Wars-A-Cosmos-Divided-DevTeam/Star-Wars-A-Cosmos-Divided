@@ -88,11 +88,24 @@ Part : /BASE_PART
 			Default = 1
 		}
 //-----------------------------------------------------------------------------
+		LoadedAmmo
+		{
+			Type = AmmoStorage
+			AmmoType = battery
+			MaxAmmo = 84000
+			DelayBeforeReadyToUse = .25
+			AnticipateMoreAmmoFrom = [BatteryStorage]
+			ToggleOnAmmo = 84000
+			ToggleOffAmmo = 7000
+		}
+
 		BatteryStorage
 		{
 			Type = AmmoStorage
 			AmmoType = battery
 			MaxAmmo = 84000
+			ToggleOnAmmo = 84000
+			ToggleOffAmmo = 7000
 		}
 		BatteryConsumer
 		{
@@ -100,10 +113,37 @@ Part : /BASE_PART
 			AmmoType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			AdditionalStorageForJobPriority = [LoadedAmmo]
 			ResupplyThreshold = 500
 			OperationalToggle = PowerToggle
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+		AmmoPrereq
+		{
+			Type = MultiAmmoStorage
+			AmmoType = battery
+			AmmoStorages = [LoadedAmmo, BatteryStorage]
+			ToggleOnAmmo = 84000
+			ToggleOffAmmo = 999
+		}
+		AmmoLoader
+		{
+			Type = AmmoConverter
+			FromStorage = BatteryStorage
+			ToStorage = LoadedAmmo
+			FromQuantity = 1000
+			ToQuantity = 1000
+			Interval = .05
+		}
+
+		LoadEffects
+		{
+			Type = TriggeredEffects
+			Trigger = AmmoLoader
+			MediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+/*
 		CombinedBatteryStorage //transfer power
 		{
 			Type = MultiAmmoStorage
@@ -116,15 +156,8 @@ Part : /BASE_PART
 			}
 			AddMode = PrioritizeLeastAmmo
 		}
+*/
 
-		AmmoPrereq
-		{
-			Type = MultiAmmoStorage
-			AmmoType = bullet
-			AmmoStorages = [BatteryStorage]
-			ToggleOnAmmo = 48000
-			ToggleOffAmmo = 999
-		}
 //-----------------------------------------------------------------------------
 
 		RailgunBuffProvider
@@ -186,51 +219,10 @@ Part : /BASE_PART
 				Right = 2
 				Bottom = 0
 			}
-			ComponentID = BulletEmitter
+			ComponentID = BeamEmitter
 		}
 
 //-----------------------------------------------------------------------------
-		AutoFireToggle
-		{
-			Type = TriggeredToggle
-			OnTrigger = WeaponTrigger
-			OffTrigger = EmitTrigger
-			OperationalToggle = IsOperational
-		}
-
-		Weapon
-		{
-			Type = FixedWeapon
-			Location = [3, -0.1]// Relative to upper-left corner of unrotated part.
-			Rotation = -90d// Relative to unrotated part.
-			OperationalToggle = IsOperational
-			AutoFireToggle = AutoFireToggle
-			FireInterval = .2
-			AIFirepowerRating = 3000
-			Emitter = BeamEmitter
-
-			FirePermissionToggle = IsOperational
-
-			AutoTarget
-			{
-				TargetType = ShipParts
-				Toggle = AutoFireToggle
-			}
-		}
-
-
-		BeamEmitter : &/COMMON_SHOTS/SuperLaserBeamGreen/SuperLaser_beam_green
-		{
-			Type = BeamEmitter
-			ChainedTo = Weapon
-			FireTrigger = Weapon
-			GetTargetFrom = Weapon
-			OperationalToggle = IsOperational
-			SourceShipCollisions = false  //roof shot
-
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 2000 //{ BaseValue=2000; BuffType=DSLaserBuff; BuffMode=Multiply; }
-		}
 
 //-----------------------------------------------------------------------------
 
@@ -1067,7 +1059,7 @@ Part : /BASE_PART
 					Toggle = BatteryStorage
 					AtlasSprite
 					{
-						File = &/INDICATORS/NoAmmo
+						File = &/INDICATORS/NoPower
 						Size = [1.5, 1.5]
 					}
 				}
@@ -1107,3 +1099,42 @@ Part : /BASE_PART
 */
 
 }
+
+
+/*
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+*/
