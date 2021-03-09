@@ -23,13 +23,16 @@ Part : /BASE_PART
 	ID = SW.galvenning_barrel_section
 	DescriptionKey = "Parts/GalvenningBarrelSectionDesc"
 	EditorGroup = "TechII"
-	Cost = 200000
-	Size = [4, 8]
+	Cost = 20000
+	Size = [6, 2]
 	Density = 2
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	MaxHealth = 32000
-	TypeCategories = [weapon, uses_power, is_crewed]
+	MaxHealth = 12000
+	TypeCategories = [uses_power, galvenning_ring,siege_weapon]
+	RequiresCategories = [siege_cannon]
+
+	ReceivableBuffs = [Railgun, RailgunOperation,SWTurretPerimeter]
 
 	EditorIcon
 	{
@@ -38,15 +41,33 @@ Part : /BASE_PART
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [46, 92]
+		Size = [92, 31]
 	}
 	Components : ^/0/Components
 	{
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, PartCrew]
+			Toggles = [PowerToggle,{Toggle=PerimeterToggle; Invert=true}]
 			Mode = All
+		}
+		PerimeterToggle
+		{
+			Type = BuffToggle
+			BuffType = BuffTurretPerimeter
+			//MinBuffValue = 1
+			//MaxBuffValue = 2
+			//Invert = true
+		}
+		NotPerimeterToggle
+		{
+			Type = MultiToggle
+			Toggles
+			[
+				PerimeterToggle
+			]
+			Mode = All
+			Invert = true
 		}
 
 		PowerToggle
@@ -56,40 +77,11 @@ Part : /BASE_PART
 			Default = 1
 		}
 
-		FireModeToggle
-		{
-			Type = UIToggle
-			ToggleID = "fire_mode"
-			Default = 1
-			ToggledOnChoices = [0, 1, 2]
-		}
-		AutoTargetToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnModes = [1, 2]
-		}
-		AutoFireToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnMode = 2
-		}
-/*
-		AmmoPrereq
-		{
-			Type = MultiAmmoStorage
-			AmmoType = battery
-			AmmoStorages = [BatteryStorage]
-			//ToggleOnAmmo = 19001
-			//ToggleOffAmmo = 3750
-		}
-*/
 		BatteryStorage
 		{
 			Type = AmmoStorage
 			AmmoType = battery
-			MaxAmmo = 48000
+			MaxAmmo = 8000
 		}
 		BatteryConsumer
 		{
@@ -101,197 +93,319 @@ Part : /BASE_PART
 			OperationalToggle = PowerToggle
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-		Turret
+
+//-----------------------------------------------------------------------------
+		BuffOperational
 		{
-			Type = TurretWeapon
-			Location = [6, 6] // Relative to upper-left corner of unrotated part.
-			Rotation = -90d // Relative to unrotated part.
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, RailgunOperationBuffToggle]
+			Mode = All
+		}
+		RailgunBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = Railgun
+		}
+
+		RailgunOperationBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = RailgunOperation
+		}
+
+		RailgunBuffProvider1
+		{
+			Type = AreaBuffProvider
+			BuffType = Railgun
+			BuffAmount = { BaseValue=5%; BuffType=Railgun; BuffMode=Add; }
+			BuffArea = [0, 2, 6, 1]
+			OperationalToggle = RailgunBuffToggle
+			ChainsFromBuffType = Railgun
+			Criteria
+			{
+				Category = siege_weapon
+				Rot = 0
+				//Left = 0
+				Right = 6
+				//Bottom = 0
+			}
+		}
+		RailgunBuffProvider2
+		{
+			Type = AreaBuffProvider
+			BuffType = Railgun
+			BuffAmount = { BaseValue=10%; BuffType=Railgun; BuffMode=Add; }
+			BuffArea = [0, 3, 6, 1]
+			OperationalToggle = RailgunBuffToggle
+			ChainsFromBuffType = Railgun
+			Criteria
+			{
+				Category = siege_weapon
+				Rot = 0
+				//Left = 0
+				Right = 6
+				//Bottom = 0
+			}
+		}
+		RailgunBuffProvider3
+		{
+			Type = AreaBuffProvider
+			BuffType = Railgun
+			BuffAmount = { BaseValue=15%; BuffType=Railgun; BuffMode=Add; }
+			BuffArea = [0, 4, 6, 1]
+			OperationalToggle = RailgunBuffToggle
+			ChainsFromBuffType = Railgun
+			Criteria
+			{
+				Category = siege_weapon
+				Rot = 0
+				//Left = 0
+				Right = 6
+				//Bottom = 0
+			}
+		}
+		RailgunBuffProvider4
+		{
+			Type = AreaBuffProvider
+			BuffType = Railgun
+			BuffAmount = { BaseValue=20%; BuffType=Railgun; BuffMode=Add; }
+			BuffArea = [0, 5, 6, 1]
+			OperationalToggle = RailgunBuffToggle
+			ChainsFromBuffType = Railgun
+			Criteria
+			{
+				Category = siege_weapon
+				Rot = 0
+				//Left = 0
+				Right = 6
+				//Bottom = 0
+			}
+		}
+		RailgunBuffProvider5
+		{
+			Type = AreaBuffProvider
+			BuffType = Railgun
+			BuffAmount = { BaseValue=25%; BuffType=Railgun; BuffMode=Add; }
+			BuffArea = [0, 6, 6, 1]
+			OperationalToggle = RailgunBuffToggle
+			ChainsFromBuffType = Railgun
+			Criteria
+			{
+				Category = siege_weapon
+				Rot = 0
+				//Left = 0
+				Right = 6
+				//Bottom = 0
+			}
+		}
+		RailgunBuffProvider6
+		{
+			Type = AreaBuffProvider
+			BuffType = Railgun
+			BuffAmount = { BaseValue=30%; BuffType=Railgun; BuffMode=Add; }
+			BuffArea = [0, 7, 6, 1]
+			OperationalToggle = RailgunBuffToggle
+			ChainsFromBuffType = Railgun
+			Criteria
+			{
+				Category = siege_weapon
+				Rot = 0
+				//Left = 0
+				Right = 6
+				//Bottom = 0
+			}
+		}
+		RailgunBuffProvider7
+		{
+			Type = AreaBuffProvider
+			BuffType = Railgun
+			BuffAmount = { BaseValue=35%; BuffType=Railgun; BuffMode=Add; }
+			BuffArea = [0, 8, 6, 1]
+			OperationalToggle = RailgunBuffToggle
+			ChainsFromBuffType = Railgun
+			Criteria
+			{
+				Category = siege_weapon
+				Rot = 0
+				//Left = 0
+				Right = 6
+				//Bottom = 0
+			}
+		}
+		RailgunBuffProvider8
+		{
+			Type = AreaBuffProvider
+			BuffType = Railgun
+			BuffAmount = { BaseValue=40%; BuffType=Railgun; BuffMode=Add; }
+			BuffArea = [0, 9, 6, 1]
+			OperationalToggle = RailgunBuffToggle
+			ChainsFromBuffType = Railgun
+			Criteria
+			{
+				Category = siege_weapon
+				Rot = 0
+				//Left = 0
+				Right = 6
+				//Bottom = 0
+			}
+		}
+
+		RailgunOperationBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = RailgunOperation
+			BuffArea = [0, 2, 6, 8]
+			OperationalToggle = BuffOperational
+			ChainsFromBuffType = RailgunOperation
+			Criteria
+			{
+				Category = siege_weapon
+				Rot = 0
+				//Left = 0
+				Right = 6
+				//Bottom = 0
+			}
+		}
+		RailgunReverseOperationBuffProvider //exist signal
+		{
+			Type = AreaBuffProvider
+			BuffType = RailgunReverseOperation
+			BuffArea = [0, 2, 6, 8]
+			Criteria
+			{
+				Category = siege_weapon
+				Rot = 0
+				//Left = 0
+				Right = 6
+				//Bottom = 0
+			}
+		}
+//-----------------------------------------------------------------------------
+		Graphics
+		{
+			Type = Graphics
+			Location = [3, 1]
 			OperationalToggle = IsOperational
-			AutoFireToggle = AutoFireToggle
-			FireInterval = 1.2
-			FiringArc = 160d
-			RotateSpeed = 45d
-			FireThresholdAngle = 1d
-			IgnoreSourceShipLOSChecks = true
-			HoldTargetAfterCancel = 0.5
-			AIFirepowerRating = 6400
-			FirePermissionToggle = FireModeToggle //FirePermissionToggle
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "arm_cylinder[4,1].png"
+						Size = [6, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "arm_cylinder[4,1].png"
+						Size = [6, 2]
+					}
+				]
+			}
+		}
 
-			Emitter = WeaponEmitterBase
-
-			AutoTargets
+		BatterySprites
+		{
+			Type = AmmoSprites
+			Location = [3, 1]
+			AmmoStorage = BatteryStorage
+			Layer = "doodads_high"
+			AmmoLevels
 			[
 				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
+					File = "../../Weapons/FixedLightLaserCannon/batteries1.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../../Weapons/FixedLightLaserCannon/batteries2.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../../Weapons/FixedLightLaserCannon/batteries3.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../../Weapons/FixedLightLaserCannon/batteries4.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../../Weapons/FixedLightLaserCannon/batteries5.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../../Weapons/FixedLightLaserCannon/batteries6.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../../Weapons/FixedLightLaserCannon/batteries7.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../../Weapons/FixedLightLaserCannon/batteries8.png"
+					Size = [1, 1]
 				}
 			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
 		}
 
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = Turret
-		}
 
-		WeaponEmitterBase // Doesn't actually fire; only used for targeting and as a base for the left and right emitters.
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger // none, but field is required
-			GetTargetFrom = Turret
-			Location = [0, 0]
-			OperationalToggle = IsOperational
-			FireDelay = .6
-			Bullet = &/COMMON_SHOTS/greenmedlasershot
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 500
-		}
-		TurretGraphics
-		{
-			Type = Graphics
-			ChainedTo = Turret
-			Location = [0, 0]
-			Rotation = 90d
-			//OperationalToggle = IsOperational
-			Floor
-			{
-				Layer = "roof_turrets"
-				DamageLevels
-				[
-					{
-						File = "turret[12,12].png"
-						Size = [12, 12]
-					}
-				]
-			}
-		}
-		BarrelGraphics
-		{
-			Type = Graphics
-			ChainedTo = Turret
-			Location = [0, 0]
-			Rotation = 90d
-			//OperationalToggle = IsOperational
-			Floor
-			{
-				Layer = "roof_turrets"
-				Offset = [-1, -7.8125] //[7.8125, -1] //-64,-500 //midwidth42
-				DamageLevels
-				[
-					{
-						File = "../barrel[1,4]01.png"
-						Size = [1, 4]
-					}
-				]
-			}
-			Walls : &Floor
-			{
-				Offset = [1, -7.8125] //[7.8125, 1]
-			}
-		}
 
-		CrewLocation
+//-----------------------------------------------------------------------------
+		Indicators
 		{
-			Type = CrewLocation
-			Location = [2.546875, 4.59375] //-157,-26
-			Rotation = 180d
-		}
-		CrewLocation2
-		{
-			Type = CrewLocation
-			Location = [3.453125, 4.59375] //-99,-26
-			Rotation = 180d
-		}
-		CrewLocation3
-		{
-			Type = CrewLocation
-			Location = [7.453125, 4.59375]
-			Rotation = 180d
-		}
-		CrewLocation4
-		{
-			Type = CrewLocation
-			Location = [6.546875, 4.59375] //-22
-			Rotation = 180d
-		}
-		CrewLocation5
-		{
-			Type = CrewLocation
-			Location = [2.546875, 6.59375]
-			Rotation = 180d
-		}
-		CrewLocation6
-		{
-			Type = CrewLocation
-			Location = [3.453125, 6.59375]
-			Rotation = 180d
-		}
-		CrewLocation7
-		{
-			Type = CrewLocation
-			Location = [7.453125, 6.59375]
-			Rotation = 180d
-		}
-		CrewLocation8
-		{
-			Type = CrewLocation
-			Location = [6.546875, 6.59375]
-			Rotation = 180d
-		}
-		PartCrew
-		{
-			Type = PartCrew
-			Crew = 8
-			DefaultPriority = &/PRIORITIES/Weapon_Crew
-			PrerequisitesBeforeCrewing = [PowerToggle]
-			HighPriorityPrerequisites = [AmmoPrereq, BatteryStorage]
-			CrewDestinations
+			Type = IndicatorSprites
+			Location = [3, 1]
+			Layer = "indicators"
+			Indicators
 			[
-				&../../CrewLocation/Location
-				&../../CrewLocation2/Location
-				&../../CrewLocation3/Location
-				&../../CrewLocation4/Location
-				&../../CrewLocation5/Location
-				&../../CrewLocation6/Location
-				&../../CrewLocation7/Location
-				&../../CrewLocation8/Location
-			]
-			CrewLocations
-			[
-				CrewLocation
-				CrewLocation2
-				CrewLocation3
-				CrewLocation4
-				CrewLocation5
-				CrewLocation6
-				CrewLocation7
-				CrewLocation8
+				// Turret Perimeter
+				{
+					Toggle = NotPerimeterToggle
+					ShowInBuildMode = true
+					AtlasSprite
+					{
+						File = &/INDICATORS/SWMinimumDistance
+						Size = [2, 2]
+					}
+				}
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1, 1]
+					}
+				}
 			]
 		}
 
 		Blueprints
 		{
 			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [12, 12]
+			File = "blueprints-arm_cylinder[4,1].png"
+			Size = [6, 2]
+		}
+		BlueprintsArrow
+		{
+			Type = BlueprintSprite
+			File = "../blueprints_arrow_blue_large.png"
+			Size = [1, 1]
 		}
 	}
 
