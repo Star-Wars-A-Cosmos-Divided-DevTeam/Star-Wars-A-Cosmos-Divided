@@ -1,0 +1,127 @@
+Part : /BASE_PART
+{
+	NameKey = "Parts/DirectorConnector";
+	IconNameKey = "Parts/TeleconnectForceIcon";
+	ID = Lafiel.director_connector;
+	DescriptionKey = "Parts/DirectorConnectorDesc";
+	EditorGroup = "TechII"
+	Cost = 1000
+	TypeCategories = [misc,non_corporeal,director_connector];
+	RequiresCategories = [deathstarlaser_director]
+	Size = [1, 1]
+	Density = 0
+	SelectionTypeByRotation = true;
+	HealthType = Structural
+	CreatePartPerTileWhenDestroyed = ""
+	CreatePartPerTileWhenGrabbed = ""
+	MaxHealth = 1000;
+	InitialPenetrationResistance = 0
+	Flammable = false
+	CrewSpeedFactor = 0
+	IsExternal = true
+	GeneratorRequiresDoor = false
+	NoAutoDoors = true
+	GenerateRectCollider = false
+
+	ReceivableBuffs = [DSLOperation]
+
+	ExternalWalls = [None]
+	InternalWalls = [All]
+	IsWalled = false
+/*
+	ExternalWallsByCell
+	[
+	 	{
+	 		Key = [0, 0]
+	 		Value = None // [TopLeft, Top, TopRight]
+	 	}
+	]
+	InternalWallsByCell
+	[
+	 	{
+	 		Key = [0, 0]
+	 		Value = None // [TopLeft, Top, TopRight]
+	 	}
+	]
+*/
+	AllowedDoorLocations []
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png";
+			SampleMode = Linear;
+		}
+		Size = [64, 64];
+	}
+	Components : ^/0/Components
+	{
+		Blueprints
+		{
+			File = "blueprints.png";
+			Size = [1, 1];
+			Offset = [0, 0];
+			Type = BlueprintSprite
+		}
+		DSLOperationToggle
+		{
+			Type = BuffToggle
+			BuffType = DSLOperation
+		}
+		BuffProvider
+		{
+			Type = GridBuffProvider
+			BuffType = DSLOperation
+			BuffAmount = 1
+			GridDistance = 1
+			OperationalToggle = DSLOperationToggle
+			Criteria
+			{
+				Category = director_connector
+				//Rot = 0
+				//Left = 0
+				//Right = 1
+				//Bottom = 0
+			}
+		}
+
+		SelfDestructTimer  //toggle
+		{
+			Type = Timer
+			OperationalToggle = DSLOperationToggle
+			InvertOperationalToggle = true
+			Duration = 1
+			AutoStart = true
+			Repeats = false
+			//TriggerWhenStarted = true
+		}
+
+		DetonateEffects
+		{
+			Type = TriggeredEffects
+			Trigger = SelfDestructTimer
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 999999
+					Filter
+					{
+						Friendlies = true
+						IgnoreInvulnerability = true
+					}
+				}
+			]
+		}
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			Location = [0.5, 0.5]
+//			MediaEffects = &/COMMON_EFFECTS/NonPartDestroyed
+			MediaEffects
+			[
+				 &/PARTICLES_2166062512852246899/FusionBombShockwave
+			]
+		}
+	}
+}
