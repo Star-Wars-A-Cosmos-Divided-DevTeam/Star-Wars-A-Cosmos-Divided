@@ -1,0 +1,177 @@
+ID = SW.orange_siege_particle_shot
+Range = { BaseValue=300; BuffType=RailgunShot; BuffMode=Multiply; MinValue=300; MaxValue=1000; }
+IdealRange = [60, 325]
+IdealRadius = [5, 50]
+Speed = 90
+ReceivableBuffs = [RailgunShot]
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.1
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 1600
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		Penetration = { BaseValue=5; BuffType=RailgunShot; BuffMode=Multiply; }
+		PenetrationSpeed = 20
+		SourceShipCollisionDelay = 10
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = { BaseValue=3000; BuffType=RailgunShot; BuffMode=Multiply; }; //720
+				}
+				{
+					Type = Impulse;
+					Impulse = { BaseValue=20; BuffType=RailgunShot; BuffMode=Multiply; }; //2.4
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/GreenLaserHit
+				&/COMMON_PARTICLES/GreenLaserFlash
+				&/COMMON_PARTICLES/GreenLaserSparks
+	
+				&/COMMON_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = { BaseValue=5000; BuffType=RailgunShot; BuffMode=Multiply; }; //360
+					TreatShieldAsPart = true
+				}
+				{
+					Type = Impulse;
+					Impulse = { BaseValue=20; BuffType=RailgunShot; BuffMode=Multiply; }; //2.4
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/GreenLaserHit
+				&/COMMON_PARTICLES/GreenLaserFlash
+				&/COMMON_PARTICLES/GreenLaserSparks
+	
+				&/COMMON_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = { BaseValue=2500; BuffType=RailgunShot; BuffMode=Multiply; }; //312
+					TreatShieldAsPart = true
+				}
+				{
+					Type = Impulse;
+					Impulse = { BaseValue=10; BuffType=RailgunShot; BuffMode=Multiply; }; //1.2
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/GreenLaserHitStruct
+
+				&/COMMON_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = { BaseValue=5000; BuffType=RailgunShot; BuffMode=Multiply; }; //360
+				}
+				{
+					Type = Fire
+					FireChance = .4
+				}
+				{
+					Type = Impulse
+					Impulse = { BaseValue=20; BuffType=RailgunShot; BuffMode=Multiply; }; //2.4
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/bullet_hit_large.txt>
+				&<particles/bullet_flash_large.txt>
+			]
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational
+		{
+			// No effect.
+		}
+		FinishedPenetratingStructural
+		{
+			// No effect.
+		}
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		Sprite
+		{
+			Texture = "shot_orange.png"
+			Size = [12, 3]
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/GreenLaserShotGlow
+		]
+	}
+}
+
