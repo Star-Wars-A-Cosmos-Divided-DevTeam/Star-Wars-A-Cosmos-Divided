@@ -1,3 +1,21 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD Director Connector
+
+Author : Lafiel
+
+Description:
+Based on Abh's teleconnect part.
+
+Has no hitbox, requires a direct connection to DSL2 director and or other director connectors.
+It will self destruct if no connection is detected.
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.14
+
+---------------------------------------------------------------------------- */
+
 Part : /BASE_PART
 {
 	NameKey = "Parts/DirectorConnector";
@@ -117,10 +135,44 @@ Part : /BASE_PART
 		{
 			Type = DeathEffects
 			Location = [0.5, 0.5]
-//			MediaEffects = &/COMMON_EFFECTS/NonPartDestroyed
 			MediaEffects
 			[
-				 &/PARTICLES_2166062512852246899/FusionBombShockwave
+				&<./Data/common_effects/particles/explosions/med_part_explode.txt>
+				&<./Data/common_effects/particles/explosions/big_part_explode_flash.txt>
+				&<particles/explosive_charge_shockwave.txt>
+				&<./Data/common_effects/particles/explosions/med_part_explode_smoke.txt>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/common_effects/sounds/big_part_destroyed.wav"
+					Volume = 1
+					SpeedVariation = .25
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .15
+					Duration = 1
+				}
+			]
+		}
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [0.5, 0.5]
+			Layer = "indicators"
+			Indicators
+			[
+				// Missing component
+				{
+					Toggle = DSLOperationToggle
+					ShowInBuildMode = true
+					AtlasSprite
+					{
+						File = &/INDICATORS/MissingComponent
+						Size = [1, 1]
+					}
+				}
 			]
 		}
 	}
