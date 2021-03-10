@@ -29,9 +29,9 @@ Part : /BASE_PART
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	MaxHealth = 32000
-	TypeCategories = [weapon, uses_power, is_crewed,siege_cannon,siege_weapon]
+	TypeCategories = [weapon, uses_power, is_crewed,siege_cannon,siege_weapon,axial_weapon]
 
-	ReceivableBuffs = [Railgun, RailgunOperation,RailgunReverseOperation,RailgunShot]
+	ReceivableBuffs = [Railgun, RailgunOperation,RailgunReverseOperation,RailgunShot,SWTurretPerimeter]
 
 	EditorIcon
 	{
@@ -47,7 +47,7 @@ Part : /BASE_PART
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, PartCrew, PrereqOperational]
+			Toggles = [PowerToggle, PartCrew, PrereqOperational,{Toggle=PerimeterToggle; Invert=true}]
 			Mode = All
 		}
 
@@ -122,6 +122,59 @@ Part : /BASE_PART
 				//Bottom = 0
 			}
 		}
+
+		//there shall be no other weapons in front
+		AxialWeaponForwardPerimeterProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = SWTurretPerimeter
+			BuffAmount = 10
+			BuffArea = [0, -1000, 4, 1000]
+			Criteria
+			{
+				Category = axial_weapon
+				//Rot = 0
+				//Left = 0
+				//Right = 6
+				//Bottom = 0
+			}
+		}
+
+		AxialWeaponSidesPerimeterProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = SWTurretPerimeter
+			BuffAmount = 10
+			BuffArea = [-4, 0, 12, 8]
+			Criteria
+			{
+				Category = axial_weapon
+				//Rot = 0
+				//Left = 0
+				//Right = 6
+				//Bottom = 0
+			}
+		}
+
+		PerimeterToggle
+		{
+			Type = BuffToggle
+			BuffType = SWTurretPerimeter
+			MinBuffValue = 10
+			//MaxBuffValue = 2
+			//Invert = true
+		}
+		NotPerimeterToggle
+		{
+			Type = MultiToggle
+			Toggles
+			[
+				PerimeterToggle
+			]
+			Mode = All
+			Invert = true
+		}
+
 //-----------------------------------------------------------------------------
 
 		ConnectedOperational
@@ -222,6 +275,39 @@ Part : /BASE_PART
 			AmmoUsed = 1000
 		}
 //-----------------------------------------------------------------------------
+		FireCmdToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = WeaponEmitter
+			OffTrigger = EndFireTimer
+		}
+		EndFireTimer
+		{
+			Type = Timer
+			Duration = 0.03333  //1 tick only
+			//AutoStart = true
+			Repeats = false
+			StartTrigger = WeaponEmitter
+		}
+
+		FireCmdBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = SWFireCMDBuff
+			BuffAmount = 1
+			BuffArea = [0, -120, 4, 120]
+			OperationalToggle = FireCmdToggle
+			Criteria
+			{
+				Category = galvenning_ring
+				Rot = 0
+				//Left = 0
+				//Right = 6
+				//Bottom = 0
+			}
+		}
+
+//-----------------------------------------------------------------------------
 		Graphics
 		{
 			Type = Graphics
@@ -234,6 +320,17 @@ Part : /BASE_PART
 				[
 					{
 						File = "../floor[4,8].png"
+						Size = [4, 8]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "../empty_roof02[1,1].png"
 						Size = [4, 8]
 					}
 				]
@@ -406,6 +503,16 @@ Part : /BASE_PART
 			Layer = "indicators"
 			Indicators
 			[
+				// Turret Perimeter
+				{
+					Toggle = NotPerimeterToggle
+					ShowInBuildMode = true
+					AtlasSprite
+					{
+						File = &/INDICATORS/SWMinimumDistance
+						Size = [2, 2]
+					}
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle

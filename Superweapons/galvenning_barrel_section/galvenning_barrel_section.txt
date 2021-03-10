@@ -37,7 +37,7 @@ Part : /BASE_PART
 	TypeCategories = [uses_power, galvenning_ring,siege_weapon]
 	RequiresCategories = [siege_cannon]
 
-	ReceivableBuffs = [Railgun, RailgunOperation,SWTurretPerimeter]
+	ReceivableBuffs = [Railgun, RailgunOperation,SWTurretPerimeter,SWFireCMDBuff]
 
 	EditorIcon
 	{
@@ -286,6 +286,29 @@ Part : /BASE_PART
 			}
 		}
 //-----------------------------------------------------------------------------
+		FireCmdBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = SWFireCMDBuff
+		}
+		FireCmdInstantDrainTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = FireCmdBuffToggle
+			TriggerWhenOn = false
+			TriggerWhenOff = true
+			OperationalToggle = IsOperational
+			//InvertOperationalToggle = true
+		}
+		FireCmdInstantDrain
+		{
+			Type = AmmoChange
+			Trigger = FireCmdInstantDrainTrigger
+			AmmoStorage = BatteryStorage
+			Amount = -2000
+		}
+//-----------------------------------------------------------------------------
+
 		Graphics
 		{
 			Type = Graphics
