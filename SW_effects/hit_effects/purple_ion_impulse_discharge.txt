@@ -6,21 +6,23 @@ Def
 	Initializers
 	[
 		{
-			Type = LocationToWorldSpace
-			DataOut = energy
-			ValueType = Float
+			Type = SetRandom
+			DataOut = rot
+			ValueType = Angle
 			Value = 1
-			Name = "Convert location to world space."
+			Name = "Random Rotation"
 			Enabled = true
 			UpdateAfterInit = false
 			LocationIn = location
 			LocationOut = location
+			FromValue = 0d
+			ToValue = 360d
 		}
 		{
-			Type = SetRandom
+			Type = AddFrameOfReference
+			Name = "Add frame of reference"
 			LocationIn = location
 			LocationOut = location
-			Name = "Random Rotation"
 			Enabled = true
 			UpdateAfterInit = false
 			RotationIn = rot
@@ -29,26 +31,7 @@ Def
 			ValueType = Angle
 			FromValue = 0d
 			ToValue = 360d
-		}
-		{
-			Type = AddFrameOfReference
-			Name = "Add frame of reference"
-			VelocityIn = velocity
-			VelocityOut = velocity
-			Enabled = true
 			VelocityInOut = velocity
-			RotationIn = rot
-			RotationOut = rot
-			UpdateAfterInit = false
-		}
-		{
-			Type = ScaleFromIntensity
-			ScaleOut = scale
-			ScaleFactor = 1
-			IntensityExponent = 0.5
-			Name = "Scale from intensity"
-			Enabled = true
-			UpdateAfterInit = false
 		}
 	]
 	Updaters
@@ -56,7 +39,7 @@ Def
 		{
 			Type = Lifetime
 			EnergyInOut = energy
-			Lifetime = 0.4
+			Lifetime = 1
 			Name = Lifetime
 			Enabled = true
 			UpdateAfterInit = false
@@ -85,7 +68,7 @@ Def
 			Enabled = true
 			TimeIn = life
 			UvRectOut = uv_rect
-			Framerate = 16
+			Framerate = 32
 			TextureSize
 			{
 				X = 512
@@ -96,32 +79,79 @@ Def
 				X = 128
 				Y = 128
 			}
-			FrameCount = 24
+			FrameCount = 16
 			FramesPerRow = 4
 			PixelOffset
 			{
 				X = 0
 				Y = 0
 			}
-			Looping = false
-			AIn = time
-			ResultOut = time
+			Looping = true
+			AIn = rot
+			ResultOut = rot
 			Operator = AddDt
 			Value = 1
 			UpdateAfterInit = true
+			DataType = Angle
+			BIn = rot_vel
+		}
+		{
+			Type = Lerp
+			TimeIn = life
+			UvRectOut = uv_rect
+			Framerate = 32
+			TextureSize
+			{
+				X = 512
+				Y = 512
+			}
+			FrameSize
+			{
+				X = 128
+				Y = 128
+			}
+			FrameCount = 16
+			FramesPerRow = 4
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = true
+			Name = "Color lerp"
+			Enabled = true
+			UpdateAfterInit = true
+			LerpIn = life
+			DataOut = color
+			Invert = false
+			ValueType = Color
+			FromValue
+			{
+				Rf = 1
+				Gf = 1
+				Bf = 1
+				Af = 1
+			}
+			ToValue
+			{
+				Rf = 1
+				Gf = 1
+				Bf = 1
+				Af = 0
+			}
 		}
 	]
 	Renderer
 	{
 		Type = StandardQuadRenderer
 		LocationIn = location
-		ScaleIn = scale
+		ScaleIn
 		RotationIn = rot
-		ColorIn
+		ColorIn = color
 		BaseSize
 		{
-			X = 4
-			Y = 4
+			X = 1.5
+			Y = 1.5
 		}
 		MaxScale = 1
 		UVRect
@@ -138,7 +168,7 @@ Def
 	{
 		Texture
 		{
-			File = green_laser_hit.png
+			File = purple_electro_bolt_discharge.png
 			FixTransparentColors = false
 			PreMultiplyByAlpha = false
 			MipLevels = 8
@@ -177,12 +207,35 @@ Def
 EmitterDef
 {
 	EmitPerSecond = 0
-	EmitPerOneShot = 1
-	PreInitializers[]
+	EmitPerOneShot = 8 //10
+	PreInitializers
+	[
+		{
+			Type = LocationFromPartRect
+			VelocityOut = velocity
+			Speed
+			{
+				Min = 0
+				Max = 2
+			}
+			Direction
+			{
+				Min = 0d
+				Max = 360d
+			}
+			Name = "World location from part rect"
+			Enabled = true
+			UpdateAfterInit = false
+			LocationOut = location
+			RectType = Physical
+			UseWorldLocation = true
+			Inflate = -0.5
+		}
+	]
 	PostInitializers[]
 	UpdatedEmittedParticles = false
 }
-Bucket = Lower3
+Bucket = Upper1
 PenetratingBucket = Middle2
 Delay = 0
 IgnoreIntensity = false
@@ -194,5 +247,6 @@ DontEmitWhenOffScreenSizeInflate = 1
 UnsharedRenderInWorldSpace = false
 UseCustomShapeForOffScreenCheck = false
 MaxEmissionZoom = 3.40282347E+38
-ScaleEmissionWithIntensity = false
+ScaleEmissionWithIntensity = true
 ScaleEmissionWithBeamLength = false
+CaptureBackBuffer = false

@@ -1,0 +1,198 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			DataOut = energy
+			ValueType = Float
+			Value = 1
+			Name = "Convert location to world space."
+			Enabled = true
+			UpdateAfterInit = false
+			LocationIn = location
+			LocationOut = location
+		}
+		{
+			Type = SetRandom
+			LocationIn = location
+			LocationOut = location
+			Name = "Random Rotation"
+			Enabled = true
+			UpdateAfterInit = false
+			RotationIn = rot
+			RotationOut = rot
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 0d
+			ToValue = 360d
+		}
+		{
+			Type = AddFrameOfReference
+			Name = "Add frame of reference"
+			VelocityIn = velocity
+			VelocityOut = velocity
+			Enabled = true
+			VelocityInOut = velocity
+			RotationIn = rot
+			RotationOut = rot
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleFromIntensity
+			ScaleOut = scale
+			ScaleFactor = 1
+			IntensityExponent = 0.5
+			Name = "Scale from intensity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			EnergyInOut = energy
+			Lifetime = 0.4
+			Name = Lifetime
+			Enabled = true
+			UpdateAfterInit = false
+			LifeInOut = life
+		}
+		{
+			Type = Operator
+			DataType = Vector2D
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvAnimation
+			LerpIn = energy
+			DataOut = scale
+			Invert = true
+			ValueType = Float
+			FromValue = 1
+			ToValue = 0
+			Name = "Animation"
+			Enabled = true
+			TimeIn = life
+			UvRectOut = uv_rect
+			Framerate = 16
+			TextureSize
+			{
+				X = 512
+				Y = 512
+			}
+			FrameSize
+			{
+				X = 128
+				Y = 128
+			}
+			FrameCount = 24
+			FramesPerRow = 4
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = false
+			AIn = time
+			ResultOut = time
+			Operator = AddDt
+			Value = 1
+			UpdateAfterInit = true
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		RotationIn = rot
+		ColorIn
+		BaseSize
+		{
+			X = 4
+			Y = 4
+		}
+		MaxScale = 1
+		UVRect
+		{
+			X = 0
+			Y = 0
+			Width = 1
+			Height = 1
+		}
+		Name = ""
+		UvRectIn = uv_rect
+	}
+	Material
+	{
+		Texture
+		{
+			File = green_hit.png
+			FixTransparentColors = false
+			PreMultiplyByAlpha = false
+			MipLevels = 8
+			SampleMode = Linear
+		}
+		TargetBlendMode
+		{
+			SourceRgbFactor = SourceAlpha
+			DestRgbFactor = InverseSourceAlpha
+			RgbOperator = Add
+			SourceAlphaFactor = InverseDestAlpha
+			DestAlphaFactor = One
+			AlphaOperator = Add
+			ChannelWriteMask
+			[
+				Red
+				Green
+				Blue
+				Alpha
+				All
+			]
+		}
+		Color
+		{
+			Rf = 1
+			Gf = 1
+			Bf = 1
+			Af = 1
+		}
+	}
+	DeleteMode = Fast
+	UpdatedEmittedParticles = false
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 1
+	PreInitializers[]
+	PostInitializers[]
+	UpdatedEmittedParticles = false
+}
+Bucket = Lower3
+PenetratingBucket = Middle2
+Delay = 0
+IgnoreIntensity = false
+Sharing = Global
+MinIntensity = 0
+IsFancy = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 1
+UnsharedRenderInWorldSpace = false
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.40282347E+38
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
