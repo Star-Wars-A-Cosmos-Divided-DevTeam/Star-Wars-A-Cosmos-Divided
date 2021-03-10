@@ -274,6 +274,38 @@ Part : /BASE_PART
 			MinAmmoUsed = 1
 		}
 //-----------------------------------------------------------------------------
+		FireCmdToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = BeamEmitter
+			OffTrigger = EndFireTimer
+		}
+		EndFireTimer
+		{
+			Type = Timer
+			Duration = 0.03333  //1 tick only
+			//AutoStart = true
+			Repeats = false
+			StartTrigger = BeamEmitter
+		}
+
+		FireCmdBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = SWFireCMDBuff
+			BuffAmount = 1
+			BuffArea = [0, -180, 4, 180]
+			OperationalToggle = FireCmdToggle
+			Criteria
+			{
+				Category = galvenning_ring
+				Rot = 0
+				//Left = 0
+				//Right = 6
+				//Bottom = 0
+			}
+		}
+//-----------------------------------------------------------------------------
 		Graphics
 		{
 			Type = Graphics
