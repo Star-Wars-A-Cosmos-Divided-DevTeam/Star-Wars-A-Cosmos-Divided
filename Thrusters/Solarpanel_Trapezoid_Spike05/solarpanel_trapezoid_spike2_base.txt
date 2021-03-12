@@ -1,0 +1,503 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+Description:
+Currently prototyping: just solar armor panel with thruster
+
+Based on the Imperial Raider Corvetter but for fighters
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.14
+
+---------------------------------------------------------------------------- */ 
+Part : /BASE_PART
+{
+	NameKey = "Parts/SolarpanelTrapezoidSpike03L"
+	IconNameKey = "Parts/SolarpanelTrapezoidSpike03LIcon"
+	ID = "SW.solarpanel_trapezoid_spike03_base"
+	DescriptionKey = "Parts/SolarpanelTrapezoidSpike03LDesc"
+	EditorGroup = "Flight"
+	Cost = 700
+	AIValueFactor = 1
+	AIValue = &Cost
+	TypeCategories = [provides_power, thruster]
+	Size = [1, 1]
+
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+
+	MaxHealth = 5280 //1000 base + panel size * 500 = 1000+(35064/4096)*500=5280.2734375
+	//HealthType = Structural
+	Flammable = false
+
+	InitialPenetrationResistance = 0.5
+	PenetrationRectType = Normal
+
+	Density = 2.8506621 //same as structure .333 * panel size since it's 1x1 real grid size = 0.333*(35064/4096)=2.850662109375
+
+	//ProhibitLeft = 1
+
+	//AllowedDoorLocations
+	
+	Components : ^/0/Components
+	{
+		IsOperationalThruster
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle,ThrusterAmmoPrereq]
+			Mode = All
+		}
+/*
+		IsOperationalWeapon
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle,WeaponAmmoPrereq]
+			Mode = All
+		}
+*/
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			ToggledOnChoices = [1]
+		}
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+//-----------------------------------------------------------------------------
+/* all imperial so no needed?
+		LaserType
+		{
+			Type = UIToggle
+			ToggleID = "SW.blasterlaser_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
+		}
+
+		LaserRedToggle
+		{
+			Type = ModeToggle
+			Mode = LaserType
+			OnMode = 0
+		}
+		LaserRedComponents
+		{
+			Type = ToggledComponents
+			Toggle = LaserRedToggle
+			IncludeInBlueprints = true
+			Components = &<red_fixedlaserL.txt>/Components
+		}
+
+		LaserBlueToggle
+		{
+			Type = ModeToggle
+			Mode = LaserType
+			OnMode = 1
+		}
+		LaserBlueComponents
+		{
+			Type = ToggledComponents
+			Toggle = LaserBlueToggle
+			IncludeInBlueprints = true
+			Components = &<blue_fixedlaserL.txt>/Components
+		}
+
+		LaserGreenToggle
+		{
+			Type = ModeToggle
+			Mode = LaserType
+			OnMode = 2
+		}
+		LaserGreenComponents
+		{
+			Type = ToggledComponents
+			Toggle = LaserGreenToggle
+			IncludeInBlueprints = true
+			Components = &<green_fixedlaserL.txt>/Components
+		}
+*/
+//-----------------------------------------------------------------------------
+		AnchorLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = AnchorLocation
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			//OperationalToggle = IsOperationalThruster
+			Location = [.5, .5]
+/*
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads off.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [1, 1]
+					}
+				]
+			}
+*/
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/walls/wall00.png"
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/walls/wall00_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/walls/wall00_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/corridor/roof.png"
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/corridor/roof_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/corridor/roof_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+/*
+			OperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "roof_windows_on.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+					{
+						File = "roof_windows_on_33.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+					{
+						File = "roof_windows_on_66.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+				]
+			}
+			NonOperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "roof_windows_off.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+					{
+						File = "roof_windows_off_33.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+					{
+						File = "roof_windows_off_66.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+				]
+			}
+*/
+		}
+
+
+		BatteryStorage
+		{
+			Type = AmmoStorage
+			AmmoType = battery
+			MaxAmmo = 6000
+			StartingAmmo = &MaxAmmo
+			SuppliesAmmo = true
+			MaxAmmoPickUp = 1000
+			ExpectedAmmoGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+			ToggleOnAmmo = 2001  //supply only 4 battery
+			ToggleOffAmmo = 2000
+		}
+		BatteryProducer
+		{
+			Type = AmmoConverter
+			ToStorage = BatteryStorage
+			ToQuantity = 450 //75 * solar panel size  (30% vanilla rate (Abh @5.5%)) = 75*(24636/4096)=451.0986328125
+			Interval = .6666
+		}
+
+//replacementfor BatterySprites
+		BatteryStorageProgressBar
+		{
+			Type = ProgressBar
+			ShowProgressFor = BatteryStorage
+			Invert = true
+			//OperationalToggle = SwitchCooldownToggle
+			//InvertOperationalToggle = true
+		}
+
+/*
+		BatterySprites
+		{
+			Type = AmmoSprites
+			Location = [.5, .75]
+			AmmoStorage = BatteryStorage
+			Layer = "doodads_high"
+			AmmoLevels
+			[
+				{
+					File = "batteries1.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries2.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries3.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries4.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries5.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries6.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries7.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries8.png"
+					Size = [1, 1]
+				}
+			]
+		}
+*/
+
+/*
+		WeaponAmmoPrereq
+		{
+			Type = MultiAmmoStorage
+			AmmoType = battery
+			AmmoStorages = [BatteryStorage]
+			ToggleOnAmmo = 1001  // 6-7 batteries for use
+			ToggleOffAmmo = 1000
+		}
+*/
+		ThrusterAmmoPrereq //always available
+		{
+			Type = MultiAmmoStorage
+			AmmoType = battery
+			AmmoStorages = [BatteryStorage]
+			//ToggleOnAmmo = 22001
+			//ToggleOffAmmo = 3750
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperationalThruster
+			Location = [.5, .5]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [.5, .5]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [.5, .5]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		BlueprintsTileBox //do not remove
+		{
+			Type = BlueprintSprite
+			File = "blueprints_form[1,1].png"
+			Size = [1, 1]
+		}
+
+	}
+	Stats
+	{
+		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		BatterySize = (&~/Part/Components/BatteryStorage/MaxAmmoPickUp) / 1000
+		BatteryFillTime = 0
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
+	}
+/*
+	StatsByCategory
+	[
+		&<red_fixedlaserL.txt>/LaserStats
+		&<blue_fixedlaserL.txt>/LaserStats
+		&<green_fixedlaserL.txt>/LaserStats
+	]
+*/
+}
+
+
+/*
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+*/
