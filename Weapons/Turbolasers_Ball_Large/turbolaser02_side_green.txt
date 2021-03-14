@@ -1,5 +1,6 @@
 Components
 	{
+
 		SwitchTimerTrigger
 		{
 			Type = Timer
@@ -31,18 +32,19 @@ Components
 		Turret
 		{
 			Type = TurretWeapon
-			Location = [1, 1]
+			ChainedTo = &TurretLocation
+			//Location = [1, 1]
 			Rotation = -90d// Relative to unrotated part.
 			OperationalToggle = WeaponIsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = .6
-			FiringArc = 180d
+			FiringArc = 120d
 			RotateSpeed = 90d
 			FireThresholdAngle = 1d
 			TargetSearchTriesPerFrame = 1
 			AIFirepowerRating = 1600
 			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitterBase
+			Emitter = BulletEmitter
 			IgnoreSourceShipLOSChecks = true
 
 			AutoTargets
@@ -77,37 +79,23 @@ Components
 			ShowProgressFor = Turret
 		}
 
-		BulletEmitterBase
+		BulletEmitter
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
 			FireTrigger
 			GetTargetFrom = Turret
-			Location = [101/64, 0]
+			Location = [365/64, 0]
 			OperationalToggle = IsOperational
 			Bullet = &/COMMON_SHOTS/greenlightlasershot
 			AmmoStorage = BatteryStorage
 			AmmoUsed = 100
 		}
 
-		BulletEmitterLeft : BulletEmitterBase
-		{
-			Type = BulletEmitter
-			FireTrigger = Turret
-			Location = [101/64, -40/64]
-		}
-
-		BulletEmitterRight : BulletEmitterBase
-		{
-			Type = BulletEmitter
-			FireTrigger = Turret
-			Location = [101/64, 40/64]
-		}
-
 		ChargeEffectBase
 		{
 			Type = TriggeredEffects
-			ChainedTo = BulletEmitterBase
+			ChainedTo = BulletEmitter
 			Trigger = Turret
 			AnchorMediaEffects = true
 		
@@ -117,12 +105,11 @@ Components
 			]
 		}
 
-
-		FireEffectLeft
+		FireEffect
 		{
 			Type = TriggeredEffects
-			ChainedTo = BulletEmitterLeft
-			Trigger = BulletEmitterLeft
+			ChainedTo = BulletEmitter
+			Trigger = BulletEmitter
 			AnchorMediaEffects = true
 	
 			MediaEffects
@@ -132,14 +119,7 @@ Components
 			]
 		}
 
-		FireEffectRight : FireEffectLeft
-		{
-			ChainedTo = BulletEmitterRight
-			Trigger = BulletEmitterRight
-		}
-		
 	}
-
 
 /*
 LaserStats
@@ -155,4 +135,5 @@ LaserStats
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 	}
 }
+
 */
