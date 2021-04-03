@@ -7,6 +7,8 @@ Author : Lafiel
 Description:
 Currently prototyping. Everything is temporary.
 
+This is based on the 1st Order tower with 3 guns.
+
 
 Versions:
 
@@ -15,40 +17,35 @@ Versions:
 ---------------------------------------------------------------------------- */ 
 Part : /BASE_PART
 {	
-	ID = SW.turbolaser_med_LR01
-	NameKey = "Parts/TurbolaserMedLR01"
-	IconNameKey = "Parts/TurbolaserMedLR01Icon"
-	DescriptionKey = "Parts/TurbolaserMedLR01Desc"
+	ID = SW.turbolaser_tower_triple01
+	NameKey = "Parts/TurbolaserTowerTriple01"
+	IconNameKey = "Parts/TurbolaserTowerTriple01Icon"
+	DescriptionKey = "Parts/TurbolaserTowerTriple01Desc"
 	EditorGroup = "WeaponsEnergy"
 	Cost = 30000
 	AIValueFactor = 1
 	AIValue = (&Cost)
 	TypeCategories = [weapon, uses_power, uses_laser_parts, is_crewed]
-	Size = [2, 2]
+	Size = [4, 4]
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "cannons"
-	MaxHealth = 8000
+	MaxHealth = 16000
 	InitialPenetrationResistance = 5
 	PenetrationRectType = Normal
-	AllowedDoorLocations
-	[
-		[-1, 1]
-		[2, 1]
-                [1, 2]
-                [0, 2]
-	]
+
+
 	EditorIcon
 	{
 		Texture
 		{
-			File = "icon.png"
+			File = "icon01.png"
 			SampleMode = Linear
 		}
-		Size = [29, 72]
+		Size = [64, 68]
 	}
 	
-	Components : ^/0/Components, &<turbolaser01_green.txt>/Components, &<turret01_graphics.txt>
+	Components : ^/0/Components, &<triple01_graphics.txt>
 	{
 		IsOperational
 		{
@@ -82,69 +79,73 @@ Part : /BASE_PART
 			OnMode = 2
 		}
 
-/*
-		LightTurbolaserType
+		TurretProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
+			//Location = [0, 0]
+		}
+
+		MunitionType
 		{
 			Type = UIToggle
-			ToggleID = "SW.lightturbolaser_type"
+			ToggleID = "SW.munition_type"
 			Default = 0
+			AvailableChoices = [0,2]
+			ToggledOnChoices = [0,2]
 			AlwaysAllowInBuildMode = true
-			ToggledOnChoices = [0, 1, 2]
 		}
-
-		LightTurbolaserRedToggle
+		RedMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = LightTurbolaserType
+			Mode = MunitionType
 			OnMode = 0
 		}
-
-		LightTurbolaserRedComponents
+		RedMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = LightTurbolaserRedToggle
+			Toggle = RedMunitionToggle
 			IncludeInBlueprints = true
-			Components = &<light_turbolaser_red.txt>/Components
+			Components = &<turbolaser01_red.txt>/Components
 		}
-
-		LightTurbolaserBlueToggle
+/*
+		BlueMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = LightTurbolaserType
+			Mode = MunitionType
 			OnMode = 1
 		}
-
-		LightTurbolaserBlueComponents
+		BlueMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = LightTurbolaserBlueToggle
+			Toggle = BlueMunitionToggle
 			IncludeInBlueprints = true
-			Components = &<light_turbolaser_blue.txt>/Components
-		}
-
-		LightTurbolaserGreenToggle
-		{
-			Type = ModeToggle
-			Mode = LightTurbolaserType
-			OnMode = 2
-		}
-
-		LightTurbolaserGreenComponents
-		{
-			Type = ToggledComponents
-			Toggle = LightTurbolaserGreenToggle
-			IncludeInBlueprints = true
-			Components = &<light_turbolaser_green.txt>/Components
+			Components = &<tower/xx9_turbolaser_red.txt>/Components
 		}
 */
-		Graphics
+		GreenMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 2
+		}
+		GreenMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreenMunitionToggle
+			IncludeInBlueprints = true
+			Components = &<turbolaser01_green.txt>/Components
+		}
+
+
+		FloorGraphics1
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational,
-			Location = [1, 1]
+			Location = [2, 2]
 			Floor
 			{
 				Layer = "floors"
+				Offset = [-1, -1]
 				DamageLevels
 				[
 					{
@@ -161,6 +162,26 @@ Part : /BASE_PART
 					}
 				]
 			}
+			Walls : &Floor
+			{
+				Offset = [1, -1]
+			}
+			Roof : &Floor
+			{
+				Offset = [-1, 1]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad : &Floor
+			{
+				Offset = [1, 1]
+			}
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			Location = [2, 2]
 			OperationalLighting
 			{
 				Layer = "lights_add"
@@ -168,7 +189,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "../Turbolasers_Light/lights.png"
-						Size = [2, 2]
+						Size = [4, 4]
 					}
 				]
 			}
@@ -208,17 +229,19 @@ Part : /BASE_PART
 				DamageLevels
 				[
 					{
-						File = "../Turbolasers_Light/walls.png"
-						Size = [2, 2]
+						File = "../walls01[4,4].png"
+						Size = [4, 4]
+					}
+/*
+					{
+						File = "../walls01[4,4]_33.png"
+						Size = [4, 4]
 					}
 					{
-						File = "../Turbolasers_Light/walls_33.png"
-						Size = [2, 2]
+						File = "../walls01[4,4]_66.png"
+						Size = [4, 4]
 					}
-					{
-						File = "../Turbolasers_Light/walls_66.png"
-						Size = [2, 2]
-					}
+*/
 				]
 			}
 			Roof
@@ -227,8 +250,8 @@ Part : /BASE_PART
 				DamageLevels
 				[
 					{
-						File = "../roof_turret_base02[2,2]01.png"
-						Size = [2, 2]
+						File = "../roof_turret_base00[8,8]01.png"
+						Size = [4, 4]
 					}
 /*
 					{
@@ -266,13 +289,13 @@ Part : /BASE_PART
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [0.55, 0.6]
+			Location = [1.55, 1.6]
 			Rotation = 180d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
-			Location = [1.45, 0.6]
+			Location = [2.45, 1.6]
 			Rotation = 180d
 		}
 		PartCrew
@@ -284,8 +307,8 @@ Part : /BASE_PART
 			HighPriorityPrerequisites = [BatteryStorage]
 			CrewDestinations
 			[
-				[0.55, 0.5]
-				[1.45, 0.5]
+				&../../CrewLocation1/Location
+				&../../CrewLocation2/Location
 			]
 			CrewLocations
 			[
@@ -297,7 +320,7 @@ Part : /BASE_PART
 		BatterySprites
 		{
 			Type = AmmoSprites
-			Location = [1, 1]
+			Location = [2, 2]
 			AmmoStorage = BatteryStorage
 			Layer = "doodads_high"
 			AmmoLevels
@@ -328,7 +351,7 @@ Part : /BASE_PART
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [1, 1]
+			Location = [2, 2]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
@@ -338,14 +361,14 @@ Part : /BASE_PART
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [1, 1]
+			Location = [2, 2]
 			
 		}
 
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [1, 1]
+			Location = [2, 2]
 			Layer = "indicators"
 			Indicators
 			[
@@ -381,52 +404,45 @@ Part : /BASE_PART
 			]
 		}
 
-		Blueprints
-		{
-			Type = BlueprintSprite
-			File = "../Turbolasers_Light/blueprints.png"
-			Size = [2, 2]
-		}
-
-/*
 		BlueprintsRed
 		{
 			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
+			File = "../Turbolasers_Light/blueprints.png"
+			Size = [4, 4]
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.lightturbolaser_type
+				ToggleID = SW.munition_type
 				Mode = 0
 			}
 		}
-
+/*
 		BlueprintsBlue
 		{
 			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
+			File = "../Turbolasers_Light/blueprints.png"
+			Size = [4, 4]
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.lightturbolaser_type
+				ToggleID = SW.munition_type
 				Mode = 1
 			}
 		}
-		
+*/
 		BlueprintsGreen
 		{
 			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
+			File = "../Turbolasers_Light/blueprints.png"
+			Size = [4, 4]
+
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.lightturbolaser_type
+				ToggleID = SW.munition_type
 				Mode = 2
 			}
 		}
-*/
+
 
 	}
 
