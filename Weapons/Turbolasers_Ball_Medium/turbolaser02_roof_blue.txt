@@ -1,40 +1,13 @@
 Components
 	{
 
-		SwitchTimerTrigger
-		{
-			Type = Timer
-			Duration = 4
-			AutoStart = true
-			Repeats = false
-		}
-		SwitchTimerProgressBar
-		{
-			Type = ProgressBar
-			ShowProgressFor = SwitchTimerTrigger
-			Invert = true
-			OperationalToggle = SwitchCooldownToggle
-			InvertOperationalToggle = true
-		}
-		SwitchCooldownToggle
-		{
-			Type = TriggeredToggle
-			OnTrigger = SwitchTimerTrigger
-			StartsOn = false
-		}
-		WeaponIsOperational
-		{
-			Type = MultiToggle
-			Toggles = [IsOperational, SwitchCooldownToggle]
-			Mode = All
-		}
-
 		Turret
 		{
 			Type = TurretWeapon
-			Location = [0.5, 1]
+			ChainedTo = TurretLocation
+			//Location = [1, 1]
 			Rotation = -90d// Relative to unrotated part.
-			OperationalToggle = WeaponIsOperational
+			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = .6
 			FiringArc = 320d
@@ -74,7 +47,7 @@ Components
 		ReloadProgressBar
 		{
 			Type = ProgressBar
-			OperationalToggle = WeaponIsOperational
+			OperationalToggle = IsOperational
 			ShowProgressFor = Turret
 		}
 
@@ -84,16 +57,13 @@ Components
 			ChainedTo = Turret
 			FireTrigger = Turret
 			GetTargetFrom = Turret
-			Location = [1, -10/64]  //-10,-61
+			Location = [300/64, 0] //0,-296
 			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/greenlightlasershot
+			Bullet = &/COMMON_SHOTS/cyanmediumioncannonshot //bluemediumioncannonshot
 			AmmoStorage = BatteryStorage
 			AmmoUsed = 100
 		}
-		BulletEmitter2 : &BulletEmitter
-		{
-			Location = [1, 10/64]
-		}
+
 		ChargeEffectBase
 		{
 			Type = TriggeredEffects
@@ -111,20 +81,16 @@ Components
 		{
 			Type = TriggeredEffects
 			ChainedTo = BulletEmitter
-			Trigger = BulletEmitter //BulletEmitterLeft
+			Trigger = BulletEmitter
 			AnchorMediaEffects = true
 	
 			MediaEffects
 			[
 				&/COMMON_SOUNDS/TurbolaserSFX
-				&/COMMON_PARTICLES/SmallGreenLaserShoot
+				&/COMMON_PARTICLES/CyanShoot //SmallBlueLaserShoot
 			]
 		}
-		FireEffect2 : &FireEffect
-		{
-			ChainedTo = BulletEmitter2
-			Trigger = BulletEmitter2 //BulletEmitterRight
-		}
+
 	}
 
 /*
