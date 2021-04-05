@@ -1,0 +1,137 @@
+Components
+{
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [4, 4] // Relative to upper-left corner of unrotated part.
+			Rotation = -90d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 0 // Uses separate fire timer.
+			FiringArc = 160d
+			RotateSpeed = 45d
+			FireThresholdAngle = 1d
+			IgnoreSourceShipLOSChecks = true
+			HoldTargetAfterCancel = 0.5
+			AIFirepowerRating = 6400
+			FirePermissionToggle = FirePermissionToggle
+
+			Emitter = WeaponEmitter
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		WeaponEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = ShootLeftTriggerProxy
+			GetTargetFrom = Turret
+			Location = [2.75, 2.171875]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/greenmedlasershot
+			SourceShipCollisions = false
+			//Spread = [-2.5d, 2.5d]
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 200 //250-350?
+			//Recoil = 10
+		}
+		WeaponEmitter2 : WeaponEmitter
+		{
+			Location = [2.75, 2.734375]
+			FireTrigger = ShootRightTriggerProxy
+			AmmoStorage = BatteryStorage
+		}
+		WeaponEmitter3 : WeaponEmitter
+		{
+			Location = [2.75, -2.171875]
+			FireTrigger = ShootLeftTriggerProxy
+			AmmoStorage = BatteryStorage
+		}
+		WeaponEmitter4 : WeaponEmitter
+		{
+			Location = [2.75, -2.734375]
+			FireTrigger = ShootRightTriggerProxy
+			AmmoStorage = BatteryStorage
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = WeaponEmitter
+			Trigger = WeaponEmitter
+			AnchorMediaEffects = true
+
+			MediaEffects
+
+			[
+
+				&/COMMON_PARTICLES/SmallGreenLaserShoot
+
+			] 
+		}
+		FireEffect2 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = WeaponEmitter2
+		}
+		FireEffect3 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter3
+			Trigger = WeaponEmitter3
+		}
+		FireEffect4 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter4
+			Trigger = WeaponEmitter4
+		}
+		TurretGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [0, 0]
+			Rotation = 90d
+			//OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "roof_turrets"
+				DamageLevels
+				[
+					{
+						File = "turret2.png"
+						Size = [8, 8]
+					}
+				]
+			}
+		}
+
+}
