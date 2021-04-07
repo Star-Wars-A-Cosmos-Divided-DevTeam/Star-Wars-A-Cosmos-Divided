@@ -25,11 +25,11 @@ Part : /BASE_PART
 	DescriptionKey = "Parts/AxialSuperlaserDesc"
 	EditorGroup = "TechII"
 	Cost = 40000000
-	Size = [6, 12]
+	Size = [12, 24]
 	Density = 2
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	MaxHealth = 72000
+	MaxHealth = 288000
 	TypeCategories = [weapon, uses_power, is_crewed,axial_weapon]
 	ReceivableBuffs = [SWTurretPerimeter]
 
@@ -114,7 +114,7 @@ Part : /BASE_PART
 			Type = AreaBuffProvider
 			BuffType = SWTurretPerimeter
 			BuffAmount = 30
-			BuffArea = [0, -1000, 4, 1000]
+			BuffArea = [0, -1000, 10, 1000]
 			BuffsSelf = false
 			Criteria
 			{
@@ -167,7 +167,7 @@ Part : /BASE_PART
 		Turret
 		{
 			Type = TurretWeapon
-			Location = [3, -0.1] // Relative to upper-left corner of unrotated part.
+			Location = [6, -0.1] // Relative to upper-left corner of unrotated part.
 			Rotation = -90d // Relative to unrotated part.
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
@@ -234,11 +234,12 @@ Part : /BASE_PART
 		Graphics
 		{
 			Type = Graphics
-			Location = [3, 6]
+			Location = [6, 12]
 			OperationalToggle = IsOperational
 			Floor
 			{
 				Layer = "floors"
+				Offset = [-3, -6]
 				DamageLevels
 				[
 					{
@@ -247,6 +248,20 @@ Part : /BASE_PART
 					}
 				]
 			}
+			Walls : &Floor
+			{
+				Offset = [3, -6]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad : &Floor
+			{
+				Offset = [-3, 6]
+			}
+			OperationalRoofDoodad = &NonOperationalRoofDoodad
+			NonOperationalRoofDoodad : &Floor
+			{
+				Offset = [3, 6]
+			}
 			Roof
 			{
 				Layer = "roofs"
@@ -254,7 +269,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "../empty_roof02[1,1].png"
-						Size = [6, 12]
+						Size = [12, 24]
 					}
 				]
 			}
@@ -262,7 +277,7 @@ Part : /BASE_PART
 		CoreGraphics
 		{
 			Type = Graphics
-			Location = [3, 6]
+			Location = [6, 6]
 			OperationalToggle = IsOperational
 			OperationalDoodad
 			{
@@ -293,7 +308,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "../deathstar_superlaser/lights-r[3,4].png"
-						Size = [6, 12]
+						Size = [12, 24]
 					}
 				]
 			}
@@ -304,11 +319,11 @@ Part : /BASE_PART
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [3, 3.5]
+			Location = [6, 3.5]
 			OperationalDoodad
 			{
 				Layer = "doodads_low"
-				Offset = [-2.078125, 0]; // [.921875, 0];
+				Offset = [-3.078125, 0]; // [.921875, 0];
 				DamageLevels
 				[
 					{
@@ -327,7 +342,7 @@ Part : /BASE_PART
 			NonOperationalDoodad
 			{
 				Layer = "doodads_low"
-				Offset = [-2.078125, 0];
+				Offset = [-3.078125, 0];
 				DamageLevels
 				[
 					{
@@ -340,7 +355,7 @@ Part : /BASE_PART
 			OperationalRoofDoodad
 			{
 				Layer = "doodads_low"
-				Offset = [2.078125, 0]; // [5.078125, 0];
+				Offset = [3.078125, 0]; // [5.078125, 0];
 				DamageLevels
 				[
 					{
@@ -359,7 +374,7 @@ Part : /BASE_PART
 			NonOperationalRoofDoodad
 			{
 				Layer = "doodads_low"
-				Offset = [2.078125, 0];
+				Offset = [3.078125, 0];
 				DamageLevels
 				[
 					{
@@ -374,25 +389,25 @@ Part : /BASE_PART
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [.921875, 3.15]  // [.921875, 3.5]
+			Location = [2.921875, 3.15]  // [.921875, 3.5]
 			Rotation = -90d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
-			Location = [.921875, 3.85]
+			Location = [2.921875, 3.85]
 			Rotation = -90d
 		}
 		CrewLocation3
 		{
 			Type = CrewLocation
-			Location = [5.078125, 3.15]  // [5.078125, 3.5]
+			Location = [9.078125, 3.15]  // [5.078125, 3.5]
 			Rotation = 90d
 		}
 		CrewLocation4
 		{
 			Type = CrewLocation
-			Location = [5.078125, 3.85]
+			Location = [9.078125, 3.85]
 			Rotation = 90d
 		}
 		PartCrew
@@ -404,10 +419,10 @@ Part : /BASE_PART
 			HighPriorityPrerequisites = [BatteryStorage]
 			CrewDestinations
 			[
-				[.921875, 3.15]
-				[.921875, 3.85]
-				[5.078125, 3.15]
-				[5.078125, 3.85]
+				&../../CrewLocation1/Location
+				&../../CrewLocation2/Location
+				&../../CrewLocation3/Location
+				&../../CrewLocation4/Location
 			]
 			CrewLocations
 			[
@@ -421,7 +436,7 @@ Part : /BASE_PART
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [3, 6]
+			Location = [6, 12]
 			Layer = "indicators"
 			Indicators
 			[
@@ -471,20 +486,21 @@ Part : /BASE_PART
 		{
 			Type = BlueprintSprite
 			File = "../blueprints.png"
-			Size = [6, 12]
+			Size = [12, 24]
 		}
 		BlueprintsCrystal
 		{
 			Type = BlueprintSprite
 			File = "../blueprints_kyber_crystal.png"
 			Size = [4, 8]
+			Offset = [0, -6]
 		}
 		BlueprintsArrow
 		{
 			Type = BlueprintSprite
 			File = "../blueprints_arrow_head_blue_large.png"
 			Size = [1, 1]
-			Offset = [0, -5.5]
+			Offset = [0, -11.5]
 		}
 	}
 
