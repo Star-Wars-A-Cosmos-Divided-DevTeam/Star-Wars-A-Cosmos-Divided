@@ -24,11 +24,11 @@ Part : /BASE_PART
 	DescriptionKey = "Parts/OrbitalAutocannonDesc"
 	EditorGroup = "TechII"
 	Cost = 10000000
-	Size = [4, 8]
+	Size = [12, 48]
 	Density = 2
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	MaxHealth = 32000
+	MaxHealth = 576000
 	TypeCategories = [weapon, uses_power, is_crewed,siege_cannon,axial_weapon]
 	ReceivableBuffs = [SWTurretPerimeter]
 
@@ -114,7 +114,7 @@ Part : /BASE_PART
 			Type = AreaBuffProvider
 			BuffType = SWTurretPerimeter
 			BuffAmount = 20
-			BuffArea = [0, -1000, 4, 1000]
+			BuffArea = [0, -1000, 12, 1000]
 			BuffsSelf = false
 			Criteria
 			{
@@ -167,7 +167,7 @@ Part : /BASE_PART
 		Turret
 		{
 			Type = TurretWeapon
-			Location = [2, 0] // Relative to upper-left corner of unrotated part.
+			Location = [6, 0] // Relative to upper-left corner of unrotated part.
 			Rotation = -90d // Relative to unrotated part.
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
@@ -232,22 +232,54 @@ Part : /BASE_PART
 		}
 
 //-----------------------------------------------------------------------------
-		Graphics
+		FloorGraphics1
 		{
 			Type = Graphics
-			Location = [2, 4]
-			OperationalToggle = IsOperational
+			Location = [6, 12]
 			Floor
 			{
 				Layer = "floors"
+				Offset = [-3, -6]
 				DamageLevels
 				[
 					{
-						File = "../floor[4,8].png"
-						Size = [4, 8]
+						File = "../floor06[6,12].png"
+						Size = [6, 12]
 					}
+/*
+					{
+						File = "../floor06[6,12]_33.png"
+						Size = [6, 12]
+					}
+					{
+						File = "../floor06[6,12]_66.png"
+						Size = [6, 12]
+					}
+*/
 				]
 			}
+			Walls : &Floor
+			{
+				Offset = [3, -6]
+			}
+			Roof : &Floor
+			{
+				Offset = [-3, 6]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad : &Floor
+			{
+				Offset = [3, 6]
+			}
+		}
+		FloorGraphics2 : &FloorGraphics1
+		{
+			Location = [6, 36]
+		}
+		RoofGraphics
+		{
+			Type = Graphics
+			Location = [6, 24]
 			Roof
 			{
 				Layer = "roofs"
@@ -255,7 +287,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "../empty_roof02[1,1].png"
-						Size = [4, 8]
+						Size = [12, 48]
 					}
 				]
 			}
@@ -263,11 +295,12 @@ Part : /BASE_PART
 		CoreGraphics
 		{
 			Type = Graphics
-			Location = [2, 4]
+			Location = [6, 24] //[2, 4]
 			OperationalToggle = IsOperational
 			OperationalDoodad
 			{
 				Layer = "doodads_low"
+				Offset = [0, -20]
 				DamageLevels
 				[
 					{
@@ -279,6 +312,7 @@ Part : /BASE_PART
 			NonOperationalDoodad
 			{
 				Layer = "doodads_low"
+				Offset = [0, -20]
 				DamageLevels
 				[
 					{
@@ -294,7 +328,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "../deathstar_superlaser/lights-r[3,4].png"
-						Size = [4, 8]
+						Size = [12, 48]
 					}
 				]
 			}
@@ -305,7 +339,7 @@ Part : /BASE_PART
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [2, 3.5]
+			Location = [6, 3.5]
 			OperationalDoodad
 			{
 				Layer = "doodads_low"
@@ -375,25 +409,25 @@ Part : /BASE_PART
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [.421875, 3.15]  // [.921875, 3.5]
+			Location = [4.421875, 3.15]  // [.921875, 3.5]
 			Rotation = -90d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
-			Location = [.421875, 3.85]
+			Location = [4.421875, 3.85]
 			Rotation = -90d
 		}
 		CrewLocation3
 		{
 			Type = CrewLocation
-			Location = [3.578125, 3.15]  // [3.078125, 3.5]
+			Location = [7.578125, 3.15]  // [3.078125, 3.5]
 			Rotation = 90d
 		}
 		CrewLocation4
 		{
 			Type = CrewLocation
-			Location = [3.578125, 3.85]
+			Location = [7.578125, 3.85]
 			Rotation = 90d
 		}
 		PartCrew
@@ -405,10 +439,10 @@ Part : /BASE_PART
 			HighPriorityPrerequisites = [BatteryStorage]
 			CrewDestinations
 			[
-				[.421875, 3.15]
-				[.421875, 3.85]
-				[3.578125, 3.15]
-				[3.578125, 3.85]
+				&../../CrewLocation1/Location
+				&../../CrewLocation2/Location
+				&../../CrewLocation3/Location
+				&../../CrewLocation4/Location
 			]
 			CrewLocations
 			[
@@ -423,7 +457,7 @@ Part : /BASE_PART
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [2, 4]
+			Location = [6, 24]
 			Layer = "indicators"
 			Indicators
 			[
@@ -434,7 +468,7 @@ Part : /BASE_PART
 					AtlasSprite
 					{
 						File = &/INDICATORS/SWMinimumDistance
-						Size = [2, 2]
+						Size = [8, 8]
 					}
 				}
 				// Turned off.
@@ -443,7 +477,7 @@ Part : /BASE_PART
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [8, 8]
 					}
 				}
 
@@ -453,7 +487,7 @@ Part : /BASE_PART
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [1, 1]
+						Size = [8, 8]
 					}
 				}
 
@@ -463,7 +497,7 @@ Part : /BASE_PART
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
+						Size = [8, 8]
 					}
 				}
 			]
@@ -473,20 +507,21 @@ Part : /BASE_PART
 		{
 			Type = BlueprintSprite
 			File = "../blueprints.png"
-			Size = [4, 8]
+			Size = [12, 48]
 		}
 		BlueprintsCrystal
 		{
 			Type = BlueprintSprite
 			File = "../blueprints_kyber_crystal.png"
 			Size = [2, 4]
+			Offset = [0, -20]
 		}
 		BlueprintsArrow
 		{
 			Type = BlueprintSprite
 			File = "../blueprints_arrow_head_blue_large.png"
 			Size = [1, 1]
-			Offset = [0, -3.5]
+			Offset = [0, -23.5]
 		}
 	}
 
