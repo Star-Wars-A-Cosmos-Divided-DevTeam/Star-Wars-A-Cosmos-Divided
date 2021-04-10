@@ -28,7 +28,7 @@ Versions:
 	MaxHealth = 48000
 	Flammable = false
 	TypeCategories = [uses_power, ion_impulse_accelerator,ion_impulse_weapon]
-	ReceivableBuffs = [RailgunOperation,Railgun]
+	ReceivableBuffs = [RailgunOperation,Railgun,RailgunReverseOperation]
 
 	AllowedDoorLocations
 	[
@@ -131,22 +131,29 @@ Versions:
 		{
 			Type = MultiToggle
 			Toggles = [IonCannonOperationBuffToggle,IsEndSection]
-			Mode = All
+			Mode = Any
 		}
 		IsEndSection //do not remove
 		{
+			Type = MultiToggle
+			Toggles = [{Toggle=BottomConnection; Invert=true}]
+			Mode = All
+		}
+		BottomConnection //do not remove
+		{
+			Mode = All
 			Type = ToggleProxy
-			PartLocation = [0, 9]
+			PartLocation = [0, 8]
 			PartCriteria
 			{
 				Category = ion_impulse_weapon
 				Rot = 0
-				Left = 0
-				Right = 6
-				Bottom = 0
+				//Left = 0
+				//Right = 6
+				//Bottom = 0
 			}
 			ComponentID = BatteryStorage
-			IsOnWhenNotConnected = true
+			//IsOnWhenNotConnected = true
 		}
 
 		IonCannonBuffProvider
@@ -155,7 +162,7 @@ Versions:
 			BuffType = Railgun
 			BuffAmount = { BaseValue=0.05; BuffType=Railgun; BuffMode=Add; }
 			BuffArea = [0, -1, 1, 1]
-			OperationalToggle = IonCannonBuffToggle
+			OperationalToggle = IonCannonOperationToggle
 			ChainsFromBuffType = Railgun
 			Criteria
 			{
@@ -172,7 +179,7 @@ Versions:
 			Type = AreaBuffProvider
 			BuffType = RailgunOperation
 			BuffArea = [0, -1, 1, 1]
-			OperationalToggle = BuffOperational
+			OperationalToggle = IonCannonOperationToggle
 			ChainsFromBuffType = RailgunOperation
 			Criteria
 			{
@@ -183,6 +190,30 @@ Versions:
 				Bottom = 0
 			}
 		}
+
+		IonCannonReverseOperationBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = RailgunReverseOperation
+		}
+
+		ReverseBuffOperationProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = RailgunReverseOperation
+			BuffArea = [0, 8, 1, 1]
+			OperationalToggle = IonCannonReverseOperationBuffToggle
+			ChainsFromBuffType = RailgunReverseOperation
+			Criteria
+			{
+				Category = ion_impulse_weapon
+				Rot = 0
+				Left = 0
+				Right = 6
+				Top = 8
+			}
+		}
+
 
 		Weapon
 		{
