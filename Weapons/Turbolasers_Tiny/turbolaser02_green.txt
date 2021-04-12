@@ -1,5 +1,35 @@
 Components
 	{
+		FirePrefToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_pref"
+			Default = 1
+		}
+		FirePrefAttack
+		{
+			Type = ModeToggle
+			Mode = FirePrefToggle
+			OnModes = [0, 2]
+		}
+		FirePrefDefend
+		{
+			Type = ModeToggle
+			Mode = FirePrefToggle
+			OnModes = [1, 2]
+		}
+		AttackToggle
+		{
+			Type = MultiToggle
+			Toggles = [AutoTargetToggle, FirePrefAttack]
+			Mode = All
+		}
+		DefendToggle
+		{
+			Type = MultiToggle
+			Toggles = [AutoTargetToggle, FirePrefDefend]
+			Mode = All
+		}
 
 		SwitchTimerTrigger
 		{
@@ -49,8 +79,14 @@ Components
 			AutoTargets
 			[
 				{
+					TargetType = Bullets
+					BulletTargetCategories = [missile, mine, bullet]
+					Toggle = DefendToggle
+				}
+				{
 					TargetType = ShipParts
-					Toggle = AutoTargetToggle
+					Toggle = AttackToggle
+					Overridable = true
 				}
 			]
 
@@ -86,7 +122,7 @@ Components
 			GetTargetFrom = Turret
 			Location = [1, -13/64]
 			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/greenlightlasershot
+			Bullet = &/COMMON_SHOTS/greenlightlaserPDshot
 			AmmoStorage = BatteryStorage
 			AmmoUsed = 100
 		}
