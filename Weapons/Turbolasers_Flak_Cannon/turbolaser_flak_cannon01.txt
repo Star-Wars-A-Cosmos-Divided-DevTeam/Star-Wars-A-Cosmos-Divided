@@ -6,48 +6,53 @@ Author : Lafiel
 Description:
 Currently prototyping
 
-It offers synchronized and alternate firing modes.
-This requires the inheritance of the firing logic found in SW_weapon_fire_alternate_2.txt (See details).
-In alternate fire on each sides the guns are divided in od and even groups and overall mirrored.
+Leaning on CIS/Republican floor and side mounted internal "flak cannons".
+Technically same as carronade.
+Visual options not implemented.
 
-The timer component (WeaponTimerBuffProvider) is needed to adjust the timing individually for the weapon.
 
 Versions:
 
- o 1.0 Cosmoteer 0.15.12
+ o 1.0 Cosmoteer 0.15.14
 
 ---------------------------------------------------------------------------- */ 
 Part : /BASE_PART
 {
-	NameKey = "Parts/TurbolaserCarronade"
-	IconNameKey = "Parts/TurbolaserCarronadeIcon"
-	ID = SW.carronade_turbolaser
-	DescriptionKey = "Parts/TurbolaserCarronadeDesc"
+	NameKey = "Parts/TurbolaserFlakCannon01"
+	IconNameKey = "Parts/TurbolaserFlakCannon01Icon"
+	ID = SW.turbolaser_flak_cannon01
+	DescriptionKey = "Parts/TurbolaserFlakCannon01Desc"
 	EditorGroup = "WeaponsEnergy"
-	Cost = 12000
+	Cost = 24000
 	AIValueFactor = 1
 	AIValue = (&Cost)
 	TypeCategories = [weapon, uses_power,is_crewed]
-	Size = [2, 3]
+	Size = [4, 6]
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "cannons"
-	MaxHealth = 12000
+	MaxHealth = 24000
 	InitialPenetrationResistance = 5
 	PenetrationRectType = Normal
 
 	ProhibitRects
 	[
-		[0, -2, 2, 1]
+		[0, -3, 4, 2]
 	]
 	AllowedDoorLocations
 	[
-		[-1, 1]
-		[2, 1]
 		[-1, 2]
-		[2, 2]
-                [1, 3]
-                [0, 3]
+		[6, 2]
+		[-1, 3]
+		[6, 3]
+		[-1, 4]
+		[6, 4]
+		[-1, 5]
+		[6, 5]
+                [0, 6]
+                [1, 6]
+                [2, 6]
+                [3, 6]
 	]
 
 	EditorIcon
@@ -57,17 +62,10 @@ Part : /BASE_PART
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [40, 80]
+		Size = [46, 92]
 	}
-	Components : ^/0/Components, &<../SW_weapon_fire_alternate_2.txt>
+	Components : ^/0/Components
 	{
-		BlueprintSprite0
-		{
-			File = "blueprints.png"
-			Size = [2, 4]
-			Type=BlueprintSprite;
-		}
-
 		IsOperational
 		{
 			Type = MultiToggle
@@ -115,7 +113,7 @@ Part : /BASE_PART
 		{
 			Type = AmmoStorage
 			AmmoType = battery
-			MaxAmmo = 5000
+			MaxAmmo = 10000
 		}
 		BatteryConsumer
 		{
@@ -128,29 +126,53 @@ Part : /BASE_PART
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
-		Graphics
+		FloorGraphics1
 		{
 			Type = Graphics
+			Location = [2, 3]
 			OperationalToggle = IsOperational,
-			Location = [1, 1.5]
 			Floor
 			{
 				Layer = "floors"
+				Offset = [-1, -2]
 				DamageLevels
 				[
 					{
-						File = "floor.png"
-						Size = [2, 3]
+						File = "../floor06[2,2]01.png"
+						Size = [2, 2]
 					}
 					{
-						File = "floor_33.png"
-						Size = [2, 3]
+						File = "../floor06[2,2]01_33.png"
+						Size = [2, 2]
 					}
 					{
-						File = "floor_66.png"
-						Size = [2, 3]
+						File = "../floor06[2,2]01_66.png"
+						Size = [2, 2]
 					}
 				]
+			}
+			Walls : &Floor
+			{
+				Offset = [1, -2]
+			}
+			Roof : &Floor
+			{
+				Offset = [-1, 0]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad : &Floor
+			{
+				Offset = [1, 0]
+			}
+			OperationalRoofDoodad = &NonOperationalRoofDoodad
+			NonOperationalRoofDoodad : &Floor
+			{
+				Offset = [-1, 2]
+			}
+			OperationalRoofWindows = &NonOperationalRoofWindows
+			NonOperationalRoofWindows : &Floor
+			{
+				Offset = [1, 2]
 			}
 			OperationalLighting
 			{
@@ -159,14 +181,21 @@ Part : /BASE_PART
 				[
 					{
 						File = "../FixedLightLaserCannon/lights.png"
-						Size = [2, 3]
+						Size = [4, 6]
 					}
 				]
 			}
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			Location = [2, 3]
 			OperationalDoodad
 			{
 				Layer = "doodads_low"
-				Offset = [0, 0.5]
+				Offset = [0, 2]
 				DamageLevels
 				[
 					{
@@ -184,7 +213,7 @@ Part : /BASE_PART
 			NonOperationalDoodad
 			{
 				Layer = "doodads_low"
-				Offset = [0, 0.5]
+				Offset = [0, 2]
 				DamageLevels
 				[
 					{
@@ -200,17 +229,17 @@ Part : /BASE_PART
 				DamageLevels
 				[
 					{
-						File = "walls01[2,3].png"
-						Size = [2, 3]
+						File = "../walls01[4,6].png"
+						Size = [4, 6]
 					}
 /*
 					{
-						File = "walls_33.png"
-						Size = [2, 3]
+						File = "../walls01[4,6]_33.png"
+						Size = [4, 6]
 					}
 					{
-						File = "walls_66.png"
-						Size = [2, 3]
+						File = "../walls01[4,6]_66.png"
+						Size = [4, 6]
 					}
 */
 				]
@@ -222,7 +251,7 @@ Part : /BASE_PART
 				[
 					{
 						File = "roof.png"
-						Size = [2, 3]
+						Size = [4, 6]
 					}
 /*
 					{
@@ -239,7 +268,7 @@ Part : /BASE_PART
 			RoofWindows
 			{
 				Layer = "roof_windows"
-				Offset = [0, 0.5]
+				Offset = [0, 2]
 				DamageLevels
 				[
 					{
@@ -263,16 +292,16 @@ Part : /BASE_PART
 			Type = TurretWeapon
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			Location = [1, 0]
+			Location = [2, 1]
 			Rotation = -90d
 			FireInterval = .6
-			FiringArc = 40d
+			FiringArc = 30d
 			RotateSpeed = 90d
 			FireThresholdAngle = 1d
 			AIFirepowerRating = 1600
 			IgnoreSourceShipLOSChecks = true
 			//AllowFireWithBlockedLOS = true
-			FirePermissionToggle = FirePermissionToggle
+			FirePermissionToggle = FireModeToggle
 			Emitter = BulletEmitter
 
 			AutoTargets
@@ -311,18 +340,13 @@ Part : /BASE_PART
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
-			FireTrigger = ShootLeftTriggerProxy
+			FireTrigger = Turret
 			GetTargetFrom = Turret
-			Location = [1.3125, -0.40625]
+			Location = [155/64, 0]  //0,-151
 			OperationalToggle = IsOperational
 			Bullet = &/COMMON_SHOTS/greenheavylasershot
 			AmmoStorage = BatteryStorage
 			AmmoUsed = 250
-		}
-		BulletEmitter2 : &BulletEmitter
-		{
-			FireTrigger = ShootRightTriggerProxy
-			Location = [2.3125, 0.40625]
 		}
 
 		FireEffect
@@ -330,7 +354,7 @@ Part : /BASE_PART
 			Type = TriggeredEffects
 			ChainedTo = Turret
 			Trigger = BulletEmitter
-			Location = [2.2125, -0.50625]
+			Location = [155/64, 0]  //0,-151
 
 			MediaEffects
 			[
@@ -354,21 +378,16 @@ Part : /BASE_PART
 			]
 		}
 
-		FireEffect2 : &FireEffect
-		{
-			Location = [2.2125, 0.50625]
-		}
-
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [0.55, 1.6]
+			Location = [1.55, 2.1]
 			Rotation = 180d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
-			Location = [1.45, 1.6]
+			Location = [2.45, 2.1]
 			Rotation = 180d
 		}
 		PartCrew
@@ -390,19 +409,11 @@ Part : /BASE_PART
 			]
 		}
 
-		TurretCollider
-		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .8
-			Density = 1.5
-		}
-
 		BarrelSprite
 		{
 			Type = Sprite
 			ChainedTo = Turret
-			Location = [0.5, 0]
+			//Location = [0.5, 0]
 			Rotation = 90d
 			Layer = "weapons"
 			ResetAnimationTrigger = BulletEmitter
@@ -410,9 +421,9 @@ Part : /BASE_PART
 			{
 				AnimationFiles
 				[
-					"turret.png"
+					"barrel01.png"
 				]
-				Size = [3, 3]
+				Size = [1, 6]
 				AnimationInterval = 0.0625
 				AnimationStartTime = MinValue
 				ClampAnimation = true
@@ -422,7 +433,7 @@ Part : /BASE_PART
 		BatterySprites
 		{
 			Type = AmmoSprites
-			Location = [1, 2]
+			Location = [2, 3.5]
 			AmmoStorage = BatteryStorage
 			Layer = "doodads_high"
 			AmmoLevels
@@ -454,7 +465,7 @@ Part : /BASE_PART
 		{
 			Type = ToggleEffects
 			Toggle = IsOperational,
-			Location = [1, 1]
+			Location = [2, 3]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
@@ -463,7 +474,7 @@ Part : /BASE_PART
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [1, 1.5]
+			Location = [2, 3]
 
 			FactorHitEffectsWith = BatteryStorage
 			HitEffects
@@ -499,9 +510,9 @@ Part : /BASE_PART
 					Falloff = 0
 					Delay = .05
 					Filter
-                    {
-                        Friendlies = true
-                    }
+					{
+						Friendlies = true
+					}
 				}
 			]
 		}
@@ -509,7 +520,7 @@ Part : /BASE_PART
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [1, 1.5]
+			Location = [2, 3]
 			Layer = "indicators"
 			Indicators
 			[
@@ -542,6 +553,19 @@ Part : /BASE_PART
 					}
 				}
 			]
+		}
+		BlueprintSprite
+		{
+			Type=BlueprintSprite
+			File = "blueprints01.png"
+			Size = [4, 6]
+		}
+		BlueprintSpriteBarrel
+		{
+			Type=BlueprintSprite
+			File = "blueprints_barrel01.png"
+			Size = [1, 6]
+			Offset = [0, -2]
 		}
 	}
 /*
