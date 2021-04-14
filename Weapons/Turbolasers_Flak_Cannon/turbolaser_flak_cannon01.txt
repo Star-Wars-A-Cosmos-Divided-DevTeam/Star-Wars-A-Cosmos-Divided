@@ -72,7 +72,7 @@ Part : /BASE_PART
 			Toggles
 			[
 				PowerToggle
-				BatteryStorage
+				//BatteryStorage
 				PartCrew
 			]
 			Mode = All
@@ -109,6 +109,7 @@ Part : /BASE_PART
 			BuffType = SWWeaponTimerBuff
 			BuffAmount = 60%
 		}
+/*
 		BatteryStorage
 		{
 			Type = AmmoStorage
@@ -124,6 +125,39 @@ Part : /BASE_PART
 			ResupplyThreshold = 1000
 			OperatinalToggle = PowerToggle
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+*/
+		LoadedAmmo
+		{
+			Type = AmmoStorage
+			AmmoType = bullet
+			MaxAmmo = 1
+			DelayBeforeReadyToUse = .25
+			AnticipateMoreAmmoFrom = ["AmmoStorage"]
+		}
+
+		AmmoStorage
+		{
+			Type = AmmoStorage
+			AmmoType = bullet
+			MaxAmmo = 40
+		}
+		AmmoConsumer
+		{
+			Type = AmmoConsumer
+			AmmoType = bullet
+			Storage = AmmoStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			AdditionalStorageForJobPriority = [LoadedAmmo]
+			OperationalToggle = PowerToggle
+			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/AmmoDeliver
+		}
+
+		AmmoPrereq
+		{
+			Type = MultiAmmoStorage
+			AmmoType = bullet
+			AmmoStorages = [LoadedAmmo, AmmoStorage]
 		}
 
 		FloorGraphics1
@@ -295,7 +329,7 @@ Part : /BASE_PART
 			Location = [2, 1]
 			Rotation = -90d
 			FireInterval = .6
-			FiringArc = 30d
+			FiringArc = 40d
 			RotateSpeed = 90d
 			FireThresholdAngle = 1d
 			AIFirepowerRating = 1600
@@ -344,9 +378,9 @@ Part : /BASE_PART
 			GetTargetFrom = Turret
 			Location = [155/64, 0]  //0,-151
 			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/greenheavylasershot
-			AmmoStorage = BatteryStorage
-			AmmoUsed = 250
+			Bullet = &/COMMON_SHOTS/greenheavylasershot  //temporary
+			AmmoStorage = LoadedAmmo //BatteryStorage
+			AmmoUsed = 1
 		}
 
 		FireEffect
@@ -396,7 +430,7 @@ Part : /BASE_PART
 			Crew = 2
 			DefaultPriority = &/PRIORITIES/Weapon_Crew
 			PrerequisitesBeforeCrewing = [PowerToggle]
-			HighPriorityPrerequisites = [BatteryStorage]
+			HighPriorityPrerequisites = [AmmoPrereq] //[BatteryStorage]
 			CrewDestinations
 			[
 				&../../CrewLocation1/Location
@@ -429,7 +463,7 @@ Part : /BASE_PART
 				ClampAnimation = true
 			}
 		}
-
+/*
 		BatterySprites
 		{
 			Type = AmmoSprites
@@ -460,6 +494,134 @@ Part : /BASE_PART
 				}
 			]
 		}
+*/
+		AmmoSprites_1
+		{
+			Type = AmmoSprites
+			Location = [0.5, 5.5]
+			AmmoStorage = AmmoStorage
+			Layer = "doodads_low"
+			RangeLow = 0
+			RangeHigh = 10
+			AmmoLevels
+			[
+				{
+					File = "../bullets_pile01.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile02.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile03.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile04.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile05.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile06.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile07.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile08.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile09.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile10.png"
+					Size = [1, 1]
+				}
+			]
+		}
+		AmmoSprites_2
+		{
+			Type = AmmoSprites
+			Location = [0.5, 5.5]
+			AmmoStorage = AmmoStorage
+			Layer = "doodads_low"
+			RangeLow = 10
+			RangeHigh = 20
+			AmmoLevels
+			[
+				{
+					File = "../bullets_pile01.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625] //26
+				}
+				{
+					File = "../bullets_pile02.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile03.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile04.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile05.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile06.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile07.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile08.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile09.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile10.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+			]
+		}
+
+		AmmoSprites2_1 : &AmmoSprites_1
+		{
+			Location = [3.5, 5.5]
+			RangeLow = 20
+			RangeHigh = 30
+		}
+		AmmoSprites2_2 : &AmmoSprites_2
+		{
+			Location = [3.5, 5.5]
+			RangeLow = 30
+			RangeHigh = 40
+		}
 
 		OperationEffects
 		{
@@ -476,7 +638,7 @@ Part : /BASE_PART
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 			Location = [2, 3]
 
-			FactorHitEffectsWith = BatteryStorage
+			FactorHitEffectsWith = AmmoStorage
 			HitEffects
 			[
 				{
@@ -533,7 +695,7 @@ Part : /BASE_PART
 						Size = [1, 1]
 					}
 				}
-
+/*
 				// Out of power.
 				{
 					Toggle = BatteryStorage
@@ -541,6 +703,17 @@ Part : /BASE_PART
 					{
 						File = &/INDICATORS/NoPower
 						Size = [1, 1]
+					}
+				}
+*/
+				// Out of ammo.
+				{
+					Toggle = AmmoPrereq
+					Delay = &~/Part/Components/Turret/FireInterval
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoAmmo
+						Size = [1.5, 1.5]
 					}
 				}
 				// No crew.
@@ -572,7 +745,8 @@ Part : /BASE_PART
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
+		//PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
+		AmmoCapacity = (&~/Part/Components/AmmoStorage/MaxAmmo) + (&~/Part/Components/LoadedAmmo/MaxAmmo)
 
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
