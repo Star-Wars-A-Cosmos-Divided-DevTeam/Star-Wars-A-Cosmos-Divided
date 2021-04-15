@@ -71,7 +71,7 @@ Part : /BASE_PART
 		{
 			Type = AmmoStorage
 			AmmoType = battery
-			MaxAmmo = 16000
+			MaxAmmo = 32000
 		}
 		CombinedBatteryStorage
 		{
@@ -83,7 +83,7 @@ Part : /BASE_PART
 				OutgoingBuffProviders = [PowerBuffProvider]
 				ComponentID = BatteryStorage
 			}
-			AddMode = PrioritizeLeastAmmo
+			AddMode = PrioritizeMostEmptyCapacity //PrioritizeLeastAmmo
 		}
 		BatteryConsumer
 		{
@@ -114,8 +114,19 @@ Part : /BASE_PART
 			MinFromQuantityForConversion = 1
 			Interval = 1
 		}
-
-
+/*
+		ForcedPump
+		{
+			Type = AmmoConverter
+			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
+			ToStorage = CombinedBatteryStorage
+			FromQuantity = 1000
+			MinFromQuantityForConversion = 1000
+			ToQuantity = 1000
+			Interval = 0.06666  //no less than 0.03333
+		}
+*/
 		Graphics
 		{
 			Type = Graphics
