@@ -30,20 +30,20 @@ Components
 	{
 		Type = PenetratingHit
 		FactorEffectsWith = Targetable
-		Penetration = 0 // Enough to get through one shield and lose half penetration.
+		Penetration = 5
 		PenetratesOperational = false
-		SourceShipCollisionDelay = 10
+		SourceShipCollisionDelay = 10  //no less than 7
 		HitShield
 		{
 			HitEffects
 			[
 				{
 					Type = Damage
-					Damage = 5000
+					Damage = 25000
 				}
 				{
 					Type = Impulse;
-					Impulse = 30;
+					Impulse = 400
 				}
 			]
 
@@ -68,12 +68,43 @@ Components
 			[
 				{
 					Type = Damage
-					Damage = 8000
-					TreatShieldAsPart = true
+					Damage = 12500
 				}
 				{
-					Type = Impulse;
-					Impulse = 30
+					Type = ExplosiveDamage
+					TotalDamage = 500000
+					Radius = 12
+					ExpandDuration = .8
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false
+						Friendlies = true
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 150000
+					Radius = 10
+					ExpandDuration = .8
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 5
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = true
+					}
+				}
+				{
+					Type = Impulse
+					Impulse = 400
 				}
 			]
 
