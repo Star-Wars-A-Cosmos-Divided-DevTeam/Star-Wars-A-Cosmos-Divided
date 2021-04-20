@@ -34,6 +34,8 @@ Part : /BASE_PART
 	Density = 1 + (&~/Part/TurretDensity)
 	InitialPenetrationResistance = 5
 	PenetrationRectType = Normal
+	ReceivableBuffs = [SWWeaponTimerBuff]
+
 
 	TurretDensity = 3
 
@@ -108,6 +110,14 @@ Part : /BASE_PART
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
+		//for alternate fire 120% * 1 s = 1.20 s
+		WeaponTimerBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SWWeaponTimerBuff
+			BuffAmount = 120%
+		}
+
 		Turret
 		{
 			Type = TurretWeapon
@@ -115,14 +125,14 @@ Part : /BASE_PART
 			Rotation = -90d // Relative to unrotated part.
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			FireInterval = 1.2
+			FireInterval = 0 // Uses separate fire timer.
 			FiringArc = 160d
 			RotateSpeed = 45d
 			FireThresholdAngle = 1d
 			IgnoreSourceShipLOSChecks = true
 			HoldTargetAfterCancel = 0.5
 			AIFirepowerRating = 6400
-			FirePermissionToggle = FireModeToggle //FirePermissionToggle
+			FirePermissionToggle = FirePermissionToggle //FireModeToggle //FirePermissionToggle
 
 			Emitter = WeaponEmitterBase
 
