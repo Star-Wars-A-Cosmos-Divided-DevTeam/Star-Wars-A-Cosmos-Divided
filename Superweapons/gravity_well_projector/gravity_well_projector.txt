@@ -17,11 +17,11 @@ Part : /BASE_PART
 	ID = Lafiel.gravity_well_projector
 	DescriptionKey = "Parts/GravityWellProjectorDesc";
 	EditorGroup = "TechI"
-	Cost = 40000;
+	Cost = 40000
 	AIValueFactor = 1
 	AIValue = (&Cost)
-	Size = [6, 6];
-	SelectionPriority = 1;
+	Size = [6, 6]
+	SelectionPriority = 1
 	MaxHealth = 36000;
 	TypeCategories = [gravity_well_projector,uses_power];
 
@@ -96,6 +96,7 @@ Part : /BASE_PART
 			OperationalToggle = PowerToggle
 			ShowProgressFor = BatteryStorage
 		}
+
 		ChargeStorage
 		{
 			Type = AmmoStorage
@@ -104,6 +105,7 @@ Part : /BASE_PART
 			ToggleOnAmmo = 1000
 			StartingAmmo = 0
 		}
+
 
 //-----------------------------------------------------------------------------
 
@@ -123,7 +125,7 @@ Part : /BASE_PART
 			Rotation = -90d // Relative to unrotated part.
 			OperationalToggle = ChargeStorage
 			AutoFireToggle = IsOperational //AutoFireToggle
-			FireInterval = 2.5 //0 // Uses separate fire timer.
+			FireInterval = 1 //0 // Uses separate fire timer.
 			//FirePermissionToggle = FireTimer
 			FiringArc = 360d
 			RotateSpeed = 1080d
@@ -132,7 +134,7 @@ Part : /BASE_PART
 			IgnoreSourceShipLOSChecks = true
 			AIFirepowerRating = 0
 			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitterBase // Doesn't actually fire; only used for targeting.
+			Emitter = WeaponEmitter
 
 			AutoTargets
 			[
@@ -157,7 +159,7 @@ Part : /BASE_PART
 				QuadCount = 64
 			}
 		}
-		BulletEmitterBase
+		WeaponEmitter
 		{
 			Type = BulletEmitter
 			ChainedTo = Weapon
@@ -167,6 +169,7 @@ Part : /BASE_PART
 			OperationalToggle = IsOperational
 			FireDelay = 0
 			Bullet = &<FTL_jammer_shot.txt>
+			AmmoStorage = BatteryStorage
 			AmmoUsage
 			[
 				{
@@ -178,6 +181,7 @@ Part : /BASE_PART
 					AmmoUsed = 1000
 				}
 			]
+
 		}
 
 //-----------------------------------------------------------------------------
@@ -334,18 +338,19 @@ Part : /BASE_PART
 			NameKey = "StatCategories/MissileEMP"
 			Stats
 			{
-				PowerDrainPerShot = (&~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/TotalDrain) / 1000
+				PowerDrainPerShot = (&~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/TotalDrain) / 1000
 				PowerDrainPerSecond = (&PowerDrainPerShot) * (&ROF)
-				PowerDrainArea = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
+				PowerDrainArea = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
 				PowerDrain = [&../PowerDrainPerShot, &../PowerDrainPerSecond]
 				ROF = 1 / (&~/Part/Components/Weapon/FireInterval)
 				Arc = deg(&~/Part/Components/Weapon/FiringArc)
-				Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
-				PowerPerShot = (&~/Part/Components/BulletEmitterBase/AmmoUsage/0/AmmoUsed) / 1000
+				Range = &~/Part/Components/WeaponEmitter/Bullet/Range
+				PowerPerShot = (&~/Part/Components/WeaponEmitter/AmmoUsage/0/AmmoUsed) / 1000
 				PowerPerSecond = (&PowerPerShot) * (&ROF)
 				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 			}
 		}
 	]
+
 
 }

@@ -16,6 +16,41 @@ Components
 		//DeathByDistanceTraveled = 1
 		Lifetime = 0
 		// Lifetime will be auto-calculated based on range and speed.
+		OnDeath
+		{
+			FrameOfReference = Grid
+			HitEffects
+			[
+				{
+					Type = ExplosiveAmmoDrain
+					AmmoType = battery
+					TotalDrain = 125664000 //16000 per 100sq tile
+					ExpandDuration = 0.5
+					ExpandStartRadius = 20
+					Radius = 500
+					Slices = 4
+
+					Filter
+					{
+						//Friendlies = false
+						Enemies = true
+						OnlyPartCategories = [ftl]
+					}
+
+					MediaEffectsOnDrainFactor = .00025
+					MediaEffectsOnDrain
+					[
+						&<./Data/shots/electro_bolt/particles/electro_bolt_discharge.txt>
+						&<./Data/shots/missile_emp/particles/missile_emp_lightning.txt>
+					]
+				}
+			]
+			MediaEffects
+			[
+				&<shockwave_large.txt>
+			]
+
+		}
 	}
 	Hit
 	{
@@ -29,12 +64,14 @@ Components
 					Type = ExplosiveAmmoDrain
 					AmmoType = battery
 					TotalDrain = 125664000 //16000 per 100sq tile
+					ExpandDuration = 1
+					ExpandStartRadius = 20
 					Radius = 500
-					Slices = 1
+					Slices = 4
 
 					Filter
 					{
-						Friendlies = false
+						//Friendlies = false
 						Enemies = true
 						OnlyPartCategories = [ftl]
 					}
@@ -47,6 +84,10 @@ Components
 					]
 
 				}
+			]
+			MediaEffects
+			[
+				&<shockwave_large.txt>
 			]
 		}
 		HitStructural = &HitOperational
