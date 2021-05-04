@@ -85,7 +85,7 @@ Components
 			GetTargetFrom = Turret
 			Location = [101/64, 0]
 			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/greenlightlasershot
+			Bullet = &/COMMON_SHOTS/redlightlasershot
 			AmmoStorage = BatteryStorage
 			AmmoUsed = 100
 		}
@@ -94,14 +94,14 @@ Components
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [101/64, -40/64]
+			Location = [150/64, -40/64] //-40,-134
 		}
 
 		BulletEmitterRight : BulletEmitterBase
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [101/64, 40/64]
+			Location = [150/64, 40/64]
 		}
 
 		ChargeEffectBase
@@ -128,7 +128,7 @@ Components
 			MediaEffects
 			[
 				&/COMMON_SOUNDS/TurbolaserSFX
-				&/COMMON_PARTICLES/SmallGreenLaserShoot
+				&/COMMON_PARTICLES/SmallRedLaserShoot
 			]
 		}
 
@@ -137,7 +137,7 @@ Components
 			ChainedTo = BulletEmitterRight
 			Trigger = BulletEmitterRight
 		}
-			TurretBaseGraphics
+		TurretBaseGraphics
 		{
 			Type = Graphics
 			ChainedTo = Turret
@@ -146,20 +146,20 @@ Components
 			Floor
 			{
 				Layer = "roofs"
-				//Offset = [-1, 0]
+				//Offset = [0, -1]
 				DamageLevels
 				[
 					{
-						File = "ball_turret_small02.png"
+						File = "ball_turret_small03.png"
 						Size = [2, 2]
 					}
 /*
 					{
-						File = "ball_turret_small02_33.png"
+						File = "ball_turret_small03_33.png"
 						Size = [2, 2]
 					}
 					{
-						File = "ball_turret_small02_66.png"
+						File = "ball_turret_small03_66.png"
 						Size = [2, 2]
 					}
 */
@@ -176,20 +176,30 @@ Components
 			Floor
 			{
 				Layer = "roof_turrets"
-				Offset = [-40/64, -68/64]
+				Offset = [-40/64, -103/64]
 				DamageLevels
 				[
 					{
-						File = "../barrel[1,2]02.png"
+						File = "../barrel[1,2]03.png"
 						Size = [1, 2]
 					}
 				]
 			}
-			Walls : &Floor
+			Walls
 			{
-				Offset = [40/64, -68/64]
+				Layer = "roof_turrets"
+				Offset = [40/64, -103/64]
+				DamageLevels
+				[
+					{
+						File = "../barrel[1,2]03.png"
+						Size = [1, 2]
+						MirrorU = true
+					}
+				]
 			}
 		}
+
 
 /*
 		WeaponSpriteL
@@ -197,6 +207,26 @@ Components
 			Type = Sprite
 			ChainedTo = Turret
 			Location = [68/64, -40/64]
+			Rotation = 90d
+			Layer = "roof_turrets"
+			ResetAnimationTrigger = Turret
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"../barrel[1,2]03.png"
+				]
+				Size = [1, 2]
+				AnimationInterval = 0.0625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}	
+		WeaponSpriteR
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [68/64, 40/64]
 			Rotation = 90d
 			Layer = "roof_turrets"
 			ResetAnimationTrigger = Turret
@@ -212,11 +242,7 @@ Components
 				ClampAnimation = true
 			}
 		}	
-		WeaponSpriteR : &WeaponSpriteL
-		{
-			Location = [68/64, 40/64]
-		}	
-*/	
+*/		
 	}
 
 

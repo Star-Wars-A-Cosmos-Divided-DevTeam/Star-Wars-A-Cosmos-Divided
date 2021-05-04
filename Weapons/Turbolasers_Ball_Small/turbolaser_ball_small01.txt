@@ -52,7 +52,7 @@ Part : /BASE_PART
 		Size = [32, 64]
 	}
 	
-	Components : ^/0/Components, &<turbolaser01_green.txt>/Components, &<turret01_graphics.txt>
+	Components : ^/0/Components
 	{
 		IsOperational
 		{
@@ -85,62 +85,53 @@ Part : /BASE_PART
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-
-/*
-		LightTurbolaserType
+		LaserType
 		{
 			Type = UIToggle
-			ToggleID = "SW.lightturbolaser_type"
+			ToggleID = "SW.blasterlaser_type"
 			Default = 0
 			AlwaysAllowInBuildMode = true
-			ToggledOnChoices = [0, 1, 2]
 		}
 
-		LightTurbolaserRedToggle
+		LaserRedToggle
 		{
 			Type = ModeToggle
-			Mode = LightTurbolaserType
+			Mode = LaserType
 			OnMode = 0
 		}
-
-		LightTurbolaserRedComponents
+		LaserRedComponents
 		{
 			Type = ToggledComponents
-			Toggle = LightTurbolaserRedToggle
+			Toggle = LaserRedToggle
 			IncludeInBlueprints = true
-			Components = &<light_turbolaser_red.txt>/Components
+			Components = &<turbolaser01_red.txt>/Components
 		}
-
-		LightTurbolaserBlueToggle
+		LaserBlueToggle
 		{
 			Type = ModeToggle
-			Mode = LightTurbolaserType
+			Mode = LaserType
 			OnMode = 1
 		}
-
-		LightTurbolaserBlueComponents
+		LaserBlueComponents
 		{
 			Type = ToggledComponents
-			Toggle = LightTurbolaserBlueToggle
+			Toggle = LaserBlueToggle
 			IncludeInBlueprints = true
-			Components = &<light_turbolaser_blue.txt>/Components
+			Components = &<turbolaser01_blue.txt>/Components
 		}
-
-		LightTurbolaserGreenToggle
+        		LaserGreenToggle
 		{
 			Type = ModeToggle
-			Mode = LightTurbolaserType
+			Mode = LaserType
 			OnMode = 2
 		}
-
-		LightTurbolaserGreenComponents
+		LaserGreenComponents
 		{
 			Type = ToggledComponents
-			Toggle = LightTurbolaserGreenToggle
+			Toggle = LaserGreenToggle
 			IncludeInBlueprints = true
-			Components = &<light_turbolaser_green.txt>/Components
+			Components = &<turbolaser01_green.txt>/Components
 		}
-*/
 		Graphics
 		{
 			Type = Graphics
@@ -393,16 +384,15 @@ Part : /BASE_PART
 			File = "../Turbolasers_Light/blueprints.png"
 			Size = [2, 2]
 		}
-/*
 		BlueprintsRed
 		{
 			Type = BlueprintSprite
-			File = "blueprints.png"
+			File = "../Turbolasers_Light/blueprints.png"
 			Size = [2, 2]
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.lightturbolaser_type
+				ToggleID = SW.blasterlaser_type
 				Mode = 0
 			}
 		}
@@ -410,12 +400,12 @@ Part : /BASE_PART
 		BlueprintsBlue
 		{
 			Type = BlueprintSprite
-			File = "blueprints.png"
+			File = "../Turbolasers_Light/blueprints.png"
 			Size = [2, 2]
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.lightturbolaser_type
+				ToggleID = SW.blasterlaser_type
 				Mode = 1
 			}
 		}
@@ -423,18 +413,18 @@ Part : /BASE_PART
 		BlueprintsGreen
 		{
 			Type = BlueprintSprite
-			File = "blueprints.png"
+			File = "../Turbolasers_Light/blueprints.png"
 			Size = [2, 2]
 			ShowOnlyInToggleMode
 			{
-				ToggleID = SW.lightturbolaser_type
+				ToggleID = SW.blasterlaser_type
 				Mode = 2
 			}
 		}
-*/
 
 	}
 
+/*
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -443,20 +433,22 @@ Part : /BASE_PART
 		RecPower = (&PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 1 / (&<turbolaser01_green.txt>/Components/Turret/FireInterval)
-		Range = &<turbolaser01_green.txt>/Components/BulletEmitter/Bullet/Range
-		Arc = deg(&<turbolaser01_green.txt>/Components/Turret/FiringArc)
-		TurretSpeed = deg(&<turbolaser01_green.txt>/Components/Turret/RotateSpeed)
-		ShotSpeed = &<turbolaser01_green.txt>/Components/BulletEmitter/Bullet/Speed
-		ShotHP = &<turbolaser01_green.txt>/Components/BulletEmitter/Bullet/Components/Targetable/Health
-		PowerPerShot = (&<turbolaser01_green.txt>/Components/BulletEmitter/AmmoUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * 1 / (&<turbolaser01_green.txt>/Components/Turret/FireInterval)
+		ROF = 2 / (&<light_turbolaser_red.txt>/Components/Turret/FireInterval)
+		Range = &<light_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Range
+		Arc = deg(&<light_turbolaser_red.txt>/Components/Turret/FiringArc)
+		TurretSpeed = deg(&<light_turbolaser_red.txt>/Components/Turret/RotateSpeed)
+		ShotSpeed = &<light_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Speed
+		ShotHP = &<light_turbolaser_red.txt>/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+		PowerPerShot = (&<light_turbolaser_red.txt>/Components/BulletEmitterBase/AmmoUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * 2 / (&<light_turbolaser_red.txt>/Components/Turret/FireInterval)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	StatsByCategory
 	[
-		&<turbolaser01_green.txt>/LaserStats
-//		&<light_turbolaser_blue.txt>/LaserStats
-//		&<light_turbolaser_green.txt>/LaserStats
+		&<light_turbolaser_red.txt>/LaserStats
+		&<light_turbolaser_blue.txt>/LaserStats
+		&<light_turbolaser_green.txt>/LaserStats
 	]
+*/
+
 }
