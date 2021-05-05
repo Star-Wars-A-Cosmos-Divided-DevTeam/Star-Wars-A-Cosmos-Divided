@@ -99,6 +99,14 @@ Part : /BASE_PART
 			Interval = 1
 		}
 
+		ShieldVisibilityToggle
+		{
+			Type = UIToggle;
+			ToggleID = "sw_shield_visibility"
+			Default = 1
+			ToggledOnChoices = [1]
+			RememberValue = false
+		}
 		ArcShield
 		{
 			Type = ArcShield
@@ -174,129 +182,76 @@ Part : /BASE_PART
 			]
 		}
 
-		EmitterCollider
+		VisibleShieldComponents
 		{
-			Type = CircleCollider
-			ChainedTo = ArcShield
-			Location = [.2, 0]
-			Radius = 1
-			Density = .1
-		}
-
-		ArcShieldEffect
-		{
-			Type = ContinuousEffects
-			ChainedTo = ArcShield
-			FactorMediaEffectsIntensityWith = BatteryStorage
-			Location = [&~/Part/Components/ArcShield/Radius, 0]
-			OperationalToggle = IsOperational
-			MediaEffects
-			[
+			Type = ToggledComponents
+			Toggle = ShieldVisibilityToggle
+			Components
+			{
+				ArcShieldEffect
 				{
-					Type = ArcShield
-					Radius = &~/Part/Components/ArcShield/Radius
-					Arc = &~/Part/Components/ArcShield/Arc
-					FadeInTime = .25
-					FadeOutTime = .25
-					FadeFromScale = .8
-					ArcSprite
-					{
-						Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
-						_waveTex
+					Type = ContinuousEffects
+					ChainedTo = ArcShield
+					FactorMediaEffectsIntensityWith = BatteryStorage
+					Location = [&~/Part/Components/ArcShield/Radius, 0]
+					OperationalToggle = IsOperational
+					MediaEffects
+					[
 						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
-							UVMode = Wrap
+							Type = ArcShield
+							Radius = &~/Part/Components/ArcShield/Radius
+							Arc = &~/Part/Components/ArcShield/Arc
+							FadeInTime = .25
+							FadeOutTime = .25
+							FadeFromScale = .8
+							ArcSprite
+							{
+								Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+								Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
+								_waveTex
+								{
+									File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
+									UVMode = Wrap
+								}
+								_waveSpeed = 1
+								_waveAlpha = 1
+								_waveCurveInterval = .5
+								_waveCurveMagnitude = .35
+								_waveCurveUOffsetPerSecond = .2
+								_fullPowerColor = [0, 0, 255, 127]
+								_lowPowerColor = [255, 0, 0, 127]
+								_lowPowerThicknessExponent = .6
+								TargetBlendMode = Add
+								Size = [0, 1.5]
+							}
+							ArcSpriteSegments = 64
+							Bucket = Lower1
 						}
-						_waveSpeed = 1
-						_waveAlpha = 1
-						_waveCurveInterval = .5
-						_waveCurveMagnitude = .35
-						_waveCurveUOffsetPerSecond = .2
-						_fullPowerColor = [0, 0, 255, 127]
-						_lowPowerColor = [255, 0, 0, 127]
-						_lowPowerThicknessExponent = .6
-						TargetBlendMode = Add
-						Size = [0, 1.5]
-					}
-					ArcSpriteSegments = 64
-					Bucket = Lower1
-				}
 
-				: /BASE_SOUNDS/AudioExteriorDetail
-				{
-					Sound = "./Data/Ships/terran/shield_gen_small/shield_loop.wav"
-					Volume = .15
-					Speed = .65
-					MaxConcurrent = 1
-					MaxConcurrentVolume = .3
-					DynamicVolume : ^/0/DynamicVolume
-					{
-						MinDistance = .75
-						MaxDistance = 1.5
-					}
-					IgnoreIntensity = true
-				}
-			]
-		}
-
-		EmitterEffect
-		{
-			Type = ContinuousEffects
-			ChainedTo = ArcShield
-			FactorMediaEffectsIntensityWith = BatteryStorage
-			Location = [0, 0]
-			OperationalToggle = IsOperational
-			MediaEffects
-			[
-				{
-					Type = ArcShield
-					Radius = 0.5
-					Arc = &~/Part/Components/ArcShield/Arc
-					FadeInTime = .25
-					FadeOutTime = .25
-					ArcSprite
-					{
-						Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-						UVRect = [0, 1, 1, -1]
-						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
-						_waveTex
+						: /BASE_SOUNDS/AudioExteriorDetail
 						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
-							UVMode = Wrap
+							Sound = "./Data/Ships/terran/shield_gen_small/shield_loop.wav"
+							Volume = .15
+							Speed = .65
+							MaxConcurrent = 1
+							MaxConcurrentVolume = .3
+							DynamicVolume : ^/0/DynamicVolume
+							{
+								MinDistance = .75
+								MaxDistance = 1.5
+							}
+							IgnoreIntensity = true
 						}
-						_waveSpeed = -1
-						_waveAlpha = 1
-						_waveCurveInterval = .5
-						_waveCurveMagnitude = .35
-						_waveCurveUOffsetPerSecond = .2
-						_fullPowerColor = [0, 0, 255, 127]
-						_lowPowerColor = [255, 0, 0, 127]
-						_lowPowerThicknessExponent = .6
-						TargetBlendMode = Add
-						Size = [0, 1.0]
-					}
-					ArcSpriteSegments = 12
-					Bucket = Lower1
+					]
 				}
-
-				: /BASE_SOUNDS/AudioExteriorDetail
-				{
-					Sound = "./Data/Ships/terran/shield_gen_small/shield_emitter_loop.wav"
-					Volume = .2
-					Speed = 1.2
-					MaxConcurrent = 1
-					MaxConcurrentVolume = .4
-					IgnoreIntensity = true
-				}
-			]
+			}
 		}
 
 		ShieldOperationEffects
 		{
 			Type = ToggleEffects
 			Toggle = IsOperational,
-			ChainedTo = ArcShieldEffect
+			ChainedTo = ArcShield
 			ToggledOnMediaEffects
 			[
 				: /BASE_SOUNDS/AudioExterior
