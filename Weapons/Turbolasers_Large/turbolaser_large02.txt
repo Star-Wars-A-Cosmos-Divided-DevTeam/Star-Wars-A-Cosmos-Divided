@@ -168,7 +168,6 @@ Part : <turbolaser_large_base.txt>/Part
 		}
 	}
 
-/*
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -176,6 +175,11 @@ Part : <turbolaser_large_base.txt>/Part
 
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
+		
+		ROF = 1 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/WeaponEmitterBase/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 	}
 
 	StatsByCategory
@@ -184,28 +188,19 @@ Part : <turbolaser_large_base.txt>/Part
 			NameKey = "StatCategories/MedGreenLasershot"
 			Stats
 			{
-				DamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
-				DamagePerSecond = (&DamagePerShot) * (&ROF)
+				ShieldDamagePerShot = &~/Part/Components/WeaponEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
+				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+				DamagePerShot = &~/Part/Components/WeaponEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				Penetration = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/Penetration
-				FireChance = (&~/Part/Components/WeaponEmitter/Bullet/Components/Hit/PenetratingOperational/HitEffects/1/FireChance) * 100
-				ROF = 1 / (&~/Part/Components/Turret/FireInterval)
-				Range = &~/Part/Components/WeaponEmitter/Bullet/Range/BaseValue
-				Arc = deg(&~/Part/Components/Turret/FiringArc)
-				//Spread = deg(&~/Part/Components/WeaponEmitter/Spread/1)
-				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
-//				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
-				PowerPerShot = (&~/Part/Components/WeaponEmitter/AmmoUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&ROF)
+//				Spread = deg(&~/Part/Components/WeaponEmitterBase/Spread/1)
+				ShotSpeed = &~/Part/Components/WeaponEmitterBase/Bullet/Speed
+				ShotHP = &~/Part/Components/WeaponEmitterBase/Bullet/Components/Targetable/Health
+				PowerPerShot = (&~/Part/Components/WeaponEmitterBase/AmmoUsed) / 1000
+				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
 				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 			}
 		}
 	]
-
-*/
-
-
 }
-
-
