@@ -64,7 +64,7 @@ Part : <turbolaser_huge_base.txt>/Part
 			Rotation = -90d // Relative to unrotated part.
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			FireInterval = 0 // Uses separate fire timer.
+			FireInterval = 0.375 // Uses separate fire timer.
 			FiringArc = 160d
 			RotateSpeed = 45d
 			FireThresholdAngle = 1d
@@ -202,7 +202,6 @@ Part : <turbolaser_huge_base.txt>/Part
 		}
 	}
 
-/*
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -210,6 +209,11 @@ Part : <turbolaser_huge_base.txt>/Part
 
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 4 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/WeaponEmitter/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 	}
 
 	StatsByCategory
@@ -218,26 +222,18 @@ Part : <turbolaser_huge_base.txt>/Part
 			NameKey = "StatCategories/MedGreenLasershot"
 			Stats
 			{
-				DamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
-				DamagePerSecond = (&DamagePerShot) * (&ROF)
+				ShieldDamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
+				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+				DamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				Penetration = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/Penetration
-				FireChance = (&~/Part/Components/WeaponEmitter/Bullet/Components/Hit/PenetratingOperational/HitEffects/1/FireChance) * 100
-				ROF = 1 / (&~/Part/Components/Turret/FireInterval)
-				Range = &~/Part/Components/WeaponEmitter/Bullet/Range/BaseValue
-				Arc = deg(&~/Part/Components/Turret/FiringArc)
-				//Spread = deg(&~/Part/Components/WeaponEmitter/Spread/1)
-				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
-//				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
+				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
 				PowerPerShot = (&~/Part/Components/WeaponEmitter/AmmoUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&ROF)
+				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
 				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 			}
 		}
 	]
-
-*/
-
 }
-
