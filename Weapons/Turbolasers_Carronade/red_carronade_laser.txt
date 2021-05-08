@@ -28,6 +28,13 @@ Components
 			Mode = All
 		}
 
+		//for alternate fire 100% * 1 s = 1.0 s
+		WeaponTimerBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SWWeaponTimerBuff
+			BuffAmount = 120%
+		}
 		Turret
 		{
 			Type = TurretWeapon
@@ -35,7 +42,7 @@ Components
 			AutoFireToggle = AutoFireToggle
 			Location = [1, 0]
 			Rotation = -90d
-			FireInterval = 0
+			FireInterval = { BaseValue=1.0; BuffType=SWWeaponTimerBuff; BuffMode=Multiply; }
 			FiringArc = 40d
 			RotateSpeed = 90d
 			FireThresholdAngle = 1d
@@ -83,7 +90,7 @@ Components
 			ChainedTo = Turret
 			FireTrigger = ShootLeftTriggerProxy
 			GetTargetFrom = Turret
-			Location = [1.3125, -0.40625]
+			Location = [2.3125, -0.40625]
 			OperationalToggle = IsOperational
 			Bullet = &/COMMON_SHOTS/redheavylasershot
 			AmmoStorage = BatteryStorage
@@ -156,6 +163,7 @@ LaserStats
 	NameKey = "StatCategories/HeavyRedLasershot"
 	Stats
 	{
+		ROF = 2 / (&~/Components/WeaponTimerBuffProvider/BuffAmount)
 		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
 		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<turbolaser_carronade.txt>/Part/Stats/ROF)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]

@@ -1,0 +1,446 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.8
+
+Author : Lafiel
+Description:
+Currently prototyping
+
+Mainly aimed at superweapons for increased power requirement. 
+This should make vanilla reactors obsolete and truely balance the weapon's consumption.
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.15
+
+---------------------------------------------------------------------------- */ 
+Part : /BASE_PART
+{
+	ID = SW.hypermatter_reactor_12x12
+	NameKey = "Parts/HypermatterReactor12x12"
+	IconNameKey = "Parts/HypermatterReactor12x12Icon"
+	DescriptionKey = "Parts/HypermatterReactor12x12Desc"
+	EditorGroup = "Power"
+	Cost = 550000
+	AIValueFactor = 5
+	Size = [12, 12]
+	SelectionPriority = 0
+	SelectionTypeID = "reactors"
+	MaxHealth = 144000 // Deliberatly not increasing this for med/large reactors to make them extra-fragile.
+	AutoDoorMaxPathLength = 5
+	TypeCategories = [provides_power, bounty_objective]
+	RequiresCategories = [bridge1,WarRoom]
+	CreatePartPerTileWhenDestroyed = ""
+	IgnoreRotationForMirroredSelection = true
+/*
+	BlockedTravelCells
+	[
+		[1, 1]
+		[1, 2]
+		[2, 1]
+		[2, 2]
+	]
+	ForceManhattenPathInPart = true
+*/
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [72, 72]
+	}
+	Components : ^/0/Components
+	{
+		BatteryStorage
+		{
+			Type = AmmoStorage
+			AmmoType = battery
+			MaxAmmo = 264000
+			StartingAmmo = &MaxAmmo
+			SuppliesAmmo = true
+			MaxAmmoPickUp = 3000
+			ExpectedAmmoGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+			ToggleOnAmmo = 20001
+			ToggleOffAmmo = 20000
+		}
+		BatteryProducer
+		{
+			Type = AmmoConverter
+			ToStorage = BatteryStorage
+			ToQuantity = 100000
+			Interval = 0.09999
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [6, 6]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "../floor.png"
+						Size = [12, 12]
+					}
+					{
+						File = "../floor_33.png"
+						Size = [12, 12]
+					}
+					{
+						File = "../floor_66.png"
+						Size = [12, 12]
+					}
+				]
+			}
+/*
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"lights1.png"
+							"lights2.png"
+							"lights3.png"
+							"lights4.png"
+							"lights5.png"
+							"lights6.png"
+							"lights7.png"
+							"lights8.png"
+						]
+						Size = [4, 4]
+						AnimationInterval = 0.05
+					}
+				]
+			}
+*/
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "../walls.png"
+						Size = [12, 12]
+					}
+					{
+						File = "../walls_33.png"
+						Size = [12, 12]
+					}
+					{
+						File = "../walls_66.png"
+						Size = [12, 12]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "../roof.png"
+						Size = [12, 12]
+					}
+					{
+						File = "../roof_33.png"
+						Size = [12, 12]
+					}
+					{
+						File = "../roof_66.png"
+						Size = [12, 12]
+					}
+				]
+			}
+/*
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"roof_doodads1.png"
+							"roof_doodads2.png"
+							"roof_doodads3.png"
+							"roof_doodads4.png"
+							"roof_doodads5.png"
+							"roof_doodads6.png"
+							"roof_doodads7.png"
+							"roof_doodads8.png"
+						]
+						Size = [4, 4]
+						AnimationInterval = 0.05
+					}
+				]
+			}
+			OperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "roof_windows.png"
+						Size = [4, 4]
+					}
+					{
+						File = "roof_windows_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "roof_windows_66.png"
+						Size = [4, 4]
+					}
+				]
+			}
+*/
+		}
+
+		CoreGraphics
+		{
+			Type = Graphics
+			Location = [6, 6]
+			Floor
+			{
+				Layer = "turrets"
+				Offset = [-2, 0]
+				DamageLevels
+				[
+					{
+						File = "core-p1.png"
+						Size = [4, 10]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "turrets"
+				Offset = [2, 0]
+				DamageLevels
+				[
+					{
+						File = "core-p1.png"
+						Size = [4, 10]
+						MirrorU = true
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				Offset = [-1.171875, 0.0625]
+				DamageLevels
+				[
+					{
+						File = "fusion_glow.png"
+						Size = [2, 4]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "lights_add"
+				Offset = [1.171875, 0.0625]
+				DamageLevels
+				[
+					{
+						File = "fusion_glow.png"
+						Size = [2, 4]
+						MirrorU = true
+					}
+				]
+			}
+		}
+		ReactorHum
+		{
+			Type = ContinuousEffects
+			Location = [6, 6]
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					Sound = "./Data/ships/terran/reactor_small/operating.wav"
+					Volume = .5
+					Speed = .5
+					MaxConcurrent = 1
+					DynamicVolume : ^/0/DynamicVolume
+					{
+						ExteriorVolume = .5
+					}
+				}
+			]
+		}
+/*
+		BatterySprites
+		{
+			Type = AmmoSprites
+			Location = [2, 2]
+			AmmoStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroAmmoSprite = true
+			AmmoLevels
+			[
+				{
+					File = "reactor0.png"
+					Size = [4, 4]
+				}
+				{
+					File = "reactor1.png"
+					Size = [4, 4]
+				}
+				{
+					File = "reactor2.png"
+					Size = [4, 4]
+				}
+				{
+					File = "reactor3.png"
+					Size = [4, 4]
+				}
+				{
+					File = "reactor4.png"
+					Size = [4, 4]
+				}
+				{
+					File = "reactor5.png"
+					Size = [4, 4]
+				}
+				{
+					File = "reactor6.png"
+					Size = [4, 4]
+				}
+				{
+					File = "reactor7.png"
+					Size = [4, 4]
+				}
+				{
+					File = "reactor8.png"
+					Size = [4, 4]
+				}
+			]
+		}
+*/
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			Location = [6, 6]
+
+			MediaEffects
+			[
+				&<./Data/ships/terran/reactor_large/particles/reactor_explode_large.txt>
+				&<./Data/ships/terran/reactor_large/particles/reactor_explode_flash_large.txt>
+				&<./Data/ships/terran/reactor_large/particles/reactor_shockwave_large.txt>
+				&<./Data/common_effects/particles/explosions/huge_part_explode_debris.txt>
+				&<./Data/common_effects/particles/explosions/huge_part_explode_smoke.txt>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/ships/terran/reactor_small/destroyed.wav"
+					Volume = 2
+					Speed = .5
+					SpeedVariation = .25 * (&Speed)
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .75
+					Duration = 4
+				}
+			]
+			
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 6000000
+					Radius = 154
+					Delay = .05
+					ExpandDuration = 3.5
+					ExpandStartRadius = 12
+					ExpandLoss = 100%
+					FireChancePerNDamage = 50%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false
+						Friendlies = true
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 13320000
+					Radius = 103
+					Delay = .05
+					ExpandDuration = 2
+					ExpandStartRadius = 12
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 5
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = true
+					}
+				}
+			]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [6, 6]
+			Layer = "indicators"
+			Indicators
+			[
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [3, 3]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "./Data/ships/terran/corridor/blueprints.png"
+			Size = [12, 12]
+		}
+		BlueprintsCore
+		{
+			Type = BlueprintSprite
+			File = "blueprints_core.png"
+			Size = [4, 10]
+			Offset = [-2, 0]
+		}
+		BlueprintsCore2
+		{
+			Type = BlueprintSprite
+			File = "blueprints_core.png"
+			Size = [4, 10]
+			MirrorU = true
+			Offset = [2, 0]
+		}
+	}
+
+	Stats
+	{
+		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		BatterySize = (&~/Part/Components/BatteryStorage/MaxAmmoPickUp) / 1000
+		BatteryFillTime = 0
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
+	}
+}
