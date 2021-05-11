@@ -15,6 +15,7 @@ Components
 			OperationalToggle = SwitchCooldownToggle
 			InvertOperationalToggle = true
 		}
+
 		SwitchCooldownToggle
 		{
 			Type = TriggeredToggle
@@ -24,7 +25,7 @@ Components
 		WeaponIsOperational
 		{
 			Type = MultiToggle
-			Toggles = [IsOperational, SwitchCooldownToggle]
+			Toggles = [IsOperational, SwitchCooldownToggle,FirePermissionToggle]
 			Mode = All
 		}
 
@@ -38,7 +39,7 @@ Components
 		Turret
 		{
 			Type = TurretWeapon
-			OperationalToggle = IsOperational
+			OperationalToggle = WeaponIsOperational  //IsOperational
 			AutoFireToggle = AutoFireToggle
 			Location = [1, 0]
 			Rotation = -90d
@@ -50,7 +51,7 @@ Components
 			IgnoreSourceShipLOSChecks = true
 			//AllowFireWithBlockedLOS = true
 			FirePermissionToggle = FirePermissionToggle
-			Emitter = BulletEmitter
+			Emitter = BulletEmitterBase
 
 			AutoTargets
 			[
@@ -84,6 +85,20 @@ Components
 			ShowProgressFor = Turret
 		}
 
+		BulletEmitterBase // Doesn't actually fire; only used for targeting and as a base for the left and right emitters.
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger // none, but field is required
+			GetTargetFrom = Turret
+			Location = [2.3125, -0.40625]
+			OperationalToggle = IsOperational
+			FireDelay = 0
+			Bullet = &/COMMON_SHOTS/blueheavylasershot
+			AmmoStorage = BatteryStorage
+			AmmoUsed = 250
+		}
+
 		BulletEmitter
 		{
 			Type = BulletEmitter
@@ -111,28 +126,14 @@ Components
 
 			MediaEffects
 			[
-				: /PARTICLES/BlueLaserShoot
-				{
-					Delay = 0
-				}
-
-				:/BASE_SOUNDS/AudioExterior
-				{
-					Sound = "../Turbolaser SFX.wav"
-					Volume = .75
-					SpeedVariation = .25
-				}
-
-				:/BASE_SHAKE
-				{
-					ShakeAmount = .025
-					Duration = .25
-				}
+				&/COMMON_PARTICLES/BlueLaserShoot
+				&/COMMON_SOUNDS/TurbolaserSFX
 			]
 		}
 
 		FireEffect2 : &FireEffect
 		{
+			Trigger = BulletEmitter2
 			Location = [2.2125, 0.50625]
 		}
 		TurretCollider
