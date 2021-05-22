@@ -733,41 +733,33 @@ Part : /BASE_PART
 		}
 	}
 
-/*
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxAmmo) / 1000
 
-		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecPower = &../StatsByCategory/0/Stats/PowerUsageContinuous
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
 
 	StatsByCategory
 	[
 		{
-			NameKey = "StatCategories/MedGreenLasershot"
+			NameKey = "StatCategories/RedSuperLaserBeam"
 			Stats
 			{
-				DamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
-				DamagePerSecond = (&DamagePerShot) * (&ROF)
-				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				Penetration = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/Penetration
-				FireChance = (&~/Part/Components/WeaponEmitter/Bullet/Components/Hit/PenetratingOperational/HitEffects/1/FireChance) * 100
-				ROF = 1 / (&~/Part/Components/Turret/FireInterval)
-				Range = &~/Part/Components/WeaponEmitter/Bullet/Range/BaseValue
+				DamagePerShot = &~/Part/Components/BeamEmitter/HitOperational/HitEffects/0/Damage
+				HitInterval = &~/Part/Components/BeamEmitter/HitInterval
+				BurstDuration = &~/Part/Components/BeamEmitter/Duration
+				BurstDamage = (&DamagePerShot) * ((&BurstDuration) / (&HitInterval))
+				DamageContinuous = (&BurstDamage) * 1 / (&~/Part/Components/Turret/FireInterval)
+				Range = &~/Part/Components/BeamEmitter/Range
 				Arc = deg(&~/Part/Components/Turret/FiringArc)
-				//Spread = deg(&~/Part/Components/WeaponEmitter/Spread/1)
 				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
-//				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
-				PowerPerShot = (&~/Part/Components/WeaponEmitter/AmmoUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&ROF)
-				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+				ShotSpeed = Infinity
+				PowerPerShot = (&~/Part/Components/BeamEmitter/AmmoUsed) / 1000
+				PowerUsageContinuous = (&PowerPerShot) / (&~/Part/Components/Turret/FireInterval)
 			}
 		}
 	]
-
-*/
-
 }
