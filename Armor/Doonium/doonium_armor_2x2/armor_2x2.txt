@@ -1,0 +1,110 @@
+Part : /BASE_PART
+{
+	NameKey = "Parts/DooniumArmor2x2"
+	IconNameKey = "Parts/DooniumArmor2x2Icon"
+	ID = SW.doonium_armor_2x2
+	EditorGroup = "Defenses"
+	DescriptionKey = "Parts/DooniumArmorDesc"
+	Cost = 1600
+	Size = [2, 2]
+	SelectionTypeID = "armor"
+	MaxHealth = 160 //must not be more than 160 or 1% of 16000; for balance reason should be destroyed soonish
+	AreaDamageBlockFactor = .25
+	Flammable = false
+	InitialPenetrationResistance = 100
+	CreatePartPerTileWhenGrabbed = "SW.doonium_armor"
+	CreatePartPerTileWhenDestroyed = "SW.doonium_armor"
+	DestroyedPartHealthFraction = 98%
+	CrewSpeedFactor = 0
+	Density = 1
+	IsRotateable = true
+	IsWalled = true
+	AllowedDoorLocations = []
+	GeneratorRequiresDoor = false
+	UsePartWhenFlipped = doonium_armor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "../../icon2x2.png"
+			SampleMode = Linear
+		}
+		Size = [64, 64]
+	}
+	Components
+	{
+		EmpAbsorber
+		{
+			Type = ExplosiveAmmoDrainSink
+			AmmoType = battery
+			AbsorbsAmmoDrain = 4000
+		}
+		BlueprintSprite0
+		{
+			File = "../../blueprints2x2.png"
+			Size = [2, 2]
+		Type=BlueprintSprite;}
+		Graphics
+		{
+			Type = Graphics
+			Location = [1, 1]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "../../armor2x2.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "../../armor2x2.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				Offset = [-0.5, -0.5]
+				DamageLevels
+				[
+					{
+						File = "../doonium_armor/roof.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad : &Roof
+			{
+				Offset = [0.5, -0.5]
+			}
+			OperationalRoofDoodad = &NonOperationalRoofDoodad
+			NonOperationalRoofDoodad : &Roof
+			{
+				Offset = [-0.5, 0.5]
+			}
+			OperationalRoofWindows = &NonOperationalRoofWindows
+			NonOperationalRoofWindows : &Roof
+			{
+				Offset = [0.5, 0.5]
+			}
+
+		}
+	}
+
+	Stats
+	{
+		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsAmmoDrain) / 1000
+	}
+}
+
+
