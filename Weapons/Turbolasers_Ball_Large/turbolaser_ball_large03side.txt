@@ -36,18 +36,61 @@ Part : <turbolaser_ball_large_side_base.txt>/Part
 	Components : ^/0/Components, &<turret03_graphics_side.txt>, &<turbolaser03_side_blue.txt>/Components
 	{
 
-		Blueprints
+			Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blueprints_side.png"
 			Size = [6, 9]
+					ShowOnlyInToggleMode
+			{
+				ToggleID = SW.exterior_type
+				Mode = 1
+			}
 		}
-		BlueprintsTurret
+		Blueprints2
 		{
 			Type = BlueprintSprite
-			File = "icon03.png"
+			File = "blueprints_side.png"
 			Size = [6, 9]
-			Offset = [0, -8]
+					ShowOnlyInToggleMode
+			{
+				ToggleID = SW.exterior_type
+				Mode = 1
+			}
+	}
+	ExteriorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.exterior_type"
+			Default = 2
+			ToggledOnChoices = [0,1]
+			AlwaysAllowInBuildMode = true
+		}
+		WhiteExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 0
+		}
+		WhiteExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<turbolaser_ball_large03_white.txt>/Components
+		}
+		GreyExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 1
+		}
+		GreyExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreyExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<turbolaser_ball_large03_grey.txt>/Components
 		}
 	}
 
