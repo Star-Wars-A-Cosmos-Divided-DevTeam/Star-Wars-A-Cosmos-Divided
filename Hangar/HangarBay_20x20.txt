@@ -1,0 +1,310 @@
+Part : /BASE_PART
+{
+	NameKey = "Parts/HangarBay_20x20"
+	IconNameKey = "Parts/HangarBay_20x20_Icon"
+	ID = SW.HangarBay_20x20
+	DescriptionKey = "Parts/HangarBay_20x20_Desc"
+	EditorGroup = "Misc"
+	Size = [20, 20]
+//	ProhibitAbove = 20
+	SelectionTypeID = "hangar"
+	SelectionPriority = 0
+	Cost = 20000
+	MaxHealth = 40000
+	InitialPenetrationResistance = 5
+	PenetrationRectType = Normal
+	Flammable = false
+//	RequiresCategories = []
+//	AllowedContiguity = [Top, Left, Right, Bottom]
+	Density = 1
+//	SelectionTypeByRotation = true;
+//	ReceivableBuffs = []
+
+	GeneratorRequiresDoor = false
+	AllowedDoorLocations []
+
+	CreatePassableHolesWhenDestroyed = true
+	CrewSpeedFactor = 1
+	TypeCategories = [hangar]
+//	InternalWalls = [None] //	InternalWalls = [All]
+	ExternalWalls = [None]
+	IsWalled = false
+	IsExternal = true //to be fixed
+//	NoAutoDoors = true
+
+	GenerateRectCollider = false
+
+/*
+	ExternalWallsByCell
+	[
+	 	{
+	 		Key = [0, 0]
+	 		Value = None // [TopLeft, Top, TopRight]
+	 	}
+	]
+	InternalWallsByCell
+	[
+	 	{
+	 		Key = [0, 0]
+	 		Value = None // [TopLeft, Top, TopRight]
+	 	}
+	]
+*/
+	AllowedDoorLocations []
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "floor.png";
+			SampleMode = Linear;
+		}
+		Size = [92, 92]
+	}
+
+	Components : ^/0/Components
+	{
+		Graphics
+		{
+			Type = Graphics
+			Location = [10, 10]
+			Floor
+			{
+				Layer = "structure" //"floors"
+				Offset = [-5, -5]
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [10, 10]
+					}
+/*
+					{
+						File = "floor_33.png"
+						Size = [10, 10]
+					}
+					{
+						File = "floor_66.png"
+						Size = [10, 10]
+					}
+*/
+				]
+			}
+			Roof
+			{
+				Layer = "structure" //"floors"
+				Offset = [5, -5]
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [10, 10]
+					}
+/*
+					{
+						File = "floor_33.png"
+						Size = [10, 10]
+					}
+					{
+						File = "floor_66.png"
+						Size = [10, 10]
+					}
+*/
+				]
+			}
+			Walls
+			{
+				Layer = "structure" //"floors"
+				Offset = [-5, 5]
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [10, 10]
+					}
+/*
+					{
+						File = "floor_33.png"
+						Size = [10, 10]
+					}
+					{
+						File = "floor_66.png"
+						Size = [10, 10]
+					}
+*/
+				]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad
+			{
+				Layer = "structure" //"floors"
+				Offset = [5, 5]
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [10, 10]
+					}
+/*
+					{
+						File = "floor_33.png"
+						Size = [10, 10]
+					}
+					{
+						File = "floor_66.png"
+						Size = [10, 10]
+					}
+*/
+				]
+			}
+		}
+
+		LightsGraphicsLeft
+		{
+			Type = Graphics
+			Location = [2.5, 10]
+			Floor
+			{
+				Layer = "lights_add"
+				Offset = [0, -7.5]
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [5, 5]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "lights_add"
+				Offset = [0, -2.5]
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [5, 5]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "lights_add"
+				Offset = [0, 2.5]
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [5, 5]
+					}
+				]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad
+			{
+				Layer = "lights_add"
+				Offset = [0, 7.5]
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [5, 5]
+					}
+				]
+			}
+		}
+
+		LightsGraphicsRight : &LightsGraphicsLeft
+		{
+			Location = [7.5, 10]
+		}
+
+
+		RoofOptionToggle
+		{
+			Type = UIToggle;
+			ToggleID = "roof_visibility_mode"
+			Default = 1
+			ToggledOnChoices = [1]
+			RememberValue = true
+		}
+		RoofOptionToggle1
+		{
+			Type = ModeToggle
+			Mode = RoofOptionToggle
+			OnMode = 1
+		}
+		RoofOptionComponents1
+		{
+			Type = ToggledComponents
+			Toggle = RoofOptionToggle1
+			//Invert = true
+			Components
+			{
+				Graphics
+				{
+					Type = Graphics
+					Location = [10, 10]
+					Roof
+					{
+						Layer = "roof_turrets"
+						DamageLevels
+						[
+							{
+								File = "roof.png"
+								Size = [20, 20]
+							}
+/*
+							{
+								File = "roof_33.png"
+								Size = [20, 20]
+							}
+							{
+								File = "roof_66.png"
+								Size = [20, 20]
+							}
+*/
+						]
+					}
+				}
+			}
+		}
+
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			Location = [5, 5]
+			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
+		}
+		Blueprints1
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [10, 10]
+			Offset = [-5, -5]
+		}
+		Blueprints2
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [10, 10]
+			Offset = [5, -5]
+		}
+		Blueprints3
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [10, 10]
+			Offset = [-5, 5]
+		}
+		Blueprints4
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [10, 10]
+			Offset = [5, 5]
+		}
+	}
+}
+
