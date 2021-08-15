@@ -25,25 +25,18 @@ Components
 		WeaponIsOperational
 		{
 			Type = MultiToggle
-			Toggles = [IsOperational, SwitchCooldownToggle,FirePermissionToggle]
+			Toggles = [IsOperational, SwitchCooldownToggle]
 			Mode = All
 		}
 
-		//for alternate fire 100% * 1 s = 1.0 s
-		WeaponTimerBuffProvider
-		{
-			Type = SelfBuffProvider
-			BuffType = SWWeaponTimerBuff
-			BuffAmount = 100%
-		}
 		Turret
 		{
 			Type = FixedWeapon
 			OperationalToggle = WeaponIsOperational  //IsOperational
 			AutoFireToggle = AutoFireToggle
-			Location = [1, 0]
+			Location = [1, 1.5]
 			Rotation = -90d
-			FireInterval = 0
+			FireInterval = 1.0
 			//FiringArc = 40d
 			//RotateSpeed = 90d
 			//FireThresholdAngle = 1d
@@ -51,7 +44,7 @@ Components
 			AIFirepowerRating = 800
 			IgnoreSourceShipLOSChecks = true
 			//AllowFireWithBlockedLOS = true
-			FirePermissionToggle = FirePermissionToggle
+			//FirePermissionToggle = FirePermissionToggle
 			Emitter = BulletEmitter
 
 			AutoTarget
@@ -95,7 +88,7 @@ Components
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
-			FireTrigger = ShootLeftTriggerProxy
+			FireTrigger = Turret
 			GetTargetFrom = Turret
 			Location = [2.40625, 0]
 			OperationalToggle = IsOperational
@@ -124,6 +117,7 @@ Components
 			Type = Graphics
 			ChainedTo = Turret
 			Location = [0, 0]
+			Rotation = 90d
 			Floor
 			{
 				Layer = "roofs"
@@ -160,6 +154,7 @@ Components
 			}
 		}
 	}
+
 
 LaserStats
 {
