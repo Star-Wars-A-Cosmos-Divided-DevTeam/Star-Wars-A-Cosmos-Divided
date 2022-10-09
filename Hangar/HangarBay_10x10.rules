@@ -1,0 +1,566 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7+
+
+Author : Lafiel
+
+Description:
+This is a work in progress. Ultimately it will include options for:
+different floor
+different floor projector lights
+different deck lights
+maybe different roofs; 
+roofs eventually might get or share a custom layer with a community mod. So current layer is just temporary to avoid creating a mess now.
+roofs can be colored via crew job
+
+This implementation features 4 tiled sprite "sectors" to allow more detailed configuration for certain composition
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.15 
+
+
+---------------------------------------------------------------------------- */
+Part : /BASE_PART
+{
+	NameKey = "Parts/HangarBay_10x10"
+	IconNameKey = "Parts/HangarBay_10x10_Icon"
+	ID = SW.HangarBay_10x10
+	DescriptionKey = "Parts/HangarBay_10x10_Desc"
+	EditorGroup = "Misc"
+	Size = [10, 10]
+//	ProhibitAbove = 10
+	SelectionTypeID = "hangar"
+	SelectionPriority = 0
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 10000
+	MaxHealth = 10000
+	InitialPenetrationResistance = 5
+	PenetrationRectType = Normal
+	Flammable = false
+//	RequiresCategories = []
+//	AllowedContiguity = [Top, Left, Right, Bottom]
+	Density = 1
+//	SelectionTypeByRotation = true;
+//	ReceivableBuffs = []
+
+	GeneratorRequiresDoor = false
+	AllowedDoorLocations []
+
+	CreatePassableHolesWhenDestroyed = true
+	CrewSpeedFactor = 1
+	TypeCategories = [hangar]
+//	InternalWalls = [None] //	InternalWalls = [All]
+	ExternalWalls = [None]
+	IsWalled = false
+	IsExternal = true //to be fixed
+//	NoAutoDoors = true
+
+	GenerateRectCollider = false
+
+/*
+	ExternalWallsByCell
+	[
+	 	{
+	 		Key = [0, 0]
+	 		Value = None // [TopLeft, Top, TopRight]
+	 	}
+	]
+	InternalWallsByCell
+	[
+	 	{
+	 		Key = [0, 0]
+	 		Value = None // [TopLeft, Top, TopRight]
+	 	}
+	]
+*/
+
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "floor01[5,5]03lines-w-double.png";
+			SampleMode = Linear;
+		}
+		Size = [64, 64]
+	}
+
+	Components : ^/0/Components
+	{
+		CrewSource
+		{
+			Type = CrewSource
+			Crew = 0
+			ColorSRange = [0, 1]
+			ColorVRange = [0, 1]
+		}
+		FloorOptionToggle
+		{
+			Type = UIToggle;
+			ToggleID = "hangar_floor_options"
+			Default = 0
+			//ToggledOnChoices = [1]
+			RememberValue = true
+			RequiresCommand = false
+		}
+
+		FloorOptionToggle0
+		{
+			Type = ModeToggle
+			Mode = FloorOptionToggle
+			OnMode = 0
+		}
+		FloorOptionComponents0
+		{
+			Type = ToggledComponents
+			Toggle = FloorOptionToggle0
+			//Invert = true
+			Components
+			{
+				Graphics0
+				{
+					Type = Graphics
+					Location = [5, 5]
+					Floor
+					{
+						Layer = "structure" //"floors"
+						Offset = [-2.5, -2.5]
+						DamageLevels
+						[
+							{
+								File = "floor01[5,5]03lines-w-double.png"
+								Size = [5, 5]
+							}
+							/*
+							{
+								File = "floor01[5,5]03lines-w-double_33.png"
+								Size = [5, 5]
+							}
+							{
+								File = "floor01[5,5]03lines-w-double_66.png"
+								Size = [5, 5]
+							}
+							*/
+						]
+					}
+					Roof
+					{
+						Layer = "structure" //"floors"
+						Offset = [2.5, -2.5]
+						DamageLevels
+						[
+							{
+								File = "floor01[5,5]03lines-w-double.png"
+								Size = [5, 5]
+								//UVRotation = 1
+							}
+							/*
+							{
+								File = "floor01[5,5]03lines-w-double_33.png"
+								Size = [5, 5]
+								UVRotation = 1
+							}
+							{
+								File = "floor01[5,5]03lines-w-double_66.png"
+								Size = [5, 5]
+								UVRotation = 1
+							}
+							*/
+						]
+					}
+					Walls
+					{
+						Layer = "structure" //"floors"
+						Offset = [-2.5, 2.5]
+						DamageLevels
+						[
+							{
+								File = "floor01[5,5]03lines-w-double.png"
+								Size = [5, 5]
+								//UVRotation = 3
+							}
+							/*
+							{
+								File = "floor01[5,5]03lines-w-double_33.png"
+								Size = [5, 5]
+								UVRotation = 3
+							}
+							{
+								File = "floor01[5,5]03lines-w-double_66.png"
+								Size = [5, 5]
+								UVRotation = 3
+							}
+							*/
+						]
+					}
+					OperationalDoodad = &NonOperationalDoodad
+					NonOperationalDoodad
+					{
+						Layer = "structure" //"floors"
+						Offset = [2.5, 2.5]
+						DamageLevels
+						[
+							{
+								File = "floor01[5,5]03lines-w-double.png"
+								Size = [5, 5]
+								//UVRotation = 2
+							}
+							/*
+							{
+								File = "floor01[5,5]03lines-w-double_33.png"
+								Size = [5, 5]
+								UVRotation = 2
+							}
+							{
+								File = "floor01[5,5]03lines-w-double_66.png"
+								Size = [5, 5]
+								UVRotation = 2
+							}
+							*/
+						]
+					}
+				}
+
+			}
+		}
+
+		FloorOptionToggle1
+		{
+			Type = ModeToggle
+			Mode = FloorOptionToggle
+			OnMode = 1
+		}
+		FloorOptionComponents1
+		{
+			Type = ToggledComponents
+			Toggle = FloorOptionToggle1
+			//Invert = true
+			Components
+			{
+				Graphics1
+				{
+					Type = Graphics
+					Location = [5, 5]
+					Floor
+					{
+						Layer = "structure" //"floors"
+						Offset = [-2.5, -2.5]
+						DamageLevels
+						[
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4.png"
+								Size = [5, 5]
+							}
+							/*
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4_33.png"
+								Size = [5, 5]
+							}
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4_66.png"
+								Size = [5, 5]
+							}
+							*/
+						]
+					}
+					Roof
+					{
+						Layer = "structure" //"floors"
+						Offset = [2.5, -2.5]
+						DamageLevels
+						[
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4.png"
+								Size = [5, 5]
+								UVRotation = 1
+							}
+							/*
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4_33.png"
+								Size = [5, 5]
+								UVRotation = 1
+							}
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4_66.png"
+								Size = [5, 5]
+								UVRotation = 1
+							}
+							*/
+						]
+					}
+					Walls
+					{
+						Layer = "structure" //"floors"
+						Offset = [-2.5, 2.5]
+						DamageLevels
+						[
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4.png"
+								Size = [5, 5]
+								UVRotation = 3
+							}
+							/*
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4_33.png"
+								Size = [5, 5]
+								UVRotation = 3
+							}
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4_66.png"
+								Size = [5, 5]
+								UVRotation = 3
+							}
+							*/
+						]
+					}
+					OperationalDoodad = &NonOperationalDoodad
+					NonOperationalDoodad
+					{
+						Layer = "structure" //"floors"
+						Offset = [2.5, 2.5]
+						DamageLevels
+						[
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4.png"
+								Size = [5, 5]
+								UVRotation = 2
+							}
+							/*
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4_33.png"
+								Size = [5, 5]
+								UVRotation = 2
+							}
+							{
+								File = "floor01[5,5]03lines-y-circle576_1of4_66.png"
+								Size = [5, 5]
+								UVRotation = 2
+							}
+							*/
+						]
+					}
+				}
+
+			}
+		}
+
+
+		LightsGraphics
+		{
+			Type = Graphics
+			Location = [5, 5]
+			Floor
+			{
+				Layer = "lights_add"
+				Offset = [-2.5, -2.5]
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [5, 5]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "lights_add"
+				Offset = [2.5, -2.5]
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [5, 5]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "lights_add"
+				Offset = [-2.5, 2.5]
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [5, 5]
+					}
+				]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad
+			{
+				Layer = "lights_add"
+				Offset = [2.5, 2.5]
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [5, 5]
+					}
+				]
+			}
+		}
+
+		RoofOptionToggle
+		{
+			Type = UIToggle;
+			ToggleID = "roof_visibility_mode"
+			Default = 1
+			ToggledOnChoices = [1]
+			RememberValue = true
+			RequiresCommand = false
+		}
+		RoofOptionToggle1
+		{
+			Type = ModeToggle
+			Mode = RoofOptionToggle
+			OnMode = 1
+		}
+		RoofOptionComponents1
+		{
+			Type = ToggledComponents
+			Toggle = RoofOptionToggle1
+			//Invert = true
+			Components
+			{
+				RoofGraphics
+				{
+					Type = Graphics
+					Location = [5, 5]
+					GetColorFrom = CrewSource
+					Roof
+					{
+						Layer = "roof_turrets"
+						DamageLevels
+						[
+							{
+								File = "roof.png"
+								Size = [10, 10]
+							}
+/*
+							{
+								File = "roof_33.png"
+								Size = [10, 10]
+							}
+							{
+								File = "roof_66.png"
+								Size = [10, 10]
+							}
+*/
+						]
+					}
+				}
+			}
+		}
+
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			Location = [5, 5]
+			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
+		}
+		Blueprints0_1
+		{
+			Type = BlueprintSprite
+			File = "blueprints01[5,5]03lines-w-double.png"
+			Size = [5, 5]
+			Offset = [-2.5, -2.5]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = "hangar_floor_options"
+				Mode = 0
+			}
+		}
+		Blueprints0_2
+		{
+			Type = BlueprintSprite
+			File = "blueprints01[5,5]03lines-w-double.png"
+			Size = [5, 5]
+			Offset = [2.5, -2.5]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = "hangar_floor_options"
+				Mode = 0
+			}
+		}
+		Blueprints0_3
+		{
+			Type = BlueprintSprite
+			File = "blueprints01[5,5]03lines-w-double.png"
+			Size = [5, 5]
+			Offset = [-2.5, 2.5]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = "hangar_floor_options"
+				Mode = 0
+			}
+		}
+		Blueprints0_4
+		{
+			Type = BlueprintSprite
+			File = "blueprints01[5,5]03lines-w-double.png"
+			Size = [5, 5]
+			Offset = [2.5, 2.5]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = "hangar_floor_options"
+				Mode = 0
+			}
+		}
+		Blueprints1_1
+		{
+			Type = BlueprintSprite
+			File = "blueprints01[5,5]03lines-y-circle576_1of4.png"
+			Size = [5, 5]
+			Offset = [-2.5, -2.5]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = "hangar_floor_options"
+				Mode = 1
+			}
+		}
+		Blueprints1_2
+		{
+			Type = BlueprintSprite
+			File = "blueprints01[5,5]03lines-y-circle576_1of4.png"
+			Size = [5, 5]
+			Offset = [2.5, -2.5]
+			UVRotation = 1
+			ShowOnlyInToggleMode
+			{
+				ToggleID = "hangar_floor_options"
+				Mode = 1
+			}
+		}
+		Blueprints1_3
+		{
+			Type = BlueprintSprite
+			File = "blueprints01[5,5]03lines-y-circle576_1of4.png"
+			Size = [5, 5]
+			Offset = [-2.5, 2.5]
+			UVRotation = 3
+			ShowOnlyInToggleMode
+			{
+				ToggleID = "hangar_floor_options"
+				Mode = 1
+			}
+		}
+		Blueprints1_4
+		{
+			Type = BlueprintSprite
+			File = "blueprints01[5,5]03lines-y-circle576_1of4.png"
+			Size = [5, 5]
+			Offset = [2.5, 2.5]
+			UVRotation = 2
+			ShowOnlyInToggleMode
+			{
+				ToggleID = "hangar_floor_options"
+				Mode = 1
+			}
+		}
+	}
+}
+

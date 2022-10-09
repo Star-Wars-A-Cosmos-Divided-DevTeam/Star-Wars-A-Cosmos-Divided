@@ -1,0 +1,190 @@
+Components
+	{
+		SwitchTimerTrigger
+		{
+			Type = Timer
+			Duration = 2.75
+			AutoStart = true
+			Repeats = false
+		}
+		SwitchTimerProgressBar
+		{
+			Type = ProgressBar
+			ShowProgressFor = SwitchTimerTrigger
+			Invert = true
+			OperationalToggle = SwitchCooldownToggle
+			InvertOperationalToggle = true
+		}
+		SwitchCooldownToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = SwitchTimerTrigger
+			StartsOn = false
+		}
+		WeaponIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, SwitchCooldownToggle]
+			Mode = All
+		}
+
+		Turret
+		{
+			Type = TurretWeapon
+			OperationalToggle = WeaponIsOperational
+			AutoFireToggle = AutoFireToggle
+			Location = [1.25, 0.625]  //[1.140625, 0.75]
+			Rotation = -90d
+			FireInterval = .16666
+			FiringArc = 15d
+			RotateSpeed = 90d
+			FireThresholdAngle = 1d
+			AIFirepowerRating = 400
+			FirePermissionToggle = FireModeToggle
+			Emitter = BulletEmitter
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = WeaponIsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = Turret
+			GetTargetFrom = Turret
+			Location = [2, 0.07]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/bluexwinglasershot
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 40
+		}
+
+		ChargeEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = Turret
+			Location = [1.1, 0]
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/SmallLaserCharge
+			]
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = BulletEmitter
+			Location = [2, 0.07]
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/SmallBlueLaserShoot
+				
+				&/COMMON_SOUNDS/XWingLaserFire
+			]
+		}
+
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .45
+			Density = .75
+		}
+
+		TurretGraphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			ChainedTo = Turret
+			Location = [.5, 0]
+			Rotation = 90d
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						// None.
+					}
+					{
+						File = "turret damage_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "turret damage_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+
+		WeaponSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [1.30, 0.10]
+			Rotation = 90d
+			Layer = "weapons"
+			ResetAnimationTrigger = BulletEmitter
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"weapon2A.png"
+					"weapon2A.png"
+				]
+				Size = [1, 5]
+				MirrorU = true
+				AnimationInterval = 0.01
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+	}
+LaserStats
+{
+	NameKey = "StatCategories/BlueXWingLasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}

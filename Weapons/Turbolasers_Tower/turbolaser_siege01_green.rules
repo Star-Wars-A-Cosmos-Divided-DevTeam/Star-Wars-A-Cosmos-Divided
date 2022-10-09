@@ -1,0 +1,123 @@
+Components
+	{
+		Weapon
+		{
+			Type = FixedWeapon
+			Location = [4, 8] // Relative to upper-left corner of unrotated part.
+			Rotation = -90d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 2  //movie accurate 47frames
+			TargetingArc = 90d
+			FiringArc = 0d
+			RotateSpeed = 0d
+			AIFirepowerRating = 12000
+			SourceShipCollisions = false
+
+			Emitter = BulletEmitter
+			FirePermissionToggle = FireModeToggle
+
+			AutoTarget
+			{
+				TargetType = ShipParts
+				Toggle = AutoTargetToggle
+			}
+
+			CoverageLine
+			{
+				LineSprite
+				{
+					Texture = &/INDICATORS/RadialGradient
+					VertexColor = [255, 255, 255, 191]
+					UVRect = [.5, 0, 0, 1]
+				}
+				LineThickness = 2
+
+				BeginCapSprite : LineSprite
+				{
+					UVRect = [0, 0, .5, 1]
+				}
+				BeginCapSize = [1, 2]
+
+				EndCapSprite : LineSprite
+				{
+					UVRect = [.5, 0, .5, 1]
+				}
+				EndCapSize = [1, 2]
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Weapon
+		}
+
+		BulletEmitter
+		{
+			Type = BulletEmitter
+			Location = [27.9375, 0] //0,-889
+			ChainedTo = Weapon
+			FireTrigger = Weapon
+			GetTargetFrom = Weapon
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/Siege02HeavyLaserShotGreen
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 100
+		}
+
+		BulletEmitterGhost
+		{
+			Type = BulletEmitter
+			Location = [27.9375, 0] //0,-889
+			ChainedTo = Weapon
+			FireTrigger = BulletEmitter
+			GetTargetFrom = Weapon
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/Siege02HeavyLaserShotGreenGhost
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 0
+		}
+
+		ChargeEffectBase
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitter
+			Trigger = Weapon
+			AnchorMediaEffects = true
+		
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/LaserReCharge
+			]
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitter
+			Trigger = BulletEmitter
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/TurbolaserSFX
+				&/COMMON_PARTICLES/LargeGreenLaserShoot
+			]
+		}
+	}
+
+LaserStats
+{
+	NameKey = "StatCategories/LightGreenTurbolasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 1 / (&~/Components/Weapon/FireInterval)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * 1 / (&~/Components/Weapon/FireInterval)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}
