@@ -1,0 +1,1429 @@
+Part : /BASE_PART
+{
+	NameKey = "Parts/DurasteelArmor_1x1_Wedge_4B_A01_L"
+	IconNameKey = "Parts/DurasteelArmor_1x1_Wedge_4B_A01_LIcon"
+	ID = SW.durasteel_armor_1x1_Wedge_4B_D04_L
+	EditorGroup = "Defenses"
+	DescriptionKey = "Parts/DurasteelArmorDesc"
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 350
+	Size = [1, 1]
+	AllowedContiguity = [Top, Right, Bottom]
+	SelectionTypeID = "armor"
+	MaxHealth = 7000
+	ExplosiveDamageAbsorption = 100%
+	ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
+	Flammable = false
+	CreatePartWhenDestroyed = ""
+	CreatePartPerTileWhenGrabbed = ""
+	InitialPenetrationResistance = 6
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	CrewSpeedFactor = 0
+	Density = 3
+	IsRotateable = true
+	IsWalled = true
+	ExternalWalls = [/*Top,*/ TopRight, Right, BottomRight, Bottom, BottomLeft]
+	InternalWalls = [Left/*, TopLeft, Top*/]
+	AllowedDoorLocations = []
+	GeneratorRequiresDoor = false
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
+	IsFlippable = true
+	CustomCollider
+	[
+		[0.25, 0]
+		[1, 0]
+		[1, 1]
+		[0, 1]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+	Components : ^/0/Components
+	{
+		EmpAbsorber
+		{
+			Type = ExplosiveResourceDrainSink
+			ResourceType = battery
+			AbsorbsResourceDrain = floor((&~/Part/MaxHealth)/4)
+		}
+
+		BlueprintSprite
+		{
+			Type=BlueprintSprite;
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+
+
+		//*************** BLUEPRINTS'S BORDERS **************
+		// Rotation 0 (up)
+		Blueprint0a	//top-right triangle External wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 0
+			Location = [0.5, -.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			//RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*0******"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_blueprints75p.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint0b	//top-left triangle Internal wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 0
+			Location = [0.5, 0.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "10*****0"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint0c	//bottom-left triangle Exnternal wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 0
+			Location = [-.5, .5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode =  "*****000"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint0d	//fake top internal 60% wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 0
+			Location = [0.5, 0.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*1******"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/blueprints_internal025.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+
+		// Rotation 1 (right)
+		Blueprint1a	//top-right triangle External wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 1
+			Location = [.5, -.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***0****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_blueprints75p.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint1b	//top-left triangle Internal wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 1
+			Location = [0.5, 0.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*010****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint1c	//bottom-left triangle Exnternal wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 1
+			Location = [-.5, .5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "00*****0"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint1d	//fake top internal 60% wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 1
+			Location = [0.5, 0.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***1****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/blueprints_internal025.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+
+		// Rotation 2 (down)
+		Blueprint2a	//top-right triangle External wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 2
+			Location = [.5, -.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*****0**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_blueprints75p.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint2b	//top-left triangle Internal wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 2
+			Location = [0.5, 0.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***010**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint2c	//bottom-left triangle Exnternal wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 2
+			Location = [-.5, .5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*000****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint2d	//fake top internal 60% wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 2
+			Location = [0.5, 0.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*****1**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/blueprints_internal025.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+
+		// Rotation 3 (left)
+		Blueprint3a	//top-right triangle External wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 3
+			Location = [.5, -.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*******0"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_blueprints75p.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint3b	//top-left triangle Internal wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 3
+			Location = [0.5, 0.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*****010"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint3c	//bottom-left triangle Exnternal wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 3
+			Location = [-.5, .5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***000**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_blueprints.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+		Blueprint3d	//fake top internal 60% wall
+		{
+			Type=BlueprintBlendSprite;
+			OnlyWithRotation = 3
+			Location = [0.5, 0.5]
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*******1"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/blueprints_internal025.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+		}
+
+
+		//*************** ROOF'S BORDERS **************
+		// Rotation 0 (up)
+		Roof0a	//top-right triangle External wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 0
+			Location = [0.5, -.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			//RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*0******"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_roof75p.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+		Roof0b	//top-left triangle Internal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 0
+			Location = [0.5, 0.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "10*****0"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+		Roof0c	//bottom-left triangle Exnternal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 0
+			Location = [-.5, .5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode =  "*****000"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+		Roof0d	//fake top internal 60% wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 0
+			Location = [0.5, 0.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*1******"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/roof_internal025.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+
+		// Rotation 1 (right)
+		Roof1a	//top-right triangle External wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 1
+			Location = [.5, -.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***0****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_roof75p.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+		Roof1b	//top-left triangle Internal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 1
+			Location = [0.5, 0.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*010****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+		Roof1c	//bottom-left triangle Exnternal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 1
+			Location = [-.5, .5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "00*****0"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+		Roof1d	//fake top internal 60% wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 1
+			Location = [0.5, 0.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***1****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/roof_internal025.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+
+		// Rotation 2 (down)
+		Roof2a	//top-right triangle External wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 2
+			Location = [.5, -.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*****0**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_roof75p.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+		Roof2b	//top-left triangle Internal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 2
+			Location = [0.5, 0.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***010**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+		Roof2c	//bottom-left triangle Exnternal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 2
+			Location = [-.5, .5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*000****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+		Roof2d	//fake top internal 60% wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 2
+			Location = [0.5, 0.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*****1**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/roof_internal025.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+
+		// Rotation 3 (left)
+		Roof3a	//top-right triangle External wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 3
+			Location = [.5, -.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*******0"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_roof75p.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+		Roof3b	//top-left triangle Internal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 3
+			Location = [0.5, 0.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*****010"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+		Roof3c	//bottom-left triangle Exnternal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 3
+			Location = [-.5, .5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***000**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_roof.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+		Roof3d	//fake top internal 60% wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 3
+			Location = [0.5, 0.5]
+			Layer = "roofs"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*******1"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/roof_internal025.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+
+
+		//*************** WALL'S BORDERS **************
+		// Rotation 0 (up)
+		Wall0a	//top-right triangle External wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 0
+			Location = [0.5, -.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			//RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*0******"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_armor75p.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+		Wall0b	//top-left triangle Internal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 0
+			Location = [0.5, 0.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "10*****0"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+		Wall0c	//bottom-left triangle Exnternal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 0
+			Location = [-.5, .5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode =  "*****000"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+		Wall0d	//fake top internal 60% wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 0
+			Location = [0.5, 0.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*1******"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/armor_internal025.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+
+		// Rotation 1 (right)
+		Wall1a	//top-right triangle External wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 1
+			Location = [.5, -.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***0****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_armor75p.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+		Wall1b	//top-left triangle Internal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 1
+			Location = [0.5, 0.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*010****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+		Wall1c	//bottom-left triangle Exnternal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 1
+			Location = [-.5, .5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "00*****0"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+		Wall1d	//fake top internal 60% wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 1
+			Location = [0.5, 0.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***1****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/armor_internal025.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+
+		// Rotation 2 (down)
+		Wall2a	//top-right triangle External wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 2
+			Location = [.5, -.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*****0**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_armor75p.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+		Wall2b	//top-left triangle Internal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 2
+			Location = [0.5, 0.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***010**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
+							Size = [1, 1]
+							UVRotation = 0
+						}
+					]
+				}
+			]
+		}
+
+		Wall2c	//bottom-left triangle Exnternal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 2
+			Location = [-.5, .5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*000****"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+		Wall2d	//fake top internal 60% wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 2
+			Location = [0.5, 0.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*****1**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/armor_internal025.png"
+							Size = [1, 1]
+							UVRotation = 2
+						}
+					]
+				}
+			]
+		}
+
+
+		// Rotation 3 (left)
+		Wall3a	//top-right triangle External wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 3
+			Location = [.5, -.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*******0"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/tri_armor75p.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+		Wall3b	//top-left triangle Internal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 3
+			Location = [0.5, 0.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*****010"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
+							Size = [1, 1]
+							UVRotation = 1
+						}
+					]
+				}
+			]
+		}
+
+		Wall3c	//bottom-left triangle Exnternal wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 3
+			Location = [-.5, .5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			RequireInternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "***000**"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "./Data/ships/terran/armor_wedge/tri_armor.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+		Wall3d	//fake top internal 60% wall
+		{
+			Type= BlendSprite;
+			OnlyWithRotation = 3
+			Location = [0.5, 0.5]
+			Layer = "walls"
+			BlendCheckRectType = Physical
+			AllowUndefinedBlendSprites = true
+			RequireExternalWallsToBlend = true
+			AmbiguousSprites
+			[
+				{
+					SituationCode = "*******1"
+					AllowRotation = false
+					DamageLevels
+					[
+						{
+							File = "../Borders/armor_internal025.png"
+							Size = [1, 1]
+							UVRotation = 3
+						}
+					]
+				}
+			]
+		}
+
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, .5]
+		}
+	}
+
+	Stats
+	{
+		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
+	}
+}

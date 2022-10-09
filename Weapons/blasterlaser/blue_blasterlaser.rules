@@ -1,0 +1,44 @@
+Components
+	{
+		BulletEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = Turret
+			GetTargetFrom = Turret
+			Location = [1, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/bluesmalllasershot
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 50
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = BulletEmitter
+			Location = [1.4, 0]
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/SmallBlueLaserShoot
+				
+				&/COMMON_SOUNDS/SmallLaserFire
+			]
+		}
+	}
+LaserStats
+{
+	NameKey = "StatCategories/SingleBlueLasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 1 * (&<small_blasterlaser.txt>/Part/Stats/ROF)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * 1 * (&<small_blasterlaser.txt>/Part/Stats/ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}

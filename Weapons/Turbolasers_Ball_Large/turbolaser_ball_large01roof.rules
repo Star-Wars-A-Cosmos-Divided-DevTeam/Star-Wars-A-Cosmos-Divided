@@ -1,0 +1,125 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+Description:
+Currently prototyping
+
+Uses a base file. This file is just the weapon and whatever function it requires.
+In order to implement different colored shot you can just link them to sub files with those shots.
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.14
+
+---------------------------------------------------------------------------- */ 
+
+Part : <turbolaser_ball_large_roof_base.txt>/Part
+{
+	NameKey = "Parts/TurbolaserBallLarge01Roof"
+	IconNameKey = "Parts/TurbolaserBallLarge01RoofIcon"
+	ID = SW.turbolaser_ball_large_01_roof
+	DescriptionKey = "Parts/TurbolaserBallLarge01RoofDesc"
+
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 130000  //cost per tile * (1+3) floors
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon01.png"
+			SampleMode = Linear
+		}
+		Size = [57, 92]
+	}
+	Components : ^/0/Components, &<turret01_graphics_roof.txt>, &<turbolaser01_roof_green.txt>/Components
+	{
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints_roof.png"
+			Size = [6, 6]
+					ShowOnlyInToggleMode
+			{
+				ToggleID = SW.exterior_type
+				Mode = 1
+			}
+		}
+		Blueprints2
+		{
+			Type = BlueprintSprite
+			File = "blueprints_roof.png"
+			Size = [6, 6]
+					ShowOnlyInToggleMode
+			{
+				ToggleID = SW.exterior_type
+				Mode = 1
+			}
+	}
+	ExteriorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.exterior_type"
+			Default = 2
+			ToggledOnChoices = [0,1]
+			AlwaysAllowInBuildMode = true
+		}
+		WhiteExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 0
+		}
+		WhiteExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<turbolaser_ball_large01_white.txt>/Components
+		}
+		GreyExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 1
+		}
+		GreyExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreyExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<turbolaser_ball_large01_grey.txt>/Components
+		}
+	}
+
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = &PowerPerSecond
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 1 / (&<turbolaser01_roof_green.txt>/Components/Turret/FireInterval)
+		Range = &<turbolaser01_roof_green.txt>/Components/BulletEmitter/Bullet/Range
+		Arc = deg(&<turbolaser01_roof_green.txt>/Components/Turret/FiringArc)
+		TurretSpeed = deg(&<turbolaser01_roof_green.txt>/Components/Turret/RotateSpeed)
+		ShotSpeed = &<turbolaser01_roof_green.txt>/Components/BulletEmitter/Bullet/Speed
+		ShotHP = &<turbolaser01_roof_green.txt>/Components/BulletEmitter/Bullet/Components/Targetable/Health
+		PowerPerShot = (&<turbolaser01_roof_green.txt>/Components/BulletEmitter/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+	}
+
+	StatsByCategory
+	[
+//		&<turbolaser01_roof_red.txt>/LaserStats
+//		&<turbolaser01_roof_blue.txt>/LaserStats
+		&<turbolaser01_roof_green.txt>/LaserStats
+	]
+}

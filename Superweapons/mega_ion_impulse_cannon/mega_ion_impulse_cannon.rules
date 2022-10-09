@@ -1,0 +1,700 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+Description:
+Currently prototyping: does not require "tunnel" parts from DSL2; for release revise by unlocking modular codes and adjust stats
+
+A peripheral weapon 12x wide but actual size is 6 to conform with "tunnel" parts from DSL2.
+Also prevents easy buff cheating with multiple tunnel parts.
+Tunnel parts are expected to have 2 buffing zones to further prevent buff cheating with staggered placement.
+The sum of the buffzone should be the expected or planned amount.
+
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.13
+
+---------------------------------------------------------------------------- */ 
+Part : /BASE_PART
+{
+	NameKey = "Parts/MegaIonImpulseCannon"
+	IconNameKey = "Parts/MegaIonImpulseCannonIcon"
+	ID = SW.mega_ion_impulse_cannon
+	DescriptionKey = "Parts/MegaIonImpulseCannonDesc"
+//	EditorGroup = "WeaponsEnergy"
+	EditorGroup = "TechIII"
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 160000
+	AIValueFactor = 5
+	TypeCategories = [weapon,uses_power,is_crewed,ion_impulse_weapon]
+	RequiresCategories = [SW.ion_impulse_accelerator] //modular code
+	Size = [6, 3]
+	Density = 2 //no less than 2
+
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	MaxHealth = 72000 //4000 per tile for actual size or 2000 per tile to final size
+
+	ReceivableBuffs : ^/0/ReceivableBuffs
+	[
+		Railgun
+		RailgunShot
+		RailgunOperation
+	]
+	ProhibitAbove = 3
+	//ProhibitBelow = 0
+	ProhibitLeft = 3
+	ProhibitRight = 3
+
+	ProhibitRects
+	[
+		[-3, -3, 12, 3]
+	]
+	AllowedDoorLocations
+	[
+		[0, 3]
+		[1, 3]
+		[2, 3]
+		[3, 3]
+		[4, 3]
+		[5, 3]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [92, 23]
+	}
+	Components : ^/0/Components
+	{
+		EmpAbsorber
+		{
+			Type = ExplosiveResourceDrainSink
+			ResourceType = battery
+			AbsorbsResourceDrain = ceil((&~/Part/MaxHealth) * 0.2)
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
+		}
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles
+			[
+				PowerToggle
+				BatteryStorage
+				PartCrew
+				RailgunOperationBuffToggle //modular code
+//				CorrectBuffPartToggleProxy //modular code //cheat prevention
+			]
+			Mode = All
+		}
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			ToggledOnChoices = [1]
+		}
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 30000 //test value
+			ToggleOnResources = 29001
+//			ToggleOffResources = 6999
+		}
+		BatteryConsumer
+		{
+			Type = TypedResourceGridConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+
+			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		RailgunBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = Railgun
+		}
+
+		RailgunOperationBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = RailgunOperation
+		}
+
+		ShotBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = RailgunShot
+			ChainsFromBuffType = Railgun
+			BuffAmount = { BaseValue=0; BuffType=Railgun; BuffMode=Add; }
+		}
+		ReverseOperationBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = RailgunReverseOperation
+			BuffArea = [0, 8, 1, 1]
+			OperationalToggle = PowerToggle
+			Criteria
+			{
+				Category = ion_impulse_weapon
+				Rot = 0
+				//Left = 0
+				//Right = 6
+				//Top = 8
+			}
+		}
+//-----------------------------------------------------------------------------
+//necessary modular code
+
+		AmmoProxy
+		{
+			Type = ResourceStorageProxy
+			ResourceType = battery
+			PartLocation = [0, 4]
+			PartCriteria
+			{
+				Category = DSL_power
+				Rot = 0
+				Left = 0
+				Right = 2
+				Top = 4
+			}
+			ComponentID = LoadedAmmo
+		}
+
+
+		CorrectBuffPartToggleProxy
+		{
+			Type = ToggleProxy
+			PartCriteria
+			{
+				Category = DSL_power
+				Rot = 0
+				Left = 0
+				Right = 1
+				Top = 1
+			}
+			ComponentID = PowerToggle
+			IsOnWhenNotConnected = false
+		}
+
+//-----------------------------------------------------------------------------
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [3, 1.5]
+			Floor
+			{
+				Layer = "weapons"
+				Offset = [0, -1]
+				DamageLevels
+				[
+					{
+						File = "warp_coil_segment1klingon.png"
+						Size = [4, 1]
+						MirrorV = true
+					}
+				]
+			}
+			Walls : &Floor
+			{
+				Offset = [-4, -1]
+			}
+			Roof : &Floor
+			{
+				Offset = [4, -1]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"SW_console01_on1.png"
+							"SW_console01_on2.png"
+							"SW_console01_on3.png"
+						]
+						Size = [2, 1]
+						AnimationInterval = 0.075
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "SW_console01_off.png"
+						Size = [2, 1]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [12, 3]
+					}
+				]
+			}
+		}
+
+		FloorGraphics
+		{
+			Type = Graphics
+			Location = [3, 1.5]
+			Floor
+			{
+				Layer = "floors"
+				Offset = [-1.5, 0]
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [3, 3]
+					}
+					{
+						File = "floor_33.png"
+						Size = [3, 3]
+					}
+					{
+						File = "floor_66.png"
+						Size = [3, 3]
+					}
+				]
+			}
+			Walls : &Floor
+			{
+				Offset = [1.5, 0]
+			}
+			Roof : &Floor
+			{
+				Offset = [-4.5, 0]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad : &Floor
+			{
+				Offset = [4.5, 0]
+			}
+		}
+		RoofGraphics
+		{
+			Type = Graphics
+			Location = [3, 1.5]
+			Floor
+			{
+				Layer = "roofs"
+				Offset = [-1.5, 0]
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						Size = [3, 3]
+					}
+/*
+					{
+						File = "roof_33.png"
+						Size = [3, 3]
+					}
+					{
+						File = "roof_66.png"
+						Size = [3, 3]
+					}
+*/
+				]
+			}
+			Walls : &Floor
+			{
+				Offset = [1.5, 0]
+			}
+			Roof : &Floor
+			{
+				Offset = [-4.5, 0]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad : &Floor
+			{
+				Offset = [4.5, 0]
+			}
+		}
+
+		Weapon
+		{
+			Type = FixedWeapon
+			Location = [3, -0.2]
+			Rotation = -90d
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 12
+			TargetingArc = 90d
+			AIFirepowerRating = 15000
+			Emitter = WeaponEmitter
+			FirePermissionToggle = FireModeToggle
+
+			AutoTarget
+			{
+				TargetType = ShipParts //ShipCenters
+				Toggle = AutoTargetToggle
+			}
+
+			CoverageLine
+			{
+				LineSprite
+				{
+					Texture = &/INDICATORS/RadialGradient
+					VertexColor = [255, 255, 255, 191]
+					UVRect = [.5, 0, 0, 1]
+				}
+				LineThickness = 2
+
+				BeginCapSprite : LineSprite
+				{
+					UVRect = [0, 0, .5, 1]
+				}
+				BeginCapSize = [1, 2]
+
+				EndCapSprite : LineSprite
+				{
+					UVRect = [.5, 0, .5, 1]
+				}
+				EndCapSize = [1, 2]
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Weapon
+		}
+
+/*
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Weapon
+//			Location = [1.1, 0]
+		}
+*/
+		WeaponEmitter
+		{
+			Type = BulletEmitter
+			//Location = [0, 0]
+			ChainedTo = Weapon
+			FireTrigger = Weapon
+			GetTargetFrom = Weapon
+			OperationalToggle = IsOperational
+			Bullet = &<mega_ion_impulse_wave_child_shot.txt>
+			//FireDelay = 0
+			//Arc = [-36d, 72d]
+			EvenSpread = true
+			Spread = [-36d, 36d]
+			Burst = 73  //2*72+1=145 //2*36+1=73 ideal distribution
+			BurstDelay = 0
+			UseAmmoPerShotInBurst = false
+
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 30000  //min 73*(2250*25)=4106250
+			MinResourcesUsed = 30000
+/*
+// modular code
+			AmmoUsage
+			[
+				{
+					ResourceStorage = AmmoProxy
+					ResourcesUsed = 8000
+					MinResourcesUsed = 8000
+				}
+				{
+					ResourceStorage = BatteryStorage
+					ResourcesUsed = 30000  //min 73*(2250*25)=4106250
+					MinResourcesUsed = 30000
+				}
+			]
+*/
+		}
+
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [2.65, 2.5]
+			Rotation = 180d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [3.35, 2.5]
+			Rotation = 180d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 2
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				[2.65, 2.5]
+				[3.35, 2.5]
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+			]
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [1, 2]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_low"
+			RangeLow = 0
+			RangeHigh = 15000
+			AmmoLevels
+			[
+				{
+					File = "./Data/ships/terran/power_storage/batteries1.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries2.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries3.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries4.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries5.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries6.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries7.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries8.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries9.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries10.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries11.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries12.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries13.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries14.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries15.png"
+					Size = [2, 2]
+				}
+			]
+		}
+
+		BatterySprites2 : &BatterySprites
+		{
+			Location = [5, 2]
+			RangeLow = 15000
+			RangeHigh = 30000
+		}
+		BatterySprites3 : &BatterySprites
+		{
+			Location = [-1, 2]
+			RangeLow = 30000
+			RangeHigh = 45000
+		}
+		BatterySprites4 : &BatterySprites
+		{
+			Location = [7, 2]
+			RangeLow = 45000
+			RangeHigh = 60000
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational
+			Location = [3, 1.5]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+			Location = [3, 1.5]
+		}
+		RecursiveDeath1
+		{
+			Type = DeathEffects
+			Location = [3, 3.5]
+
+			HitEffects
+			[
+				{
+					Type = AreaDamage
+					Damage = 6000
+					Radius = .6
+					Falloff = 0
+					Delay = .15
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false
+						Friendlies = true
+					}
+				}
+			]
+		}
+
+		RecursiveDeath2 : RecursiveDeath1
+		{
+			Location = [-3.5, 1.5]
+		}
+		RecursiveDeath3 : RecursiveDeath1
+		{
+			Location = [9.5, 1.5]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [3, 1.5]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1.5, 1.5]
+					}
+				}
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [1.5, 1.5]
+					}
+				}
+			]
+		}
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [12, 3]
+		}
+	}
+
+	Stats
+	{
+		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/BulletRailgun"
+			Stats
+			{
+				PowerDrainPerShot = (&~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/2/TotalDrain)*(&~/Part/Components/WeaponEmitter/Burst) / 1000
+				PowerDrainPerSecond = (&PowerDrainPerShot) * (&ROF)
+				PowerDrain = [&../PowerDrainPerShot, &../PowerDrainPerSecond]
+				PowerDrainArea = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/2/Radius
+
+				DamagePerShot = (&~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/1/TotalDamage)*(&~/Part/Components/WeaponEmitter/Burst)
+				DamagePerSecond = (&DamagePerShot) * (&ROF)
+				Damage = [&../DamagePerShot, &../DamagePerSecond]
+				DamageArea = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/1/Radius
+
+				Penetration = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/Penetration
+				ROF = 1 / (&~/Part/Components/Weapon/FireInterval)
+				RangeLimited = [&~/Part/Components/WeaponEmitter/Bullet/Range/BaseValue, &~/Part/Components/WeaponEmitter/Bullet/Range/MaxValue]
+				Arc = 0
+				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
+				//ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
+
+				PowerPerShot = (&~/Part/Components/WeaponEmitter/ResourcesUsed) / 1000
+				//PowerPerShot = (&~/Part/Components/WeaponEmitter/AmmoUsage/1/ResourcesUsed) / 1000
+				PowerPerSecond = (&PowerPerShot) * (&ROF)
+				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+			}
+		}
+	]
+
+}

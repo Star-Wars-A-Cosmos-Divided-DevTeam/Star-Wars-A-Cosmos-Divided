@@ -1,0 +1,1079 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD DSL Railgun version
+
+Author : Lafiel
+
+Description:
+Quick and dirty fast prototyping version, based on railgun
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.12b
+
+   o based on railgun
+
+---------------------------------------------------------------------------- */
+
+Part : /BASE_PART
+{
+	NameKey = "Parts/DSLaserCore"
+	IconNameKey = "Parts/DSLaserCoreIcon"
+	ID = SW.DSLaser_core
+	DescriptionKey = "Parts/DSLaserCoreDesc"
+	EditorGroup = "TechIII"
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 25000000
+	Size = [6, 8]
+	Density = 2
+	SelectionTypeID = "DSLII"
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	MaxHealth = 48000
+	TypeCategories = [weapon, uses_power, is_crewed,DSLII,DSL_ammo]
+	ReceivableBuffs : ^/0/ReceivableBuffs [RailgunReverseOperation]
+	RequiresCategories = [WarRoom, DSL_command]
+	AllowedDoorLocations
+	[
+		[-1, 4]
+		[-1, 5]
+		[-1, 6]
+		[-1, 7]
+		[6, 4]
+		[6, 5]
+		[6, 6]
+		[6, 7]
+		[0, 8]
+		[1, 8]
+		[2, 8]
+		[3, 8]
+		[4, 8]
+		[5, 8]
+		[6, 8]
+		[7, 8]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [69, 92]
+	}
+	Components : ^/0/Components
+	{
+		BuffOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, PartCrew]
+			Mode = All
+		}
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [BuffOperational, RailgunReverseOperationBuffToggle]
+			Mode = All
+		}
+
+		RailgunReverseOperationBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = RailgunReverseOperation
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
+//-----------------------------------------------------------------------------
+		LoadedAmmo
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 84000
+			DelayBeforeReadyToUse = .25
+			AnticipateMoreResourcesFrom = [BatteryStorage]
+			ToggleOnResources = 83001
+			ToggleOffResources = 7000
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 84000
+			ToggleOnResources = 83001
+			ToggleOffResources = 7000
+		}
+		BatteryConsumer
+		{
+			Type = TypedResourceGridConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			AdditionalStorageForJobPriority = [LoadedAmmo]
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		AmmoPrereq
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [LoadedAmmo, BatteryStorage]
+			ToggleOnResources = 83001
+			ToggleOffResources = 999
+		}
+		AmmoLoader
+		{
+			Type = ResourceConverter
+			FromStorage = BatteryStorage
+			ToStorage = LoadedAmmo
+			FromQuantity = 1000
+			ToQuantity = 1000
+			Interval = .05
+		}
+
+		LoadEffects
+		{
+			Type = TriggeredEffects
+			Trigger = AmmoLoader
+			MediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+/*
+		CombinedBatteryStorage //transfer power
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorage]
+			ViaBuffs
+			{
+				OutgoingBuffProviders = [RailgunBuffProvider]
+				ComponentID = BatteryStorage
+			}
+			AddMode = PrioritizeLeastAmmo
+		}
+*/
+
+//-----------------------------------------------------------------------------
+
+		RailgunBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = Railgun
+			BuffAmount = 0
+			BuffArea = [0, -1, 6, 1]
+			Criteria
+			{
+				Category = DSLII
+				Rot = 0
+				Left = 0
+				Right = 6
+				Bottom = 0
+			}
+		}
+
+		OperationBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = RailgunOperation
+			BuffArea = [0, -1, 6, 1]
+			OperationalToggle = BuffOperational
+			Criteria
+			{
+				Category = DSLII
+				Rot = 0
+				Left = 0
+				Right = 6
+				Bottom = 0
+			}
+		}
+
+		WeaponTrigger
+		{
+			Type = TriggerProxy
+			PartLocation = [0, -1]
+			PartCriteria
+			{
+				Category = DSL_power
+				Rot = 0
+				Left = 0
+				Right = 6
+				Bottom = 0
+			}
+			ComponentID = Weapon
+		}
+
+		EmitTrigger
+		{
+			Type = TriggerProxy
+			PartLocation = [0, -1]
+			PartCriteria
+			{
+				Category = DSL_power
+				Rot = 0
+				Left = 0
+				Right = 2
+				Bottom = 0
+			}
+			ComponentID = BeamEmitter
+		}
+
+//-----------------------------------------------------------------------------
+		PowerDrainOnShoot
+		{
+			Type = AmmoChange
+			Trigger = EmitTrigger
+			ResourceStorage = BatteryStorage
+			Amount = -2000
+		}
+
+//-----------------------------------------------------------------------------
+
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [.921875, 3.15]  // [.921875, 3.5]
+			Rotation = -90d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [.921875, 3.85]
+			Rotation = -90d
+		}
+		CrewLocation3
+		{
+			Type = CrewLocation
+			Location = [5.078125, 3.15]  // [5.078125, 3.5]
+			Rotation = 90d
+		}
+		CrewLocation4
+		{
+			Type = CrewLocation
+			Location = [5.078125, 3.85]
+			Rotation = 90d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 4
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				[.921875, 3.15]
+				[.921875, 3.85]
+				[5.078125, 3.15]
+				[5.078125, 3.85]
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+				CrewLocation3
+				CrewLocation4
+			]
+		}
+//-----------------------------------------------------------------------------
+
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [3, 4]
+			OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [6, 8]
+					}
+					{
+						File = "floor_33.png"
+						Size = [6, 8]
+					}
+					{
+						File = "floor_66.png"
+						Size = [6, 8]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "../deathstar_superlaser/lights-r[3,4].png"
+						Size = [6, 8]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls01[6,8].png"
+						Size = [6, 8]
+					}
+					{
+						File = "walls01[6,8]_33.png"
+						Size = [6, 8]
+					}
+					{
+						File = "walls01[6,8]_66.png"
+						Size = [6, 8]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						Size = [6, 8]
+					}
+					{
+						File = "roof_33.png"
+						Size = [6, 8]
+					}
+					{
+						File = "roof_66.png"
+						Size = [6, 8]
+					}
+				]
+			}
+		}
+
+		CoreGraphics
+		{
+			Type = Graphics
+			Location = [3, 4]
+			OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "weapons"
+				Offset = [0, -0.5]
+				DamageLevels
+				[
+					{
+						File = "cannon_core.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "doodads_high"
+				Offset = [0, 186/64]
+				DamageLevels
+				[
+					{
+						File = "../deathstar_superlaser/power_core.png"
+						Size = [2, 2]
+					}
+				]
+			}
+		}
+
+		ConsoleGraphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [3, 3.5]
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [-2.078125, 0]; // [.921875, 0];
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../deathstar_superlaser/SW_console01_on1.png"
+							"../deathstar_superlaser/SW_console01_on2.png"
+							"../deathstar_superlaser/SW_console01_on3.png"
+						]
+						UVRotation = 1
+						Size = [1, 2]
+						AnimationInterval = 0.125
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [-2.078125, 0];
+				DamageLevels
+				[
+					{
+						File = "../deathstar_superlaser/SW_console01_off.png"
+						UVRotation = 1
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [2.078125, 0]; // [5.078125, 0];
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../deathstar_superlaser/SW_console01_on1.png"
+							"../deathstar_superlaser/SW_console01_on2.png"
+							"../deathstar_superlaser/SW_console01_on3.png"
+						]
+						UVRotation = 3
+						Size = [1, 2]
+						AnimationInterval = 0.125
+					}
+				]
+			}
+			NonOperationalRoofDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [2.078125, 0];
+				DamageLevels
+				[
+					{
+						File = "../deathstar_superlaser/SW_console01_off.png"
+						UVRotation = 3
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+//-----------------------------------------------------------------------------
+
+		BatterySpritesBottom
+		{
+			Type = ResourceSprites
+			Location = [3, 442/64]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroAmmoSprite = true
+			RangeLow = 0
+			RangeHigh = 42000
+			AmmoLevels
+			[
+				{
+					File = "../deathstar_superlaser/power_indicator00.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator01.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator02.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator03.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator04.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator05.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator06.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator07.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator08.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator09.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator10.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator11.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator12.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator13.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator14.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator15.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator16.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator17.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator18.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator19.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator20.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator21.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator22.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator23.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator24.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator25.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator26.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator27.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator28.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator29.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator30.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator31.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator32.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator33.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator34.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator35.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator36.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator37.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator38.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator39.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator40.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator41.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator42.png"
+					Size = [2, 2]
+				}
+			]
+		}
+
+		BatterySpritesTopRight //BatterySpritesBottomLeft
+		{
+			Type = ResourceSprites
+			Location = [3, 442/64]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			//HasZeroAmmoSprite = true
+			RangeLow = 41000
+			RangeHigh = 83000
+			AmmoLevels
+			[
+				{
+					File = "../deathstar_superlaser/power_indicator00.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator02.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator04.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator06.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator08.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator10.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator12.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator14.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator16.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator18.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator20.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator22.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator24.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator26.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator28.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator30.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator32.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator34.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator36.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator38.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator40.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator42.png"
+					Size = [2, 2]
+					MirrorU = true
+					UVRotation = 3
+				}
+			]
+		}
+
+		BatterySpritesTopLeft //BatterySpritesBottomLeft
+		{
+			Type = ResourceSprites
+			Location = [3, 442/64]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			//HasZeroAmmoSprite = true
+			RangeLow = 42000
+			RangeHigh = 84000
+			AmmoLevels
+			[
+				{
+					File = "../deathstar_superlaser/power_indicator00.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator02.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator04.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator06.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator08.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator10.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator12.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator14.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator16.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator18.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator20.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator22.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator24.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator26.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator28.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator30.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator32.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator34.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator36.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator38.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator40.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+				{
+					File = "../deathstar_superlaser/power_indicator42.png"
+					Size = [2, 2]
+					UVRotation = 1
+				}
+			]
+		}
+
+
+//-----------------------------------------------------------------------------
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Location = [3, 4]
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+			Location = [3, 4]
+		}
+
+/*
+		RecursiveDeath
+		{
+			Type = DeathEffects
+			Location = [1, -.5]
+
+			HitEffects
+			[
+				{
+					Type = AreaDamage
+					Damage = 3000
+					Radius = .6
+					Falloff = 0
+					Delay = .15
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false
+						Friendlies = true
+					}
+				}
+			]
+		}
+*/
+		FireEffect
+		{
+			Type = TriggeredEffects
+			Trigger = WeaponTrigger
+			Location = [3, 4]
+
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "../deathstar_superlaser/DS_Superlaser_3.wav"
+					Volume = 2
+					SpeedVariation = .25
+				}
+			]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [3, 4]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1.5, 1.5]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [1.5, 1.5]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [6, 8]
+		}
+	}
+
+
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = 24 //&../StatsByCategory/0/Stats/PowerUsageContinuousMinutes
+		RecCrew = (&CrewRequired) + (&RecPower) * 2
+	}
+
+	//StatsByCategory = &<../railgun_launcher/railgun_launcher.txt>/Part/StatsByCategory
+	//StatsNotesKey = "Stats/RailgunNotes"
+
+
+}
+
+
+/*
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+###############################################################################
+*/

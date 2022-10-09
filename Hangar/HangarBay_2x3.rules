@@ -1,0 +1,213 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7+
+
+Author : Lafiel
+
+Description:
+This is a work in progress. Ultimately it will include options for:
+different floor
+different floor projector lights
+different deck lights
+maybe different roofs; 
+roofs eventually might get or share a custom layer with a community mod. So current layer is just temporary to avoid creating a mess now.
+roofs can be colored via crew job
+
+This implementation is meant to help with curving hangars on large ships.
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.15 
+
+
+---------------------------------------------------------------------------- */
+Part : /BASE_PART
+{
+	NameKey = "Parts/HangarBay_2x3"
+	IconNameKey = "Parts/HangarBay_2x3_Icon"
+	ID = SW.HangarBay_2x3
+	DescriptionKey = "Parts/HangarBay_2x3_Desc"
+	EditorGroup = "Misc"
+	Size = [2, 3]
+//	ProhibitAbove = 3
+	SelectionTypeID = "hangar"
+	SelectionPriority = 0
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 600
+	MaxHealth = 6000
+	InitialPenetrationResistance = 5
+	PenetrationRectType = Normal
+	Flammable = false
+//	RequiresCategories = []
+//	AllowedContiguity = [Top, Left, Right, Bottom]
+	Density = 1
+//	SelectionTypeByRotation = true;
+//	ReceivableBuffs = []
+
+	GeneratorRequiresDoor = false
+	AllowedDoorLocations []
+
+	CreatePassableHolesWhenDestroyed = true
+	CrewSpeedFactor = 1
+	TypeCategories = [hangar]
+//	InternalWalls = [None] //	InternalWalls = [All]
+	ExternalWalls = [None]
+	IsWalled = false
+	IsExternal = true //to be fixed
+//	NoAutoDoors = true
+
+	GenerateRectCollider = false
+
+/*
+	ExternalWallsByCell
+	[
+	 	{
+	 		Key = [0, 0]
+	 		Value = None // [TopLeft, Top, TopRight]
+	 	}
+	]
+	InternalWallsByCell
+	[
+	 	{
+	 		Key = [0, 0]
+	 		Value = None // [TopLeft, Top, TopRight]
+	 	}
+	]
+*/
+
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "floor01[2,3]03.png";
+			SampleMode = Linear
+		}
+		Size = [32, 92]
+	}
+
+	Components : ^/0/Components
+	{
+		CrewSource
+		{
+			Type = CrewSource
+			Crew = 0
+			ColorSRange = [0, 1]
+			ColorVRange = [0, 1]
+		}
+		Graphics
+		{
+			Type = Graphics
+			Location = [1, 1.5]
+			Floor
+			{
+				Layer = "structure" //"floors"
+				DamageLevels
+				[
+					{
+						File = "floor01[2,3]03.png"
+						Size = [2, 3]
+					}
+/*
+					{
+						File = "floor01[2,3]03_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "floor01[2,3]03_66.png"
+						Size = [2, 3]
+					}
+*/
+				]
+			}
+		}
+
+
+		LightsGraphicsLeft
+		{
+			Type = Graphics
+			Location = [1, 1.5]
+			Floor
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [2, 2]
+					}
+				]
+			}
+		}
+
+
+		RoofOptionToggle
+		{
+			Type = UIToggle;
+			ToggleID = "roof_visibility_mode"
+			Default = 1
+			ToggledOnChoices = [1]
+			RememberValue = true
+			RequiresCommand = false
+		}
+		RoofOptionToggle1
+		{
+			Type = ModeToggle
+			Mode = RoofOptionToggle
+			OnMode = 1
+		}
+		RoofOptionComponents1
+		{
+			Type = ToggledComponents
+			Toggle = RoofOptionToggle1
+			//Invert = true
+			Components
+			{
+				RoofGraphics
+				{
+					Type = Graphics
+					Location = [1, 1.5]
+					GetColorFrom = CrewSource
+					Roof
+					{
+						Layer = "roof_turrets"
+						DamageLevels
+						[
+							{
+								File = "roof.png"
+								Size = [2, 3]
+							}
+/*
+							{
+								File = "roof_33.png"
+								Size = [2, 3]
+							}
+							{
+								File = "roof_66.png"
+								Size = [2, 3]
+							}
+*/
+						]
+					}
+				}
+			}
+		}
+
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			Location = [1, 1.5]
+			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+		}
+		Blueprints1
+		{
+			Type = BlueprintSprite
+			File = "blueprints01[2,3]03.png"
+			Size = [2, 3]
+		}
+	}
+}
+

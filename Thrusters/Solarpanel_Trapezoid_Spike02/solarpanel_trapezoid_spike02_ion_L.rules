@@ -1,0 +1,171 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+Description:
+Currently prototyping: No color changing atm but code is there for adding
+
+Ion cannon version seen on Tie Defender on the top = inside Solar panels
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.14
+
+gun 27,-256 from center
+muzzle 58,-382 from 0,0
+wing -32,-108 from center
+---------------------------------------------------------------------------- */ 
+Part : <solarpanel_trapezoid_spike02_base.rules>/Part
+{
+	NameKey = "Parts/SolarpanelTrapezoidSpike02IonL"
+	IconNameKey = "Parts/SolarpanelTrapezoidSpike02IonLIcon"
+	ID = "SW.solarpanel_trapezoid_spike02_ion_L"
+	DescriptionKey = "Parts/SolarpanelTrapezoidSpike02IonLDesc"
+
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 5000
+
+	IsFlippable = true
+
+//	AllowedDoorLocations
+
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
+	CustomCollider
+	[
+		[44/64, -346/64]
+		[44/64, 205/64]
+		[-1, 124/64]
+		[-1, 7/64]
+	]
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon_ion.png"
+			SampleMode = Linear
+		}
+		Size = [21, 92]
+	}
+	
+	Components : ^/0/Components, <thruster_small_3wayL.rules>/Components, <blue_fixed_ionL.rules>/Components
+	{
+		SolarPanelGraphics
+		{
+			Type = Graphics
+			Location = [.5, .5]
+			Floor
+			{
+				Layer = "structure"
+				Offset = [-0.5, -1.6875] //[-0.5, -1.6875] //-32,-108
+				DamageLevels
+				[
+					{
+						File = "tie_defender_wing.png"
+						Size = [2, 9]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "roof_turrets"
+				Offset = [-0.5, -1.6875] //[-0.5, -1.6875] //-32,-108
+				DamageLevels
+				[
+					{
+						File = "tie_defender_wing.png"
+						Size = [2, 9]
+					}
+				]
+			}
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints_tie_defender_wing.png"
+			Size = [2, 9]
+			Offset = [-0.5, -1.6875] //-32,-108
+		}
+		BlueprintsGun
+		{
+			Type = BlueprintSprite
+			File = "blueprints_tie_defender_gun1.png"
+			Size = [1, 5]
+			Offset = [0.421875, -4] //27,-256
+		}
+
+/*
+		BlueprintsRed
+		{
+			Type = BlueprintSprite
+			File = "blueprintsL.png"
+			Size = [2, 1]
+			Offset = [-0.5, 0]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.blasterlaser_type
+				Mode = 0
+			}
+		}
+		BlueprintsBlue
+		{
+			Type = BlueprintSprite
+			File = "blueprintsL.png"
+			Size = [2, 1]
+			Offset = [-0.5, 0]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.blasterlaser_type
+				Mode = 1
+			}
+		}
+		BlueprintsGreen
+		{
+			Type = BlueprintSprite
+			File = "blueprintsL.png"
+			Size = [2, 1]
+			Offset = [-0.5, 0]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.blasterlaser_type
+				Mode = 2
+			}
+		}
+*/
+	}
+
+/*
+	Stats
+	{
+		CrewRequired = &../Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = (&PowerPerSecond) * 1
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 1 / (&<red_fixedlaserL.rules>/Components/Turret/FireInterval)
+		Range = &<red_fixedlaserL.rules>/Components/BulletEmitter/Bullet/Range
+		Arc = deg(&<red_fixedlaserL.rules>/Components/Turret/FiringArc)
+		TurretSpeed = deg(&<red_fixedlaserL.rules>/Components/Turret/RotateSpeed)
+		ShotSpeed = &<red_fixedlaserL.rules>/Components/BulletEmitter/Bullet/Speed
+		ShotHP = &<red_fixedlaserL.rules>/Components/BulletEmitter/Bullet/Components/Targetable/Health
+		PowerPerShot = (&<red_fixedlaserL.rules>/Components/BulletEmitter/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * 1 / (&<red_fixedlaserL.rules>/Components/Turret/FireInterval)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+	}
+	StatsByCategory
+	[
+		&<red_fixedlaserL.rules>/LaserStats
+		&<blue_fixedlaserL.rules>/LaserStats
+		&<green_fixedlaserL.rules>/LaserStats
+	]
+*/
+
+}

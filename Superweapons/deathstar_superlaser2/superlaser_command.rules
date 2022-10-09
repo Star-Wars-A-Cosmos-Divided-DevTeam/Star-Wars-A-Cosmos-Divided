@@ -1,0 +1,487 @@
+/* ----------------------------------------------------------------------------
+Introduction: SW:ACD (2020 April)
+Author : Lafiel
+Description:
+This part is required to enable the new modular Death Star Laser 2
+Versions:
+ o 1.0 Cosmoteer 0.15.8
+
+---------------------------------------------------------------------------- */
+
+Part : /BASE_PART
+{
+	NameKey = "Parts/SuperlaserCommand"
+	IconNameKey = "Parts/SuperlaserCommandIcon"
+	ID = SW.superlaser_command
+	EditorGroup = "TechIII"
+	DescriptionKey = "Parts/SuperlaserCommandDesc"
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 1000000
+	AIValueFactor = 5
+	AIValue = (&Cost) * 5
+	Size = [4, 4]
+	MaxHealth = 16000
+	TypeCategories = [uses_power, is_crewed, DSL_command]
+	RequiresCategories = [WarRoom]
+
+	ReceivableBuffs : ^/0/ReceivableBuffs [DSLEndFireCMDBuff]
+
+
+
+	AllowedDoorLocations
+	[
+		[0, -1]
+		//[1, -1]
+		//[2, -1]
+		[3, -1]
+		[-1, 0]
+		[-1, 1]
+		[-1, 2]
+		[-1, 3]
+		[4, 0]
+		[4, 1]
+		[4, 2]
+		[4, 3]
+		[0, 4]
+		//[1, 4]
+		//[2, 4]
+		[3, 4]
+	]
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon_cntr.png"
+			SampleMode = Linear
+		}
+		Size = [64, 64]
+	}
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+		
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+		FireTrigger
+		{
+			Type = UITrigger
+			TriggerID = "detonate"
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 2000
+		}
+		BatteryConsumer
+		{
+			Type = TypedResourceGridConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		PowerDrain
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
+			FromQuantity = 1000
+			MinFromQuantityForConversion = 1
+			Interval = 60// Drains 1 power every minute.
+		}
+		EndFireCmdToggle
+		{
+			Type = BuffToggle
+			BuffType = DSLEndFireCMDBuff
+		}
+
+		FireCmdToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = FireTrigger
+			OperationalToggle = EndFireCmdToggle
+			InvertOperationalToggle = true	
+		}
+
+		FireCmdProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = DSLFireCMDBuff
+			OperationalToggle = FireCmdToggle
+			BuffAmount = 1
+			BuffArea = [-500, -1000, 1004, 1000]
+			Criteria
+			{
+				Category = deathstarlaser_emitter
+				//Rot = 0
+				//Left = 0
+				//Right = 2
+				//Bottom = 0
+			}
+		}
+
+		CrewLocation
+		{
+			Type = CrewLocation
+			Location = [2, 39/64]
+			Rotation = 180d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [2, 217/64]
+			Rotation = 0d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 2
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				[2, 39/64]
+				[2, 217/64]
+			]
+			CrewLocations
+			[
+				CrewLocation
+				CrewLocation2
+			]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [2, 2]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor[4,4].png"
+						Size = [4, 4]
+					}
+					{
+						File = "floor[4,4]_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "floor[4,4]_66.png"
+						Size = [4, 4]
+					}
+				]
+			}
+/*
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights-r[3,4].png"
+						Size = [4, 4]
+					}
+				]
+			}
+*/
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/reactor_large/walls.png"
+						Size = [4, 4]
+					}
+					{
+						File = "./Data/ships/terran/reactor_large/walls_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "./Data/ships/terran/reactor_large/walls_66.png"
+						Size = [4, 4]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						Size = [4, 4]
+					}
+					{
+						File = "roof_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "roof_66.png"
+						Size = [4, 4]
+					}
+				]
+			}
+		}
+
+		ConsoleGraphics1
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			Location = [2, 39/64]
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../deathstar_superlaser/SW_console01_on1.png"
+							"../deathstar_superlaser/SW_console01_on2.png"
+							"../deathstar_superlaser/SW_console01_on3.png"
+						]
+						Size = [2, 1]
+						AnimationInterval = 0.125
+						AnimationStartTime = Zero
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "../deathstar_superlaser/SW_console01_off.png"
+						Size = [2, 1]
+					}
+				]
+			}
+		}
+		ConsoleGraphics2
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [2, 217/64]
+			Rotation = 180d
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../deathstar_superlaser/SW_console01_on1.png"
+							"../deathstar_superlaser/SW_console01_on2.png"
+							"../deathstar_superlaser/SW_console01_on3.png"
+						]
+						Size = [2, 1]
+						AnimationInterval = 0.125
+						AnimationStartTime = Zero
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "../deathstar_superlaser/SW_console01_off.png"
+						Size = [2, 1]
+					}
+				]
+			}
+		}
+
+		OperatingHum
+		{
+			Type = ContinuousEffects
+			Location = [2, 2]
+			OnlyWhenOperational = true
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					Sound = "./Data/ships/terran/ion_beam_emitter/operating.wav"
+					Volume = .2
+					Speed = 2
+					MaxConcurrent = 1
+					MaxConcurrentVolume = .2
+				}
+			]
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [2, 2]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_low"
+			HasZeroAmmoSprite = true
+			AmmoLevels
+			[
+				{
+					File = "./Data/ships/terran/power_storage/batteries1.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries2.png"
+					Size = [2, 2]
+				}
+/*
+				{
+					File = "./Data/ships/terran/power_storage/batteries3.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries4.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries5.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries6.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries7.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries8.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries9.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries10.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries11.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries12.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries13.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries14.png"
+					Size = [2, 2]
+				}
+				{
+					File = "./Data/ships/terran/power_storage/batteries15.png"
+					Size = [2, 2]
+				}
+*/
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Location = [2, 2]
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+			Location = [2, 2]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [2, 2]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1.5, 1.5]
+					}
+				}
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [1.5, 1.5]
+					}
+				}
+			]
+		}
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints_cntr.png"
+			Size = [4, 4]
+		}
+	}
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = &PowerUsageContinuousMinutes
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+}
+
+
+
+
+
+
