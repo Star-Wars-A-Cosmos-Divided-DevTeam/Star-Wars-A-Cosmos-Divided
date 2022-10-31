@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/DooniumArmor_1x1_SquareWedge_1"
 	IconNameKey = "Parts/DooniumArmor1x1"
@@ -26,19 +26,19 @@ Part : /BASE_PART_TERRAN
 	IsRotateable = true
 	IsWalled = true
 	IsSelfDestructible = false
+	GenerateRectCollider = false
 	ExternalWalls = [BottomRight]
 	InternalWalls = [BottomLeft, Left, TopLeft, Top, TopRight]
+	//maybe a solution
+	VirtualInternalCells
+	[
+		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
+		{ExternalCell=[-1, 0]; InternalCell=[0, 1]}
+	]
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
 	FlipHRotate = [1, 0, 3, 2]
 	FlipVRotate = [3, 2, 1, 0]
-	CustomCollider
-	[
-		[1, 0.75]
-		[1, 1]
-		[0.75, 1]
-		[0.75, 0.75]
-	]
 	EditorIcon
 	{
 		Texture
@@ -57,14 +57,24 @@ Part : /BASE_PART_TERRAN
 			AbsorbsResourceDrain = floor((&~/Part/MaxHealth)/4)
 		}
 
-		BlueprintSprite0
-
+		Collider
 		{
-			File = "blueprints.png"
-			Size = [1, 1]
-			Type=BlueprintSprite;
+			Type = PolygonCollider
+			Vertices
+			[
+				[1, 0.75]
+				[1, 1]
+				[0.75, 1]
+				[0.75, 0.75]
+			]
 		}
 
+		Blueprints
+		{
+			Type=BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
 
 		//*************** BLUEPRINTS'S BORDERS **************
 		// Rotation 0 (up)

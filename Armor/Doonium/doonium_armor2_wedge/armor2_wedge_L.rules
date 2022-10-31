@@ -1,9 +1,10 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/DooniumArmor2WedgeL"
 	IconNameKey = "Parts/DooniumArmor2WedgeLIcon"
 	ID = SW.doonium_armor2_wedge_L
 	OtherIDs = ["doonium_armor2_wedge_L"]
+	FlipWhenLoadingIDs = ["doonium_armor2_wedge_R"]
 	EditorGroup = "Defenses"
 	DescriptionKey = "Parts/DooniumArmorDesc"
 	EditorReplacementPartID = ""
@@ -11,16 +12,20 @@ Part : /BASE_PART_TERRAN
 	[
 		[steel, 8] //
 	]  //Cost = 400
+	AIValueFactor = 0
 	Size = [1, 2]
 	AllowedContiguity = [Right, Bottom]
 	SelectionTypeID = "armor"
 	MaxHealth = 8000
-	AreaDamageBlockFactor = .25
+	ExplosiveDamageAbsorption = 100%
+	ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
 	Flammable = false
 	CreatePartPerTileWhenDestroyed = ""
 	CreatePartWhenDestroyed = structure2_wedge_L
 	CreatePartPerTileWhenGrabbed = ""
-	InitialPenetrationResistance = 100
+	InitialPenetrationResistance = 20
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	CrewSpeedFactor = 0
 	Density = 1
 	IsRotateable = true
@@ -48,17 +53,17 @@ Part : /BASE_PART_TERRAN
 	 		Value = [Left, TopLeft]
 	 	}
 	]
+	VirtualInternalCells
+	[
+		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
+		{ExternalCell=[-1, 1]; InternalCell=[0, 2]}
+	]
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
 	FlipHRotate = [0, 3, 2, 1]
 	FlipVRotate = [2, 1, 0, 3]
+	GenerateRectCollider = false
 	IsFlippable = true
-	CustomCollider
-	[
-		[1, 0]
-		[1, 2]
-		[0, 2]
-	]
 	EditorIcon
 	{
 		Texture
@@ -68,19 +73,33 @@ Part : /BASE_PART_TERRAN
 		}
 		Size = [32, 64]
 	}
-	Components
+	Components : ^/0/Components
 	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[1, 0]
+				[1, 2]
+				[0, 2]
+			]
+		}
+
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
 			AbsorbsResourceDrain = 1000
 		}
-		BlueprintSprite0
+		
+		Blueprints
 		{
+			Type=BlueprintSprite
 			File = "blueprints.png"
 			Size = [1, 2]
-		Type=BlueprintSprite;}
+		}
+/*
 		BlueprintBlendSprite0
 		{
 			OnlyWithRotation = 0
@@ -272,7 +291,9 @@ Part : /BASE_PART_TERRAN
 					]
 				}
 			]
-		Type=BlueprintBlendSprite;}
+		Type=BlueprintBlendSprite
+		}
+*/
 		Graphics
 		{
 			Type = Graphics

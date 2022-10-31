@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/DooniumArmor_1x1_TipBitRound01"
 	IconNameKey = "Parts/DooniumArmor_1x1_TipBit01Icon"
@@ -31,17 +31,7 @@ Part : /BASE_PART_TERRAN
 	InternalWalls = [BottomLeft, Left, TopLeft, Top, TopRight, Right, BottomRight]
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
-	CustomCollider
-	[
-		[0.53, 0]
-		[0.60, 0.08]
-		[0.72, 0.37]
-		[0.76, 1]
-		[0.24, 1]
-		[0.28, 0.37]
-		[0.40, 0.08]
-		[0.47, 0]
-	]
+	GenerateRectCollider = false
 	EditorIcon
 	{
 		Texture
@@ -53,6 +43,22 @@ Part : /BASE_PART_TERRAN
 	}
 	Components : ^/0/Components
 	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0.53, 0]
+				[0.60, 0.08]
+				[0.72, 0.37]
+				[0.76, 1]
+				[0.24, 1]
+				[0.28, 0.37]
+				[0.40, 0.08]
+				[0.47, 0]
+			]
+		}
+
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
@@ -60,12 +66,11 @@ Part : /BASE_PART_TERRAN
 			AbsorbsResourceDrain = floor((&~/Part/MaxHealth)/4)
 		}
 
-		BlueprintSprite0
-
+		Blueprints
 		{
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [1, 1]
-			Type=BlueprintSprite;
 		}
 
 		//*************** BLUEPRINTS'S BORDERS **************

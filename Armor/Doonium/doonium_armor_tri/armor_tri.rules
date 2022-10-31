@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/DooniumArmorTri"
 	IconNameKey = "Parts/DooniumArmorTriIcon"
@@ -27,15 +27,15 @@ Part : /BASE_PART_TERRAN
 	IsSelfDestructible = false
 	ExternalWalls = [BottomRight, Bottom, BottomLeft]
 	InternalWalls = [Left, TopLeft, Top, TopRight, Right]
+	VirtualInternalCells
+	[
+		{ExternalCell=[-1, 0]; InternalCell=[0, 1]}
+		{ExternalCell=[1, 0]; InternalCell=[0, 1]}
+	]
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
+	GenerateRectCollider = false
 	IsFlippable = true
-	CustomCollider
-	[
-		[.5, .5]
-		[1, 1]
-		[0, 1]
-	]
 	EditorIcon
 	{
 		Texture
@@ -47,17 +47,32 @@ Part : /BASE_PART_TERRAN
 	}
 	Components
 	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[.5, .5]
+				[1, 1]
+				[0, 1]
+			]
+		}
+
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = 1000
+			AbsorbsResourceDrain = 250
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
-		BlueprintSprite0
+
+		Blueprints
 		{
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [1, 1]
-		Type=BlueprintSprite;}
+		}
+/*
 		BlueprintBlendSprite0
 		{
 			OnlyWithRotation = 0
@@ -241,7 +256,9 @@ Part : /BASE_PART_TERRAN
 					]
 				}
 			]
-		Type=BlueprintBlendSprite;}
+		Type=BlueprintBlendSprite
+		}
+		*/
 		Graphics
 		{
 			Type = Graphics

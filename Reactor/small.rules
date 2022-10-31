@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/Smallrea"
 	IconNameKey = "Parts/Smallrea"
@@ -8,18 +8,21 @@ Part : /BASE_PART_TERRAN
 	DescriptionKey = "Parts/SmallreaDesc"
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 10000
+		[steel, 10]
+		[coil, 24]
+		[enriched_uranium, 2]
+	]
 	AIValueFactor = 5
 
 	Size = [1, 1]
+	IsRotateable = false
 	SelectionPriority = 0
+	SelectionTypeID = "reactors"
 	MaxHealth = 1000
-	InitialPenetrationResistance = 1
-	PenetrationRectType = Normal
 	AutoDoorMaxPathLength = 5
-	TypeCategories = [provides_power, bounty_objective]
+	TypeCategories = [reactor, provides_power]
 	CreatePartPerTileWhenDestroyed = ""
+	IgnoreRotationForMirroredSelection = true
 	EditorIcon
 	{
 		Texture
@@ -31,32 +34,31 @@ Part : /BASE_PART_TERRAN
 	}
 	Components
 	{
-		BlueprintSprite0
-
+		Blueprints
 		{
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [1, 1]
-			Type=BlueprintSprite;
 		}
 
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 6000
-			StartingAmmo = &MaxResources
-			SuppliesAmmo = true
-			ToggleOnResources = 751
-			ToggleOffResources = 750
+			MaxResources = 2000
+			StartingResources = &MaxResources
+			SuppliesResources = true
 			MaxResourcesPickUp = 1000
 			ExpectedAmmoGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+			ToggleOnResources = 501
+			ToggleOffResources = 500
 		}
 		BatteryProducer
 		{
 			Type = ResourceConverter
 			ToStorage = BatteryStorage
-			ToQuantity = 600
-			Interval = .6666
+			ToQuantity = 500
+			Interval = .7200
 		}
 
 		Graphics
@@ -196,8 +198,8 @@ Part : /BASE_PART_TERRAN
 			Location = [0.5, 0.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			HasZeroAmmoSprite = true
-			AmmoLevels
+			HasZeroResourceSprite = true
+			ResourceLevels
 			[
 				{
 					File = "reactor0.png"
@@ -245,11 +247,11 @@ Part : /BASE_PART_TERRAN
 
 			MediaEffects
 			[
-				&<./Data/ships/terran/reactor_small/particles/reactor_explode_small.txt>
-				&<./Data/ships/terran/reactor_small/particles/reactor_explode_flash_small.txt>
-				&<./Data/ships/terran/reactor_small/particles/reactor_shockwave_small.txt>
-				&<./Data/common_effects/particles/explosions/med_part_explode_debris.txt>
-				&<./Data/common_effects/particles/explosions/big_part_explode_smoke.txt>
+				&<./Data/ships/terran/reactor_small/particles/reactor_explode_small.rules>
+				&<./Data/ships/terran/reactor_small/particles/reactor_explode_flash_small.rules>
+				&<./Data/ships/terran/reactor_small/particles/reactor_shockwave_small.rules>
+				&<./Data/common_effects/particles/explosions/med_part_explode_debris.rules>
+				&<./Data/common_effects/particles/explosions/big_part_explode_smoke.rules>
 
 				: /BASE_SOUNDS/AudioExterior
 				{

@@ -6,7 +6,7 @@ Author : Lafiel
 Description:
 Currently prototyping
 
-To combat small reactor spam and lag.
+To combat small reactor spam and lag. Skipper's Comment: MAYBE just dont give it x4 Small Reactor Storage xdd
 
 Versions:
 
@@ -14,16 +14,19 @@ Versions:
 
 ---------------------------------------------------------------------------- */ 
 
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/Reactor"
 	IconNameKey = "Parts/Reactor"
 	ID = SW.reactor
+	OtherIDs = [reactor]
 	EditorGroup = "Power"
 	DescriptionKey = "Parts/ReactorDesc"
 	Resources
 	[
-		[steel, 8] //
+		[steel, 32]
+		[coil, 82]
+		[enriched_uranium, 8]
 	]  //Cost = 50000
 	AIValueFactor = 5
 
@@ -33,8 +36,9 @@ Part : /BASE_PART_TERRAN
 	InitialPenetrationResistance = 1
 	PenetrationRectType = Normal
 	AutoDoorMaxPathLength = 5
-	TypeCategories = [provides_power, bounty_objective]
+	TypeCategories = [reactor, provides_power]
 	CreatePartPerTileWhenDestroyed = ""
+	IgnoreRotationForMirroredSelection = true
 	EditorIcon
 	{
 		Texture
@@ -44,33 +48,33 @@ Part : /BASE_PART_TERRAN
 		}
 		Size = [64, 64]
 	}
-	Components
+	Components : ^/0/Components
 	{
-		BlueprintSprite0
-
+		Blueprints
 		{
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [2, 2]
-			Type=BlueprintSprite;
 		}
 
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 24000
-			StartingAmmo = &MaxResources
-			SuppliesAmmo = true
+			MaxResources = 8000			//Nerf down from 24000
+			StartingResources = &MaxResources
+			SuppliesResources = true
+			MinResourcesPickUp = 1000
+			MaxResourcesPickUp = 1000
+			ExpectedAmmoGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
 			ToggleOnResources = 1001
 			ToggleOffResources = 1000
-			MaxResourcesPickUp = 2000
-			ExpectedAmmoGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
 		}
 		BatteryProducer
 		{
 			Type = ResourceConverter
 			ToStorage = BatteryStorage
-			ToQuantity = 3000
+			ToQuantity = 1000			//WAYY TO HIGH at 3k
 			Interval = .6666
 		}
 
@@ -211,8 +215,8 @@ Part : /BASE_PART_TERRAN
 			Location = [1, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			HasZeroAmmoSprite = true
-			AmmoLevels
+			HasZeroResourceSprite = true
+			ResourceLevels
 			[
 				{
 					File = "reactor0.png"
@@ -260,11 +264,11 @@ Part : /BASE_PART_TERRAN
 
 			MediaEffects
 			[
-				&<./Data/ships/terran/reactor_med/particles/reactor_explode_med.txt>
-				&<./Data/ships/terran/reactor_med/particles/reactor_explode_flash_med.txt>
-				&<./Data/ships/terran/reactor_med/particles/reactor_shockwave_med.txt>
-				&<./Data/common_effects/particles/explosions/big_part_explode_debris.txt>
-				&<./Data/common_effects/particles/explosions/huge_part_explode_smoke.txt>
+				&<./Data/ships/terran/reactor_small/particles/reactor_explode_small.rules>
+				&<./Data/ships/terran/reactor_small/particles/reactor_explode_flash_small.rules>
+				&<./Data/ships/terran/reactor_small/particles/reactor_shockwave_small.rules>
+				&<./Data/common_effects/particles/explosions/med_part_explode_debris.rules>
+				&<./Data/common_effects/particles/explosions/big_part_explode_smoke.rules>
 
 				: /BASE_SOUNDS/AudioExterior
 				{
@@ -285,8 +289,8 @@ Part : /BASE_PART_TERRAN
 			[
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 270000
-					Radius = 10
+					TotalDamage = 90000
+					Radius = 6
 					Delay = .05
 					ExpandDuration = .175
 					ExpandStartRadius = 3
@@ -303,8 +307,8 @@ Part : /BASE_PART_TERRAN
 				}
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 60000
-					Radius = 7
+					TotalDamage = 20000
+					Radius = 4
 					Delay = .05
 					ExpandDuration = .125
 					ExpandStartRadius = 2
@@ -344,6 +348,8 @@ Part : /BASE_PART_TERRAN
 	Stats
 	{
 		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
+		BatteryFillTime = 0
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	}
 }
