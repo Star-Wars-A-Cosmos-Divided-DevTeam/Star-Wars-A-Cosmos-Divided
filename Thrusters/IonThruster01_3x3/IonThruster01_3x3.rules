@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/IonThruster01_3x3"
 	IconNameKey = "Parts/IonThruster01_3x3_Icon"
@@ -7,21 +7,22 @@ Part : /BASE_PART_TERRAN
 	DescriptionKey = "Parts/IonThruster01_3x3_Desc"
 	Resources
 	[
-		[steel, 8] //
+		[steel, 64]
+		[coil, 16]
+		[coil2, 4]
 	]  //Cost = 20000
-	TypeCategories = [thruster]
+	TypeCategories = [thruster, uses_power]
 	Size = [3, 5]
 	PhysicalRect = [0, 0, 3, 3]
 	SaveRect = &PhysicalRect
+	BoundingRectType = Physical
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
 	Density = 1
 	MaxHealth = 9000
-	InitialPenetrationResistance = 1
-	PenetrationRectType = Normal
 	ProhibitBelow = 7
-	ThrusterForce = 6000
+	ThrusterForce = 6400
 	ThrustIncreaseTime = 3
 	ThrustRecoveryTime = 3
 	FuelUsage = 450
@@ -56,19 +57,18 @@ Part : /BASE_PART_TERRAN
 	}
 	Components
 	{
-		BlueprintSprite0
-		{
-			File = "blueprints.png"
-			Size = [3, 5]
-//			Offset = [0, 0.5]
-			Type=BlueprintSprite;
-		}
-
 		IsOperational
 		{
 			Type = MultiToggle
 			Toggles = [PowerToggle, BatteryStorage]
 			Mode = All
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 9
 		}
 
 		PowerToggle
@@ -93,7 +93,7 @@ Part : /BASE_PART_TERRAN
 			{
 				BatteryConsumer
 				{
-					Type = TypedResourceGridConsumer
+					Type = ResourceConsumer
 					ResourceType = battery
 					Storage = BatteryStorage
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
@@ -270,8 +270,8 @@ Part : /BASE_PART_TERRAN
 			Location = [1.5, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			HasZeroAmmoSprite = false
-			AmmoLevels
+			HasZeroResourceSprite = false
+			ResourceLevels
 			[
 				{
 					File = "batteries 1.png"
@@ -482,6 +482,14 @@ Part : /BASE_PART_TERRAN
 					}
 				}
 			]
+		}
+		
+		blueprints
+		{
+			Type=BlueprintSprite
+			File = "blueprints.png"
+			Size = [3, 5]
+			//Offset = [0, 0.5]
 		}
 	}
 

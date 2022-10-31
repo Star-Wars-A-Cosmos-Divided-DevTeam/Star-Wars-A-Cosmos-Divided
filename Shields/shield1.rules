@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/Small1"
 	IconNameKey = "Parts/Small1"
@@ -14,38 +14,30 @@ Part : /BASE_PART_TERRAN
 
 	Size = [1, 1]
 	SelectionPriority = 1
+	SelectionTypeID = "shield_gen"
 	SelectionTypeByRotation = true
 	MaxHealth = 1000
-	InitialPenetrationResistance = 1
+	TypeCategories = [defense, uses_power]
 	PenetrationRectType = Normal
-	TypeCategories = [defense, shield]
-	ProhibitAbove = 0
+	MaxDoors = 2
 	AllowedDoorLocations
 	[
-		[-1, 0] //top
-		[0, -1] //left
- 		[0, 1] //right
-		[1, 0] //bottom
+		[-1, 0] //left
+		[0, -1]	//right
+ 		[0, 1]	//bottom
+		//[1, 0]	//top
 	]
 	EditorIcon
 	{
 		Texture
 		{
-			File = "icon.png"
+			File = "ShieldGenSmall/icon.png"
 			SampleMode = Linear
 		}
 		Size = [22.66, 22.66]
 	}
-	Components
+	Components : ^/0/Components
 	{
-		BlueprintSprite0
-
-		{
-			File = "blueprints.png"
-			Size = [1, 1]
-			Type=BlueprintSprite;
-		}
-
 		IsOperational
 		{
 			Type = MultiToggle
@@ -66,13 +58,12 @@ Part : /BASE_PART_TERRAN
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 4000
-			ToggleOnResources = 2000
-			PrerequisiteUnmetAmmo = 0
+			ToggleOnResources = 1000
 			DrainOnFtlJump = true
 		}
 		BatteryConsumer
 		{
-			Type = TypedResourceGridConsumer
+			Type = ResourceConsumer
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Defense_Supply
@@ -101,8 +92,8 @@ Part : /BASE_PART_TERRAN
 			FromQuantity = 100
 			Interval = 1
 		}
-
-		ShieldVisibilityToggle
+/*
+		ShieldVisibilityToggle				//Currently Useless
 		{
 			Type = UIToggle;
 			ToggleID = "sw_shield_visibility"
@@ -110,23 +101,27 @@ Part : /BASE_PART_TERRAN
 			ToggledOnChoices = [1]
 			RememberValue = false
 		}
+*/
 		ArcShield
 		{
 			Type = ArcShield
-			OperationalToggle = IsOperational
-
 			Radius = 5
 			Arc = 365d
-			DrainAmmoFrom = BatteryStorage
+			OperationalToggle = IsOperational
 			PenetrationResistance = [7, 0]
-
-			AmmoDrainPerDamage = 1.25
+			DrainResourcesFrom = BatteryStorage
+			ResourceDrainPerDamage = 1.25
 			Rotation = -90d
 			Location = [0.5, 0.5]
 
 			BlueprintArcSprite
 			{
-				Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+				Texture
+				{
+					File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
 				Size = [0, 1.5]
 				Color = [50, 50, 255, 127]
 			}
@@ -134,12 +129,76 @@ Part : /BASE_PART_TERRAN
 
 			CoverageArcSprite
 			{
-				Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+				Texture
+				{
+					File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
 				Size = [0, 1.5]
 				Color = [255, 255, 255, 127]
 			}
 			CoverageArcSpriteSegments = 64
 
+			ShieldMediaEffects
+			[
+				{
+					Type = ArcShield
+					Radius = &~/Part/Components/ArcShield/Radius
+					Arc = &~/Part/Components/ArcShield/Arc
+					FadeInTime = .25
+					FadeOutTime = .25
+					FadeFromScale = .8
+					ArcSprite
+					{
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
+						_waveTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_waveSpeed = 1
+						_waveAlpha = 1
+						_waveCurveInterval = .5
+						_waveCurveMagnitude = .35
+						_waveCurveUOffsetPerSecond = .2
+						_fullPowerColor1 = [54, 0, 91, 127]
+						_lowPowerColor1 = [54, 0, 91, 127]
+						_fullPowerColor2 = [0, 0, 255, 127]
+						_lowPowerColor2 = [255, 0, 0, 127]
+						_lowPowerThicknessExponent = .6
+						_xScale = 1
+						TargetBlendMode = Add
+						Size = [0, 1.5]
+					}
+					ArcSpriteSegments = 64
+					Bucket = Lower1
+				}
+
+				: /BASE_SOUNDS/AudioExteriorDetail
+				{
+					Sound = "./Data/ships/terran/shield_gen_small/shield_loop.wav"
+					Volume = .15
+					Speed = .5
+					MaxConcurrent = 1
+					MaxConcurrentVolume = .3
+					DynamicVolume : ^/0/DynamicVolume
+					{
+						MinDistance = .75
+						MaxDistance = 1.5
+					}
+					IgnoreIntensity = true
+				}
+			]
+			
 			HitMediaEffects
 			[
 				{
@@ -150,12 +209,19 @@ Part : /BASE_PART_TERRAN
 					Arc = 20d
 					ArcSprite
 					{
-						Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_original.png"
+							SampleMode = Linear
+							MipLevels = 1
+						}
 						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
 						_waveTex
 						{
 							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
 							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
 						}
 						_waveSpeed = -2
 						_waveAlpha = .75
@@ -163,9 +229,12 @@ Part : /BASE_PART_TERRAN
 						_waveCurveMagnitude = .25
 						_waveCurveUOffsetPerSecond = 0
 						//TargetBlendMode = Add
-						_fullPowerColor = [50, 50, 255, 191]
-						_lowPowerColor = [255, 0, 0, .191]
+						_fullPowerColor1 = [50, 50, 255, 191]
+						_lowPowerColor1 = [255, 0, 0, 255]
+						_fullPowerColor2 = [200, 146, 240,191]
+						_lowPowerColor2 = [240, 198, 234, 191]
 						_lowPowerThicknessExponent = .6
+						_xScale = 1
 						TargetBlendMode = Add
 						Size = [0, 3]
 					}
@@ -184,7 +253,7 @@ Part : /BASE_PART_TERRAN
 				}
 			]
 		}
-
+/*
 		VisibleShieldComponents
 		{
 			Type = ToggledComponents
@@ -249,12 +318,13 @@ Part : /BASE_PART_TERRAN
 				}
 			}
 		}
-
+*/
 		ShieldOperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
 			ChainedTo = ArcShield
+			Location = [0, 0]
+			Toggle = IsOperational
 			ToggledOnMediaEffects
 			[
 				: /BASE_SOUNDS/AudioExterior
@@ -277,56 +347,30 @@ Part : /BASE_PART_TERRAN
 			]
 		}
 
-		GraphicsFloor // Hack: We want different floor sprites depending on the operational state.
+		Graphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational,
 			Location = [0.5, 0.5]
-			OperationalDoodad
+			Floor
 			{
 				Layer = "floors"
 				DamageLevels
 				[
 					{
-						File = "floor_on.png"
+						File = "ShieldGenSmall/floor_on.png"
 						Size = [1, 1]
 					}
 					{
-						File = "floor_on_33.png"
+						File = "ShieldGenSmall/floor_on_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "floor_on_66.png"
+						File = "ShieldGenSmall/floor_on_66.png"
 						Size = [1, 1]
 					}
 				]
 			}
-			NonOperationalDoodad
-			{
-				Layer = "floors"
-				DamageLevels
-				[
-					{
-						File = "floor_off.png"
-						Size = [1, 1]
-					}
-					{
-						File = "floor_off_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "floor_off_66.png"
-						Size = [1, 1]
-					}
-				]
-			}
-		}
-
-		GraphicsOther
-		{
-			Type = Graphics
-			OperationalToggle = IsOperational,
-			Location = [0.5, 0.5]
 			OperationalDoodad
 			{
 				Layer = "doodads_high"
@@ -335,7 +379,7 @@ Part : /BASE_PART_TERRAN
 					{
 						AnimationFiles
 						[
-							"doodads1.png"
+							"ShieldGenSmall/doodads1.png"
 						]
 						Size = [1, 1]
 						AnimationInterval = 0.055
@@ -348,7 +392,7 @@ Part : /BASE_PART_TERRAN
 				DamageLevels
 				[
 					{
-						File = "doodads_off.png"
+						File = "ShieldGenSmall/doodads_off.png"
 						Size = [1, 1]
 					}
 				]
@@ -360,7 +404,7 @@ Part : /BASE_PART_TERRAN
 				DamageLevels
 				[
 					{
-						File = "lights.png"
+						File = "ShieldGenSmall/lights.png"
 						Size = [1, 1]
 					}
 				]
@@ -371,15 +415,15 @@ Part : /BASE_PART_TERRAN
 				DamageLevels
 				[
 					{
-						File = "walls.png"
+						File = "ShieldGenSmall/walls.png"
 						Size = [1, 1]
 					}
 					{
-						File = "walls_33.png"
+						File = "ShieldGenSmall/walls_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "walls_66.png"
+						File = "ShieldGenSmall/walls_66.png"
 						Size = [1, 1]
 					}
 				]
@@ -391,20 +435,19 @@ Part : /BASE_PART_TERRAN
 				DamageLevels
 				[
 					{
-						File = "roof.png"
+						File = "ShieldGenSmall/roof.png"
 						Size = [1, 1]
 					}
 					{
-						File = "roof_33.png"
+						File = "ShieldGenSmall/roof_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "roof_66.png"
+						File = "ShieldGenSmall/roof_66.png"
 						Size = [1, 1]
 					}
 				]
 			}
-			
 			OperationalRoofWindows
 			{
 				Layer = "roof_windows"
@@ -412,15 +455,15 @@ Part : /BASE_PART_TERRAN
 				DamageLevels
 				[
 					{
-						File = "roof_windows.png"
+						File = "ShieldGenSmall/roof_windows.png"
 						Size = [1, 1]
 					}
 					{
-						File = "roof_windows_33.png"
+						File = "ShieldGenSmall/roof_windows_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "roof_windows_66.png"
+						File = "ShieldGenSmall/roof_windows_66.png"
 						Size = [1, 1]
 					}
 				]
@@ -434,7 +477,8 @@ Part : /BASE_PART_TERRAN
 			Location = [0.5, 0.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_low"
-			AmmoLevels
+			HasZeroResourceSprite = false
+			ResourceLevels
 			[
 			
 				{
@@ -492,17 +536,25 @@ Part : /BASE_PART_TERRAN
 				}
 			]
 		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
 	}
 
 	Stats
 	{
-		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&~/Part/Components/ArcShield/AmmoDrainPerDamage)
+		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&~/Part/Components/ArcShield/ResourceDrainPerDamage)
+		ShieldPenResist = &~/Part/Components/ArcShield/PenetrationResistance/0
 		ShieldArc = deg(&~/Part/Components/ArcShield/Arc)
 		ShieldDist = (&~/Part/Components/ArcShield/Radius) - (&~/Part/Components/ArcShield/Location/1)
-		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
+		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = (&PowerUsageContinuousMinutes) + 0.5
+		RecPower = (&PowerUsageContinuous) + 0.5
 		RecCrew = (&RecPower) * 4
 	}
 }

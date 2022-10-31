@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/ControlRoomSmall"
 	IconNameKey = "Parts/ControlRoomSmallIcon"
@@ -9,8 +9,8 @@ Part : /BASE_PART_TERRAN
 // lower cost 10k -> 8k
 	Resources
 	[
-		[steel, 16]
-		[coil2, 17]
+		[steel, 24]
+		[coil2, 12]
 		[processor, 1]
 	]  //16*25+17*300+1*2500=8000  //Cost = 8000
 //less likely to get hit 50->40
@@ -25,7 +25,7 @@ Part : /BASE_PART_TERRAN
 	IsContiguityOrigin = true
 	IsShipForward = true
 	SelectionTypeID = "control_room"
-	TypeCategories = [command]
+	TypeCategories = [command, uses_power, is_crewed]
 //doors only in the back
 	AllowedDoorLocations
 	[
@@ -49,13 +49,13 @@ Part : /BASE_PART_TERRAN
 		}
 		Size = [32, 64]
 	}
-	Components
+	Components : ^/0/Components
 	{
-		BlueprintSprite0
+		Blueprints
 		{
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [1, 2]
-			Type=BlueprintSprite;
 		}
 
 		CommandProvider
@@ -96,13 +96,14 @@ Part : /BASE_PART_TERRAN
 		}
 		BatteryConsumer
 		{
-			Type = TypedResourceGridConsumer
+			Type = ResourceConsumer
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
 			ResupplyThreshold = 1000
 			OperationalToggle = PowerToggle
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			AllowNonContiguousCrewSearch = true
 		}
 
 		PowerDrain
@@ -179,8 +180,8 @@ Part : /BASE_PART_TERRAN
 						    "on7.png"
 						    "on8.png"
 						    "on9.png"
-                                                                                                             "on10.png"
-]
+                        	"on10.png"
+						]
 						Size = [1, 2]
 						AnimationInterval = 0.100
 					}
@@ -273,7 +274,8 @@ Part : /BASE_PART_TERRAN
 			Location = [.5, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			AmmoLevels
+			HasZeroResourceSprite = false
+			ResourceLevels
 			[
 				{
 					File = "batteries_1.png"

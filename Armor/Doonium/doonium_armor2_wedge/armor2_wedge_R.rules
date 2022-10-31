@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/DooniumArmor2WedgeR"
 	IconNameKey = "Parts/DooniumArmor2WedgeRIcon"
@@ -11,16 +11,20 @@ Part : /BASE_PART_TERRAN
 	[
 		[steel, 8] //
 	]  //Cost = 400
+	AIValueFactor = 0
 	Size = [1, 2]
 	AllowedContiguity = [Left, Bottom]
 	SelectionTypeID = "armor"
 	MaxHealth = 8000
-	AreaDamageBlockFactor = .25
+	ExplosiveDamageAbsorption = 100%
+	ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
 	Flammable = false
 	CreatePartPerTileWhenDestroyed = ""
 	CreatePartWhenDestroyed = structure2_wedge_R
 	CreatePartPerTileWhenGrabbed = ""
-	InitialPenetrationResistance = 100
+	InitialPenetrationResistance = 20
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	CrewSpeedFactor = 0
 	Density = 1
 	IsRotateable = true
@@ -52,13 +56,8 @@ Part : /BASE_PART_TERRAN
 	GeneratorRequiresDoor = false
 	FlipHRotate = [0, 3, 2, 1]
 	FlipVRotate = [2, 1, 0, 3]
+	GenerateRectCollider = false
 	IsFlippable = true
-	CustomCollider
-	[
-		[0, 0]
-		[1, 2]
-		[0, 2]
-	]
 	EditorIcon
 	{
 		Texture
@@ -77,18 +76,30 @@ Part : /BASE_PART_TERRAN
 	}
 	Components
 	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0, 0]
+				[1, 2]
+				[0, 2]
+			]
+		}
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
 			AbsorbsResourceDrain = 1000
 		}
-		BlueprintSprite0
+		
+		Blueprints
 		{
+			Type=BlueprintSprite
 			File = "blueprints.png"
 			MirrorU = true
 			Size = [1, 2]
-		Type=BlueprintSprite;}
+		}
 		BlueprintBlendSprite0
 		{
 			OnlyWithRotation = 0
