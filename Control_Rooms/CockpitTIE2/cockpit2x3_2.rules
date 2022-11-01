@@ -13,7 +13,7 @@ Versions:
  o 1.0 Cosmoteer 0.15.14
 
 ---------------------------------------------------------------------------- */ 
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/Cockpit2_2"
 	IconNameKey = "Parts/Cockpit2_2Icon"
@@ -27,10 +27,8 @@ Part : /BASE_PART_TERRAN
 		[processor, 2]
 	]  //52*200+32*300+2*2500=25000  //Cost = 25000
 	AIValueFactor = 5
-
 	Size = [2, 3]
 	SelectionPriority = 0
-
 	Density = 0.7
 	MaxHealth = 4200 //(17090/4096)*1000=4172.36328125
 	InitialPenetrationResistance = 2
@@ -38,7 +36,7 @@ Part : /BASE_PART_TERRAN
 	IsContiguityOrigin = true
 	IsShipForward = true
 	SelectionTypeID = "control_room"
-	TypeCategories = [command,weapon,provides_power, bounty_objective,thruster]
+	TypeCategories = [command,weapon, provides_power, uses_power, thruster]
 
 	ThrusterForce = 200
 	ThrustIncreaseTime = 0
@@ -47,23 +45,15 @@ Part : /BASE_PART_TERRAN
 	ProhibitBelow = 3
 
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
-
-//uses turret collider
 	GenerateRectCollider = false
-
 	ExternalWalls = [None]
 	InternalWalls = [All]
 	IsWalled = false
-
-
-//doors only to the sides
 	AllowedDoorLocations
 	[
 		[-1,1]
 		[2,1]
 	]
-//comes with 3 crew member
-
 	RequiresCategories = []
 	EditorIcon
 	{
@@ -74,7 +64,7 @@ Part : /BASE_PART_TERRAN
 		}
 		Size = [61, 92]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		TurretCollider
 		{
@@ -641,7 +631,7 @@ Part : /BASE_PART_TERRAN
 				//&<./Data/ships/terran/thruster_med/particles/thruster_trail_med.txt>
 				//&<./Data/ships/terran/thruster_med/particles/thruster_glow_med.txt>
 
-				&/COMMON_PARTICLES/IonThrusterRedGlow
+				&/COMMON_PARTICLES/IonThrusterRedGlowSmall
 
 				: /COMMON_SOUNDS/ThrusterRumble
 				{
@@ -685,7 +675,8 @@ Part : /BASE_PART_TERRAN
 			Layer = "doodads_high"
 			RangeLow = 0
 			RangeHigh = 2000
-			AmmoLevels
+			HasZeroResourceSprite = false
+			ResourceLevels
 			[
 				{
 					File = "batteries_1.png"
@@ -703,8 +694,8 @@ Part : /BASE_PART_TERRAN
 			Location = [1, 141/64]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_low"
-			HasZeroAmmoSprite = true
-			AmmoLevels
+			HasZeroResourceSprite = true
+			ResourceLevels
 			[
 				{
 					File = "../../Thrusters/IonThruster01_1x1/batteries 0.png"
@@ -798,14 +789,18 @@ Part : /BASE_PART_TERRAN
 
 	Stats
 	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
 		BatteryFillTime = 0
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		SightRange = &~/Part/Components/Sensor/SightRadius
 		RadarRange = &~/Part/Components/Sensor/RadarRadius
-
+		
+		RecPower = (&PowerUsageContinuousMinutes) / 60
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
 }
 
