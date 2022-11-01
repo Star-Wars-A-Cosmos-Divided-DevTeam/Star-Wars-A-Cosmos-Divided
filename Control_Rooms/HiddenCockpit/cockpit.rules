@@ -6,19 +6,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	OtherIDs = ["cockpit2"]
 	EditorGroup = "Flight"
 	DescriptionKey = "Parts/CockpitHidDesc"
-// lower cost 10k -> 8k
 	Resources
 	[
 		[steel, 24]
 		[coil2, 12]
 		[processor, 1]
 	]   //16*25+17*300+1*2500=8000  //Cost = 8000
-//less likely to get hit 50->40
 	AIValueFactor = 5
-
 	Size = [1, 2]
 	SelectionPriority = 0
-//less hp
 	MaxHealth = 3000
 	InitialPenetrationResistance = 2
 	PenetrationRectType = Normal
@@ -26,18 +22,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	IsShipForward = true
 	SelectionTypeID = "control_room"
 	TypeCategories = [command, uses_power, is_crewed]
-//doors only in the back
 	AllowedDoorLocations
 	[
 		[1,1]
 		[-1,1]
 		[0,2]
-	]
-//comes with one crew member
-	CrewCapacity = 1
-	CrewSpawnLocations
-	[
-		[.5, 1.5]
 	]
 	RequiresCategories = []
 	EditorIcon
@@ -57,14 +46,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "blueprints.png"
 			Size = [1, 2]
 		}
-
 		CommandProvider
 		{
 			Type = CommandProvider
 			OperationalToggle = IsOperational
 			CommandPoints = 25  //Remember to update tooltip.
 		}
-
 		PowerToggle
 		{
 			Type = UIToggle
@@ -78,16 +65,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Toggles = [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
-
 		Sensor
 		{
-			Type = Sensor
-//lower radius
+			Type = Sensor				//lower radius
 			SightRadius = 300
 			RadarRadius = ceil(300*4.5)
 
 		}
-
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -105,16 +89,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 			AllowNonContiguousCrewSearch = true
 		}
-
 		PowerDrain
 		{
 			Type = ResourceConverter
 			FromStorage = BatteryStorage
-			FromQuantity = 1000
-//uses less power
-			Interval = 80// Drains 1,5 power every minute.
+			FromQuantity = 1000				//uses less power
+			Interval = 80					// Drains 1.5 power every minute.
 		}
-
 		CrewLocation
 		{
 			Type = CrewLocation
@@ -138,7 +119,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				CrewLocation
 			]
 		}
-
 		Graphics
 		{
 			Type = Graphics
@@ -222,14 +202,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [1, 2]
 					}
 					{
-						File = "Cockpit roof33.png"
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [1, 2]
 					}
 					{
-						File = "Cockpit roof66.png"
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [1, 2]
 					}
 				]
@@ -253,19 +236,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			NonOperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				DamageLevels
-				[
-					{
-						File = "Cockpit Window.png"
-						Size = [1, 2]
-					}
-				]
-			}
+			NonOperationalRoofWindows = &OperationalRoofWindows
 		}
-
 		BatterySprites
 		{
 			Type = ResourceSprites
@@ -285,7 +257,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-
 		OperationEffects
 		{
 			Type = ToggleEffects
@@ -294,14 +265,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
-
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 			Location = [1, 1]
 		}
-
 		OperationSoundLoop
 		{
 			Type = ContinuousEffects
@@ -319,7 +288,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-
 		Indicators
 		{
 			Type = IndicatorSprites
@@ -358,17 +326,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 	}
-
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
-		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
+		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 		SightRange = &~/Part/Components/Sensor/SightRadius
 		RadarRange = &~/Part/Components/Sensor/RadarRadius
 
-
-		RecPower = &PowerUsageContinuousMinutes
+		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
 }
