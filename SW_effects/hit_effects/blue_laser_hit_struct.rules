@@ -24,9 +24,26 @@ Def
 			UpdateAfterInit = false
 		}
 		{
-			Type = InheritVelocity
+			Type = AddFrameOfReference
+			Name = "Add frame of reference"
 			VelocityInOut = velocity
-			Name = "Inherit velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleFromIntensity
+			ScaleOut = scale
+			ScaleFactor = 1
+			IntensityExponent = 0.5
+			Name = "Scale from intensity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = scale
+			ScaleOut = scale
+			Name = ""
 			Enabled = true
 			UpdateAfterInit = false
 		}
@@ -84,7 +101,7 @@ Def
 	{
 		Type = StandardQuadRenderer
 		LocationIn = location
-		ScaleIn
+		ScaleIn = scale
 		RotationIn = rot
 		ColorIn
 		UvRectIn = uv_rect
@@ -101,10 +118,10 @@ Def
 		Texture
 		{
 			File = blue_hit.png
-			SampleMode = Point
 			FixTransparentColors = false
 			PreMultiplyByAlpha = false
 			MipLevels = 8
+			SampleMode = Linear
 		}
 		Color
 		{
@@ -116,6 +133,7 @@ Def
 	}
 	DeleteMode = Fast
 	EnableMultithreading = false
+	InitCapacity = 256
 }
 EmitterDef
 {
@@ -124,7 +142,7 @@ EmitterDef
 	PreInitializers[]
 	PostInitializers[]
 }
-Bucket = Lower3
+Bucket = Lower1
 PenetratingBucket = Middle2
 MinIntensity = 0
 IsFancy = false
@@ -133,3 +151,32 @@ DontEmitWhenOffScreen = true
 DontEmitWhenOffScreenSizeInflate = 1
 Delay = 0
 IgnoreIntensity = false
+UnsharedRenderInWorldSpace = false
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.4028235E+38
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+UseRealTime = false
+IsSimple = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Junk = true
+	TargetedJunk
+}
