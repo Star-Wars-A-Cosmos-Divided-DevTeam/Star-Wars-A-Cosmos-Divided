@@ -7,38 +7,27 @@ Def
 	[
 		{
 			Type = LocationToWorldSpace
-			DataOut = energy
-			ValueType = Float
-			Value = 1
+			LocationIn = location
+			LocationOut = location
 			Name = "Convert location to world space."
 			Enabled = true
 			UpdateAfterInit = false
-			LocationIn = location
-			LocationOut = location
 		}
 		{
 			Type = SetRandom
-			LocationIn = location
-			LocationOut = location
-			Name = "Random Rotation"
-			Enabled = true
-			UpdateAfterInit = false
-			RotationIn = rot
-			RotationOut = rot
 			DataOut = rot
 			ValueType = Angle
 			FromValue = 0d
 			ToValue = 360d
+			Name = "Random Rotation"
+			Enabled = true
+			UpdateAfterInit = false
 		}
 		{
 			Type = AddFrameOfReference
-			Name = "Add frame of reference"
-			VelocityIn = velocity
-			VelocityOut = velocity
-			Enabled = true
 			VelocityInOut = velocity
-			RotationIn = rot
-			RotationOut = rot
+			Name = "Add frame of reference"
+			Enabled = true
 			UpdateAfterInit = false
 		}
 		{
@@ -50,21 +39,28 @@ Def
 			Enabled = true
 			UpdateAfterInit = false
 		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = scale
+			ScaleOut = scale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
 	]
 	Updaters
 	[
 		{
 			Type = Lifetime
-			EnergyInOut = energy
+			LifeInOut = life
 			Lifetime = 0.4
 			Name = Lifetime
 			Enabled = true
 			UpdateAfterInit = false
-			LifeInOut = life
 		}
 		{
 			Type = Operator
-			DataType = Vector2D
+			DataType = Vector2
 			AIn = location
 			BIn = velocity
 			ResultOut = location
@@ -75,14 +71,6 @@ Def
 		}
 		{
 			Type = UvAnimation
-			LerpIn = energy
-			DataOut = scale
-			Invert = true
-			ValueType = Float
-			FromValue = 1
-			ToValue = 0
-			Name = "Animation"
-			Enabled = true
 			TimeIn = life
 			UvRectOut = uv_rect
 			Framerate = 16
@@ -104,11 +92,39 @@ Def
 				Y = 0
 			}
 			Looping = false
-			AIn = time
-			ResultOut = time
-			Operator = AddDt
-			Value = 1
+			Name = Animation
+			Enabled = true
 			UpdateAfterInit = true
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0.39215687
+					Gf = 1
+					Bf = 0.39215687
+					Af = 0.78431374
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.78431374
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
 		}
 	]
 	Renderer
@@ -116,57 +132,24 @@ Def
 		Type = StandardQuadRenderer
 		LocationIn = location
 		ScaleIn = scale
+		Scale2In
 		RotationIn = rot
-		ColorIn
+		ColorIn = color
+		UvRectIn = uv_rect
 		BaseSize
 		{
 			X = 4
 			Y = 4
 		}
-		MaxScale = 1
-		UVRect
-		{
-			X = 0
-			Y = 0
-			Width = 1
-			Height = 1
-		}
 		Name = ""
-		UvRectIn = uv_rect
 	}
 	Material
 	{
 		Texture
 		{
 			File = green_hit.png
-			FixTransparentColors = false
-			PreMultiplyByAlpha = false
 			MipLevels = 8
 			SampleMode = Linear
-		}
-		TargetBlendMode
-		{
-			SourceRgbFactor = SourceAlpha
-			DestRgbFactor = InverseSourceAlpha
-			RgbOperator = Add
-			SourceAlphaFactor = InverseDestAlpha
-			DestAlphaFactor = One
-			AlphaOperator = Add
-			ChannelWriteMask
-			[
-				Red
-				Green
-				Blue
-				Alpha
-				All
-			]
-		}
-		Color
-		{
-			Rf = 1
-			Gf = 1
-			Bf = 1
-			Af = 1
 		}
 	}
 	DeleteMode = Fast
@@ -177,22 +160,56 @@ Def
 EmitterDef
 {
 	EmitPerSecond = 0
-	EmitPerOneShot = 1
+	EmitPerOneShot
+	{
+		Min = 1
+		Max = 1
+	}
 	PreInitializers[]
 	PostInitializers[]
 	UpdatedEmittedParticles = false
 }
-Bucket = Lower3
+Bucket = Lower2
+UseRealTime = false
 PenetratingBucket = Middle2
-Delay = 0
-IgnoreIntensity = false
-Sharing = Global
 MinIntensity = 0
 IsFancy = false
+IsFancyLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
 DontEmitWhenOffScreen = true
 DontEmitWhenOffScreenSizeInflate = 1
-UnsharedRenderInWorldSpace = false
 UseCustomShapeForOffScreenCheck = false
-MaxEmissionZoom = 3.40282347E+38
+MaxEmissionZoom = 3.4028235E+38
 ScaleEmissionWithIntensity = false
 ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Junk = true
+	TargetedJunk
+}
+Delay = 0
+IgnoreIntensity = false

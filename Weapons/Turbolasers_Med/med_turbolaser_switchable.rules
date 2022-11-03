@@ -1,9 +1,9 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {	
-	ID = SW.turbolaser_med_switchable
-	OtherIDs = ["med_turbolaser","med_turbolaser2","med_turbolaserb1","med_turbolaserb2","med_turbolaserg1","med_turbolaserg2"]
 	NameKey = "Parts/Medturbolaserswitchable"
 	IconNameKey = "Parts/MedturbolaserswitchableIcon"
+	ID = SW.turbolaser_med_switchable
+	OtherIDs = ["med_turbolaser","med_turbolaser2","med_turbolaserb1","med_turbolaserb2","med_turbolaserg1","med_turbolaserg2"]
 	EditorGroup = "WeaponsEnergy"
 	DescriptionKey = "Parts/MedturbolaserswitchableDesc"
 	Resources
@@ -24,8 +24,8 @@ Part : /BASE_PART_TERRAN
 	[
 		[-1, 1]
 		[1, 2]
-                [2, 1]
-                [0, 2]
+        [2, 1]
+        [0, 2]
 	]
 	EditorIcon
 	{
@@ -39,7 +39,35 @@ Part : /BASE_PART_TERRAN
 	
 	Components : ^/0/Components
 	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 8
+		}
 		
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+
 		AutoTargetToggle
 		{
 			Type = ModeToggle
@@ -53,12 +81,23 @@ Part : /BASE_PART_TERRAN
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-		
-		IsOperational
+
+		BatteryStorage
 		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
-			Mode = All
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 5000
+		}
+
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
 		WeaponIsOperational
@@ -66,21 +105,6 @@ Part : /BASE_PART_TERRAN
 			Type = MultiToggle
 			Toggles = [IsOperational, SwitchCooldownTimer]
 			Mode = All
-		}
-
-		PowerToggle
-		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-		}
-
-		FireModeToggle
-		{
-			Type = UIToggle
-			ToggleID = "fire_mode"
-			Default = 1
-			ToggledOnChoices = [0, 1, 2]
 		}
 
 		CooldownProgressBar
@@ -107,15 +131,12 @@ Part : /BASE_PART_TERRAN
 			Type = MultiTrigger
 			Triggers = [SwitchCooldownTrigger]
 		}
-
 		SwitchCooldownTrigger
 		{
 			Type = ModeTrigger
 			Mode = MunitionType
 			TriggerInModes = [0,1,2]
 		}
-
-
 		MunitionType
 		{
 			Type = UIToggle
@@ -134,7 +155,7 @@ Part : /BASE_PART_TERRAN
 			Type = ToggledComponents
 			Toggle = RedMunitionToggle
 			IncludeInBlueprints = true
-			Components = &<med_turbolaser_red.txt>/Components
+			Components = &<med_turbolaser_red.rules>/Components
 		}
 		BlueMunitionToggle
 		{
@@ -147,7 +168,7 @@ Part : /BASE_PART_TERRAN
 			Type = ToggledComponents
 			Toggle = BlueMunitionToggle
 			IncludeInBlueprints = true
-			Components = &<med_turbolaser_blue.txt>/Components
+			Components = &<med_turbolaser_blue.rules>/Components
 		}
 		GreenMunitionToggle
 		{
@@ -160,7 +181,7 @@ Part : /BASE_PART_TERRAN
 			Type = ToggledComponents
 			Toggle = GreenMunitionToggle
 			IncludeInBlueprints = true
-			Components = &<med_turbolaser_green.txt>/Components
+			Components = &<med_turbolaser_green.rules>/Components
 		}
 
 		ExteriorType
@@ -182,7 +203,7 @@ Part : /BASE_PART_TERRAN
 			Type = ToggledComponents
 			Toggle = WhiteExteriorToggle
 			IncludeInBlueprints = false
-			Components = &<med_turbolaser_white.txt>/Components
+			Components = &<med_turbolaser_white.rules>/Components
 		}
 		GreyExteriorToggle
 		{
@@ -195,7 +216,7 @@ Part : /BASE_PART_TERRAN
 			Type = ToggledComponents
 			Toggle = GreyExteriorToggle
 			IncludeInBlueprints = false
-			Components = &<med_turbolaser_grey.txt>/Components
+			Components = &<med_turbolaser_grey.rules>/Components
 		}
 
 		Graphics
@@ -384,6 +405,14 @@ Part : /BASE_PART_TERRAN
 			}
 		}
 
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .8
+			Density = 1.5
+		}
+
 		BulletEmitterBase
 		{
 			Type = BulletEmitter
@@ -430,43 +459,17 @@ Part : /BASE_PART_TERRAN
 			]
 		}
 
-		TurretCollider
-		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .8
-			Density = 1.5
-		}
-
-		BatteryStorage
-		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 5000
-		}
-
-		BatteryConsumer
-		{
-			Type = TypedResourceGridConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 500
-			OperationalToggle = PowerToggle
-			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-		}
-
 		CrewLocation1
 		{
 			Type = CrewLocation
 			Location = [0.55, 0.6]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
 			Location = [1.45, 0.6]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		PartCrew
 		{
@@ -493,7 +496,8 @@ Part : /BASE_PART_TERRAN
 			Location = [1, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			AmmoLevels
+			HasZeroResourceSprite = false
+			ResourceLevels
 			[
 				{
 					File = "batteries1.png"
@@ -577,7 +581,6 @@ Part : /BASE_PART_TERRAN
 			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [2, 2]
-
 			ShowOnlyInToggleMode
 			{
 				ToggleID = SW.munition_type
@@ -650,8 +653,8 @@ Part : /BASE_PART_TERRAN
 	}
 	StatsByCategory
 	[
-		&<med_turbolaser_red.txt>/LaserStats
-		&<med_turbolaser_blue.txt>/LaserStats
-		&<med_turbolaser_green.txt>/LaserStats
+		&<med_turbolaser_red.rules>/LaserStats
+		&<med_turbolaser_blue.rules>/LaserStats
+		&<med_turbolaser_green.rules>/LaserStats
 	]
 }

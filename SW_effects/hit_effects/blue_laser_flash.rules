@@ -1,5 +1,135 @@
 Type = Particles
-Def = &<./Data/common_effects/particles/flash_def.rules>
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Location to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = scale
+			ScaleOut = scale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 0.4
+			Name = Lifetime
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = color
+			Invert = false
+			ValueType = Color
+			FromValue
+			{
+				Rf = 1
+				Gf = 1
+				Bf = 1
+				Af = 1
+			}
+			ToValue
+			{
+				Rf = 1
+				Gf = 1
+				Bf = 1
+				Af = 0
+			}
+			Name = "Alpha lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Operator
+			DataType = Color
+			AIn = color
+			BIn = base_color
+			ResultOut = color
+			Operator = Multiply
+			Name = "Apply base color"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+	]
+	Renderer
+	{
+		Type = LightQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In
+		RotationIn
+		ColorIn = color
+		UvRectIn
+		BaseSize
+		{
+			X = 1
+			Y = 1
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader = ./Data/common_effects/particles/particle_light.shader
+		_z = 0.1
+		_litReflectiveStrength = 24
+		_litAdditiveStrength = 0.05
+		_unlitAdditiveStrength = 0.05
+
+		Texture
+		{
+			File = ./Data/common_effects/particles/blob.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+		TargetBlendMode
+		{
+			SourceRgbFactor = InverseDestColor
+			DestRgbFactor = One
+			RgbOperator = Add
+			SourceAlphaFactor = Zero
+			DestAlphaFactor = One
+			AlphaOperator = Add
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
+}
 EmitterDef
 {
 	EmitPerSecond = 0
@@ -23,36 +153,57 @@ EmitterDef
 		}
 		{
 			Type = ScaleFromIntensity
-			DataOut = base_color
-			ValueType = Color
-			Value
-			{
-				Rf = 0
-				Gf = 0
-				Bf = 1
-				Af = 0.490196079
-			}
+			ScaleOut = scale
+			ScaleFactor = 6
+			IntensityExponent = 0.5
 			Name = "Scale from intensity"
 			Enabled = true
 			UpdateAfterInit = false
-			ScaleOut = scale
-			ScaleFactor = 3
-			IntensityExponent = 0.5
 		}
 	]
 	PostInitializers[]
 }
 Bucket = Upper1
+UseRealTime = false
+PenetratingBucket
 MinIntensity = 0
 IsFancy = true
+IsFancyLight = false
+IsSimple = false
 Sharing = Global
+UnsharedRenderInWorldSpace = false
 DontEmitWhenOffScreen = true
 DontEmitWhenOffScreenSizeInflate = 5
-Delay = 0
-IgnoreIntensity = false
-PenetratingBucket
-UnsharedRenderInWorldSpace = false
 UseCustomShapeForOffScreenCheck = false
-MaxEmissionZoom = 3.40282347E+38
+MaxEmissionZoom = 3.4028235E+38
 ScaleEmissionWithIntensity = false
 ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Junk = true
+	TargetedJunk
+}
+Delay = 0
+IgnoreIntensity = false
