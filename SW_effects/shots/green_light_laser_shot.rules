@@ -30,10 +30,14 @@ Components
 	Hit
 	{
 		Type = PenetratingHit
-		FactorEffectsWith = Targetable
-		SourceShipCollisionDelay = 10
-
-
+		Penetration = 0.1
+		PenetratesOperational = false
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+		
 		HitShield
 		{
 			HitEffects
@@ -66,16 +70,11 @@ Components
 
 			MediaEffects
 			[
-				&/PARTICLES/GreenLaserHit
-				&/PARTICLES/GreenLaserFlash
-				&/PARTICLES/GreenLaserSparks
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/laser_bolt_small/laser_bolt_small_hit.wav"
-					Volume = .5
-					SpeedVariation = .4
-				}
+				&/COMMON_PARTICLES/GreenLaserHit
+				&/COMMON_PARTICLES/GreenLaserFlash
+				&/COMMON_PARTICLES/GreenLaserSparks
+	
+				&/COMMON_SOUNDS/SmallLaserHit
 
 				: /BASE_SHAKE
 				{
@@ -100,14 +99,9 @@ Components
 
 			MediaEffects
 			[
-				&/PARTICLES/GreenLaserHit
+				&/COMMON_PARTICLES/GreenLaserHitStruct
 
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/laser_bolt_small/laser_bolt_small_hit.wav"
-					Volume = .3
-					SpeedVariation = .4
-				}
+				&/COMMON_SOUNDS/SmallLaserHit
 			]
 		}
 		PenetratingOperational
@@ -127,7 +121,7 @@ Components
 	Sprite
 	{
 		Type = AnimatedSprite
-		RenderBucket = BulletUpper3
+		//RenderBucket = BulletUpper3
 		ReduceScaleWith = Hit
 		ReduceScaleExponent = 0.5
 		Animation
@@ -147,6 +141,9 @@ Components
 			FramesPerRow = 1
 			FramesPerSecond = 60
 		}
+		NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
 	}
 
 	MediaEffects
@@ -157,7 +154,7 @@ Components
 		FactorEffectsExponent = 0.5
 		MediaEffects
 		[
-			&/PARTICLES/GreenLaserShotGlow
+			&/COMMON_PARTICLES/GreenLaserShotGlow
 		]
 	}
 }

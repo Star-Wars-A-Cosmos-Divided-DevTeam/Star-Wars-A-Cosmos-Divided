@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/FalconLaserCannon"
 	IconNameKey = "Parts/FalconLaserCannonIcon"
@@ -24,8 +24,8 @@ Part : /BASE_PART_TERRAN
 	[
 		[-1, 1]
 		[2, 1]
-                [1, 2]
-                [0, 2]
+        [1, 2]
+        [0, 2]
 	]
 
 	EditorIcon
@@ -35,34 +35,23 @@ Part : /BASE_PART_TERRAN
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [25,65]
+		Size = [40, 60]
 	}
 	Components
 	{
-		BlueprintSprite0
-		{
-			File = "blueprints.png"
-			Size = [2, 2]
-			Type=BlueprintSprite;
-		}
-
+		
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles
-			[
-				PowerToggle
-				BatteryStorage
-				PartCrew
-			]
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
+
 		PowerToggle
 		{
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
 		}
 
 		FireModeToggle
@@ -78,6 +67,7 @@ Part : /BASE_PART_TERRAN
 			Mode = FireModeToggle
 			OnModes = [1, 2]
 		}
+
 		AutoFireToggle
 		{
 			Type = ModeToggle
@@ -205,7 +195,28 @@ Part : /BASE_PART_TERRAN
 					}
 				]
 			}
+			OperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "roof_windows.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_windows_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_windows_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			NonOperationalRoofWindows = &OperationalRoofWindows
 		}
+
 		Turret
 		{
 			Type = TurretWeapon
@@ -213,14 +224,13 @@ Part : /BASE_PART_TERRAN
 			AutoFireToggle = AutoFireToggle
 			Location = [1, 1]
 			Rotation = -90d
-			FireInterval = .35
+			FireInterval = 1
 			FiringArc = 220d
 			RotateSpeed = 75d
 			FireThresholdAngle = 1d
 			AIFirepowerRating = 1600
 			AllowFireWithBlockedLOS = true
-			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitter
+			Emitter = BulletEmitterBase
 
 			AutoTargets
 			[
@@ -254,62 +264,112 @@ Part : /BASE_PART_TERRAN
 			ShowProgressFor = Turret
 		}
 
-		BulletEmitter
+
+
+		BulletEmitterBase
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
-			FireTrigger = Turret
+			FireTrigger 
 			GetTargetFrom = Turret
 			Location = [1.75, 0]
 			OperationalToggle = IsOperational
-			Bullet = &<laser_cannon_shot_Red.txt>
+			Bullet = &/COMMON_SHOTS/redfalconlasercannonshot
 			ResourceStorage = BatteryStorage
-			ResourcesUsed = 80
+			ResourcesUsed = 100
+			Recoil = 1
 		}
 
-		FireEffect1
+		BulletEmitterLeftUpper : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.25, -0.09]//0.25
+		}
+
+		BulletEmitterRightUpper : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.25, 0.09]
+		}
+
+		BulletEmitterLeftUnder : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.25, -0.09]
+		}
+
+		BulletEmitterRightUnder : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.25, 0.09]
+		}
+
+		ChargeEffectLeftUpper
 		{
 			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [1.25, -0.09]//[1.35, -0.25]
-
+			ChainedTo = BulletEmitterLeftUpper
+			Trigger = BulletEmitterLeftUpper
+			AnchorMediaEffects = true
+		
 			MediaEffects
 			[
-				:<./Data/ships/terran/laser_blaster_small/particles/laser_blaster_small_shoot.txt>
-				{
-					Delay = 0
-				}
-
-				:/BASE_SOUNDS/AudioExterior
-				{
-					Sound = "FalconShot.wav"
-					Volume = .25
-					SpeedVariation = .25
-				}
-
-				:/BASE_SHAKE
-				{
-					ShakeAmount = .025
-					Duration = .25
-				}
+				&/COMMON_SOUNDS/LaserRecharge
 			]
 		}
 
-		FireEffect2
+		ChargeEffectRightUpper : ChargeEffectLeftUpper
+		{
+			ChainedTo = BulletEmitterRightUpper
+			Trigger = BulletEmitterRightUpper
+		}
+
+		ChargeEffectLeftUnder : ChargeEffectLeftUpper
+		{
+			ChainedTo = BulletEmitterLeftUnder
+			Trigger = BulletEmitterLeftUnder
+		}
+
+		ChargeEffectRightUnder : ChargeEffectLeftUpper
+		{
+			ChainedTo = BulletEmitterRightUnder
+			Trigger = BulletEmitterRightUnder
+		}
+
+		FireEffectLeftUpper
 		{
 			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [1.25, 0.09]//[1.35, 0.25]
-
+			ChainedTo = BulletEmitterLeftUpper
+			Trigger = BulletEmitterLeftUpper
+			AnchorMediaEffects = true
+	
 			MediaEffects
 			[
-				:<./Data/ships/terran/laser_blaster_small/particles/laser_blaster_small_shoot.txt>
-				{
-					Delay = 0
-				}
+				&/COMMON_PARTICLES/SmallRedLaserShoot
+	
+				&/COMMON_SOUNDS/FalconShot
 			]
+		}
+
+		FireEffectRightUpper : FireEffectLeftUpper
+		{
+			ChainedTo = BulletEmitterRightUpper
+			Trigger = BulletEmitterRightUpper
+		}
+
+		FireEffectLeftUnder : FireEffectLeftUpper
+		{
+			ChainedTo = BulletEmitterLeftUnder
+			Trigger = BulletEmitterLeftUnder
+		}
+
+		FireEffectRightUnder : FireEffectLeftUpper
+		{
+			ChainedTo = BulletEmitterRightUnder
+			Trigger = BulletEmitterRightUnder
 		}
 
 		CrewLocation1
@@ -358,7 +418,7 @@ Part : /BASE_PART_TERRAN
 			Location = [0.20, 0]
 			Rotation = 90d
 			Layer = "roof_doodads"
-			ResetAnimationTrigger = BulletEmitter
+			ResetAnimationTrigger = Turret
 			AtlasSprite
 			{
 				AnimationFiles
@@ -378,7 +438,8 @@ Part : /BASE_PART_TERRAN
 			Location = [1, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			AmmoLevels
+			HasZeroResourceSprite = false
+			ResourceLevels
 			[
 				{
 					File = "batteries1.png"
@@ -423,7 +484,7 @@ Part : /BASE_PART_TERRAN
 			[
 				{
 					Type = AreaDamage
-					Damage = 400
+					Damage = 0
 					Radius = 2
 					Delay = .05
 					Filter
@@ -435,7 +496,7 @@ Part : /BASE_PART_TERRAN
 				}
 				{
 					Type = AreaDamage
-					Damage = 200
+					Damage = 0
 					Radius = 2
 					Delay = .05
 					Filter
@@ -444,7 +505,8 @@ Part : /BASE_PART_TERRAN
 						OperationalHealth = false
 						StructuralHealth = true
 					}
-				}{
+				}
+				{
 					Type = AreaFires
 					FireChancePerTile = .1
 					Radius = 4
@@ -495,6 +557,12 @@ Part : /BASE_PART_TERRAN
 				}
 			]
 		}
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+		}
 	}
 
 	Stats
@@ -505,8 +573,8 @@ Part : /BASE_PART_TERRAN
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 1 / (&~/Part/Components/Turret/FireInterval)
-		Range = &~/Part/Components/BulletEmitter/Bullet/Range
+		ROF = 4 * (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/Part/Components/Turret/FiringArc)
 		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 	}
@@ -514,18 +582,18 @@ Part : /BASE_PART_TERRAN
 	StatsByCategory
 	[
 		{
-			NameKey = "StatCategories/FalconLaserCannonShot"
+			NameKey = "StatCategories/FalconLaserCannonshot"
 			Stats
 			{
-				ShieldDamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+				ShieldDamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
 				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
 				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				DamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
 				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Speed
-				ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Targetable/Health
-				PowerPerShot = (&~/Part/Components/BulletEmitter/ResourcesUsed) / 1000
+				ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
+				ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+				PowerPerShot = (&~/Part/Components/BulletEmitterBase/ResourcesUsed) / 1000
 				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
 				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 			}
