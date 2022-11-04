@@ -7,7 +7,7 @@ Description:
 Currently prototyping
 
 It offers synchronized and alternate firing modes.
-This requires the inheritance of the firing logic found in SW_weapon_fire_alternate_2.txt (See details).
+This requires the inheritance of the firing logic found in SW_weapon_fire_alternate_2.rules (See details).
 In alternate fire on each sides the guns are divided in od and even groups and overall mirrored.
 
 The timer component (WeaponTimerBuffProvider) is needed to adjust the timing individually for the weapon.
@@ -17,7 +17,7 @@ Versions:
  o 1.0 Cosmoteer 0.15.12
 
 ---------------------------------------------------------------------------- */ 
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/TurbolaserCarronade"
 	IconNameKey = "Parts/TurbolaserCarronadeIcon"
@@ -63,7 +63,7 @@ Part : /BASE_PART_TERRAN
 		}
 		Size = [40, 80]
 	}
-	Components : ^/0/Components //, &<../SW_weapon_fire_alternate_2.txt>
+	Components : ^/0/Components //, &<../SW_weapon_fire_alternate_2.rules>
 	{
 //		BlueprintSprite0
 //		{
@@ -145,7 +145,7 @@ Part : /BASE_PART_TERRAN
 			Type = ToggledComponents
 			Toggle = LaserRedToggle
 			IncludeInBlueprints = true
-			Components : <red_carronade_laser.txt>/Components, <../SW_weapon_fire_alternate_2.txt> {}
+			Components : <red_carronade_laser.rules>/Components, <../SW_weapon_fire_alternate_2.rules> {}
 		}
 
 		LaserBlueToggle
@@ -159,7 +159,7 @@ Part : /BASE_PART_TERRAN
 			Type = ToggledComponents
 			Toggle = LaserBlueToggle
 			IncludeInBlueprints = true
-			Components : <blue_carronade_laser.txt>/Components, <../SW_weapon_fire_alternate_2.txt> {}
+			Components : <blue_carronade_laser.rules>/Components, <../SW_weapon_fire_alternate_2.rules> {}
 		}
 
 		LaserGreenToggle
@@ -173,7 +173,7 @@ Part : /BASE_PART_TERRAN
 			Type = ToggledComponents
 			Toggle = LaserGreenToggle
 			IncludeInBlueprints = true
-			Components : <green_carronade_laser.txt>/Components, <../SW_weapon_fire_alternate_2.txt> {}
+			Components : <green_carronade_laser.rules>/Components, <../SW_weapon_fire_alternate_2.rules> {}
 		}
 		Graphics
 		{
@@ -310,7 +310,8 @@ Part : /BASE_PART_TERRAN
 			Location = [1, 2]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			AmmoLevels
+			HasZeroResourceSprite = false
+			ResourceLevels
 			[
 				{
 					File = "../FalconLaser/batteries1.png"
@@ -502,20 +503,20 @@ Part : /BASE_PART_TERRAN
 		RecPower = (&PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 2 / (&<red_carronade_laser.txt>/Components/WeaponTimerBuffProvider/BuffAmount)
-		Range = &<red_carronade_laser.txt>/Components/BulletEmitter/Bullet/Range
-		Arc = deg(&<red_carronade_laser.txt>/Components/Turret/FiringArc)
-		TurretSpeed = deg(&<red_carronade_laser.txt>/Components/Turret/RotateSpeed)
-		ShotSpeed = &<red_carronade_laser.txt>/Components/BulletEmitter/Bullet/Speed
-		ShotHP = &<red_carronade_laser.txt>/Components/BulletEmitter/Bullet/Components/Targetable/Health
-		PowerPerShot = (&<red_carronade_laser.txt>/Components/BulletEmitter/ResourcesUsed) / 1000
+		ROF = 2 / (&<red_carronade_laser.rules>/Components/WeaponTimerBuffProvider/BuffAmount)
+		Range = &<red_carronade_laser.rules>/Components/BulletEmitter/Bullet/Range
+		Arc = deg(&<red_carronade_laser.rules>/Components/Turret/FiringArc)
+		TurretSpeed = deg(&<red_carronade_laser.rules>/Components/Turret/RotateSpeed)
+		ShotSpeed = &<red_carronade_laser.rules>/Components/BulletEmitter/Bullet/Speed
+		ShotHP = &<red_carronade_laser.rules>/Components/BulletEmitter/Bullet/Components/Targetable/Health
+		PowerPerShot = (&<red_carronade_laser.rules>/Components/BulletEmitter/ResourcesUsed) / 1000
 		PowerPerSecond = (&PowerPerShot) * (&ROF)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	StatsByCategory
 	[
-		&<red_carronade_laser.txt>/LaserStats
-		&<blue_carronade_laser.txt>/LaserStats
-		&<green_carronade_laser.txt>/LaserStats
+		&<red_carronade_laser.rules>/LaserStats
+		&<blue_carronade_laser.rules>/LaserStats
+		&<green_carronade_laser.rules>/LaserStats
 	]
 }
