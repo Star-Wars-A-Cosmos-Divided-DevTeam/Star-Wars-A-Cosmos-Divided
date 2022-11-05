@@ -1,38 +1,49 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/IonThruster01_2x2"
-	IconNameKey = "Parts/IonThruster01_2x2_Icon"
-	ID = SW.IonThruster01_2x2
-	OtherIDs = ["IonThruster01_2x2"]
+	NameKey = "Parts/IonThruster01_3x3"
+	IconNameKey = "Parts/IonThruster01_3x3_Icon"
+	ID = SW.IonThruster01_3x3_switchable
+	OtherIDs = ["IonThruster01_3x3","SW.IonThruster01_3x3"]
 	EditorGroup = "Flight"
-	DescriptionKey = "Parts/IonThruster01_2x2_Desc"
+	DescriptionKey = "Parts/IonThruster01_3x3_Desc"
 	Resources
 	[
-		[steel, 40] 
-		[coil, 10]
-	]  //Cost = 8000
+		[steel, 64]
+		[coil, 16]
+		[coil2, 4]
+	]  //Cost = 20000
 	TypeCategories = [thruster, uses_power]
-	Size = [2, 3]
-	PhysicalRect = [0, 0, 2, 2]
+	Size = [3, 5]
+	PhysicalRect = [0, 0, 3, 3]
 	SaveRect = &PhysicalRect
 	BoundingRectType = Physical
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
 	Density = 1
-	MaxHealth = 4000
-	ProhibitBelow = 5
-	ThrusterForce = 3600  //2400
-	ThrustIncreaseTime = 0
-	ThrustRecoveryTime = 0
-	FuelUsage = 250
+	MaxHealth = 9000
+	ProhibitBelow = 7
+	ThrusterForce = 6400
+	ThrustIncreaseTime = 3
+	ThrustRecoveryTime = 3
+	FuelUsage = 450
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
+
+	ForceManhattenPathInPart = true
+	BlockedTravelCells
+	[
+		[1, 1]
+		[0, 2]
+		[1, 2]
+		[2, 2]
+	]
 	AllowedDoorLocations
 	[
 		[-1, 0]
 		[0, -1]
 		[1, -1]
-		[2, 0]
+		[2, -1]
+		[3, 0]
 	]
 	EditorIcon
 	{
@@ -41,7 +52,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [42.66, 64]
+		Size = [60, 100]
 	}
 	Components
 	{
@@ -62,13 +73,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
-			CommandPoints = 4
+			CommandPoints = 9
 		}
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 3000
+			MaxResources = 8000
 		}
 		EngineBuffToggle
 		{
@@ -95,36 +106,101 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			}
 		}
+		
+		ThrusterEffectColorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.thruster_effect_color_type"
+			Default = 1
+			AlwaysAllowInBuildMode = true
+		}
+
+		RedThrusterToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 0
+		}
+		RedThrusterComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedThrusterToggle
+			IncludeInBlueprints = true
+			Components = &<thruster_red.rules>/Components
+		}
+
+		BlueThrusterToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 1
+		}
+		BlueThrusterComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueThrusterToggle
+			IncludeInBlueprints = true
+			Components = &<thruster_blue.rules>/Components
+		}
+
+		YellowThrusterToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 2
+		}
+		YellowThrusterComponents
+		{
+			Type = ToggledComponents
+			Toggle = YellowThrusterToggle
+			IncludeInBlueprints = true
+			Components = &<thruster_yellow.rules>/Components
+		}
+		
+		PurpleThrusterToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 3
+		}
+		PurpleThrusterComponents
+		{
+			Type = ToggledComponents
+			Toggle = PurpleThrusterToggle
+			IncludeInBlueprints = true
+			Components = &<thruster_purple.rules>/Components
+		}
+
 		Graphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
 
-			Location = [1, 1]
+			Location = [1.5, 1.5]
 			Floor
 			{
 				Layer = "floors"
-				Offset = [0, .5]
+				Offset = [0, 1]
 				DamageLevels
 				[
 					{
 						File = "floor.png"
-						Size = [2, 3]
+						Size = [3, 5]
 					}
 					{
 						File = "floor_33.png"
-						Size = [2, 3]
+						Size = [3, 5]
 					}
 					{
 						File = "floor_66.png"
-						Size = [2, 3]
+						Size = [3, 5]
 					}
 				]
 			}
 			OperationalDoodad
 			{
 				Layer = "doodads_low"
-				Offset = [0, .5]
+//				Offset = [0, 1]
 				DamageLevels
 				[
 					{
@@ -139,7 +215,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"doodads on7.png"
 							"doodads on8.png"
 						]
-						Size = [2, 3]
+						Size = [3, 3]
 						AnimationInterval = 0.075
 					}
 				]
@@ -147,24 +223,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			NonOperationalDoodad
 			{
 				Layer = "doodads_high"
-				Offset = [0, .5]
+//				Offset = [0, 1]
 				DamageLevels
 				[
 					{
 						File = "doodads off.png"
-						Size = [2, 3]
+						Size = [3, 3]
 					}
 				]
 			}
 			OperationalLighting
 			{
 				Layer = "lights_add"
-				Offset = [0, 0.5]
+//				Offset = [1.5, 1.5]
 				DamageLevels
 				[
 					{
 						File = "lights.png"
-						Size = [2, 3]
+						Size = [3, 3]
 					}
 				]
 			}
@@ -175,15 +251,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "walls.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 					{
 						File = "walls_33.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 					{
 						File = "walls_66.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 				]
 			}
@@ -195,15 +271,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
-						Size = [2, 2]
+						NormalsFile = "roof_normals.png"
+						Size = [3, 3]
 					}
 					{
 						File = "roof_33.png"
-						Size = [2, 2]
+						NormalsFile = "roof_normals_33.png"
+						Size = [3, 3]
 					}
 					{
 						File = "roof_66.png"
-						Size = [2, 2]
+						NormalsFile = "roof_normals_66.png"
+						Size = [3, 3]
 					}
 				]
 			}
@@ -214,15 +293,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof_windows.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 					{
 						File = "roof_windows_33.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 					{
 						File = "roof_windows_66.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 				]
 			}
@@ -233,15 +312,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof_windows.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 					{
 						File = "roof_windows_33.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 					{
 						File = "roof_windows_66.png"
-						Size = [2, 2]
+						Size = [3, 3]
 					}
 				]
 			}
@@ -250,7 +329,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [1, 0.5]
+			Location = [1.5, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			HasZeroResourceSprite = false
@@ -258,24 +337,41 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				{
 					File = "batteries 1.png"
-					Size = [2, 1]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries 2.png"
-					Size = [2, 1]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries 3.png"
-					Size = [2, 1]
+					Size = [2, 2]
+				}
+				{
+					File = "batteries 4.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries 5.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries 6.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries 7.png"
+					Size = [2, 2]
 				}
 			]
 		}
+
 		MainThruster
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
 
-			Location = [1, 2.727]// Relative to upper-left corner of unrotated part.
+			Location = [1.5, 4.44]// Relative to upper-left corner of unrotated part.
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
@@ -301,7 +397,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Thruster
 			OperationalToggle = IsOperational
 
-			Location = [1, 0]
+			Location = [1.5, 0]
 			Rotation = -90d
 			Force = (&../../ThrusterForce)/2
 			MinActivation = 0
@@ -314,29 +410,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelUsagePerSecond = &../../FuelUsage
 		}
 
-		ThrustEffects
+		ThrustEffectsSounds
 		{
 			Type = ContinuousEffects
 			ChainedTo = MainThruster
 			FactorMediaEffectsIntensityWith = MainThruster
 			MediaEffects
 			[
-				&/COMMON_PARTICLES/IonThrusterBlueGlowLarge
-				&/COMMON_PARTICLES/ThrusterBlueFireLarge
-				&/COMMON_PARTICLES/ThrusterBluePlumeLarge
-				&/COMMON_PARTICLES/ThrusterBluePlumeLightLarge
-				&/COMMON_PARTICLES/ThrusterSmokeLarge
-				&/COMMON_PARTICLES/ThrusterBlueSparks30
-
 				: /COMMON_SOUNDS/ThrusterRumble
 				{
-					Volume = .125
+					Volume = 0.5
 					Speed = 1.5
-					MaxConcurrentVolume = .25
+					MaxConcurrentVolume = 0.64
 				}
 			]
 		}
-
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
@@ -365,8 +453,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
-			Location = [.5, 1]
+			Toggle = IsOperational
+
+			Location = [1.5, 1.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
@@ -374,14 +463,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
-			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [1, 1]
+			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+			Location = [1.5, 1.5]
 		}
 
 		ThrusterHum
 		{
 			Type = ContinuousEffects
-			Location = [1, 1]
+			Location = [1.5, 1.5]
 			OperationalToggle = IsOperational
 			MediaEffects
 			[
@@ -397,7 +486,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [1, 1]
+			Location = [1.5, 1.5]
 			Layer = "indicators"
 			Indicators
 			[
@@ -423,12 +512,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 		
-		Blueprints
+		blueprints
 		{
 			Type=BlueprintSprite
 			File = "blueprints.png"
-			Size = [2, 3]
-			//Offset = [0, 0]
+			Size = [3, 5]
+			//Offset = [0, 0.5]
 		}
 	}
 

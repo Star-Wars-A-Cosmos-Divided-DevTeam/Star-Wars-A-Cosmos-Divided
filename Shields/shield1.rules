@@ -4,7 +4,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	IconNameKey = "Parts/Small1"
 	ID = SW.bubble_generator_small1
 	OtherIDs = ["bubble_generator_small1"]
-	EditorGroup = "Defenses"
+	EditorGroup = "DefensesSWACD"
 	DescriptionKey = "Parts/Small1Desc"
 	Resources
 	[
@@ -53,6 +53,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggledOnChoices = [1]
 		}
 
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 2
+			//Requires 0 Stationary Crew so
+		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -92,25 +100,66 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FromQuantity = 100
 			Interval = 1
 		}
-/*
-		ShieldVisibilityToggle				//Currently Useless
+
+		ShieldColorType
 		{
-			Type = UIToggle;
-			ToggleID = "sw_shield_visibility"
-			Default = 1
-			ToggledOnChoices = [1]
-			RememberValue = false
+			Type = UIToggle
+			ToggleID = "SW.shield_color_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
 		}
-*/
+
+		BlueShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 0
+		}
+		BlueShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield1_blue.rules>/Components
+		}
+
+		WhiteShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 1
+		}
+		WhiteShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield1_white.rules>/Components
+		}
+
+		InvisShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 2
+		}
+		InvisShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = InvisShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield1_invis.rules>/Components
+		}
+/*
 		ArcShield
 		{
 			Type = ArcShield
-			Radius = 5
-			Arc = 365d
+			Radius = 8
+			Arc = 181.8d
 			OperationalToggle = IsOperational
 			PenetrationResistance = [7, 0]
 			DrainResourcesFrom = BatteryStorage
-			ResourceDrainPerDamage = 1.25
+			ResourceDrainPerDamage = 2
 			Rotation = -90d
 			Location = [0.5, 0.5]
 
@@ -122,7 +171,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					SampleMode = Linear
 					MipLevels = max
 				}
-				Size = [0, 1.5]
+				Size = [0, 1]
 				Color = [50, 50, 255, 127]
 			}
 			BlueprintArcSpriteSegments = 64
@@ -135,7 +184,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					SampleMode = Linear
 					MipLevels = max
 				}
-				Size = [0, 1.5]
+				Size = [0, 1]
 				Color = [255, 255, 255, 127]
 			}
 			CoverageArcSpriteSegments = 64
@@ -154,6 +203,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Texture
 						{
 							File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+							UVMode = Wrap
 							SampleMode = Linear
 							MipLevels = 1
 						}
@@ -177,7 +227,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						_lowPowerThicknessExponent = .6
 						_xScale = 1
 						TargetBlendMode = Add
-						Size = [0, 1.5]
+						Size = [0, 1]
 					}
 					ArcSpriteSegments = 64
 					Bucket = Lower1
@@ -229,10 +279,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						_waveCurveMagnitude = .25
 						_waveCurveUOffsetPerSecond = 0
 						//TargetBlendMode = Add
-						_fullPowerColor1 = [50, 50, 255, 191]
-						_lowPowerColor1 = [255, 0, 0, 255]
-						_fullPowerColor2 = [200, 146, 240,191]
-						_lowPowerColor2 = [240, 198, 234, 191]
+						_fullPowerColor1 = [54, 0, 91, 127]
+						_lowPowerColor1 = [54, 0, 91, 127]
+						_fullPowerColor2 = [0, 0, 255, 127]
+						_lowPowerColor2 = [255, 0, 0, 127]
 						_lowPowerThicknessExponent = .6
 						_xScale = 1
 						TargetBlendMode = Add
@@ -253,77 +303,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-/*
-		VisibleShieldComponents
-		{
-			Type = ToggledComponents
-			Toggle = ShieldVisibilityToggle
-			Components
-			{
-				ArcShieldEffect
-				{
-					Type = ContinuousEffects
-					ChainedTo = ArcShield
-					FactorMediaEffectsIntensityWith = BatteryStorage
-					Location = [&~/Part/Components/ArcShield/Radius, 0]
-					OperationalToggle = IsOperational
-					MediaEffects
-					[
-						{
-							Type = ArcShield
-							Radius = &~/Part/Components/ArcShield/Radius
-							Arc = &~/Part/Components/ArcShield/Arc
-							FadeInTime = .25
-							FadeOutTime = .25
-							FadeFromScale = .8
-							ArcSprite
-							{
-								Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-								Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
-								_waveTex
-								{
-									File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
-									UVMode = Wrap
-								}
-								_waveSpeed = 1
-								_waveAlpha = 1
-								_waveCurveInterval = .5
-								_waveCurveMagnitude = .35
-								_waveCurveUOffsetPerSecond = .2
-								_fullPowerColor = [0, 0, 255, 127]
-								_lowPowerColor = [255, 0, 0, 127]
-								_lowPowerThicknessExponent = .6
-								TargetBlendMode = Add
-								Size = [0, 1.5]
-							}
-							ArcSpriteSegments = 64
-							Bucket = Lower1
-						}
 
-						: /BASE_SOUNDS/AudioExteriorDetail
-						{
-							Sound = "./Data/Ships/terran/shield_gen_small/shield_loop.wav"
-							Volume = .15
-							Speed = .65
-							MaxConcurrent = 1
-							MaxConcurrentVolume = .3
-							DynamicVolume : ^/0/DynamicVolume
-							{
-								MinDistance = .75
-								MaxDistance = 1.5
-							}
-							IgnoreIntensity = true
-						}
-					]
-				}
-			}
+		ArcShield90 : ArcShield
+		{
+			Rotation = 90d
 		}
 */
 		ShieldOperationEffects
 		{
 			Type = ToggleEffects
-			ChainedTo = ArcShield
-			Location = [0, 0]
+			//ChainedTo = ArcShield
+			Location = [0.5, 0.5]
 			Toggle = IsOperational
 			ToggledOnMediaEffects
 			[
@@ -550,10 +540,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&~/Part/Components/ArcShield/ResourceDrainPerDamage)
-		ShieldPenResist = &~/Part/Components/ArcShield/PenetrationResistance/0
-		ShieldArc = deg(&~/Part/Components/ArcShield/Arc)
-		ShieldDist = (&~/Part/Components/ArcShield/Radius) - (&~/Part/Components/ArcShield/Location/1)
+		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&<shield1_blue.rules>/Components/ArcShield/ResourceDrainPerDamage)
+		ShieldPenResist = &<shield1_blue.rules>/Components/ArcShield/PenetrationResistance/0
+		ShieldArc = deg(&<shield1_blue.rules>/Components/ArcShield/Arc)
+		ShieldDist = (&<shield1_blue.rules>/Components/ArcShield/Radius) - (&<shield1_blue.rules>/Components/ArcShield/Location/1)
 		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
