@@ -2,8 +2,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/IonThruster01_1x2"
 	IconNameKey = "Parts/IonThruster01_1x2_Icon"
-	ID = SW.IonThruster02_1x2
-	OtherIDs = ["IonThruster02_1x2"]
+	ID = SW.IonThruster01_1x2_switchable
+	OtherIDs = ["IonThruster01_1x2","SW.IonThruster01_1x2"]
 	EditorGroup = "Flight"
 	DescriptionKey = "Parts/IonThruster01_1x2_Desc"
 	Resources
@@ -93,6 +93,71 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			}
 		}
+
+		ThrusterEffectColorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.thruster_effect_color_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
+		}
+
+		RedThrusterToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 0
+		}
+		RedThrusterComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedThrusterToggle
+			IncludeInBlueprints = true
+			Components = &<thruster_red.rules>/Components
+		}
+
+		BlueThrusterToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 1
+		}
+		BlueThrusterComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueThrusterToggle
+			IncludeInBlueprints = true
+			Components = &<thruster_blue.rules>/Components
+		}
+
+		YellowThrusterToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 2
+		}
+		YellowThrusterComponents
+		{
+			Type = ToggledComponents
+			Toggle = YellowThrusterToggle
+			IncludeInBlueprints = true
+			Components = &<thruster_yellow.rules>/Components
+		}
+		
+		PurpleThrusterToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 3
+		}
+		PurpleThrusterComponents
+		{
+			Type = ToggledComponents
+			Toggle = PurpleThrusterToggle
+			IncludeInBlueprints = true
+			Components = &<thruster_purple.rules>/Components
+		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -193,14 +258,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [1, 2]
 					}
 					{
 						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [1, 2]
 					}
 					{
 						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [1, 2]
 					}
 				]
@@ -307,50 +375,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelUsagePerSecond = &../../FuelUsage
 		}
 
-		ThrustEffects
+		ThrustEffectsSounds
 		{
 			Type = ContinuousEffects
 			ChainedTo = MainThruster
 			FactorMediaEffectsIntensityWith = MainThruster
 			MediaEffects
 			[
-				&/COMMON_PARTICLES/IonThrusterRedGlowMed
-				//&/COMMON_PARTICLES/ThrusterRedFireSmall
-				//&/COMMON_PARTICLES/ThrusterRedPlumeLightSmall
-				&/COMMON_PARTICLES/ThrusterSmokeSmall
-				&/COMMON_PARTICLES/ThrusterRedSparks4
-
 				: /COMMON_SOUNDS/ThrusterRumble
 				{
-					Volume = .125
+					Volume = 0.27
 					Speed = 1.5
-					MaxConcurrentVolume = .25
+					MaxConcurrentVolume = 0.32
 				}
 			]
 		}
-		ThrustEffectsL
-		{
-			Type = ContinuousEffects
-			ChainedTo = MainThruster
-			Location = [0, 0.21]
-			FactorMediaEffectsIntensityWith = MainThruster
-			MediaEffects
-			[
-				&/COMMON_PARTICLES/ThrusterRedSparks4
-			]
-		}
-		ThrustEffectsR
-		{
-			Type = ContinuousEffects
-			ChainedTo = MainThruster
-			Location = [0, -0.21]
-			FactorMediaEffectsIntensityWith = MainThruster
-			MediaEffects
-			[
-				&/COMMON_PARTICLES/ThrusterRedSparks4
-			]
-		}
-		
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
@@ -369,9 +408,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				: /COMMON_SOUNDS/ThrusterBurst
 				{
-					Volume = .25
+					Volume = .125
 					Speed = 1.5
-					MaxConcurrentVolume = .5
+					MaxConcurrentVolume = .25
 				}
 			]
 		}
