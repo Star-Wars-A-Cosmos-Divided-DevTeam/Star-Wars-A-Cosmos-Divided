@@ -32,11 +32,18 @@ Components
 	Hit
 	{
 		Type = PenetratingHit
-		FactorEffectsWith = Targetable
-		SourceShipCollisionDelay = 10
+		Penetration = 0.1
+		PenetratesOperational = false
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
 
 		HitShield
 		{
+			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
@@ -56,6 +63,7 @@ Components
 		}
 		HitOperational
 		{
+			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
@@ -76,13 +84,8 @@ Components
 				&/PARTICLES/BlueLaserHit
 				&/PARTICLES/BlueLaserFlash
 				&/PARTICLES/BlueLaserSparks
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/laser_bolt_small/laser_bolt_small_hit.wav"
-					Volume = .5
-					SpeedVariation = .4
-				}
+	
+				&/COMMON_SOUNDS/SmallLaserHit
 
 				: /BASE_SHAKE
 				{
@@ -93,6 +96,7 @@ Components
 		}
 		HitStructural
 		{
+			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
@@ -122,29 +126,50 @@ Components
 		}
 		PenetratingOperational
 		{
+			// No effect.
 		}
 		PenetratingStructural
 		{
+			// No effect.
 		}
 		FinishedPenetratingOperational
 		{
+			// No effect.
 		}
 		FinishedPenetratingStructural
 		{
+			// No effect.
 		}
 	}
 
 	Sprite
 	{
-		Type = Sprite
+		Type = AnimatedSprite
 		RenderBucket = BulletUpper3
-		Sprite
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
 		{
-			Texture = "old7unusedsprites/IonShotBlueSingle.png"
-			Size = [0.64, 0.64]
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "lasershotblue.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [0.64, 0.64]
+			}
+			FrameCount = 2
+			FrameSize = [64, 32]
+			FramesPerRow = 1
+			FramesPerSecond = 60
 		}
+		NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
 	}
-
+	
 	MediaEffects
 	{
 		Type = MediaEffects
