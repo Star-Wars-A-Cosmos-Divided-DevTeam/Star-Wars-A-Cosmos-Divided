@@ -12,11 +12,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[steel, 8] //
 	]  //Cost = 800
 	Size = [2, 1]
+	FlipHRotate = [0, 1, 2, 3] // Disable flipping UI.
+	FlipVRotate = [0, 1, 2, 3] // Disable flipping UI.
 	SelectionTypeID = "armor"
 	MaxHealth = 16000
-	AreaDamageBlockFactor = .25
+	ExplosiveDamageAbsorption = 100%
+	ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
 	Flammable = false
-	InitialPenetrationResistance = 100
+	InitialPenetrationResistance = 10
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	CreatePartPerTileWhenGrabbed = ""
 	CrewSpeedFactor = 0
 	Density = 1
@@ -25,6 +30,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	IsSelfDestructible = false
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
+	IgnoreRotationForMirroredSelection = true
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	IsFlippable = true
         EditorIcon
 	{
@@ -42,6 +49,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
 			AbsorbsResourceDrain = 1000
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
 		
 		Blueprints
@@ -100,14 +108,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [2, 1]
 					}
 					{
 						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [2, 1]
 					}
 					{
 						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [2, 1]
 					}
 				]
