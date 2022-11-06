@@ -17,7 +17,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Size = [2, 2]
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	SelectionTypeID = "turbolasers"
+	SelectionTypeID = "turbolaser"
 	MaxHealth = 8000
 	InitialPenetrationResistance = 3
 	PenetrationRectType = Normal
@@ -61,12 +61,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			CommandPoints = 8
 		}
-		
+
 		FireModeToggle
 		{
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
+			AvailableChoices = [-1, 0, 1, 2]
 			ToggledOnChoices = [0, 1, 2]
 		}
 		AutoTargetToggle
@@ -98,7 +99,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
+/*
 		WeaponIsOperational
 		{
 			Type = MultiToggle
@@ -136,6 +137,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = MunitionType
 			TriggerInModes = [0, 1, 2]
 		}
+		*/
 		MunitionType
 		{
 			Type = UIToggle
@@ -365,14 +367,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = TurretWeapon
 			Location = [1, 1]
 			Rotation = -90d// Relative to unrotated part.
-			OperationalToggle = WeaponIsOperational
+			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 2
 			FiringArc = 200d
 			RotateSpeed = 65d
 			FireThresholdAngle = 1d
 			AIFirepowerRating = 1600
+			CanBeGivenExplicitTarget = true
 			Emitter = BulletEmitterBase
+			TargetSearchesPerSecond = 1
 			FirePermissionToggle = FireModeToggle
 			HoldTargetAfterCancel = 0.15
 			AutoTargetCrewSafetyDist = 8
@@ -383,10 +387,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				{
 					TargetType = ShipParts
 					Toggle = AutoTargetToggle
+					Overridable = true
 				}
 				{
 				    TargetType = Crew
 				    Toggle = AutoTargetToggle
+					Overridable = true
 				}
 			]
 
@@ -407,11 +413,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			//OperationalToggle = WeaponIsOperational
+			ShowProgressFor = Turret
+		}
+
 		BulletEmitterBase
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
-			FireTrigger
+			FireTrigger 
 			GetTargetFrom = Turret
 			Location = [1, 0]
 			OperationalToggle = IsOperational
@@ -419,13 +432,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Bullet = &/COMMON_SHOTS/redmedlasershot
 			ResourceStorage = BatteryStorage
 			ResourcesUsed = 250
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = WeaponIsOperational
-			ShowProgressFor = Turret
 		}
 
 		ChargeEffectBase
