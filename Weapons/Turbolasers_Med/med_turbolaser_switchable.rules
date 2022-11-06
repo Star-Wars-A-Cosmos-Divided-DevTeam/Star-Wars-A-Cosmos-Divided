@@ -12,11 +12,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]  //Cost = 16000
 	AIValueFactor = 1
 
-	TypeCategories = [weapon, uses_power, uses_laser_parts, is_crewed]
+	TypeCategories = [weapon, uses_power,  is_crewed]//uses_laser_parts,
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [2, 2]
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	SelectionTypeID = "cannons"
+	SelectionTypeID = "turbolasers"
 	MaxHealth = 8000
 	InitialPenetrationResistance = 3
 	PenetrationRectType = Normal
@@ -51,6 +52,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
+			RequiresCommand = false
 		}
 
 		CommandConsumer
@@ -67,14 +69,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			ToggledOnChoices = [0, 1, 2]
 		}
-
 		AutoTargetToggle
 		{
 			Type = ModeToggle
 			Mode = FireModeToggle
 			OnModes = [1, 2]
 		}
-
 		AutoFireToggle
 		{
 			Type = ModeToggle
@@ -86,9 +86,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 5000
+			MaxResources = 6000
 		}
-
 		BatteryConsumer
 		{
 			Type = ResourceConsumer
@@ -135,7 +134,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ModeTrigger
 			Mode = MunitionType
-			TriggerInModes = [0,1,2]
+			TriggerInModes = [0, 1, 2]
 		}
 		MunitionType
 		{
@@ -154,7 +153,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = RedMunitionToggle
-			IncludeInBlueprints = true
+			IncludeInBlueprints = false
 			Components = &<med_turbolaser_red.rules>/Components
 		}
 		BlueMunitionToggle
@@ -167,7 +166,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = BlueMunitionToggle
-			IncludeInBlueprints = true
+			IncludeInBlueprints = false
 			Components = &<med_turbolaser_blue.rules>/Components
 		}
 		GreenMunitionToggle
@@ -180,7 +179,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = GreenMunitionToggle
-			IncludeInBlueprints = true
+			IncludeInBlueprints = false
 			Components = &<med_turbolaser_green.rules>/Components
 		}
 
@@ -188,8 +187,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.exterior_type"
-			Default = 2
-			ToggledOnChoices = [0,1]
+			Default = 0
 			AlwaysAllowInBuildMode = true
 		}
 		WhiteExteriorToggle
@@ -267,7 +265,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"console on3.png"
 						]
 						Size = [2, 2]
-						//Offset = [0, 0]//-0.67]
+						//Offset = [0, 0]//-0.67
 						AnimationInterval = 0.50
 					}
 				]
@@ -280,7 +278,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "console off.png"
 						Size = [2, 2]
-						//Offset = [0, 0]//-0.67]
+						//Offset = [0, 0]//-0.67
 					}
 				]
 			}
@@ -369,15 +367,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = -90d// Relative to unrotated part.
 			OperationalToggle = WeaponIsOperational
 			AutoFireToggle = AutoFireToggle
-			FireInterval = 2.2
-			FireDelay = .15
+			FireInterval = 2
 			FiringArc = 200d
 			RotateSpeed = 65d
 			FireThresholdAngle = 1d
-			TargetSearchTriesPerFrame = 1
 			AIFirepowerRating = 1600
-			FirePermissionToggle = FireModeToggle
 			Emitter = BulletEmitterBase
+			FirePermissionToggle = FireModeToggle
+			HoldTargetAfterCancel = 0.15
+			AutoTargetCrewSafetyDist = 8
 			IgnoreSourceShipLOSChecks = true
 
 			AutoTargets
@@ -385,6 +383,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				{
 					TargetType = ShipParts
 					Toggle = AutoTargetToggle
+				}
+				{
+				    TargetType = Crew
+				    Toggle = AutoTargetToggle
 				}
 			]
 
@@ -405,14 +407,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		TurretCollider
-		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .8
-			Density = 1.5
-		}
-
 		BulletEmitterBase
 		{
 			Type = BulletEmitter
@@ -421,6 +415,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			GetTargetFrom = Turret
 			Location = [1, 0]
 			OperationalToggle = IsOperational
+			FireDelay = .15
 			Bullet = &/COMMON_SHOTS/redmedlasershot
 			ResourceStorage = BatteryStorage
 			ResourcesUsed = 250
@@ -463,13 +458,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CrewLocation
 			Location = [0.55, 0.6]
-			Rotation = 0d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
 			Location = [1.45, 0.6]
-			Rotation = 0d
 		}
 		PartCrew
 		{
@@ -488,6 +481,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				CrewLocation1
 				CrewLocation2
 			]
+		}
+
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .8
+			Density = 1.5
 		}
 
 		BatterySprites
@@ -576,60 +577,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		BlueprintsRed
+		Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [2, 2]
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.munition_type
-				Mode = 0
-			}
-		}
-		BlueprintsBlue
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.munition_type
-				Mode = 1
-			}
-		}
-		BlueprintsGreen
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.munition_type
-				Mode = 2
-			}
-		}
-		BlueprintsWhite
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.exterior_type
-				Mode = 0
-			}
-		}
-		BlueprintsGrey
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.exterior_type
-				Mode = 1
-			}
 		}
 	}
 	Stats
