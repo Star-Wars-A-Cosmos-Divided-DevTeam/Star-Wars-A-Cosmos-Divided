@@ -30,12 +30,17 @@ Components
 	Hit
 	{
 		Type = PenetratingHit
-		FactorEffectsWith = Targetable
-		Penetration = 0 // Enough to get through one shield and lose half penetration.
+		Penetration = 0.1
 		PenetratesOperational = false
-		SourceShipCollisionDelay = 0
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
 		HitShield
 		{
+			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
@@ -65,6 +70,7 @@ Components
 		}
 		HitOperational
 		{
+			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
@@ -94,6 +100,7 @@ Components
 		}
 		HitStructural
 		{
+			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
@@ -154,6 +161,9 @@ Components
 			FramesPerRow = 2
 			FramesPerSecond = 32
 		}
+		NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
 	}
 
 	MediaEffects
