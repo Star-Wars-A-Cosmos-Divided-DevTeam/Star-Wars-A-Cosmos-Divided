@@ -8,8 +8,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_1x2_Desc"
 	Resources
 	[
-		[steel, 8]
-		[coil, 2]
+		[steel, 18]//75% of vanilla 24
+		[coil, 6]//66% of vanilla 9
 	]  //Cost = 3000
 	TypeCategories = [thruster, uses_power]
 	Size = [1, 3]
@@ -19,13 +19,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
-	Density = 1//0.5
-	MaxHealth = 2000//1500
+	MaxHealth = 1600 //1620 //81% of vanilla 2000
 	ProhibitBelow = 4
-	ThrusterForce = 1500
-	ThrustIncreaseTime = 0
-	ThrustRecoveryTime = 0
-	FuelUsage = 100
+	ThrusterForce = 1500 //1470 //122,5% of vanilla 1200
+	ThrustIncreaseTime = 1.6
+	ThrustRecoveryTime = 1.6
+	FuelUsage = 140 //133 //133% of vanilla 100 
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
 	AllowedDoorLocations
 	[
@@ -42,7 +41,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [21.33, 64]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		IsOperational
 		{
@@ -55,6 +54,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
+			RequiresCommand = false
 		}
 		CommandConsumer
 		{
@@ -87,7 +87,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					ResourceType = battery
 					Storage = BatteryStorage
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
-					ResupplyThreshold = 1000
+					ResupplyThreshold = 500
 					OperationalToggle = PowerToggle
 					ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 				}
@@ -98,7 +98,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
-			Default = 0
+			Default = 2
+			AvailableChoices = [0, 1]
 			AlwaysAllowInBuildMode = false
 		}
 		
@@ -120,7 +121,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_color_type"
-			Default = 0
+			Default = 4
+			AvailableChoices = [0, 1, 2, 3]
 			AlwaysAllowInBuildMode = true
 		}
 
@@ -295,9 +297,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			OperationalRoofWindows
+			OperationalRoofDoodad
 			{
-				Layer = "roof_windows"
+				Layer = "roof_doodads"
 				Offset = [0, -0.5]
 				DamageLevels
 				[
@@ -315,9 +317,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			NonOperationalRoofWindows
+			NonOperationalRoofDoodad
 			{
-				Layer = "roof_windows"
+				Layer = "roof_doodads"
 				Offset = [0, -0.5]
 				DamageLevels
 				[
@@ -331,11 +333,54 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 					{
 						File = "roof_windows_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				Offset = [0, 0.35]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [2.0, 3.5]
+						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [16, 120, 255] // [6, 57, 113]
+					}
+				]
+			}
+		}
+/*
+		NozzleGraphics
+		{
+			Type = Graphics
+			Location = [.5, 2.5]
+			Floor
+			{
+				Layer = "weapons"
+				DamageLevels
+				[
+					{
+						File = "nozzle.png"
+						NormalsFile = "nozzle_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "nozzle_33.png"
+						NormalsFile = "nozzle_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "nozzle_66.png"
+						NormalsFile = "nozzle_normals.png"
 						Size = [1, 1]
 					}
 				]
 			}
 		}
+*/
 		BatterySprites
 		{
 			Type = ResourceSprites
@@ -364,7 +409,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
+			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
@@ -374,25 +419,39 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		LateralThruster : MainThruster
 		{
 			Rotation = 0d
-			MinActivation = -0.08
-			MaxActivation = 0.08
+			MinActivation = -0.05
+			MaxActivation = 0.05
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			AllowAutoFire = false
 		}
+/*
+		NozzleCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0, 2]
+				[1, 2]
+				[.92, 2.56]
+				[.08, 2.56]
+			]
+			Density = 1
+		}
+*/
 		ReverseThruster
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational,
 			Location = [0.5, 0]
 			Rotation = -90d
-			Force = (&../../ThrusterForce)/2
+			Force = (&../../ThrusterForce)/4
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.5; BuffType=Engine; BuffMode=Multiply; }	//0.345
+			MaxActivation = { BaseValue=0.345; BuffType=Engine; BuffMode=Multiply; }
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
+			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*2
+			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*2
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
 		}
