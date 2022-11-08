@@ -90,6 +90,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
+
+		CommonOnShootEffectTimerShort
+		{
+			Type = Timer
+			Duration = 0.42
+			AutoStart = true
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+
 		CommonReloadResetTriggerProxy
 		{
 			Type = TriggerProxy
@@ -285,9 +294,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			OperationalRoofWindows
+			OperationalRoofDoodad
 			{
-				Layer = "roof_windows"
+				Layer = "roof_doodads"
 				DamageLevels
 				[
 					{
@@ -304,22 +313,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			NonOperationalRoofWindows
+
+			OperationalRoofLighting
 			{
-				Layer = "roof_windows"
+				Layer = "roof_lights_fancy"
+				Offset = [0, 0.75]
 				DamageLevels
 				[
 					{
-						File = "roof_windows.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_33.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_66.png"
-						Size = [2, 2]
+						File = "./Data/ships/common/light_blob.png"
+						Size = [2, 0.5]
+						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [16, 120, 255] // [6, 57, 113]
 					}
 				]
 			}
@@ -477,6 +482,11 @@ TurretStats
 		PowerPerSecond = (&PowerPerShot) * (&~/TurretStats/Stats/ROF)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
+}
+OperationalRoofLightingBase
+{
+	Size = [2.1, 4.8] //X(Desired Radius)+0,6(Distance between Barrels)+X=Y
+	Z = 1.65 // Controls the "height" of the light for the purposes of normal mapping.
 }
 BulletEmitterBase
 {
