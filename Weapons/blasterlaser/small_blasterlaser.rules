@@ -47,31 +47,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	
 	Components : ^/0/Components
 	{
-		AutoFireToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnMode = 2
-		}
-		
-		AutoTargetToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnModes = [1, 2]
-		}
-
 		IsOperational
 		{
 			Type = MultiToggle
 			Toggles = [PowerToggle, BatteryStorage, PartCrew]
-			Mode = All
-		}
-		
-		WeaponIsOperational
-		{
-			Type = MultiToggle
-			Toggles = [IsOperational, SwitchCooldownTimer]
 			Mode = All
 		}
 
@@ -80,6 +59,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 2
 		}
 
 		FireModeToggle
@@ -87,35 +74,65 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
+			AvailableChoices = [-1, 0, 1, 2]
 			ToggledOnChoices = [0, 1, 2]
 		}
-
-		CooldownProgressBar
+		AutoTargetToggle
 		{
-			Type = ProgressBar
-			OperationalToggle = SwitchCooldownTimer
-			InvertOperationalToggle = true
-			ShowProgressFor = SwitchCooldownTimer
-			Invert = true
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [2]
 		}
 
-		SwitchCooldownTimer
+		CommonReloadTimer
 		{
 			Type = Timer
-			Duration = 2.7
+			Duration = 0.25
+			AutoStart = true
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+
+		CommonOnShootEffectTimer
+		{
+			Type = Timer
+			Duration = 0.25
+			AutoStart = true
+			StartsOn = 0
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+
+		CommonReloadResetTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = CommonReloadResetTrigger
+		}
+
+		SwitchWeaponCooldownProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = SwitchWeaponCooldownTimer
+			InvertOperationalToggle = true
+			ShowProgressFor = SwitchWeaponCooldownTimer
+			Invert = true
+			LowColor = [255, 0, 0]
+			HighColor = [0, 255, 0]
+		}
+		SwitchWeaponCooldownTimer
+		{
+			Type = Timer
+			Duration = 2
 			AutoStart = true
 			Repeats = false
 			StartsOn = 0
-			StartTrigger = CommonCooldownResetTrigger
+			StartTrigger = SwitchWeaponCooldownTrigger
 		}
-
-		CommonCooldownResetTrigger
-		{
-			Type = MultiTrigger
-			Triggers = [SwitchCooldownTrigger]
-		}
-
-		SwitchCooldownTrigger
+		SwitchWeaponCooldownTrigger
 		{
 			Type = ModeTrigger
 			Mode = MunitionType
@@ -126,7 +143,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.munition_type"
-			Default = 0
+			Default = -1
 			ToggledOnChoices = [0,1,2]
 			AlwaysAllowInBuildMode = true
 		}
@@ -141,7 +158,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = RedMunitionToggle
-			IncludeInBlueprints = true
+			IncludeInBlueprints = false
 			Components = &<red_blasterlaser.rules>/Components
 		}
 
@@ -155,7 +172,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = BlueMunitionToggle
-			IncludeInBlueprints = true
+			IncludeInBlueprints = false
 			Components = &<blue_blasterlaser.rules>/Components
 		}
 
@@ -169,8 +186,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = GreenMunitionToggle
-			IncludeInBlueprints = true
+			IncludeInBlueprints = false
 			Components = &<green_blasterlaser.rules>/Components
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery 
+			MaxResources = 2000 //for 40 times firing in 10 secs(40shots)
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 200
+			OperationalToggle = PowerToggle
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
 		Graphics
@@ -327,96 +361,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		Turret
-		{
-			Type = TurretWeapon
-			Location = [.5, 0.66]// Relative to upper-left corner of unrotated part.
-			Rotation = -90d// Relative to unrotated part.
-			OperationalToggle = WeaponIsOperational
-			AutoFireToggle = AutoFireToggle
-			FireInterval = .25
-			FireDelay = .03
-			FiringArc = 200d
-			RotateSpeed = 90d
-			FireThresholdAngle = 1d
-			TargetSearchTriesPerFrame = 1
-			AIFirepowerRating = 400
-			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitterBase
-
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = WeaponIsOperational
-			ShowProgressFor = Turret
-		}
-
-		BulletEmitterBase
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger
-			GetTargetFrom = Turret
-			Location = [1, 0]
-			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/redsmalllasershot
-			ResourceStorage = BatteryStorage
-			ResourcesUsed = 50
-		}
-
-		ChargeEffect
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = Turret
-			Location = [1.1, 0]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/SmallLaserCharge
-			]
-		}
-
-		TurretCollider
-		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .45
-			Density = .75
-		}
-
 		TurretGraphics
 		{
 			Type = Graphics
-			ChainedTo = Turret
-			Location = [.5, 0]
-			Rotation = 90d
+			Location = [.5, 1]
 			OperationalToggle = IsOperational
 			Walls
 			{
@@ -438,57 +386,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		WeaponSprite
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [.5, 0]
-			Rotation = 90d
-			Layer = "weapons"
-			ResetAnimationTrigger = Turret
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"blaster/weapon2.png"
-					"blaster/weapon3.png"
-					"blaster/weapon4.png"
-					"blaster/weapon5.png"
-					"blaster/weapon6.png"
-					"blaster/weapon7.png"
-					"blaster/weapon8.png"
-					"blaster/weapon1.png"// Loop back to beginning and clamp there.
-				]
-				Size = [1, 2]
-				AnimationInterval = 0.05
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
-		}
-
-		BatteryStorage
-		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 2000
-		}
-
-		BatteryConsumer
-		{
-			Type = TypedResourceGridConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 200
-			OperationalToggle = PowerToggle
-			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-		}
-
 		CrewLocation
 		{
 			Type = CrewLocation
 			Location = [.5, 1.75]
-			Rotation = 180d
 		}
 		PartCrew
 		{
@@ -606,43 +507,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		BlueprintsRed
+		Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blaster/blueprints.png"
 			Size = [1, 3]
 			Offset = [0, -0.5]
-
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.munition_type
-				Mode = 0
-			}
-		}
-		BlueprintsBlue
-		{
-			Type = BlueprintSprite
-			File = "blaster/blueprints.png"
-			Size = [1, 3]
-			Offset = [0, -0.5]
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.munition_type
-				Mode = 1
-			}
-		}
-		BlueprintsGreen
-		{
-			Type = BlueprintSprite
-			File = "blaster/blueprints.png"
-			Size = [1, 3]
-			Offset = [0, -0.5]
-
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.munition_type
-				Mode = 2
-			}
 		}
 	}
 	Stats
@@ -650,24 +520,120 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = 2
+		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
-		
-		ROF = 1 / (&~/Part/Components/Turret/FireInterval)
-		Range = &~/Part/Components/BulletEmitterBase/Bullet/Range
-		Arc = deg(&~/Part/Components/Turret/FiringArc)
-		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-		ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
-		ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
-		PowerPerShot = (&~/Part/Components/BulletEmitterBase/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
-		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	StatsByCategory
 	[
+		&~/TurretStats
 		&<red_blasterlaser.rules>/LaserStats
 		&<blue_blasterlaser.rules>/LaserStats
 		&<green_blasterlaser.rules>/LaserStats
-	]
-	
+	]	
 }
+TurretStats
+{
+	NameKey = "StatCategories/Turret"
+	Stats
+	{
+		Barrels = 1
+		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		Range = &~/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/TurretBase/FiringArc)
+		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
+		PowerPerShot = (&Barrels) * (&~/BulletEmitterBase/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+	}
+}
+OperationalRoofLightingBase
+{
+	Size = [1.2, 1.2] //X(Desired Radius)+barrelspacing(Distance between Barrels)+X(Desired Radius)=Y 
+	Z = 1.32 // Controls the "height" of the light for the purposes of normal mapping.
+}
+BulletEmitterBase
+{
+	OperationalToggle = IsOperational
+	FireDelay = 0.03
+	ResourceStorage = BatteryStorage
+	ResourcesUsed = 50
+	Bullet = &/COMMON_SHOTS/redsmalllasershot
+}
+TurretBase
+		{
+			Type = TurretWeapon
+			Location = [0.5, 0.66]
+			Rotation = -90d// Relative to unrotated part.
+			Emitter = BulletEmitter
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 0
+			FiringArc = 200d;
+			RotateSpeed = 65d;
+			FireThresholdAngle = 3d;
+			AIFirepowerRating = 400
+			CanBeGivenExplicitTarget = true
+			TargetSearchesPerSecond = 4
+			FirePermissionToggle = FirePermissionToggle
+			HoldTargetAfterCancel = 0.15
+			AutoTargetCrewSafetyDist = 8
+			IgnoreSourceShipLOSChecks = false
+			AllowFireWithBlockedLOS = false
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+					Overridable = true
+				}
+				{
+				    TargetType = Crew
+				    Toggle = AutoTargetToggle
+					Overridable = true
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+WeaponSpriteBase
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [.5, 0]
+			Rotation = 90d
+			Layer = "weapons"
+			ResetAnimationTrigger = CommonReloadResetTriggerProxyProxy
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"blaster/weapon2.png"
+					"blaster/weapon3.png"
+					"blaster/weapon4.png"
+					"blaster/weapon5.png"
+					"blaster/weapon6.png"
+					"blaster/weapon7.png"
+					"blaster/weapon8.png"
+					"blaster/weapon1.png"// Loop back to beginning and clamp there.
+				]
+				Size = [1, 2]
+				AnimationInterval = 0.1
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}

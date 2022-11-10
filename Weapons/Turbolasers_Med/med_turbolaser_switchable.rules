@@ -83,7 +83,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnModes = [2]
 		}
 
-		CommonReloadTimerShort
+		CommonReloadTimer
 		{
 			Type = Timer
 			Duration = 2
@@ -91,7 +91,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
 
-		CommonOnShootEffectTimerShort
+		CommonOnShootEffectTimer
 		{
 			Type = Timer
 			Duration = 0.42
@@ -105,28 +105,37 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ComponentID = CommonReloadResetTrigger
 		}
 
-		BatteryStorage
+		SwitchWeaponCooldownProgressBar
 		{
-			Type = ResourceStorage
-			ResourceType = battery 
-			MaxResources = 7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
+			Type = ProgressBar
+			OperationalToggle = SwitchWeaponCooldownTimer
+			InvertOperationalToggle = true
+			ShowProgressFor = SwitchWeaponCooldownTimer
+			Invert = true
+			LowColor = [16, 16, 16]
+			HighColor = [255, 255, 255]
 		}
-		BatteryConsumer
+		SwitchWeaponCooldownTimer
 		{
-			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 640
-			OperationalToggle = PowerToggle
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			Type = Timer
+			Duration = 8
+			AutoStart = true
+			Repeats = false
+			StartsOn = 0
+			StartTrigger = SwitchWeaponCooldownTrigger
+		}
+		SwitchWeaponCooldownTrigger
+		{
+			Type = ModeTrigger
+			Mode = MunitionType
+			TriggerInModes = [0,1,2]
 		}
 
 		MunitionType
 		{
 			Type = UIToggle
 			ToggleID = "SW.munition_type"
-			Default = 3
+			Default = -1
 			AvailableChoices = [0, 1, 2]
 			AlwaysAllowInBuildMode = true
 		}
@@ -174,7 +183,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.exterior_type"
-			Default = 2
+			Default = -1
 			AlwaysAllowInBuildMode = true
 		}
 		WhiteExteriorToggle
@@ -191,10 +200,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnMode = 1
 		}
 
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery 
+			MaxResources = 7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 640
+			OperationalToggle = PowerToggle
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
 		Graphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational,
+			OperationalToggle = IsOperational
 			Location = [1, 1]
 			Floor
 			{
@@ -454,7 +480,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 	Stats
 	{
-		CrewRequired = &../Components/PartCrew/Crew
+		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
@@ -474,12 +500,12 @@ TurretStats
 	Stats
 	{
 		Barrels = 2
-		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimerShort/Duration)
-		Range = &<med_turbolaser_red.rules>/Components/BulletEmitterLeft/Bullet/Range
+		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		Range = &~/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/TurretBase/FiringArc)
 		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
 		PowerPerShot = (&Barrels) * (&~/BulletEmitterBase/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * (&~/TurretStats/Stats/ROF)
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 }
@@ -491,11 +517,11 @@ OperationalRoofLightingBase
 BulletEmitterBase
 {
 	OperationalToggle = IsOperational
-	FireDelay = .05
+	FireDelay = 0.05
 	ResourceStorage = BatteryStorage
 	ResourcesUsed = 320
+	Bullet = &/COMMON_SHOTS/redmedlasershot
 }
-
 TurretBase
 		{
 			Type = TurretWeapon
