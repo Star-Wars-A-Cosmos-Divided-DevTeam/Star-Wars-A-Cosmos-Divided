@@ -17,10 +17,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Size = [2, 2]
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	SelectionTypeID = "turbolaser"
+	SelectionTypeID = "turbolasers"
 	MaxHealth = 8000
 	InitialPenetrationResistance = 3
 	PenetrationRectType = Normal
+	MaxDoors = 3
 	AllowedDoorLocations
 	[
 		[-1, 1]
@@ -184,8 +185,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.exterior_type"
 			Default = -1
+			AvailableChoices = [0, 1]
 			AlwaysAllowInBuildMode = true
 		}
+
 		WhiteExteriorToggle
 		{
 			Type = ModeToggle
@@ -204,8 +207,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery 
-			MaxResources = 7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
+			MaxResources = 8000 //7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
 		}
+
 		BatteryConsumer
 		{
 			Type = ResourceConsumer
@@ -215,6 +219,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResupplyThreshold = 640
 			OperationalToggle = PowerToggle
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
 		}
 
 		Graphics
@@ -343,14 +357,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
-				Offset = [0, 0.75]
+				//Offset = [0, 0]
 				DamageLevels
 				[
 					{
 						File = "./Data/ships/common/light_blob.png"
-						Size = [2, 0.5]
+						Size = [2, 2]
 						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
-						VertexColor = [16, 120, 255] // [6, 57, 113]
+						VertexColor = [192, 192, 192] // [6, 57, 113]
 					}
 				]
 			}
@@ -446,7 +460,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [2, 2]
+						Size = [1.5, 1.5]
 					}
 				}
 
@@ -456,7 +470,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [2, 2]
+						Size = [1.5, 1.5]
 					}
 				}
 
@@ -466,7 +480,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoCrew
-						Size = [2, 2]
+						Size = [1.5, 1.5]
 					}
 				}
 			]
@@ -511,12 +525,17 @@ TurretStats
 }
 OperationalRoofLightingBase
 {
-	Size = [2.1, 4.8] //X(Desired Radius)+0,6(Distance between Barrels)+X=Y
+	Size = [2.4, 3.0] //X+0,6(Distance between Barrels)=Y
 	Z = 1.65 // Controls the "height" of the light for the purposes of normal mapping.
 }
 BulletEmitterBase
 {
+	Type = BulletEmitter
 	OperationalToggle = IsOperational
+	ChainedTo = Turret
+	FireTrigger = Turret
+	GetTargetFrom = Turret
+	//No Location is dual barrel
 	FireDelay = 0.05
 	ResourceStorage = BatteryStorage
 	ResourcesUsed = 320

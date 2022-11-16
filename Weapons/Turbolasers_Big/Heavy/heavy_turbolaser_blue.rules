@@ -1,115 +1,92 @@
 Components
 	{
-		SwitchTimerTrigger
+		CommonReloadResetTriggerProxyProxy
 		{
-			Type = Timer
-			Duration = 9
-			AutoStart = true
-			Repeats = false
+			Type = TriggerProxy
+			ComponentID = CommonReloadResetTriggerProxy
 		}
-		SwitchTimerProgressBar
+
+		WhiteExteriorToggleProxy
 		{
-			Type = ProgressBar
-			ShowProgressFor = SwitchTimerTrigger
-			Invert = true
-			OperationalToggle = SwitchCooldownToggle
-			InvertOperationalToggle = true
+			Type = ToggleProxy
+			ComponentID = WhiteExteriorToggle
 		}
-		SwitchCooldownToggle
+
+		GreyExteriorToggleProxy
 		{
-			Type = TriggeredToggle
-			OnTrigger = SwitchTimerTrigger
-			StartsOn = false
+			Type = ToggleProxy
+			ComponentID = GreyExteriorToggle
 		}
-		WeaponIsOperational
+		
+		WhiteExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteExteriorToggleProxy
+			IncludeInBlueprints = false
+			Components = &<heavy_turbolaser_white.rules>/Components
+		}
+		
+		GreyExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreyExteriorToggleProxy
+			IncludeInBlueprints = false
+			Components = &<heavy_turbolaser_grey.rules>/Components
+		}
+
+		FirePermissionToggle
 		{
 			Type = MultiToggle
-			Toggles = [IsOperational, SwitchCooldownToggle]
+			Toggles = [CommonReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
 			Mode = All
 		}
 
-		Turret
+		Turret : &<../heavy_turbolaser_switchable.rules>/TurretBase
 		{
-			Type = TurretWeapon
-			Location = [2, 2]
-			Rotation = -90d// Relative to unrotated part.
-			OperationalToggle = WeaponIsOperational
-			AutoFireToggle = AutoFireToggle
-			FireInterval = 4.5
-			FireDelay = .20
-			FiringArc = 180d
-			RotateSpeed = 15d
-			FireThresholdAngle = 1d
-			TargetSearchTriesPerFrame = 1
-			AIFirepowerRating = 3200
-			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitterBase
-			IgnoreSourceShipLOSChecks = true
+			
+		}
 
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = 1.64
+			Density = 1.5
 		}
 
 		ReloadProgressBar
 		{
 			Type = ProgressBar
-			OperationalToggle = WeaponIsOperational
-			ShowProgressFor = Turret
-		}
-
-
-		BulletEmitterBase
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger
-			GetTargetFrom = Turret
-			Location = [2.1, 0]
 			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/blueheavylasershot
-			ResourceStorage = BatteryStorage
-			ResourcesUsed = 500
+			ShowProgressFor = CommonReloadTimer
+			Invert = true
+			LowColor = [0, 0, 64]
+			HighColor = [0, 0, 255]
 		}
 
-		BulletEmitterLeft : BulletEmitterBase
+		CommonReloadResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [Turret]
+		}
+
+		BulletEmitterLeft : &<../heavy_turbolaser_switchable.rules>/BulletEmitterBase
 		{
 			Type = BulletEmitter
-			FireTrigger = Turret
 			Location = [3.425, -0.575]
+			Bullet = &/COMMON_SHOTS/blueheavylasershot
 		}
 
-		BulletEmitterRight : BulletEmitterBase
+		BulletEmitterRight : BulletEmitterLeft
 		{
 			Type = BulletEmitter
-			FireTrigger = Turret
 			Location = [3.425, 0.575]
 		}
 
-		ChargeEffectBase
+		ChargeEffectSound
 		{
 			Type = TriggeredEffects
-			ChainedTo = BulletEmitterBase
+			ChainedTo = Turret
 			Trigger = Turret
 			AnchorMediaEffects = true
 		
@@ -119,10 +96,10 @@ Components
 			]
 		}
 
-		FireEffectBase
+		FireEffectSound
 		{
 			Type = TriggeredEffects
-			ChainedTo = BulletEmitterBase
+			ChainedTo = Turret
 			Trigger = BulletEmitterLeft
 			AnchorMediaEffects = true
 	
@@ -151,12 +128,27 @@ Components
 			Trigger = BulletEmitterRight
 		}
 
-		TurretCollider
+		TurretGraphics
 		{
-			Type = CircleCollider
+			Type = Graphics
+			OperationalToggle = CommonOnShootEffectTimer
+			InvertOperationalToggle = true
 			ChainedTo = Turret
-			Radius = 1.64
-			Density = 1.5
+			Location = [3.425, 0]
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = &<../heavy_turbolaser_switchable.rules>/OperationalRoofLightingBase/Size
+						Z = &<../heavy_turbolaser_switchable.rules>/OperationalRoofLightingBase/Z
+						VertexColor = [16, 16, 255]
+					}
+				]
+			}
 		}
 	}
 LaserStats
@@ -164,11 +156,13 @@ LaserStats
 	NameKey = "StatCategories/HeavyBlueLasershot"
 	Stats
 	{
-		ShieldDamagePerShot = &~/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 2 / (&~/Components/Turret/FireInterval)
+		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<../heavy_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = (&~/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage) + (&~/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/1/TotalDamage)
-		DamagePerSecond = (&DamagePerShot) * 2 / (&~/Components/Turret/FireInterval)
+		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&<../heavy_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
+		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
 	}
 }
