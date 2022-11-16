@@ -16,7 +16,7 @@ Versions:
  o 1.0 Cosmoteer 0.15.14
 
 ---------------------------------------------------------------------------- */ 
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	ID = SW.IonThruster01_7x10
 	NameKey = "Parts/IonThruster01_7x10"
@@ -24,29 +24,31 @@ Part : /BASE_PART_TERRAN
 	DescriptionKey = "Parts/IonThrusterBigDesc"
 
 	EditorGroup = "TechI"
-	TypeCategories = [thruster]
+	TypeCategories = [thruster, uses_power]
 	RequiresCategories = [bridge1]
 
 	Resources
 	[
 		[steel, 8] //
 	]  //Cost = 100000
-	Size = [7, 10]
 
+	Size = [7, 13]
+	PhysicalRect = [0, 0, 7, 10]
+	SaveRect = &PhysicalRect
+	BoundingRectType = Physical
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
-	Density = 1
-	MaxHealth = 70000
+	MaxHealth = 56000 //56700 //81% of vanilla 1000 per tile //70000
 	InitialPenetrationResistance = 1
 	PenetrationRectType = Normal
 
-	ThrusterForce = 16000  //(7/3)*(6000)*1.1_^4=14000*1.1_^4=21338.210638622161247370827617741*(3/4)=16003.5
-	ThrustIncreaseTime = 0
-	ThrustRecoveryTime = 0
-	FuelUsage = 870 //6.6_*250*(3/4)^5 = ~ 1666.6_*(0.85)^4=870.0
+	ThrusterForce = 39000 //50%sizedegrade*[normalized] 122,5% of vanilla 1000*8/9 per tile //16000 //(7/3)*(6000)*1.1_^4=14000*1.1_^4=21338.210638622161247370827617741*(3/4)=16003.5
+	ThrustIncreaseTime = 6.4
+	ThrustRecoveryTime = 2.7
+	FuelUsage = 1600 //3200 //3111,11 //50%sizedegrade*[normalized] 133% of vanilla 50*8/9 per tile //870 //6.6_*250*(3/4)^5 = ~ 1666.6_*(0.85)^4=870.0
 
-	ProhibitBelow = 11
+	ProhibitBelow = 17 //11
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine,PowerCellBuff]
 	AllowedDoorLocations
 	[
@@ -71,9 +73,8 @@ Part : /BASE_PART_TERRAN
 		}
 		Size = [55, 92]
 	}
-	Components : &<graphics7x10.rules>
+	Components : ^/0/Components, &<graphics7x10_toggles.rules>, &<graphics7x10_walls.rules>, &<graphics7x10_floor.rules>, &<graphics7x10_roof.rules>, &<graphics7x10_doodads.rules>
 	{
-
 		IsOperational
 		{
 			Type = MultiToggle
@@ -86,8 +87,34 @@ Part : /BASE_PART_TERRAN
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
+			RequiresCommand = false
 		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 70 //1 per tile
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 25000 //MaxUsage 1600
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+
 		EngineBuffToggle
 		{
 			Type = BuffToggle
@@ -103,7 +130,7 @@ Part : /BASE_PART_TERRAN
 			{
 				BatteryConsumer
 				{
-					Type = TypedResourceGridConsumer
+					Type = ResourceConsumer
 					ResourceType = battery
 					Storage = BatteryStorage
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
@@ -113,15 +140,6 @@ Part : /BASE_PART_TERRAN
 				}
 			}
 		}
-
-
-		BatteryStorage
-		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 12000
-		}
-
 /*
 		BatterySprites
 		{
@@ -129,8 +147,8 @@ Part : /BASE_PART_TERRAN
 			Location = [1, 0.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			HasZeroAmmoSprite = false
-			AmmoLevels
+			HasZeroResourceSprite = false
+			ResourceLevels
 			[
 				{
 					File = "batteries 1.png"
@@ -147,9 +165,7 @@ Part : /BASE_PART_TERRAN
 			]
 		}
 */
-
-
-		ForwardThruster
+		MainThruster
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
@@ -166,70 +182,42 @@ Part : /BASE_PART_TERRAN
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
 		}
-
-		LateralThrustOfForwardThruster
+		LateralThruster : MainThruster
 		{
-			Type = Thruster
-			OperationalToggle = IsOperational
-
-			ChainedTo = ForwardThruster
-			Rotation = 90d
-			Force = &../../ThrusterForce
-			MinActivation = { BaseValue=-0.12; BuffType=Engine; BuffMode=Multiply; } //-.26
-			MaxActivation = { BaseValue=0.12; BuffType=Engine; BuffMode=Multiply; } //.26
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = 0
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			Rotation = 0d
+			MinActivation = -0.01
+			MaxActivation = 0.01
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			AllowAutoFire = false
 		}
 
-		BackwardThruster
+		ReverseThruster
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
 
 			Location = [3.5, 0]
 			Rotation = -90d
-			Force = &../../ThrusterForce
+			Force = (&../../ThrusterForce)/64
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.5; BuffType=Engine; BuffMode=Multiply; }	//0.345
-			MinUncommandedActivation = 0
+			MaxActivation = 0.345
+			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
+			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*4
+			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*4
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
+			AllowAutoFire = false
 		}
 
-		LateralThrustOfBackwardThruster
-		{
-			Type = Thruster
-			OperationalToggle = IsOperational
-
-			ChainedTo = BackwardThruster
-			Rotation = 90d
-			Force = &../../ThrusterForce
-			MinActivation = { BaseValue=-0.12; BuffType=Engine; BuffMode=Multiply; } //.26
-			MaxActivation = { BaseValue=0.12; BuffType=Engine; BuffMode=Multiply; }	//.26
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = 0
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
-		}
-
-		ThrustEffectsForward
+		ThrustEffectsSounds
 		{
 			Type = ContinuousEffects
-			ChainedTo = ForwardThruster
-			FactorMediaEffectsIntensityWith = ForwardThruster
+			ChainedTo = MainThruster
+			FactorMediaEffectsIntensityWith = MainThruster
 			MediaEffects
 			[
-				&<Particles/IonThruster_Blue_Glow.rules>
-
 				: /COMMON_SOUNDS/ThrusterRumble
 				{
 					Volume = .125
@@ -239,20 +227,19 @@ Part : /BASE_PART_TERRAN
 			]
 		}
 
-
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
-			AmountFrom = ForwardThruster
+			AmountFrom = MainThruster
 			MinAmount = 0.5
 		}
 
 		BurstEffects
 		{
 			Type = TriggeredEffects
-			ChainedTo = ForwardThruster
+			ChainedTo = MainThruster
 			Trigger = BurstTrigger
-			FactorMediaEffectsIntensityWith = ForwardThruster
+			FactorMediaEffectsIntensityWith = MainThruster
 			AnchorMediaEffects = true
 			MediaEffects
 			[
@@ -325,9 +312,9 @@ Part : /BASE_PART_TERRAN
 				}
 			]
 		}
-		BlueprintSprite
+		Blueprints
 		{
-			Type=BlueprintSprite
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [7, 13.5]
 			Offset = [0, 1.75]
@@ -341,7 +328,7 @@ Part : /BASE_PART_TERRAN
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = &ThrusterPowerUsage
+		RecPower = (&ThrusterPowerUsage)
 		RecCrew = (&RecPower) * 4
 	}
 }

@@ -31,9 +31,12 @@ Components
 	{
 		Type = PenetratingHit
 		FactorEffectsWith = Targetable
-		Penetration = 0 // Enough to get through one shield and lose half penetration.
-		PenetratesOperational = false
-		SourceShipCollisionDelay = 10
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
 		HitShield
 		{
 			HitEffects
@@ -57,14 +60,11 @@ Components
 				{
 					Type = Damage
 					Damage = 4000
-					Filter
-					{
-					}
 				}
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 3000
-					Radius = 8
+					TotalDamage = 2400
+					Radius = 5
 					Filter
 					{
 						Friendlies = false
@@ -98,15 +98,6 @@ Components
 					Type = AreaDamage
 					Damage = 3850
 					Radius = 6
-				}
-								{
-					Type = ExplosiveDamage
-					TotalDamage = 2000
-					Radius = 6
-					Filter
-					{
-						Friendlies = false
-					}
 				}
 				{
 					Type = Impulse
@@ -155,13 +146,16 @@ Components
 					SampleMode = Linear
 					MipLevels = max
 				}
-				Size = [2.4, 1.2]
+				Size = [2.1, 1.05]//2.4 1.2
 			}
 			FrameCount = 2
 			FrameSize = [64, 32]
 			FramesPerRow = 1
 			FramesPerSecond = 60
 		}
+		//NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
 	}
 
 	MediaEffects

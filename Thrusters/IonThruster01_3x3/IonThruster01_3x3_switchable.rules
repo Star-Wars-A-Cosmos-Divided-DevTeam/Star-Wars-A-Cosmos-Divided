@@ -21,12 +21,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
-	MaxHealth = 7200 //7290 //81% of vanilla 9000
-	ProhibitBelow = 7
-	ThrusterForce = 10000 //9800 //122,5% of vanilla 8000
+	MaxHealth = 7200 //7290 //81% of vanilla 9000/9 = 1000 per tile
+
+	ThrusterForce = 10000 //9800 //122,5% of vanilla 8000/9 = 1000*8/9 per tile
 	ThrustIncreaseTime = 3.6
 	ThrustRecoveryTime = 3.6
-	FuelUsage = 520 //532 //133% of vanilla 400
+	FuelUsage = 520 //532 //133% of vanilla 400/9 = 50*8/9 per tile
+
+	ProhibitBelow = 7
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
 
 	ForceManhattenPathInPart = true
@@ -120,7 +122,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = -1
 			AvailableChoices = [0, 1, 2, 3]
-			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
 		}
 
 		RedThrusterToggle
@@ -185,7 +187,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
 			AvailableChoices = [0, 1, 2]
-			AlwaysAllowInBuildMode = false
+			RequiresCommand = false
 		}
 		GlowToggle
 		{
@@ -234,20 +236,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Floor
 			{
 				Layer = "floors"
-				Offset = [0, 1]
 				DamageLevels
 				[
 					{
-						File = "floor.png"
-						Size = [3, 5]
+						File = "../floor[3,3]01.png"
+						Size = [3, 3]
 					}
 					{
-						File = "floor_33.png"
-						Size = [3, 5]
+						File = "../floor[3,3]01_33.png"
+						Size = [3, 3]
 					}
 					{
-						File = "floor_66.png"
-						Size = [3, 5]
+						File = "../floor[3,3]01_66.png"
+						Size = [3, 3]
 					}
 				]
 			}
@@ -277,7 +278,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			NonOperationalDoodad
 			{
 				Layer = "doodads_high"
-//				Offset = [0, 1]
 				DamageLevels
 				[
 					{
@@ -289,7 +289,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalLighting
 			{
 				Layer = "lights_add"
-//				Offset = [1.5, 1.5]
 				DamageLevels
 				[
 					{
@@ -340,44 +339,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			OperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				DamageLevels
-				[
-					{
-						File = "roof_windows.png"
-						Size = [3, 3]
-					}
-					{
-						File = "roof_windows_33.png"
-						Size = [3, 3]
-					}
-					{
-						File = "roof_windows_66.png"
-						Size = [3, 3]
-					}
-				]
-			}
-			NonOperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				DamageLevels
-				[
-					{
-						File = "roof_windows.png"
-						Size = [3, 3]
-					}
-					{
-						File = "roof_windows_33.png"
-						Size = [3, 3]
-					}
-					{
-						File = "roof_windows_66.png"
-						Size = [3, 3]
-					}
-				]
-			}
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -386,18 +347,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "./Data/ships/common/light_blob.png"
-						Size = [5, 5]
+						Size = [4.2, 4.2]
 						Z = 2.50 // Controls the "height" of the light for the purposes of normal mapping.
 						VertexColor = [16, 120, 255] // [6, 57, 113]
 					}
 				]
 			}
 		}
-/*
+
+		NozzleCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0.16, 3]
+				[2.84, 3]
+				[2.96, 4.2]
+				[0.04, 4.2]
+			]
+			Density = 1
+		}
+
 		NozzleGraphics
 		{
 			Type = Graphics
-			Location = [1.5, 4]
+			Location = [1.5, 4.096]
 			Floor
 			{
 				Layer = "weapons"
@@ -405,23 +379,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "nozzle.png"
-						NormalsFile = "nozzle_normals.png"
+						//NormalsFile = "nozzle_normals.png"
 						Size = [3, 2]
 					}
 					{
 						File = "nozzle_33.png"
-						NormalsFile = "nozzle_normals.png"
+						//NormalsFile = "nozzle_normals.png"
 						Size = [3, 2]
 					}
 					{
 						File = "nozzle_66.png"
-						NormalsFile = "nozzle_normals.png"
+						//NormalsFile = "nozzle_normals.png"
 						Size = [3, 2]
 					}
 				]
 			}
 		}
-*/
+
 		BatterySprites
 		{
 			Type = ResourceSprites
@@ -488,20 +462,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxUncommandedActivation = &MaxActivation
 			AllowAutoFire = false
 		}
-/*
-		NozzleCollider
-		{
-			Type = PolygonCollider
-			Vertices
-			[
-				[0.16, 3]
-				[2.84, 3]
-				[2.96, 4.2]
-				[0.04, 4.2]
-			]
-			Density = 1
-		}
-*/
+
 		ReverseThruster
 		{
 			Type = Thruster
@@ -623,12 +584,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 		
-		blueprints
+		Blueprints
 		{
 			Type=BlueprintSprite
 			File = "blueprints.png"
 			Size = [3, 5]
-			//Offset = [0, 0.5]
 		}
 	}
 

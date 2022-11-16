@@ -31,10 +31,29 @@ Components
 	{
 		Type = PenetratingHit
 		FactorEffectsWith = Targetable
-		Penetration = 0 // Enough to get through one shield and lose half penetration.
-		PenetratesOperational = false
-		SourceShipCollisionDelay = 0
-		HitShield = &HitOperational
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = true
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 200
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+
 		HitOperational
 		{
 			HitEffects
@@ -42,6 +61,7 @@ Components
 				{
 					Type = Damage
 					Damage = 200
+					TreatShieldAsPart = true
 				}
 				{
 					Type = Impulse;
@@ -71,6 +91,7 @@ Components
 				{
 					Type = Damage
 					Damage = 100
+					TreatShieldAsPart = true
 				}
 				{
 					Type = Impulse;
@@ -106,9 +127,8 @@ Components
 	Sprite
 	{
 		Type = AnimatedSprite
-		RenderBucket = BulletUpper3
-		ReduceScaleWith = Hit
-		ReduceScaleExponent = 0.5
+		//ReduceScaleWith = Hit
+		//ReduceScaleExponent = 0.5
 		Animation
 		{
 			AtlasSprite
@@ -126,6 +146,9 @@ Components
 			FramesPerRow = 2
 			FramesPerSecond = 32
 		}
+		NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
 	}
 
 	MediaEffects

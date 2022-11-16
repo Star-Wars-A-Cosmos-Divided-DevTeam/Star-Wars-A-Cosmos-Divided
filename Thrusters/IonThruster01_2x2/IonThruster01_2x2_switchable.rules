@@ -106,7 +106,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = -1
 			AvailableChoices = [0, 1, 2, 3]
-			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
 		}
 
 		RedThrusterToggle
@@ -171,7 +171,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
 			AvailableChoices = [0, 1, 2]
-			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
 		}
 		GlowToggle
 		{
@@ -220,20 +220,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Floor
 			{
 				Layer = "floors"
-				Offset = [0, .5]
 				DamageLevels
 				[
 					{
-						File = "floor.png"
-						Size = [2, 3]
+						File = "../floor[2,2]01.png"
+						Size = [2, 2]
 					}
 					{
-						File = "floor_33.png"
-						Size = [2, 3]
+						File = "../floor[2,2]01_33.png"
+						Size = [2, 2]
 					}
 					{
-						File = "floor_66.png"
-						Size = [2, 3]
+						File = "../floor[2,2]01_66.png"
+						Size = [2, 2]
 					}
 				]
 			}
@@ -326,44 +325,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			OperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				DamageLevels
-				[
-					{
-						File = "roof_windows.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_33.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_66.png"
-						Size = [2, 2]
-					}
-				]
-			}
-			NonOperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				DamageLevels
-				[
-					{
-						File = "roof_windows.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_33.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_66.png"
-						Size = [2, 2]
-					}
-				]
-			}
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -372,14 +333,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "./Data/ships/common/light_blob.png"
-						Size = [3.5, 3.5]
+						Size = [2.7, 2.7]
 						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
 						VertexColor = [16, 120, 255] // [6, 57, 113]
 					}
 				]
 			}
 		}
-/*
+
+		NozzleCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0.072, 2]
+				[1.927, 2]
+				[1.927, 2.72]
+				[0.072, 2.72]
+			]
+			Density = 1
+		}
+
 		NozzleGraphics
 		{
 			Type = Graphics
@@ -391,23 +365,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "nozzle.png"
-						NormalsFile = "nozzle_normals.png"
+						//NormalsFile = "nozzle_normals.png"
 						Size = [2, 1]
 					}
 					{
 						File = "nozzle_33.png"
-						NormalsFile = "nozzle_normals.png"
+						//NormalsFile = "nozzle_normals.png"
 						Size = [2, 1]
 					}
 					{
 						File = "nozzle_66.png"
-						NormalsFile = "nozzle_normals.png"
+						//NormalsFile = "nozzle_normals.png"
 						Size = [2, 1]
 					}
 				]
 			}
 		}
-*/
+
 		BatterySprites
 		{
 			Type = ResourceSprites
@@ -475,21 +449,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*2
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
+			AllowAutoFire = false
 		}
-/*
-		NozzleCollider
-		{
-			Type = PolygonCollider
-			Vertices
-			[
-				[0.072, 2]
-				[1.927, 2]
-				[1.927, 2.72]
-				[0.072, 2.72]
-			]
-			Density = 1
-		}
-*/
+
 		ThrustEffectsSounds
 		{
 			Type = ContinuousEffects
