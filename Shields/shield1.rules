@@ -2,13 +2,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/Small1"
 	IconNameKey = "Parts/Small1"
-	ID = SW.bubble_generator_small1
-	OtherIDs = ["bubble_generator_small1"]
+	ID = SW.bubble_generator_small_switchable
+	OtherIDs = ["bubble_generator_small1","SW.bubble_generator_small1"]
 	EditorGroup = "DefensesSWACD"
 	DescriptionKey = "Parts/Small1Desc"
 	Resources
 	[
-		[steel, 8] //
+		[steel, 40]
+		[coil2, 6]
+		//[carbon, 4]
 	]  //Cost = 4000
 	AIValueFactor = 5
 
@@ -65,8 +67,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 4000
-			ToggleOnResources = 1000
+			MaxResources = 8000
+			ToggleOnResources = 2000
 			DrainOnFtlJump = true
 		}
 		BatteryConsumer
@@ -150,165 +152,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = true
 			Components = &<shield1_invis.rules>/Components
 		}
-/*
-		ArcShield
-		{
-			Type = ArcShield
-			Radius = 8
-			Arc = 181.8d
-			OperationalToggle = IsOperational
-			PenetrationResistance = [7, 0]
-			DrainResourcesFrom = BatteryStorage
-			ResourceDrainPerDamage = 2
-			Rotation = -90d
-			Location = [0.5, 0.5]
 
-			BlueprintArcSprite
-			{
-				Texture
-				{
-					File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
-					SampleMode = Linear
-					MipLevels = max
-				}
-				Size = [0, 1]
-				Color = [50, 50, 255, 127]
-			}
-			BlueprintArcSpriteSegments = 64
-
-			CoverageArcSprite
-			{
-				Texture
-				{
-					File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-					SampleMode = Linear
-					MipLevels = max
-				}
-				Size = [0, 1]
-				Color = [255, 255, 255, 127]
-			}
-			CoverageArcSpriteSegments = 64
-
-			ShieldMediaEffects
-			[
-				{
-					Type = ArcShield
-					Radius = &~/Part/Components/ArcShield/Radius
-					Arc = &~/Part/Components/ArcShield/Arc
-					FadeInTime = .25
-					FadeOutTime = .25
-					FadeFromScale = .8
-					ArcSprite
-					{
-						Texture
-						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-							UVMode = Wrap
-							SampleMode = Linear
-							MipLevels = 1
-						}
-						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
-						_waveTex
-						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
-							UVMode = Wrap
-							SampleMode = Linear
-							MipLevels = max
-						}
-						_waveSpeed = 1
-						_waveAlpha = 1
-						_waveCurveInterval = .5
-						_waveCurveMagnitude = .35
-						_waveCurveUOffsetPerSecond = .2
-						_fullPowerColor1 = [54, 0, 91, 127]
-						_lowPowerColor1 = [54, 0, 91, 127]
-						_fullPowerColor2 = [0, 0, 255, 127]
-						_lowPowerColor2 = [255, 0, 0, 127]
-						_lowPowerThicknessExponent = .6
-						_xScale = 1
-						TargetBlendMode = Add
-						Size = [0, 1]
-					}
-					ArcSpriteSegments = 64
-					Bucket = Lower1
-				}
-
-				: /BASE_SOUNDS/AudioExteriorDetail
-				{
-					Sound = "./Data/ships/terran/shield_gen_small/shield_loop.wav"
-					Volume = .15
-					Speed = .5
-					MaxConcurrent = 1
-					MaxConcurrentVolume = .3
-					DynamicVolume : ^/0/DynamicVolume
-					{
-						MinDistance = .75
-						MaxDistance = 1.5
-					}
-					IgnoreIntensity = true
-				}
-			]
-			
-			HitMediaEffects
-			[
-				{
-					Type = ArcShield
-					FadeInTime = .1
-					FadeOutTime = .5
-					Radius = &~/Part/Components/ArcShield/Radius
-					Arc = 20d
-					ArcSprite
-					{
-						Texture
-						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy_original.png"
-							SampleMode = Linear
-							MipLevels = 1
-						}
-						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
-						_waveTex
-						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
-							UVMode = Wrap
-							SampleMode = Linear
-							MipLevels = max
-						}
-						_waveSpeed = -2
-						_waveAlpha = .75
-						_waveCurveInterval = 1
-						_waveCurveMagnitude = .25
-						_waveCurveUOffsetPerSecond = 0
-						//TargetBlendMode = Add
-						_fullPowerColor1 = [54, 0, 91, 127]
-						_lowPowerColor1 = [54, 0, 91, 127]
-						_fullPowerColor2 = [0, 0, 255, 127]
-						_lowPowerColor2 = [255, 0, 0, 127]
-						_lowPowerThicknessExponent = .6
-						_xScale = 1
-						TargetBlendMode = Add
-						Size = [0, 3]
-					}
-					ArcSpriteSegments = 6
-					Bucket = Upper3
-				}
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/Ships/terran/shield_gen_small/shield_hit.wav"
-					Volume = 1
-					Speed = 1.2
-					IgnoreIntensity = true
-					SpeedVariation = .25
-					MaxConcurrent = 10
-				}
-			]
-		}
-
-		ArcShield90 : ArcShield
-		{
-			Rotation = 90d
-		}
-*/
 		ShieldOperationEffects
 		{
 			Type = ToggleEffects
@@ -540,14 +384,52 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&<shield1_blue.rules>/Components/ArcShield/ResourceDrainPerDamage)
-		ShieldPenResist = &<shield1_blue.rules>/Components/ArcShield/PenetrationResistance/0
-		ShieldArc = deg(&<shield1_blue.rules>/Components/ArcShield/Arc)
-		ShieldDist = (&<shield1_blue.rules>/Components/ArcShield/Radius) - (&<shield1_blue.rules>/Components/ArcShield/Location/1)
+		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
+		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
+		ShieldArc = deg(360)
+		ShieldDist = (&~/ShieldStatBase/Radius)
 		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = (&PowerUsageContinuous) + 0.5
 		RecCrew = (&RecPower) * 4
 	}
+}
+ShieldStatBase
+{
+	OperationalToggle = IsOperational
+	Radius = 8
+	Arc = 181.8d
+	DrainResourcesFrom = BatteryStorage
+	Location = [0.5, 0.25]
+	PenetrationResistance = [7, 0]
+	ResourceDrainPerDamage = 4
+
+	BlueprintArcSprite
+	{
+		Texture
+		{
+			File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		Size = [0, 1.5]
+		Color = [50, 50, 255, 127]
+	}
+	BlueprintArcSpriteSegments = 64
+
+	CoverageArcSprite
+	{
+		Texture
+		{
+			File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		Size = [0, 1.5]
+		Color = [255, 255, 255, 127]
+	}
+	CoverageArcSpriteSegments = 64
 }
