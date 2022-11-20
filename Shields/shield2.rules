@@ -13,6 +13,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[diamond, 1] //
 	]  //Cost = 10000
 	AIValueFactor = 5
+
 	Size = [2, 2]
 	SelectionPriority = 1
 	SelectionTypeID = "shield_gen"
@@ -51,7 +52,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
+			RequiresCommand = false
 		}
 
 		CommandConsumer
@@ -99,7 +100,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FromQuantity = 200
 			Interval = 1
 		}
-		
 
 		ShieldColorType
 		{
@@ -185,63 +185,59 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = IsOperational,
 			Location = [1, 1]
-			
-			AnimationSpeedFactor = BatteryStorage
-			AnimationSpeedFactorRenormalize = [0.75, 2]
 			Floor
 			{
 				Layer = "floors"
 				DamageLevels
 				[
 					{
-						File = "ShieldGenMed/floor_on.png"
+						File = "Shield_Roasted/floor.png"
 						Size = [2, 2]
 					}
 					{
-						File = "ShieldGenMed/floor_on_33.png"
+						File = "Shield_Roasted/floor_33.png"
 						Size = [2, 2]
 					}
 					{
-						File = "ShieldGenMed/floor_on_66.png"
+						File = "Shield_Roasted/floor_66.png"
 						Size = [2, 2]
 					}
 				]
 			}
-			OperationalDoodad
-			{
-				Layer = "doodads_high"
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"ShieldGenMed/doodads1.png"
-						]
-						Size = [2, 2]
-						AnimationInterval = 0.055
-					}
-				]
-			}
-			NonOperationalDoodad
-			{
-				Layer = "doodads_high"
-				DamageLevels
-				[
-					{
-						File = "ShieldGenMed/doodads_off.png"
-						Size = [2, 2]
-					}
-				]
-			}
+			/*
 			OperationalLighting
 			{
 				Layer = "lights_add"
-				Offset = [0, 0]
 				DamageLevels
 				[
 					{
-						File = "ShieldGenMed/lights.png"
+						File = "Shield_Roasted/lights.png"
 						Size = [2, 2]
+					}
+				]
+			}
+			*/
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted/roof_glows.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [6, 6]
+						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [16, 120, 255]
 					}
 				]
 			}
@@ -251,83 +247,106 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "ShieldGenMed/walls.png"
+						File = "Shield_Roasted/walls.png"
 						Size = [2, 2]
 					}
 					{
-						File = "ShieldGenMed/walls_33.png"
+						File = "Shield_Roasted/walls_33.png"
 						Size = [2, 2]
 					}
 					{
-						File = "ShieldGenMed/walls_66.png"
+						File = "Shield_Roasted/walls_66.png"
 						Size = [2, 2]
 					}
 				]
 			}
-			/*
 			Roof
 			{
 				Layer = "roofs"
-				Offset = [0, 0]
 				DamageLevels
 				[
 					{
-						File = "ShieldGenMed/roof.png"
+						File = "Shield_Roasted/roof.png"
 						Size = [2, 2]
 					}
 					{
-						File = "ShieldGenMed/roof_33.png"
+						File = "Shield_Roasted/roof_33.png"
 						Size = [2, 2]
 					}
 					{
-						File = "ShieldGenMed/roof_66.png"
+						File = "Shield_Roasted/roof_66.png"
 						Size = [2, 2]
 					}
 				]
 			}
-			*/
 		}
-		//Temp Remove Once we have Proper Roofs for Shield2&3
-        RoofGraphics0
+
+		DoodadGraphics
 		{
 			Type = Graphics
-			Location = [0, 0]
-			Roof
+			OperationalToggle = PowerToggle
+			Location = [1, 1]
+
+			AnimationSpeedFactor = BatteryStorage
+			AnimationSpeedFactorRenormalize = [0, 64.0]
+
+			OperationalDoodad
 			{
-				Layer = "roofs"
-				RandomUVRotation = true
-				Offset = [0.5, 0.5]
+				Layer = "doodads_high"
 				DamageLevels
 				[
 					{
-						File = "ShieldGenSmall/roof.png"
-						NormalsFile = "ShieldGenSmall/roof_normals.png"
-						Size = [1, 1]
-					}
-					{
-						File = "ShieldGenSmall/roof_33.png"
-						NormalsFile = "ShieldGenSmall/roof_normals_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "ShieldGenSmall/roof_66.png"
-						NormalsFile = "ShieldGenSmall/roof_normals_66.png"
-						Size = [1, 1]
+						AnimationFiles
+						[
+							"Shield_Roasted/doodads_on1.png"
+							"Shield_Roasted/doodads_on2.png"
+							"Shield_Roasted/doodads_on3.png"
+							"Shield_Roasted/doodads_on4.png"
+							"Shield_Roasted/doodads_on5.png"
+							"Shield_Roasted/doodads_on6.png"
+							"Shield_Roasted/doodads_on7.png"
+							"Shield_Roasted/doodads_on8.png"
+							"Shield_Roasted/doodads_on9.png"
+							"Shield_Roasted/doodads_on10.png"
+							"Shield_Roasted/doodads_on11.png"
+							"Shield_Roasted/doodads_on12.png"
+							"Shield_Roasted/doodads_on13.png"
+							"Shield_Roasted/doodads_on14.png"
+							"Shield_Roasted/doodads_on15.png"
+							"Shield_Roasted/doodads_on16.png"
+							"Shield_Roasted/doodads_on17.png"
+							"Shield_Roasted/doodads_on18.png"
+							"Shield_Roasted/doodads_on19.png"
+							"Shield_Roasted/doodads_on20.png"
+							"Shield_Roasted/doodads_on21.png"
+							"Shield_Roasted/doodads_on22.png"
+							"Shield_Roasted/doodads_on23.png"
+							"Shield_Roasted/doodads_on24.png"
+							"Shield_Roasted/doodads_on25.png"
+							"Shield_Roasted/doodads_on26.png"
+							"Shield_Roasted/doodads_on27.png"
+							"Shield_Roasted/doodads_on28.png"
+							"Shield_Roasted/doodads_on29.png"
+							"Shield_Roasted/doodads_on30.png"
+							"Shield_Roasted/doodads_on31.png"
+							"Shield_Roasted/doodads_on32.png"
+						]
+						Size = [2, 2]
+						AnimationInterval = 0.3125 //0.03125
 					}
 				]
 			}
-		}
-		RoofGraphics1 : RoofGraphics0
-		{
-			Location = [1, 0]
-		}
-		RoofGraphics2 : RoofGraphics0
-		{
-			Location = [0, 1]
-		}
-		RoofGraphics3 : RoofGraphics0
-		{
-			Location = [1, 1]
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted/doodads_off.png"
+						Size = [2, 2]
+					}
+				]
+			}
 		}
 
 		BatterySprites
@@ -340,11 +359,51 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceLevels
 			[
 				{
-					File = "Batteries2.png"
+					File = "Shield_Roasted/Batteries1.png"
 					Size = [2, 2]
 				}
 				{
-					File = "Batteries3.png"
+					File = "Shield_Roasted/Batteries2.png"
+					Size = [2, 2]
+				}
+				{
+					File = "Shield_Roasted/Batteries3.png"
+					Size = [2, 2]
+				}
+				{
+					File = "Shield_Roasted/Batteries4.png"
+					Size = [2, 2]
+				}
+				{
+					File = "Shield_Roasted/Batteries5.png"
+					Size = [2, 2]
+				}
+				{
+					File = "Shield_Roasted/Batteries6.png"
+					Size = [2, 2]
+				}
+				{
+					File = "Shield_Roasted/Batteries7.png"
+					Size = [2, 2]
+				}
+				{
+					File = "Shield_Roasted/Batteries8.png"
+					Size = [2, 2]
+				}
+				{
+					File = "Shield_Roasted/Batteries9.png"
+					Size = [2, 2]
+				}
+				{
+					File = "Shield_Roasted/Batteries10.png"
+					Size = [2, 2]
+				}
+				{
+					File = "Shield_Roasted/Batteries11.png"
+					Size = [2, 2]
+				}
+				{
+					File = "Shield_Roasted/Batteries12.png"
 					Size = [2, 2]
 				}
 			]
@@ -404,14 +463,52 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&<shield2_blue.rules>/Components/ArcShield/ResourceDrainPerDamage)
-		ShieldPenResist = &<shield2_blue.rules>/Components/ArcShield/PenetrationResistance/0
-		ShieldArc = deg(360)//deg(&<shield2_blue.rules>/Components/ArcShield/Arc)
-		ShieldDist = (&<shield2_blue.rules>/Components/ArcShield/Radius)// - (&<shield2_blue.rules>/Components/ArcShield/Location/1)
+		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
+		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
+		ShieldArc = deg(360)
+		ShieldDist = (&~/ShieldStatBase/Radius)
 		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = (&PowerUsageContinuous) + 0.5
 		RecCrew = (&RecPower) * 4
 	}
+}
+ShieldStatBase
+{
+	Radius = 16
+	Arc = 181.8d
+	OperationalToggle = IsOperational
+	DrainResourcesFrom = BatteryStorage
+	Location = [1, 0.5]
+	PenetrationResistance = [27, 0]
+	ResourceDrainPerDamage = 2
+
+	BlueprintArcSprite
+	{
+		Texture
+		{
+			File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		Size = [0, 2]
+		Color = [50, 50, 255, 127]
+	}
+	BlueprintArcSpriteSegments = 64
+
+	CoverageArcSprite
+	{
+		Texture
+		{
+			File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		Size = [0, 2]
+		Color = [255, 255, 255, 127]
+	}
+	CoverageArcSpriteSegments = 64
 }
