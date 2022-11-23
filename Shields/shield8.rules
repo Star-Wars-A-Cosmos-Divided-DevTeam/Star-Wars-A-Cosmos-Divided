@@ -2,13 +2,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/Large1"
 	IconNameKey = "Parts/Large1"
-	ID = SW.bubble_generator_huge1
-	OtherIDs = ["bubble_generator_huge1"]
+	ID = SW.bubble_generator_omega_switchable
+	OtherIDs = ["bubble_generator_huge1", "SW.bubble_generator_huge1"]
 	EditorGroup = "DefensesSWACD"
 	DescriptionKey = "Parts/Large1Desc"
 	Resources
 	[
-		[steel, 8] //
+		[steel, 640]
+		[coil2, 64]
+		[diamond, 16] //
 	]  //Cost = 30000
 	AIValueFactor = 5
 
@@ -43,7 +45,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	{
 		Texture
 		{
-			File = "ShieldGenMed/icon.png"
+			File = "Shield_Roasted/icon.png"
 			SampleMode = Linear
 		}
 		Size = [82.66, 82.66]
@@ -62,7 +64,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 72
+			//Requires 0 Stationary Crew so
 		}
 
 		BatteryStorage
@@ -100,259 +110,59 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceConverter
 			FromStorage = BatteryStorage
-			FromQuantity = 500
+			FromQuantity = 800
 			Interval = 1
 		}
-		
-		ArcShield
+
+		ShieldColorType
 		{
-			Type = ArcShield
-			Radius = 64
-			Arc = 181.8d
-			OperationalToggle = IsOperational
-			PenetrationResistance = [320, 0]
-			DrainResourcesFrom = BatteryStorage
-			ResourceDrainPerDamage = 0.5
-			Rotation = -90d
-			Location = [4, 4]
-
-			BlueprintArcSprite
-			{
-				Texture
-				{
-					File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
-					SampleMode = Linear
-					MipLevels = max
-				}
-				Size = [0, 4.5]
-				Color = [50, 50, 255, 127]
-			}
-			BlueprintArcSpriteSegments = 64
-
-			CoverageArcSprite
-			{
-				Texture
-				{
-					File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-					SampleMode = Linear
-					MipLevels = max
-				}
-				Size = [0, 4.5]
-				Color = [255, 255, 255, 127]
-			}
-			CoverageArcSpriteSegments = 64
-
-			ShieldMediaEffects
-			[
-				{
-					Type = ArcShield
-					Radius = &~/Part/Components/ArcShield/Radius
-					Arc = &~/Part/Components/ArcShield/Arc
-					FadeInTime = .25
-					FadeOutTime = .25
-					FadeFromScale = .8
-					ArcSprite
-					{
-						Texture
-						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-							UVMode = Wrap
-							SampleMode = Linear
-							MipLevels = 1
-						}
-						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
-						_waveTex
-						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
-							UVMode = Wrap
-							SampleMode = Linear
-							MipLevels = max
-						}
-						_waveSpeed = 1
-						_waveAlpha = 1
-						_waveCurveInterval = .5
-						_waveCurveMagnitude = .35
-						_waveCurveUOffsetPerSecond = .2
-						_fullPowerColor1 = [54, 0, 91, 127]
-						_lowPowerColor1 = [54, 0, 91, 127]
-						_fullPowerColor2 = [0, 0, 255, 127]
-						_lowPowerColor2 = [255, 0, 0, 127]
-						_lowPowerThicknessExponent = .6
-						_xScale = 3
-						TargetBlendMode = Add
-						Size = [0, 4.5]
-					}
-					ArcSpriteSegments = 64
-					Bucket = Lower1
-				}
-
-				: /BASE_SOUNDS/AudioExteriorDetail
-				{
-					Sound = "./Data/ships/terran/shield_gen_small/shield_loop.wav"
-					Volume = .15
-					Speed = .5
-					MaxConcurrent = 1
-					MaxConcurrentVolume = .3
-					DynamicVolume : ^/0/DynamicVolume
-					{
-						MinDistance = .75
-						MaxDistance = 1.5
-					}
-					IgnoreIntensity = true
-				}
-			]
-			
-			HitMediaEffects
-			[
-				{
-					Type = ArcShield
-					FadeInTime = .1
-					FadeOutTime = .5
-					Radius = &~/Part/Components/ArcShield/Radius
-					Arc = 20d
-					ArcSprite
-					{
-						Texture
-						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy_original.png"
-							SampleMode = Linear
-							MipLevels = 1
-						}
-						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
-						_waveTex
-						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
-							UVMode = Wrap
-							SampleMode = Linear
-							MipLevels = max
-						}
-						_waveSpeed = -2
-						_waveAlpha = .75
-						_waveCurveInterval = 1
-						_waveCurveMagnitude = .25
-						_waveCurveUOffsetPerSecond = 0
-						//TargetBlendMode = Add
-						_fullPowerColor1 = [54, 0, 91, 127]
-						_lowPowerColor1 = [54, 0, 91, 127]
-						_fullPowerColor2 = [0, 0, 255, 127]
-						_lowPowerColor2 = [255, 0, 0, 127]
-						_lowPowerThicknessExponent = .6
-						_xScale = 1
-						TargetBlendMode = Add
-						Size = [0, 4.5]
-					}
-					ArcSpriteSegments = 6
-					Bucket = Upper3
-				}
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/Ships/terran/shield_gen_small/shield_hit.wav"
-					Volume = 1
-					Speed = 1.2
-					IgnoreIntensity = true
-					SpeedVariation = .25
-					MaxConcurrent = 10
-				}
-			]
+			Type = UIToggle
+			ToggleID = "SW.shield_color_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2]
+			AlwaysAllowInBuildMode = true
 		}
 
-		ArcShield90 : ArcShield
+		BlueShieldColorToggle
 		{
-			Rotation = 90d
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 0
 		}
-/*
-		VisibleShieldComponents
+		BlueShieldColorComponents
 		{
 			Type = ToggledComponents
-			Toggle = ShieldVisibilityToggle
-			Components
-			{
-				ArcShieldEffect
-				{
-					Type = ContinuousEffects
-					ChainedTo = ArcShield
-					FactorMediaEffectsIntensityWith = BatteryStorage
-					Location = [&~/Part/Components/ArcShield/Radius, 0]
-					OperationalToggle = IsOperational
-					MediaEffects
-					[
-						{
-							Type = ArcShield
-							Radius = &~/Part/Components/ArcShield/Radius
-							Arc = &~/Part/Components/ArcShield/Arc
-							FadeInTime = .25
-							FadeOutTime = .25
-							FadeFromScale = .8
-							ArcSprite
-							{
-								Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-								Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
-								_waveTex
-								{
-									File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
-									UVMode = Wrap
-								}
-								_waveSpeed = 1
-								_waveAlpha = 1
-								_waveCurveInterval = .5
-								_waveCurveMagnitude = .35
-								_waveCurveUOffsetPerSecond = .2
-								_fullPowerColor = [0, 0, 255, 127]
-								_lowPowerColor = [255, 0, 0, 127]
-								_lowPowerThicknessExponent = .6
-								TargetBlendMode = Add
-								Size = [0, 1.5]
-							}
-							ArcSpriteSegments = 64
-							Bucket = Lower1
-						}
-
-						: /BASE_SOUNDS/AudioExteriorDetail
-						{
-							Sound = "./Data/Ships/terran/shield_gen_small/shield_loop.wav"
-							Volume = .15
-							Speed = .65
-							MaxConcurrent = 1
-							MaxConcurrentVolume = .3
-							DynamicVolume : ^/0/DynamicVolume
-							{
-								MinDistance = .75
-								MaxDistance = 1.5
-							}
-							IgnoreIntensity = true
-						}
-					]
-				}
-			}
+			Toggle = BlueShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield8_blue.rules>/Components
 		}
-*/
-		ShieldOperationEffects
+
+		WhiteShieldColorToggle
 		{
-			Type = ToggleEffects
-			ChainedTo = ArcShield
-			Location = [0, 0]
-			Toggle = IsOperational
-			ToggledOnMediaEffects
-			[
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/Ships/terran/shield_gen_small/activate.wav"
-					Volume = .5
-					Speed = 1.2
-					IgnoreIntensity = true
-				}
-			]
-			ToggledOffMediaEffects
-			[
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/Ships/terran/shield_gen_small/deactivate.wav"
-					Volume = .5
-					Speed = 1.2
-					IgnoreIntensity = true
-				}
-			]
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 1
+		}
+		WhiteShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield8_white.rules>/Components
+		}
+
+		InvisShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 2
+		}
+		InvisShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = InvisShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield8_invis.rules>/Components
 		}
 
 		Graphics
@@ -366,54 +176,53 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "ShieldGenMed/floor_on.png"
+						File = "Shield_Roasted/floor.png"
 						Size = [8, 8]
 					}
 					{
-						File = "ShieldGenMed/floor_on_33.png"
+						File = "Shield_Roasted/floor_33.png"
 						Size = [8, 8]
 					}
 					{
-						File = "ShieldGenMed/floor_on_66.png"
+						File = "Shield_Roasted/floor_66.png"
 						Size = [8, 8]
 					}
 				]
 			}
-			OperationalDoodad
-			{
-				Layer = "doodads_high"
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"ShieldGenMed/doodads1.png"
-						]
-						Size = [8, 8]
-						AnimationInterval = 0.055
-					}
-				]
-			}
-			NonOperationalDoodad
-			{
-				Layer = "doodads_high"
-				DamageLevels
-				[
-					{
-						File = "ShieldGenMed/doodads_off.png"
-						Size = [8, 8]
-					}
-				]
-			}
+			/*
 			OperationalLighting
 			{
 				Layer = "lights_add"
-				Offset = [0, 0]
 				DamageLevels
 				[
 					{
-						File = "ShieldGenMed/lights.png"
+						File = "Shield_Roasted/lights.png"
 						Size = [8, 8]
+					}
+				]
+			}
+			*/
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted/roof_glows.png"
+						Size = [8, 8]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [24, 24]
+						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [16, 120, 255]
 					}
 				]
 			}
@@ -423,15 +232,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "ShieldGenMed/walls.png"
+						File = "Shield_Roasted/walls.png"
 						Size = [8, 8]
 					}
 					{
-						File = "ShieldGenMed/walls_33.png"
+						File = "Shield_Roasted/walls_33.png"
 						Size = [8, 8]
 					}
 					{
-						File = "ShieldGenMed/walls_66.png"
+						File = "Shield_Roasted/walls_66.png"
 						Size = [8, 8]
 					}
 				]
@@ -439,44 +248,90 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Roof
 			{
 				Layer = "roofs"
-				Offset = [0, 0]
 				DamageLevels
 				[
 					{
-						File = "ShieldGenMed/roof.png"
+						File = "Shield_Roasted/roof.png"
 						Size = [8, 8]
 					}
 					{
-						File = "ShieldGenMed/roof_33.png"
+						File = "Shield_Roasted/roof_33.png"
 						Size = [8, 8]
 					}
 					{
-						File = "ShieldGenMed/roof_66.png"
+						File = "Shield_Roasted/roof_66.png"
 						Size = [8, 8]
 					}
 				]
 			}
-			OperationalRoofWindows
+		}
+
+		DoodadGraphics
+		{
+			Type = Graphics
+			OperationalToggle = PowerToggle
+			Location = [4, 4]
+
+			AnimationSpeedFactor = BatteryStorage
+			AnimationSpeedFactorRenormalize = [0, 32.0]
+
+			OperationalDoodad
 			{
-				Layer = "roof_windows"
-				Offset = [0, 0]
+				Layer = "doodads_high"
 				DamageLevels
 				[
 					{
-						File = "ShieldGenMed/roof_windows.png"
+						AnimationFiles
+						[
+							"Shield_Roasted/doodads_on1.png"
+							"Shield_Roasted/doodads_on2.png"
+							"Shield_Roasted/doodads_on3.png"
+							"Shield_Roasted/doodads_on4.png"
+							"Shield_Roasted/doodads_on5.png"
+							"Shield_Roasted/doodads_on6.png"
+							"Shield_Roasted/doodads_on7.png"
+							"Shield_Roasted/doodads_on8.png"
+							"Shield_Roasted/doodads_on9.png"
+							"Shield_Roasted/doodads_on10.png"
+							"Shield_Roasted/doodads_on11.png"
+							"Shield_Roasted/doodads_on12.png"
+							"Shield_Roasted/doodads_on13.png"
+							"Shield_Roasted/doodads_on14.png"
+							"Shield_Roasted/doodads_on15.png"
+							"Shield_Roasted/doodads_on16.png"
+							"Shield_Roasted/doodads_on17.png"
+							"Shield_Roasted/doodads_on18.png"
+							"Shield_Roasted/doodads_on19.png"
+							"Shield_Roasted/doodads_on20.png"
+							"Shield_Roasted/doodads_on21.png"
+							"Shield_Roasted/doodads_on22.png"
+							"Shield_Roasted/doodads_on23.png"
+							"Shield_Roasted/doodads_on24.png"
+							"Shield_Roasted/doodads_on25.png"
+							"Shield_Roasted/doodads_on26.png"
+							"Shield_Roasted/doodads_on27.png"
+							"Shield_Roasted/doodads_on28.png"
+							"Shield_Roasted/doodads_on29.png"
+							"Shield_Roasted/doodads_on30.png"
+							"Shield_Roasted/doodads_on31.png"
+							"Shield_Roasted/doodads_on32.png"
+						]
 						Size = [8, 8]
+						AnimationInterval = 0.3125 //0.03125
 					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
 					{
-						File = "ShieldGenMed/roof_windows_33.png"
-						Size = [8, 8]
-					}
-					{
-						File = "ShieldGenMed/roof_windows_66.png"
+						File = "Shield_Roasted/doodads_off.png"
 						Size = [8, 8]
 					}
 				]
 			}
-			NonOperationalRoofWindows = &OperationalRoofWindows
 		}
 
 		BatterySprites
@@ -489,11 +344,51 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceLevels
 			[
 				{
-					File = "Batteries2.png"
+					File = "Shield_Roasted/Batteries1.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Batteries3.png"
+					File = "Shield_Roasted/Batteries2.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted/Batteries3.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted/Batteries4.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted/Batteries5.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted/Batteries6.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted/Batteries7.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted/Batteries8.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted/Batteries9.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted/Batteries10.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted/Batteries11.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted/Batteries12.png"
 					Size = [8, 8]
 				}
 			]
@@ -546,21 +441,63 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Blueprints
 		{
 			Type = BlueprintSprite
-			File = "blueprints.png"
+			File = "Shield_Roasted/blueprints.png"
 			Size = [8, 8]
 		}
 	}
 
 	Stats
 	{
-		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&~/Part/Components/ArcShield/ResourceDrainPerDamage)
-		ShieldPenResist = &~/Part/Components/ArcShield/PenetrationResistance/0
-		ShieldArc = deg(&~/Part/Components/ArcShield/Arc)
-		ShieldDist = (&~/Part/Components/ArcShield/Radius)
+		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
+		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
+		ShieldArc = deg(360)
+		ShieldDist = (&~/ShieldStatBase/Radius)
 		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = (&PowerUsageContinuous) + 0.5
 		RecCrew = (&RecPower) * 4
 	}
+}
+ShieldStatBase
+{
+	OperationalToggle = IsOperational
+	Radius = 72 //81 //96 //108
+	Arc = 181.8d // 2 Halfs so the Texture doesn't get Strechted
+	DrainResourcesFrom = BatteryStorage
+	Location = [4, 2.33]
+	PenetrationResistance = [420, 0]
+	ResourceDrainPerDamage = 0.5
+
+	BlueprintArcSprite
+	{
+		Texture
+		{
+			File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		_xScale = 3.6
+		Size = [0, 8]
+		UVRect = [0, 1, 2, 1]
+		Color = [50, 50, 255, 127]
+	}
+	BlueprintArcSpriteSegments = 64
+
+	CoverageArcSprite
+	{
+		Texture
+		{
+			File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		_xScale = 3.6
+		Size = [0, 8]
+		UVRect = [0, 1, 2, 1]
+		Color = [255, 255, 255, 127]
+	}
+	CoverageArcSpriteSegments = 64
 }
