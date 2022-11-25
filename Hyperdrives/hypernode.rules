@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/HyperdriveNode"
 	IconNameKey = "Parts/HyperdriveNodeIcon"
@@ -29,28 +29,22 @@ Part : /BASE_PART_TERRAN
 	}
 	Components
 	{
-		BlueprintSprite0
-		{
-			File = "blueprints.png"
-			Size = [1, 1]
-			Type=BlueprintSprite;
-		}
-
-		IsOperational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle]
-			Mode = All
-		}
 
 		PowerToggle
 		{
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
+			RequiresCommand = false
 		}
-
+/*
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 1
+		}
+*/
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -75,15 +69,86 @@ Part : /BASE_PART_TERRAN
 			OperationalToggle = FtlDrive
 			ShowProgressFor = BatteryStorage
 		}
-
+		
+		//Keep or replace later with diff resource?
+		HyperiumStorage
+		{
+			Type = ResourceStorage
+			ResourceType = hyperium
+			MaxResources = 20
+			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
+			DropResourcesWhenDestroyed = true
+		}
+		HyperiumConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = hyperium
+			Storage = HyperiumStorage
+			DefaultPriority = &/PRIORITIES/Utility_Supply
+			OperationalToggle = PowerToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+		
 		FtlDrive
 		{
 			Type = FtlDrive
 			OperationalToggle = PowerToggle
-			ResourceStorage = BatteryStorage
-			SpinDownDuration = 7.5
+			PowerStorage = BatteryStorage
+			FuelStorage = HyperiumStorage
+			SpinDownDuration = 5
+			JumpEfficiency = 50%
 			JumpEfficiencyDistanceRange = [5, 10]
-			FuelCapacity = 25
+
+			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
+			[
+				/*
+				&<./Data/ships/common/particles/ftl_lightning.rules>
+				*/
+			]
+			JumpOutGateMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			[
+				/*
+				&<../../common/particles/ftl_gate_lightning_out.rules>
+
+				: /BASE_SOUNDS/AudioExteriorZoomless
+				{
+					Sound = "../../common/ftl_zap_out.wav"
+					Volume = 1
+					MaxConcurrentVolume = 1
+					Speed = 1
+					MaxConcurrent = 3
+				}
+				*/
+			]
+			JumpInMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInMediaEffects
+			[
+				/*
+				: <../../common/particles/ftl_lightning.rules>
+				{
+					Delay = (&<./Data/ships/base_ship.rules>/FtlEffects/TotalDuration) - (&<./Data/ships/base_ship.rules>/FtlEffects/CropTime/1) - .4
+				}
+				*/
+			]
+			JumpInGateMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
+			[
+				/*
+				: <../../common/particles/ftl_gate_lightning_in.rules>
+				{
+					Delay = (&<./Data/ships/base_ship.rules>/FtlEffects/TotalDuration) - (&<./Data/ships/base_ship.rules>/FtlEffects/CropTime/1) - .4
+				}
+
+				: /BASE_SOUNDS/AudioExteriorZoomless
+				{
+					Delay = (&<./Data/ships/base_ship.rules>/FtlEffects/TotalDuration) - (&<./Data/ships/base_ship.rules>/FtlEffects/CropTime/1) - .8
+					Sound = "../../common/ftl_zap_in.wav"
+					Volume = 1
+					MaxConcurrentVolume = 1
+					Speed = 1
+					MaxConcurrent = 3
+				}
+				*/
+			]
 		}
 
 		Graphics
@@ -320,6 +385,13 @@ Part : /BASE_PART_TERRAN
 					}
 				}
 			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
 		}
 	}
 
