@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/CommandBridge2"
 	IconNameKey = "Parts/CommandBridge2Icon"
@@ -39,18 +39,10 @@ Part : /BASE_PART_TERRAN
 		}
 		Size = [47, 55]
 	}
-	Components
+	Components : ^/0/Components
 	{
-		BlueprintSprite0
-
-		{
-			File = "blueprints.png"
-			Size = [6, 7]
-			Type=BlueprintSprite;
-		}
 
 		CommandProvider
-
 		{
 			Type = CommandProvider
 			OperationalToggle = IsOperational
@@ -64,6 +56,7 @@ Part : /BASE_PART_TERRAN
 			Default = 1
 			RequiresCommand = false
 		}
+
 		IsOperational
 		{
 			Type = MultiToggle
@@ -74,7 +67,7 @@ Part : /BASE_PART_TERRAN
 		Sensor
 		{
 			Type = Sensor
-			SightRadius = 3000  //3000
+			SightRadius = 3000
 			RadarRadius = ceil(3000*4.5)
 
 		}
@@ -87,7 +80,7 @@ Part : /BASE_PART_TERRAN
 		}
 		BatteryConsumer
 		{
-			Type = TypedResourceGridConsumer
+			Type = ResourceConsumer
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
@@ -100,117 +93,112 @@ Part : /BASE_PART_TERRAN
 		{
 			Type = ResourceConverter
 			FromStorage = BatteryStorage
-			FromQuantity = 5000
-			Interval = 80// Drains 1,5 power every minute.
+			FromQuantity = 500
+			Interval = 8// Drains 1,5 power every minute.
 		}
-
+		
 		CrewLocation1
 		{
 			Type = CrewLocation
 			Location = [3, 0.9]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
 			Location = [2.1, 2.35]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation3
 		{
 			Type = CrewLocation
 			Location = [2.1, 3.25]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation4
 		{
 			Type = CrewLocation
 			Location = [2.1, 4.15]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation5
 		{
 			Type = CrewLocation
 			Location = [2.1, 5]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation6
 		{
 			Type = CrewLocation
 			Location = [2.1, 5.9]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation7
 		{
 			Type = CrewLocation
 			Location =  [1.5, 5.1]
-			Rotation = 95d
+			Rotation = -95d
 		}
 		CrewLocation8
 		{
 			Type = CrewLocation
 			Location = [1.5, 4.2]
-			Rotation = 95d
+			Rotation = -95d
 		}
 		CrewLocation9
 		{
 			Type = CrewLocation
 			Location = [1.55, 3.35]
-			Rotation = 90d
+			Rotation = -90d
 		}
 		CrewLocation10
 		{
 			Type = CrewLocation
 			Location = [3.9, 2.35]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation11
 		{
 			Type = CrewLocation
 			Location = [3.9, 3.25]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation12
 		{
 			Type = CrewLocation
 			Location = [3.9, 4.15]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation13
 		{
 			Type = CrewLocation
 			Location = [3.9, 5]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation14
 		{
 			Type = CrewLocation
 			Location = [3.9, 5.9]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation15
 		{
 			Type = CrewLocation
 			Location = [4.5, 5.1]
-			Rotation = -95d
+			Rotation = 95d
 		}
 		CrewLocation16
 		{
 			Type = CrewLocation
 			Location = [4.5, 4.2]
-			Rotation = -95d
+			Rotation = 95d
 		}
 		CrewLocation17
 		{
 			Type = CrewLocation
 			Location = [4.45, 3.35]
-			Rotation = -90d
+			Rotation = 90d
 		}
-		
-		
-		
-		
-		
 		PartCrew
 		{
 			Type = PartCrew
@@ -350,38 +338,21 @@ Part : /BASE_PART_TERRAN
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [6, 7]
 					}
 					{
 						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [6, 7]
 					}
 					{
 						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [6, 7]
 					}
 				]
 			}
-			OperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				DamageLevels
-				[
-					{
-						File = "roof_Window.png"
-						Size = [6, 7]
-					}
-					{
-						File = "roof_Window_33.png"
-						Size = [6, 7]
-					}
-					{
-						File = "roof_Window_66.png"
-						Size = [6, 7]
-					}
-				]
-			}
-			NonOperationalRoofWindows = &OperationalRoofWindows
 		}
 		BatterySprites
 		{
@@ -389,7 +360,8 @@ Part : /BASE_PART_TERRAN
 			Location = [3, 6.2]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			AmmoLevels
+			HasZeroResourceSprite = false
+			ResourceLevels
 			[
 				{
 					File = "batteries_1.png"
@@ -399,6 +371,38 @@ Part : /BASE_PART_TERRAN
 					File = "batteries_2.png"
 					Size = [3, 1]
 				}
+				{
+					File = "batteries_3.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_4.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_5.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_6.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_7.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_8.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_9.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_10.png"
+					Size = [3, 1]
+				}
 			]
 		}
 
@@ -406,22 +410,20 @@ Part : /BASE_PART_TERRAN
 		{
 			Type = ToggleEffects
 			Toggle = IsOperational,
-			Location = [1, 1]
+			Location = [3, 3.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
-
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [1, 1]
+			Location = [3, 3.5]
 		}
-
 		OperationSoundLoop
 		{
 			Type = ContinuousEffects
-			Location = [1, 1]
+			Location = [3, 3.5]
 			OperationalToggle = IsOperational
 			MediaEffects
 			[
@@ -449,7 +451,7 @@ Part : /BASE_PART_TERRAN
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 				}
 				 //Out of power.
@@ -458,7 +460,7 @@ Part : /BASE_PART_TERRAN
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [4, 4]
+						Size = [3, 3]
 					}
 				}
 
@@ -468,10 +470,17 @@ Part : /BASE_PART_TERRAN
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoCrew
-						Size = [4, 4]
+						Size = [3, 3]
 					}
 				}
 			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [6, 7]
 		}
 	}
 	Stats
