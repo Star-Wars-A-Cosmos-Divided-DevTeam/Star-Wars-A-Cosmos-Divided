@@ -2,7 +2,7 @@ ID = SW.blue_med_laser_shot_common
 OtherIDs = ["blue_med_laser_shot"]
 Range = 500
 IdealRange = [60, 500]
-IdealRadius = [5, 400]
+IdealRadius = [5, 50]
 Speed = 210
 
 Components
@@ -34,7 +34,7 @@ Components
 		
 		CrewCollisions = {Enemies=true; Junk=true}
 		SourceShipLowCollisions = false
-		PenetratesCrew = true
+		
 		HitCrew = &HitOperational
 
 		HitShield
@@ -60,7 +60,7 @@ Components
 				{
 					Type = Damage
 					Damage = 750
-					TreatShieldAsPart = true
+					//TreatShieldAsPart = true
 				}
 				{
 					Type = Impulse;
@@ -90,7 +90,7 @@ Components
 				{
 					Type = Damage
 					Damage = 275
-					TreatShieldAsPart = true
+					//TreatShieldAsPart = true
 				}
 				{
 					Type = Impulse;
@@ -135,7 +135,7 @@ Components
 			{
 				Texture
 				{
-					File = "lasershotblue.png"
+					File = "lasershotblue2.png"
 					SampleMode = Linear
 					MipLevels = max
 				}
@@ -146,9 +146,34 @@ Components
 			FramesPerRow = 1
 			FramesPerSecond = 60
 		}
-		//NormalsTexture = &Animation/AtlasSprite/Texture
+		NormalsTexture = "lasershotblue_normals.png"
 		DiffuseShader = "./Data/default.shader"
 		NormalsShader = "./Data/no_normals.shader"
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Offset = [0, 0]
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [12, 6]
+			VertexColor = [16, 16, 255]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.125
+		}
 	}
 
 	MediaEffects
