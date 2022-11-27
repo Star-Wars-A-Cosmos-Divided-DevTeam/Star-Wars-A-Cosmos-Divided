@@ -286,6 +286,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+			/*
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -300,6 +301,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+			*/
 		}
 		GraphicsTurret
 		{
@@ -402,9 +404,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		TurretCollider
 		{
-			Type = CircleCollider
+			Type = PolygonCollider
+			Vertices
+			[
+				[-1.2, 1.2]
+				[-1.8, -0.32]
+				[-1.8, -1.64]//front left
+				[1.8, -1.64]//front right
+				[1.8, -0.32]
+				[1.2, 1.2]
+			]
 			Location = &../Turret/Location
-			Radius = 1.96
 			IsHigh = true
 		}
 
@@ -499,14 +509,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = CrewLocation
 			Location = [0.4, 0.45]
 			ChainedTo = Turret
-			Rotation = 270d
+			Rotation = 90d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
 			Location = [0.4, -0.45]
 			ChainedTo = Turret
-			Rotation = 270d
+			Rotation = 90d
 		}
 		PartCrew
 		{
@@ -681,7 +691,7 @@ TurretStats
 		Range = (&~/Part/Components/BulletEmitterBase/Bullet/Range)
 		Arc = deg(&~/Part/Components/Turret/FiringArc)
 		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-		PowerPerShot = (&Barrels) * (&~/Part/Components/BulletEmitterBase/ResourcesUsed) / 1000
+		PowerPerShot = (&~/Part/Components/BulletEmitterBase/ResourcesUsed) / 1000
 		PowerPerSecond = (&PowerPerShot) * (&ROF)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
