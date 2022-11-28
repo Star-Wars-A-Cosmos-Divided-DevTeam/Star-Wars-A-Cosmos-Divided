@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/Navicomputer"
 	IconNameKey = "Parts/NavicomputerIcon"
@@ -20,8 +20,8 @@ Part : /BASE_PART_TERRAN
 	[
 		[-1, 1]
 		[2, 1]
-                [1, 2]
-                [0, 2]
+        [1, 2]
+        lusti[0, 2]
 	]
 
 	EditorIcon
@@ -33,15 +33,23 @@ Part : /BASE_PART_TERRAN
 		}
 		Size = [40,40]
 	}
-	Components
+	Components : ^/0/Components
 	{
-		BlueprintSprite0
+		PowerToggle
 		{
-			File = "blueprints.png"
-			Size = [2, 2]
-			Type=BlueprintSprite;
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
 		}
-
+/*
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 1
+		}
+*/
 		IsOperational
 		{
 			Type = MultiToggle
@@ -49,23 +57,15 @@ Part : /BASE_PART_TERRAN
 			Mode = All
 		}
 
-		PowerToggle
-		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-			ToggledOnChoices = [1]
-		}
-
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 5000
+			MaxResources = 6000
 		}
 		BatteryConsumer
 		{
-			Type = TypedResourceGridConsumer
+			Type = ResourceConsumer
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Utility_Supply
@@ -153,39 +153,17 @@ Part : /BASE_PART_TERRAN
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [2, 2]
 					}
 					{
 						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [2, 2]
 					}
 					{
 						File = "roof_66.png"
-						Size = [2, 2]
-					}
-				]
-			}
-		}
-		Graphics2
-		{
-			Type = Graphics
-			OperationalToggle = IsOperational,
-			Location = [1, 1]
-			Roof
-			{
-				Layer = "roofs"
-				DamageLevels
-				[
-					{
-						File = "roof_windows.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_33.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_windows_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [2, 2]
 					}
 				]
@@ -212,7 +190,7 @@ Part : /BASE_PART_TERRAN
 			Location = [1, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			AmmoLevels
+			ResourceLevels
 			[
 				{
 					File = "Batteries1.png"
@@ -228,8 +206,7 @@ Part : /BASE_PART_TERRAN
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
-			Location = [1, 1]
+			Toggle = IsOperational [1, 1]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
@@ -316,6 +293,13 @@ Part : /BASE_PART_TERRAN
 					}
 				}
 			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
 		}
 	}
 }
