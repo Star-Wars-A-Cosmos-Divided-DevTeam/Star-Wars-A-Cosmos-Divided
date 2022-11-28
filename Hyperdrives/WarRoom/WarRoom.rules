@@ -3,18 +3,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	NameKey = "Parts/WarRoom"
 	IconNameKey = "Parts/WarRoomIcon"
 	ID = SW.WarRoom
+
 	EditorGroup = "TechII"
 	DescriptionKey = "Parts/WarRoomDesc"
-	Size = [6, 7]
-	SelectionPriority = 0
 	Resources
 	[
 		[steel, 8] //
 	]  //Cost = 100000
+	Size = [6, 7]
+	SelectionPriority = 0
 	MaxHealth = 20000
-	InitialPenetrationResistance = 2
-	PenetrationRectType = Normal
-        TypeCategories = [WarRoom]
+	AutoDoorMaxPathLength = 5
+	RequiresCategories = []
+	TypeCategories = [WarRoom]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
 	AllowedDoorLocations
 	[
 		[3, -1]
@@ -27,11 +30,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[-1, 4]
 		[6, 4]
 
-
 		[3, 7]
 		[2, 7]
 	]
-	RequiresCategories = []
 	ForceManhattenPathInPart = true
 	BlockedTravelCells
 	[
@@ -76,8 +77,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Key = [5, 1]
 			Value = [Left]
 		}
-
-
 
 		//----- Cell [1,5] -----
 		{
@@ -125,7 +124,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [47, 55]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		IsOperational
 		{
@@ -141,13 +140,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
-
+/*
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 42
+		}
+*/
 		Sensor
 		{
 			Type = Sensor
 			SightRadius = 2500
-			RadarRadius = 2ceil(500*4.5)
-
+			RadarRadius = ceil(500*9)
 		}
 
 		BatteryStorage
@@ -158,7 +163,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		BatteryConsumer
 		{
-			Type = TypedResourceGridConsumer
+			Type = ResourceConsumer
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Utility_Supply
@@ -185,43 +190,43 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CrewLocation
 			Location = [1.75, 3.5]
-			Rotation = 270d
+			Rotation = 90d
 		}
 		CrewLocation3
 		{
 			Type = CrewLocation
 			Location = [4.25, 3.5]
-			Rotation = 90d
+			Rotation = 270d
 		}
 		CrewLocation4
 		{
 			Type = CrewLocation
 			Location = [3, 4.72]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation5
 		{
 			Type = CrewLocation
 			Location = [1.5, 1.85]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation6
 		{
 			Type = CrewLocation
 			Location = [4.5, 1.85]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation7
 		{
 			Type = CrewLocation
 			Location =  [1.85, 5.5]
-			Rotation = 90d
+			Rotation = 270d
 		}
 		CrewLocation8
 		{
 			Type = CrewLocation
 			Location = [4.15, 5.5]
-			Rotation = 270d
+			Rotation = 90d
 		}
 
 		PartCrew
@@ -430,6 +435,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Layer = "indicators"
 			Indicators
 			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [4, 4]
+					}
+				}
 				 //Out of power.
 				{
 					Toggle = BatteryStorage
@@ -439,7 +453,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [4, 4]
 					}
 				}
-
 				 //No crew.
 				{
 					Toggle = PartCrew
@@ -451,6 +464,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+
 		Blueprints
 		{
 			Type = BlueprintSprite
@@ -458,4 +472,4 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Size = [6, 7]
 		}
     }
-  }
+}

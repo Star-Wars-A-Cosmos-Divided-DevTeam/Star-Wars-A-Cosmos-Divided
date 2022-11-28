@@ -9,14 +9,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/LargeHyperdriveDesc"
 	Resources
 	[
-		[steel, 8] //
+		[steel, 160]
+		[coil2, 32] //
 	]  //Cost = 15000
 	Size = [3, 3]
 	SelectionPriority = 0
 	MaxHealth = 4000
 	AutoDoorMaxPathLength = 5
 	RequiresCategories = [WarRoom]
-        TypeCategories = [ftl, LargeHyperdrive]// This is a magic category that allows the FTL overlay to efficiently find FTL drives.
+    TypeCategories = [ftl, uses_power, LargeHyperdrive]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
 	EditorIcon
 	{
 		Texture
@@ -26,31 +29,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [64, 64]
 	}
-	Components
+
+	Components : ^/0/Components
 	{
-		BlueprintSprite0
-		{
-			File = "blueprints.png"
-			Size = [3, 3]
-			Type=BlueprintSprite;
-		}
-
-		IsOperational
-		{
-
-			Type = MultiToggle
-			Toggles = [PowerToggle]
-			Mode = All
-		}
-
 		PowerToggle
 		{
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
+			RequiresCommand = false
 		}
-
+/*
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 9
+		}
+*/
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -60,12 +56,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		BatteryConsumer
 		{
-			Type = TypedResourceGridConsumer
+			Type = ResourceConsumer
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Ftl_Supply
 			OperationalToggle = FtlDrive
 			AllowNonOperationalMinPriorityDelivery = false
+			OverrideExclusiveCrewAssignment = true
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
@@ -75,23 +72,110 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = FtlDrive
 			ShowProgressFor = BatteryStorage
 		}
-
+		//Keep or replace later with diff resource?
+		HyperiumStorage
+		{
+			Type = ResourceStorage
+			ResourceType = hyperium
+			MaxResources = 20
+			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
+			DropResourcesWhenDestroyed = true
+		}
+		HyperiumConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = hyperium
+			Storage = HyperiumStorage
+			DefaultPriority = &/PRIORITIES/Utility_Supply
+			OperationalToggle = PowerToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+		
 		FtlDrive
 		{
 			Type = FtlDrive
 			OperationalToggle = PowerToggle
-			ResourceStorage = BatteryStorage
-			SpinDownDuration = 3
+			PowerStorage = BatteryStorage
+			FuelStorage = HyperiumStorage
+			SpinDownDuration = 5
+			JumpEfficiency = 50%
 			JumpEfficiencyDistanceRange = [10, 60]
-			FuelCapacity = 50
-		}
 
+			JumpOutMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
+			//[
+				/*
+				&<./Data/ships/common/particles/ftl_lightning.rules>
+				*/
+			//]
+			JumpOutGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			//[
+				/*
+				&<../../common/particles/ftl_gate_lightning_out.rules>
+
+				: /BASE_SOUNDS/AudioExteriorZoomless
+				{
+					Sound = "../../common/ftl_zap_out.wav"
+					Volume = 1
+					MaxConcurrentVolume = 1
+					Speed = 1
+					MaxConcurrent = 3
+				}
+				*/
+			//]
+			JumpInMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInMediaEffects
+			//[
+				/*
+				: <../../common/particles/ftl_lightning.rules>
+				{
+					Delay = (&<./Data/ships/base_ship.rules>/FtlEffects/TotalDuration) - (&<./Data/ships/base_ship.rules>/FtlEffects/CropTime/1) - .4
+				}
+				*/
+			//]
+			JumpInGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
+			//[
+				/*
+				: <../../common/particles/ftl_gate_lightning_in.rules>
+				{
+					Delay = (&<./Data/ships/base_ship.rules>/FtlEffects/TotalDuration) - (&<./Data/ships/base_ship.rules>/FtlEffects/CropTime/1) - .4
+				}
+
+				: /BASE_SOUNDS/AudioExteriorZoomless
+				{
+					Delay = (&<./Data/ships/base_ship.rules>/FtlEffects/TotalDuration) - (&<./Data/ships/base_ship.rules>/FtlEffects/CropTime/1) - .8
+					Sound = "../../common/ftl_zap_in.wav"
+					Volume = 1
+					MaxConcurrentVolume = 1
+					Speed = 1
+					MaxConcurrent = 3
+				}
+				*/
+			//]
+		}
+		//used in base Hyperdrive for Doodad Control
+/*
+		BatteryStorageCharging
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorage]
+			ToggleOnResources = 1
+			ToggleOffResources = 0
+		}
+		BatteryStorageFull
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorage]
+			ToggleOnResources = 16000
+			ToggleOffResource = 15999
+		}
+*/
 		Graphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational
-
 			Location = [1.5, 1.5]
+			OperationalToggle = PowerToggle
 			AnimationSpeedFactor = FtlDrive
 			Floor
 			{
@@ -196,15 +280,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [3, 3]
 					}
 					{
 						File = "roof_33.png"
+						NormalsFile = "roof_normals.png"
 						Size = [3, 3]
 					}
 					{
 						File = "roof_66.png"
+						NormalsFile = "roof_normals.png"
 						Size = [3, 3]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [2.5, 2.5]
+						Z = 1.5 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [0*2.0,255*2.0, 255*2.0]
 					}
 				]
 			}
@@ -215,15 +315,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ContinuousEffects
 			Location = [1.5, 1.5]
 			FactorMediaEffectsIntensityWith = FtlDrive
-			OperationalToggle = IsOperational
+			OperationalToggle = PowerToggle
 			MediaEffects
 			[
 				: /BASE_SOUNDS/AudioExterior
 				{
-					Sound = "./Data/ships/terran/ftl_drive/ftl_spin.wav"
+					Sound = "./Data/ships/terran/hyperdrive_small/spin.wav"
 					Volume = 1
 					Speed = 3.5
 					MaxConcurrent = 0
+					VolumeOverIntensity = 1
+					SpeedOverIntensity = [0, 1]
 				}
 			]
 		}
@@ -234,7 +336,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [1.5, 1.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_low"
-			AmmoLevels
+			ResourceLevels
 			[
 				{
 					File = "power1.png"
@@ -306,7 +408,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational
+			Toggle = PowerToggle
 
 			Location = [1.5, 1.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
@@ -338,12 +440,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [3, 3]
+		}
 	}
 
 	Stats
 	{
 		FtlMaxEfficiencyRange = &~/Part/Components/FtlDrive/JumpEfficiencyDistanceRange/0
 		FtlMinEfficiencyRange = &~/Part/Components/FtlDrive/JumpEfficiencyDistanceRange/1
+		HyperiumCapacity = &~/Part/Components/HyperiumStorage/MaxResources
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	}
 
