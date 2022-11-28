@@ -17,7 +17,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	PenetrationRectType = Normal
 	AutoDoorMaxPathLength = 5
 	RequiresCategories = [LargeHyperdrive]
-        TypeCategories = [ftl]// This is a magic category that allows the FTL overlay to efficiently find FTL drives.
+    TypeCategories = [ftl]
 	EditorIcon
 	{
 		Texture
@@ -27,7 +27,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [21.33, 21.33]
 	}
-	Components
+	Components : ^/0/Components
 	{
 
 		PowerToggle
@@ -54,7 +54,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		BatteryConsumer
 		{
-			Type = TypedResourceGridConsumer
+			Type = ResourceConsumer
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Ftl_Supply
@@ -100,14 +100,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			JumpEfficiency = 50%
 			JumpEfficiencyDistanceRange = [5, 10]
 
-			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
-			[
+			JumpOutMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
+			//[
 				/*
 				&<./Data/ships/common/particles/ftl_lightning.rules>
 				*/
-			]
-			JumpOutGateMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
-			[
+			//]
+			JumpOutGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			//[
 				/*
 				&<../../common/particles/ftl_gate_lightning_out.rules>
 
@@ -120,18 +120,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					MaxConcurrent = 3
 				}
 				*/
-			]
-			JumpInMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInMediaEffects
-			[
+			//]
+			JumpInMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInMediaEffects
+			//[
 				/*
 				: <../../common/particles/ftl_lightning.rules>
 				{
 					Delay = (&<./Data/ships/base_ship.rules>/FtlEffects/TotalDuration) - (&<./Data/ships/base_ship.rules>/FtlEffects/CropTime/1) - .4
 				}
 				*/
-			]
-			JumpInGateMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
-			[
+			//]
+			JumpInGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
+			//[
 				/*
 				: <../../common/particles/ftl_gate_lightning_in.rules>
 				{
@@ -148,7 +148,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					MaxConcurrent = 3
 				}
 				*/
-			]
+			//]
 		}
 
 		Graphics
@@ -177,25 +177,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-/*			OperationalDoodad
+			OperationalDoodad
 			{
 				Layer = "doodads_high"
 				DamageLevels
 				[
 					{
-						AnimationFiles
-						[
-							"doodads_on1.png"
-							"doodads_on1.png"
-							"doodads_on1.png"
-							"doodads_on1.png"
-							"doodads_on1.png"
-							"doodads_on1.png"
-							"doodads_on1.png"
-							"doodads_on1.png"
-						]
+						File = "doodads_on1.png"
 						Size = [1, 1]
-						AnimationInterval = 0.0075
 					}
 				]
 			}
@@ -210,7 +199,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-*/
 			OperationalLighting
 			{
 				Layer = "lights_add"
@@ -234,7 +222,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-
 			Walls
 			{
 				Layer = "walls"
@@ -261,33 +248,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [1, 1]
 					}
 					{
 						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [1, 1]
 					}
 					{
 						File = "roof_66.png"
-						Size = [1, 1]
-					}
-				]
-			}
-			OperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				DamageLevels
-				[
-					{
-						File = "roof_windows.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_windows_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_windows_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [1, 1]
 					}
 				]
@@ -304,10 +275,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				: /BASE_SOUNDS/AudioExterior
 				{
-					Sound = "./Data/ships/terran/ftl_drive/ftl_spin.wav"
-					Volume = 1
+					Sound = "./Data/ships/terran/hyperdrive_small/spin.wav"
+					Volume = 0.64
 					Speed = 3.5
 					MaxConcurrent = 0
+					VolumeOverIntensity = 1
+					SpeedOverIntensity = [0, 1]
 				}
 			]
 		}
@@ -318,7 +291,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [0.5, 0.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_low"
-			AmmoLevels
+			ResourceLevels
 			[
 				{
 					File = "power1.png"
@@ -399,6 +372,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	{
 		FtlMaxEfficiencyRange = &~/Part/Components/FtlDrive/JumpEfficiencyDistanceRange/0
 		FtlMinEfficiencyRange = &~/Part/Components/FtlDrive/JumpEfficiencyDistanceRange/1
+		HyperiumCapacity = &~/Part/Components/HyperiumStorage/MaxResources
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	}
 
