@@ -30,17 +30,15 @@ Components
 	Hit
 	{
 		Type = PenetratingHit
-		Penetration = 0.1
-		PenetratesOperational = false
+		FactorEffectsWith = Targetable
 		
 		CrewCollisions = {Enemies=true; Junk=true}
 		SourceShipLowCollisions = false
-		PenetratesCrew = true
+		
 		HitCrew = &HitOperational
 		
 		HitShield
 		{
-			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
@@ -70,7 +68,6 @@ Components
 		}
 		HitOperational
 		{
-			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
@@ -100,7 +97,6 @@ Components
 		}
 		HitStructural
 		{
-			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
@@ -161,9 +157,34 @@ Components
 			FramesPerRow = 2
 			FramesPerSecond = 60
 		}
-		NormalsTexture = &Animation/AtlasSprite/Texture
-		DiffuseShader = "./Data/default.shader"
-		NormalsShader = "./Data/no_normals.shader"
+		//NormalsTexture = &Animation/AtlasSprite/Texture
+		//DiffuseShader = "./Data/default.shader"
+		//NormalsShader = "./Data/no_normals.shader"
+	}
+	
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Offset = [0, 0]
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [6, 3]
+			VertexColor = [16, 16, 255]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.125
+		}
 	}
 
 	MediaEffects
