@@ -30,9 +30,12 @@ Components
 	{
 		Type = PenetratingHit
 		FactorEffectsWith = Targetable
-		Penetration = 0 // Enough to get through one shield and lose half penetration.
-		PenetratesOperational = false
-		SourceShipCollisionDelay = 10
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		
+		HitCrew = &HitOperational
+
 		HitShield
 		{
 			HitEffects
@@ -139,6 +142,34 @@ Components
 			FrameSize = [128, 128]
 			FramesPerRow = 2
 			FramesPerSecond = 60
+		}
+		//NormalsTexture = &Animation/AtlasSprite/Texture
+		//DiffuseShader = "./Data/default.shader"
+		//NormalsShader = "./Data/no_normals.shader"
+	}
+	
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Offset = [0, 0]
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [6, 3]
+			VertexColor = [16, 255, 16]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.125
 		}
 	}
 

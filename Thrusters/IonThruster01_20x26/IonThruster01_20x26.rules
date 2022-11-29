@@ -24,31 +24,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_20x26_Desc"
 
 	EditorGroup = "TechI"
-	TypeCategories = [thruster]
+	TypeCategories = [thruster, uses_power]
 	RequiresCategories = [bridge1]
 
 	Resources
 	[
 		[steel, 8] //
 	]  //Cost = 650000
-	Size = [20, 26]
-
+	Size = [20, 33]
+	PhysicalRect = [0, 0, 20, 26]
+	SaveRect = &PhysicalRect
+	BoundingRectType = Physical
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
-	Density = 1
 	MaxHealth = 520000
-	InitialPenetrationResistance = 1
-	PenetrationRectType = Normal
 
 	ThrusterForce = 142000  //(20/3)*(6000)*1.1_^12=40000*1.1_^12=141628.24645888599076435064653559
 	ThrustIncreaseTime = 0
 	ThrustRecoveryTime = 0
 	FuelUsage = 4200 //59.2*250*(3/4)^12 = ~ 14791.6_*(0.9)^12=4177.603560448125
 
-	ProhibitBelow = 25
-
+	ProhibitBelow = 32
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine,PowerCellBuff]
+
 	AllowedDoorLocations
 	[
 		[-1, 0]
@@ -85,7 +84,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [48, 92]
 	}
-	Components : &<graphics20x26.rules>
+	Components : ^/0/Components, &<graphics20x26_toggles.rules>, &<graphics20x26_doodads.rules>, &<graphics20x26_walls.rules>, &<graphics20x26_roof.rules>, &<graphics20x26_floor.rules>
 	{
 		IsOperational
 		{
@@ -99,18 +98,38 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
+			RequiresCommand = false
 		}
-		EngineBuffToggle
+
+		CommandConsumer
 		{
-			Type = BuffToggle
-			BuffType = Engine
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 260 //520 //1 per tile
 		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 60000
+			MaxResources = 81000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+
+		EngineBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = Engine
 		}
 		ToggledBatteryConsumer
 		{
@@ -133,10 +152,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-
-
-
-		ForwardThruster
+		MainThruster
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
@@ -153,70 +169,43 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
 		}
-
-		LateralThrustOfForwardThruster
+		LateralThruster : MainThruster
 		{
-			Type = Thruster
-			OperationalToggle = IsOperational
-
-			ChainedTo = ForwardThruster
-			Rotation = 90d
-			Force = &../../ThrusterForce
-			MinActivation = { BaseValue=-0.12; BuffType=Engine; BuffMode=Multiply; } //-.26
-			MaxActivation = { BaseValue=0.12; BuffType=Engine; BuffMode=Multiply; } //.26
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = 0
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
-		}
-
-		BackwardThruster
-		{
-			Type = Thruster
-			OperationalToggle = IsOperational
-
-			Location = [10, 0]
-			Rotation = -90d
-			Force = &../../ThrusterForce
-			MinActivation = 0
-			MaxActivation = { BaseValue=0.5; BuffType=Engine; BuffMode=Multiply; }	//0.345
-			MinUncommandedActivation = 0
+			Rotation = 0d
+			Force = (&../../ThrusterForce)/4
+			MinActivation = -0.05
+			MaxActivation = 0.05
+			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			AllowAutoFire = false
 		}
 
-		LateralThrustOfBackwardThruster
+		ReverseThruster
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
 
-			ChainedTo = BackwardThruster
-			Rotation = 90d
-			Force = &../../ThrusterForce
-			MinActivation = { BaseValue=-0.12; BuffType=Engine; BuffMode=Multiply; } //.26
-			MaxActivation = { BaseValue=0.12; BuffType=Engine; BuffMode=Multiply; }	//.26
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = 0
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
+			Location = [10, 0.5]
+			Rotation = -90d
+			Force = (&../../ThrusterForce)/64
+			MinActivation = 0
+			MaxActivation = 0.345
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = (&../../ThrustIncreaseTime)
+			ActivationRecoveryTime = (&../../ThrustRecoveryTime)
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
+			AllowAutoFire = false
 		}
 
-		ThrustEffectsForward
+		ThrustEffectsSounds
 		{
 			Type = ContinuousEffects
-			ChainedTo = ForwardThruster
-			FactorMediaEffectsIntensityWith = ForwardThruster
+			ChainedTo = MainThruster
+			FactorMediaEffectsIntensityWith = MainThruster
 			MediaEffects
 			[
-				&<Particles/IonThruster_Blue_Glow.rules>
-
 				: /COMMON_SOUNDS/ThrusterRumble
 				{
 					Volume = .125
@@ -226,20 +215,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
-
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
-			AmountFrom = ForwardThruster
+			AmountFrom = MainThruster
 			MinAmount = 0.5
 		}
 
 		BurstEffects
 		{
 			Type = TriggeredEffects
-			ChainedTo = ForwardThruster
+			ChainedTo = MainThruster
 			Trigger = BurstTrigger
-			FactorMediaEffectsIntensityWith = ForwardThruster
+			FactorMediaEffectsIntensityWith = MainThruster
 			AnchorMediaEffects = true
 			MediaEffects
 			[
@@ -312,12 +300,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		BlueprintSprite
+		Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [20, 35.44134]
-			Offset = [0, 4.72067] //[0, 9.44134]
+			Offset = [0, 0.72067] //[0, 9.44134]
 		}
 	}
 
@@ -328,7 +316,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = &ThrusterPowerUsage
+		RecPower = (&ThrusterPowerUsage)
 		RecCrew = (&RecPower) * 4
 	}
 }
