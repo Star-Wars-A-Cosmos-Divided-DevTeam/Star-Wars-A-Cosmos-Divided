@@ -16,13 +16,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ExplosiveDamageAbsorption = 100%
 	ExplosiveDamageResistance = 50%
 	TypeCategories = [armor]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Flammable = false
 	CreatePartWhenDestroyed = ""
 	CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 5
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	CrewSpeedFactor = 0
-	Density = 1
+	Density = 4 //v:3?
 	IsRotateable = true
 	IsWalled = true
 	IsSelfDestructible = false
@@ -30,8 +31,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	InternalWalls = [ BottomLeft, Left, TopLeft, Top, TopRight]
 	VirtualInternalCells
 	[
-		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
-		{ExternalCell=[-1, 0]; InternalCell=[0, 1]}
+		{ExternalCell=[0, 1]; InternalCell=[1, 0]}
+		{ExternalCell=[1, 0]; InternalCell=[0, 1]}
 	]
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
@@ -65,17 +66,89 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = floor((&~/Part/MaxHealth)/4)
+			AbsorbsResourceDrain = 640
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
-
-		Blueprints
+		
+		Graphics
 		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 1]
+			Type = Graphics
+			Location = [0.5, 0.5]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"//external_
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						//NormalsFile = "external_wall_normals.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_33.png"
+						//NormalsFile = "external_wall_normals_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_66.png"
+						//NormalsFile = "external_wall_normals_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
 		}
 
-		//*************** BLUEPRINTS'S BORDERS **************
+		/*
 		// Rotation 0 (up)
 		Blueprint0a	//right triangle External wall
 		{
@@ -1419,9 +1492,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					]
 				}
 			]
+		}*/
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
 		}
-
-
 
 		DestroyedEffects
 		{

@@ -3,28 +3,34 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	NameKey = "Parts/DooniumArmor_1x3_Wedge_L"
 	IconNameKey = "Parts/DooniumArmor_1x3_Wedge_LIcon"
 	ID = SW.dooniumArmor_1x3_Wedge_L
-	OtherIDs = ["SW.jam_armor_wedge3x1b"]
+	OtherIDs = [SW.jam_armor_wedge3x1b,SW.jam_armor_wedge3x1,SW.dooniumArmor_1x3_Wedge_R]
+	FlipWhenLoadingIDs = [SW.jam_armor_wedge3x1, SW.dooniumArmor_1x3_Wedge_R]
 	EditorGroup = "DefensesSWACD"
 	DescriptionKey = "Parts/DooniumArmorDesc"
+	EditorReplacementPartID = ""
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 600
+		[steel, 16] 
+	]
+	AIValueFactor = 0
 	Size = [1, 3]
+	IsFlippable = true
 	AllowedContiguity = [Right, Bottom]
 	SelectionTypeID = "armor"
 	MaxHealth = 6000
 	ExplosiveDamageAbsorption = 100%
 	ExplosiveDamageResistance = 50%
 	TypeCategories = [armor]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Flammable = false
-	CreatePartWhenDestroyed = "SW.structure1x3_wedge_L"
+	UnderlyingPartPerTile = ""
+	UnderlyingPart = cosmoteer.structure_1x3_wedge
 	CreatePartPerTileWhenGrabbed = ""
-	InitialPenetrationResistance = 4
+	InitialPenetrationResistance = 4 //v:3?
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
-	UsePerTilePenetrationResistance = true
+	//UsePerTilePenetrationResistance = true
 	CrewSpeedFactor = 0
-	Density = 1
+	Density = 4 //v:3?
 	IsRotateable = true
 	IsWalled = true
 	IsSelfDestructible = false
@@ -58,12 +64,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	 		Value = [Left, TopLeft]
 	 	}
 	]
+	VirtualInternalCells
+	[
+		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
+		{ExternalCell=[-1, 2]; InternalCell=[0, 3]}
+	]
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
 	FlipHRotate = [0, 3, 2, 1]
 	FlipVRotate = [2, 1, 0, 3]
 	GenerateRectCollider = false
-	IsFlippable = true
 	EditorIcon
 	{
 		Texture
@@ -90,14 +100,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = floor((&~/Part/MaxHealth)/4)
-		}
-
-		Blueprints
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 3]
+			AbsorbsResourceDrain = 1500
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
 
 		Graphics
@@ -110,34 +114,37 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "armor.png"
+						File = "floor.png"
 						Size = [1, 3]
 					}
 					{
-						File = "armor_33.png"
+						File = "floor_33.png"
 						Size = [1, 3]
 					}
 					{
-						File = "armor_66.png"
+						File = "floor_66.png"
 						Size = [1, 3]
 					}
 				]
 			}
 			Walls
 			{
-				Layer = "walls"
+				Layer = "external_walls"
 				DamageLevels
 				[
 					{
 						File = "armor.png"
+						NormalsFile = "external_wall_normals.png"
 						Size = [1, 3]
 					}
 					{
 						File = "armor_33.png"
+						NormalsFile = "external_wall_normals_33.png"
 						Size = [1, 3]
 					}
 					{
 						File = "armor_66.png"
+						NormalsFile = "external_wall_normals_66.png"
 						Size = [1, 3]
 					}
 				]
@@ -149,438 +156,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [1, 3]
 					}
 					{
 						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [1, 3]
 					}
 					{
 						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [1, 3]
 					}
 				]
 			}
-		}
-
-		TriRoof0a
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 0
-			Location = [.5, -.5]
-			CellOffset = [0, 0]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*0*0****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_roof.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-
-
-		TriRoof0b
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 0
-			Location = [-.5, 2.5]
-			CellOffset = [0, 2]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****000"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_roof.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-		TriRoof1a
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 1
-			Location = [.5, -.5]
-			CellOffset = [2, 0]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***0*0**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_roof.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-		TriRoof1b
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 1
-			Location = [-.5, 2.5]
-			CellOffset = [0, 0]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "00*****0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_roof.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-		TriRoof2a
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 2
-			Location = [.5, -.5]
-			CellOffset = [0, 2]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****0*0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_roof.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-		TriRoof2b
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 2
-			Location = [-.5, 2.5]
-			CellOffset = [0, 0]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*000****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_roof.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-		TriRoof3a
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 3
-			Location = [.5, -.5]
-			CellOffset = [0, 0]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*0*****0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_roof.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
-		}
-		TriRoof3b
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 3
-			Location = [-.5, 2.5]
-			CellOffset = [2, 0]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***000**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_roof.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
-		}
-
-		TriWall0a
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 0
-			Location = [.5, -.5]
-			CellOffset = [0, 0]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*0*0****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_armor.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-		TriWall0b
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 0
-			Location = [-.5, 2.5]
-			CellOffset = [0, 2]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****000"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_armor.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-		TriWall1a
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 1
-			Location = [.5, -.5]
-			CellOffset = [2, 0]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***0*0**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_armor.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-		TriWall1b
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 1
-			Location = [-.5, 2.5]
-			CellOffset = [0, 0]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "00*****0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_armor.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-		TriWall2a
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 2
-			Location = [.5, -.5]
-			CellOffset = [0, 2]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****0*0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_armor.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-		TriWall2b
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 2
-			Location = [-.5, 2.5]
-			CellOffset = [0, 0]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*000****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_armor.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-		TriWall3a
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 3
-			Location = [.5, -.5]
-			CellOffset = [0, 0]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*0*****0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_armor.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
-		}
-		TriWall3b
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 3
-			Location = [-.5, 2.5]
-			CellOffset = [2, 0]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***000**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_armor.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
 		}
 
 		DestroyedEffects
@@ -590,205 +180,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [.5, 1.5]
 		}
 
-		BlueprintTri0a
+		Blueprints
 		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 0
-			Location = [.5, -.5]
-			CellOffset = [0, 0]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*0*0****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_blueprints.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-		BlueprintTri0b
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 0
-			Location = [-.5, 2.5]
-			CellOffset = [0, 2]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****000"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_blueprints.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-		BlueprintTri1a
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 1
-			Location = [.5, -.5]
-			CellOffset = [2, 0]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***0*0**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_blueprints.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-		BlueprintTri1b
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 1
-			Location = [-.5, 2.5]
-			CellOffset = [0, 0]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "00*****0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_blueprints.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-		BlueprintTri2a
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 2
-			Location = [.5, -.5]
-			CellOffset = [0, 2]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****0*0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_blueprints.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-		BlueprintTri2b
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 2
-			Location = [-.5, 2.5]
-			CellOffset = [0, 0]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*000****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_blueprints.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-		BlueprintTri3a
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 3
-			Location = [.5, -.5]
-			CellOffset = [0, 0]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*0*****0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_blueprints.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
-		}
-		BlueprintTri3b
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 3
-			Location = [-.5, 2.5]
-			CellOffset = [2, 0]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***000**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../armor_wedge/tri_blueprints.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 3]
 		}
 	}
 

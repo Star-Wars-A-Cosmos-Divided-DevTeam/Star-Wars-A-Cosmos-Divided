@@ -3,44 +3,45 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	NameKey = "Parts/DooniumArmor_1x1_Wedge_1QuarterInv"
 	IconNameKey = "Parts/DooniumArmor1x1"
 	ID = SW.doonium_armor_1x1_Wedge_1QuarterInv
+	//OtherIDs = [SW.doonium_armor_1x1_Wedge_1QuarterInv]
 	EditorGroup = "DefensesSWACD"
 	DescriptionKey = "Parts/DooniumArmorDesc"
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 360
+		[steel, 7] 
+	]
+	AIValueFactor = 0
 	Size = [1, 1]
-	AllowedContiguity = [Top, Right, Bottom, Left]
+	//AllowedContiguity = [Top, Right, Bottom, Left]
 	SelectionTypeID = "armor"
 	MaxHealth = 3600
 	ExplosiveDamageAbsorption = 100%
 	ExplosiveDamageResistance = 50%
 	TypeCategories = [armor]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Flammable = false
-	CreatePartWhenDestroyed = ""
+	UnderlyingPartPerTile = ""
+	UnderlyingPart = cosmoteer.structure
 	CreatePartPerTileWhenGrabbed = ""
-	InitialPenetrationResistance = 6
+	InitialPenetrationResistance = 6 //v:7?
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	CrewSpeedFactor = 0
-	Density = 1
+	Density = 4 //v:3?
 	IsRotateable = true
 	IsWalled = true
 	IsSelfDestructible = false
-	ExternalWalls = [ BottomLeft, Bottom, BottomRight, Right, TopRight]
-	InternalWalls = [ TopLeft]
+	ExternalWalls = [BottomLeft, Bottom, BottomRight, Right, TopRight]
+	InternalWalls = [TopLeft]
+	VirtualInternalCells
+	[
+		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
+		{ExternalCell=[-1, 0]; InternalCell=[0, 1]}
+	]
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
 	FlipHRotate = [1, 0, 3, 2]
 	FlipVRotate = [3, 2, 1, 0]
 	GenerateRectCollider = false
-	CustomCollider
-	[
-		[0.22, 0]
-		[1, 0]
-		[1, 1]
-		[0, 1]
-		[0.22, 1]
-	]
 	EditorIcon
 	{
 		Texture
@@ -69,17 +70,89 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = floor((&~/Part/MaxHealth)/4)
+			AbsorbsResourceDrain = 810
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
 
-		Blueprints
+		Graphics
 		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 1]
+			Type = Graphics
+			Location = [0.5, 0.5]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"//external_
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						//NormalsFile = "external_wall_normals.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_33.png"
+						//NormalsFile = "external_wall_normals_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_66.png"
+						//NormalsFile = "external_wall_normals_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
 		}
 
-		//*************** BLUEPRINTS'S BORDERS **************
+		/*
 		// Rotation 0 (up)
 		Blueprint0a	//top triangle External wall
 		{
@@ -132,7 +205,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		Blueprint0d
-	//fake left internal 50% wall
+		//fake left internal 50% wall
 		{
 			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 0
@@ -158,7 +231,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		Blueprint0e
-	//fake top internal 50% wall
+		//fake top internal 50% wall
 		{
 			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 0
@@ -236,7 +309,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		Blueprint1d
-	//fake left internal 50% wall
+		//fake left internal 50% wall
 		{
 			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 1
@@ -262,7 +335,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		Blueprint1e
-	//fake top internal 50% wall
+		//fake top internal 50% wall
 		{
 			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 1
@@ -340,7 +413,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		Blueprint2d
-	//fake left internal 50% wall
+		//fake left internal 50% wall
 		{
 			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 2
@@ -366,7 +439,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		Blueprint2e
-	//fake top internal 50% wall
+		//fake top internal 50% wall
 		{
 			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 2
@@ -444,7 +517,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		Blueprint3d
-	//fake left internal 50% wall
+		//fake left internal 50% wall
 		{
 			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 3
@@ -470,7 +543,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		Blueprint3e
-	//fake top internal 50% wall
+		//fake top internal 50% wall
 		{
 			Type=BlueprintBlendSprite;
 			OnlyWithRotation = 3
@@ -624,7 +697,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		roof0d
-	//fake left internal 50% wall
+		//fake left internal 50% wall
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 0
@@ -651,7 +724,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		roof0e
-	//fake top internal 50% wall
+		//fake top internal 50% wall
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 0
@@ -733,7 +806,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		roof1d
-	//fake left internal 50% wall
+		//fake left internal 50% wall
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 1
@@ -760,7 +833,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		roof1e
-	//fake top internal 50% wall
+		//fake top internal 50% wall
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 1
@@ -1172,7 +1245,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		wall1d
-	//fake left internal 50% wall
+		//fake left internal 50% wall
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 1
@@ -1199,7 +1272,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		wall1e
-	//fake top internal 50% wall
+		//fake top internal 50% wall
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 1
@@ -1281,7 +1354,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		wall2d
-	//fake left internal 50% wall
+		//fake left internal 50% wall
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 2
@@ -1308,7 +1381,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		wall2e
-	//fake top internal 50% wall
+		//fake top internal 50% wall
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 2
@@ -1390,7 +1463,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		wall3d
-	//fake left internal 50% wall
+		//fake left internal 50% wall
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 3
@@ -1417,7 +1490,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		wall3e
-	//fake top internal 50% wall
+		//fake top internal 50% wall
 		{
 			Type = BlendSprite
 			OnlyWithRotation = 3
@@ -1442,14 +1515,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+		*/
 
-
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
 
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
 			Location = [.5, .5]
+		}
+
+		ConstructionStructureSprite
+		{
+			Type = Sprite
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			Layer = "structure"
+			Location = [.5, .5]
+			AtlasSprite = &<./Data/ships/terran/structure_wedge/structure_wedge.rules>/Part/Components/Graphics/Floor/DamageLevels/0
 		}
 	}
 

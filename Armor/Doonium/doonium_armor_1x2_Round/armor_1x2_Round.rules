@@ -6,10 +6,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	OtherIDs = ["SW.Armor1x2_Round"]
 	EditorGroup = "DefensesSWACD"
 	DescriptionKey = "Parts/DooniumArmorDesc"
+	EditorReplacementPartID = ""
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 600
+		[steel, 8]
+	]
+	AIValueFactor = 0
 	Size = [1, 2]
 	AllowedContiguity = [Bottom]
 	SelectionTypeID = "armor"
@@ -18,13 +20,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ExplosiveDamageResistance = 50%
 	TypeCategories = [armor]
 	Flammable = false
+	CreatePartPerTileWhenDestroyed = ""
 	CreatePartWhenDestroyed = SW.structure1x2_Round
 	CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 5
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	UsePerTilePenetrationResistance = true
 	CrewSpeedFactor = 0
-	Density = 1
+	Density = 4 //v:3?
 	IsRotateable = true
 	IsWalled = true
 	IsSelfDestructible = false
@@ -49,6 +52,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	 		Key = [0, 1]
 	 		Value = [Left, TopLeft, Right, TopRight]
 	 	}
+	]
+	VirtualInternalCells
+	[
+		{ExternalCell=[-1, 1]; InternalCell=[0, 2]}
+		{ExternalCell=[1, 1]; InternalCell=[0, 2]}
 	]
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
@@ -86,16 +94,81 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = floor((&~/Part/MaxHealth)/4)
+			AbsorbsResourceDrain = 1500
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
 
-		Blueprints
+		Graphics
 		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 2]
+			Type = Graphics
+			Location = [0.5, 1]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						Size = [1, 2]
+					}
+					{
+						File = "armor_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "armor_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"//external_
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						//NormalsFile = "external_wall_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "armor_33.png"
+						//NormalsFile = "external_wall_normals_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "armor_66.png"
+						//NormalsFile = "external_wall_normals_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
 		}
 
+
+		/*
 		BlueprintBlendSprite0
 		{
 			OnlyWithRotation = 0
@@ -768,6 +841,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					]
 				}
 			]
+		}
+		*/
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
 		}
 
 		DestroyedEffects
