@@ -7,8 +7,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/DooniumArmorDesc"
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 104
+		[steel, 2] 
+	]
+	AIValueFactor = 0
 	Size = [1, 1]
 	AllowedContiguity = [Bottom]
 	SelectionTypeID = "armor"
@@ -16,13 +17,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ExplosiveDamageAbsorption = 100%
 	ExplosiveDamageResistance = 50%
 	TypeCategories = [armor]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Flammable = false
 	CreatePartWhenDestroyed = ""
 	CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 3
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	CrewSpeedFactor = 0
-	Density = 1
+	Density = 4 //v:3?
 	IsRotateable = true
 	IsWalled = true
 	IsSelfDestructible = false
@@ -58,220 +60,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = floor((&~/Part/MaxHealth)/4)
+			AbsorbsResourceDrain = 250
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
-
-		Blueprints
-		{
-			Type=BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 1]
-		}
-
-		//*************** BLUEPRINTS'S BORDERS **************
-		// Rotation 0 (up)
-		Blueprint0a	//bottom External wall
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 0
-			Location = [0.5, 1.5]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****0**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/blueprints_split025.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-		Blueprint0b	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 0
-			Location = [0.5, 0.5]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****1**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/blueprints_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-		// Rotation 1 (right)
-		Blueprint1a	//bottom External wall
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 1
-			Location = [0.5, 1.5]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*******0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/blueprints_split025.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
-		}
-		Blueprint1b	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 1
-			Location = [0.5, 0.5]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*******1"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/blueprints_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
-		}
-
-		// Rotation 2 (down)
-		Blueprint2a	//bottom External wall
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 2
-			Location = [0.5, 1.5]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*0******"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/blueprints_split025.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-		Blueprint2b	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 2
-			Location = [0.5, 0.5]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*1******"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/blueprints_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-
-		// Rotation 3 (left)
-		Blueprint3a	//bottom External wall
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 3
-			Location = [0.5, 1.5]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***0****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/blueprints_split025.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-		Blueprint3b	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlueprintBlendSprite
-			OnlyWithRotation = 3
-			Location = [0.5, 0.5]
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***1****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/blueprints_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-
 
 		Graphics
 		{
@@ -301,21 +92,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 			Walls
 			{
-				Layer = "walls"
+				Layer = "walls"//external_
 				DamageLevels
 				[
 					{
 						File = "armor.png"
+						//NormalsFile = "external_wall_normals.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
 						File = "armor_33.png"
+						//NormalsFile = "external_wall_normals_33.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
 						File = "armor_66.png"
+						//NormalsFile = "external_wall_normals_66.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
@@ -328,16 +122,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
 						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
 						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
@@ -345,436 +142,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-
-		//*************** ROOF'S BORDERS **************
-		// Rotation 0 (up)
-		TriRoof0a	//bottom External wall
+		Blueprints
 		{
-			Type = BlendSprite
-			OnlyWithRotation = 0
-			Location = [0.5, 1.5]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****0**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/roof_split025.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
+			Type=BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
 		}
-		Roof0a	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 0
-			Location = [0.5, 0.5]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****1**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/roof_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-
-		// Rotation 1 (right)
-		TriRoof1a	//bottom External wall
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 1
-			Location = [0.5, 1.5]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*******0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/roof_split025.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
-		}
-		Roof1a	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 1
-			Location = [0.5, 0.5]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*******1"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/roof_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
-		}
-
-		// Rotation 2 (down)
-		TriRoof2a	//bottom External wall
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 2
-			Location = [0.5, 1.5]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*0******"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/roof_split025.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-		Roof2a	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 2
-			Location = [0.5, 0.5]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*1******"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/roof_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-
-		// Rotation 3 (left)
-		TriRoof3a	//bottom External wall
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 3
-			Location = [0.5, 1.5]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***0****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/roof_split025.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-		Roof3a	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 3
-			Location = [0.5, 0.5]
-			Layer = "roofs"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***1****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/roof_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-
-
-
-		//*************** WALL'S BORDERS **************
-		// Rotation 0 (up)
-		TriWall0a	//bottom External wall
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 0
-			Location = [0.5, 1.5]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****0**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/armor_split025.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-		Wall0a	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 0
-			Location = [0.5, 0.5]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*****1**"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/armor_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 2
-						}
-					]
-				}
-			]
-		}
-
-		// Rotation 1 (right)
-		TriWall1a	//bottom External wall
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 1
-			Location = [0.5, 1.5]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*******0"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/armor_split025.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
-		}
-		Wall1a	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 1
-			Location = [0.5, 0.5]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*******1"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/armor_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 3
-						}
-					]
-				}
-			]
-		}
-
-		// Rotation 2 (down)
-		TriWall2a	//bottom External wall
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 2
-			Location = [0.5, 1.5]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*0******"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/armor_split025.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-		Wall2a	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 2
-			Location = [0.5, 0.5]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "*1******"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/armor_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 0
-						}
-					]
-				}
-			]
-		}
-
-		// Rotation 3 (down)
-		TriWall3a	//bottom External wall
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 3
-			Location = [0.5, 1.5]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			//RequireInternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***0****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/armor_split025.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-		Wall3a	//fake bottom Internal split wall 25%/25%
-		{
-			Type = BlendSprite
-			OnlyWithRotation = 3
-			Location = [0.5, 0.5]
-			Layer = "walls"
-			BlendCheckRectType = Physical
-			AllowUndefinedBlendSprites = true
-			RequireExternalWallsToBlend = true
-			AmbiguousSprites
-			[
-				{
-					SituationCode = "***1****"
-					AllowRotation = false
-					DamageLevels
-					[
-						{
-							File = "../Borders/armor_internalsplit025.png"
-							Size = [1, 1]
-							UVRotation = 1
-						}
-					]
-				}
-			]
-		}
-
-
 
 		DestroyedEffects
 		{
