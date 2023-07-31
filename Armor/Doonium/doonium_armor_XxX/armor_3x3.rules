@@ -28,25 +28,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/DooniumArmor2x2"
 	IconNameKey = "Parts/DooniumArmor2x2Icon"
-	ID = SW.doonium_armor_2x2
+	ID = SW.doonium_armor_3x3
 	EditorGroup = "Defenses"
 	DescriptionKey = "Parts/DooniumArmorDesc"
 	Resources
 	[
-		[steel, 36] //8*4
-	]  //Cost = 1600
+		[steel, 72] //8*9
+	]
 	AIValueFactor = 0
-	Size = [2, 2]
+	Size = [3, 3]
 	IsRotateable = false
 	SelectionTypeID = "armor"
-	MaxHealth = 16000
+	MaxHealth = 360 //must not be more than 360 or 1% of 4000*9; for balance reason should be destroyed soonish
 	ExplosiveDamageAbsorption = 100%
 	ExplosiveDamageResistance = 50%
 	TypeCategories = [armor]
 	Flammable = false
 	InitialPenetrationResistance = 10
-	UnderlyingPartPerTile = ""
-	CreatePartPerTileWhenGrabbed = ""
+	CreatePartPerTileWhenGrabbed = SW.doonium_armor
+	CreatePartPerTileWhenDestroyed = SW.doonium_armor
+	DestroyedPartHealthFraction = 98%
 	CrewSpeedFactor = 0
 	Density = 4 //v:3?
 	IsWalled = true
@@ -70,14 +71,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = 4000
+			AbsorbsResourceDrain = 9000
 			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
 		Floor
 		{
 			Type = SpriteGrid
 			Location = [0.5, 0.5]
-			GridSize = [2, 2]
+			GridSize = [3, 3]
 			RandomUVRotation = true
 			Layer = "floors"
 			RandomDamageLevels
@@ -94,7 +95,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = SpriteGrid
 			Location = [0.5, 0.5]
-			GridSize = [2, 2]
+			GridSize = [3, 3]
 			Layer = "walls"
 			RandomUVRotation = true
 			RandomDamageLevels
@@ -111,7 +112,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = SpriteGrid
 			Location = [0.5, 0.5]
-			GridSize = [2, 2]
+			GridSize = [3, 3]
 			Layer = "roofs"
 			RandomDamageLevels
 			[
@@ -130,14 +131,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "../../blueprints2x2.png"
-			Size = [2, 2]
+			Size = [3, 3]
 		}
 	}
 
 	Stats
 	{
 		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
-		HP = 16000
+		HP = 36000
 	}
 }
 
