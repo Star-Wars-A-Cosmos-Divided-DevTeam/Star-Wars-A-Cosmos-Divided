@@ -489,7 +489,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
-
 			Location = [1.5, 0]
 			Rotation = -90d
 			Force = (&../../ThrusterForce)/16
@@ -541,6 +540,38 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					Speed = 1.5
 					MaxConcurrentVolume = .5
 				}
+			]
+		}
+
+		WhiteThruster
+		{
+			Type = Thruster
+			OperationalToggle = IsOperational
+			Location = [1.5, 0]
+			Rotation = 90d// Relative to unrotated part.
+			Force = &../../ThrusterForce
+			MinActivation = 0
+			MaxActivation = { BaseValue=0.64; BuffType=Engine; BuffMode=Multiply; }
+			MinUncommandedActivation = 0
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = 60
+			ActivationRecoveryTime = 60
+			FuelStorage = BatteryStorage
+			FuelUsagePerSecond = (&../../FuelUsage)*0.64
+		}
+	
+		ThrustEffectsWhiteThruster
+		{
+			Type = ContinuousEffects
+			ChainedTo = WhiteThruster
+			FactorMediaEffectsIntensityWith = WhiteThruster
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/IonThruster/Glow/Huge/White
+				&/COMMON_PARTICLES/Thruster/Fire/Huge/White
+				&/COMMON_PARTICLES/Thruster/PlumeLight/Huge/White
+				&/COMMON_PARTICLES/Thruster/Smoke/Huge
+				&/COMMON_PARTICLES/Thruster/Sparks/Spread/White
 			]
 		}
 
