@@ -136,7 +136,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.munition_type"
-			Default = -1
+			Default = 0
 			ToggledOnChoices = [0, 1, 2]
 			AlwaysAllowInBuildMode = true
 		}
@@ -151,7 +151,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = RedMunitionToggle
-			IncludeInBlueprints = false
+			IncludeInBlueprints = true
 			Components = &<red_blasterlaser.rules>/Components
 		}
 
@@ -165,7 +165,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = BlueMunitionToggle
-			IncludeInBlueprints = false
+			IncludeInBlueprints = true
 			Components = &<blue_blasterlaser.rules>/Components
 		}
 
@@ -179,14 +179,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = GreenMunitionToggle
-			IncludeInBlueprints = false
+			IncludeInBlueprints = true
 			Components = &<green_blasterlaser.rules>/Components
 		}
 
 		BatteryStorage
 		{
 			Type = ResourceStorage
-			ResourceType = battery 
+			ResourceType = battery
 			MaxResources = 2000 //for 40 times firing in 10 secs(40shots)
 		}
 		BatteryConsumer
@@ -324,6 +324,50 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+		}
+
+		FirePermissionToggle
+		{
+			Type = MultiToggle
+			Toggles = [CommonReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
+			Mode = All
+		}
+
+		Turret : &~/TurretBase
+		{
+			
+		}
+
+		BulletEmitterBase : &~/BulletEmitterBase
+		{
+			FireTrigger 
+		}
+		
+		WeaponSprite : &~/WeaponSpriteBase
+		{
+
+		}
+
+		TurretCollider : &~/TurretColliderBase
+		{
+
+		}
+
+		ChargeEffect : &<small_blasterlaser.rules>/ChargeEffectBase
+		{
+			
+		}
+
+		CommonReloadResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [Turret]
+		}
+
+		TurretLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
 		}
 
 		TurretGraphics
@@ -519,8 +563,8 @@ BulletEmitterBase
 {
 	Type = BulletEmitter
 	OperationalToggle = IsOperational
-	ChainedTo = Turret
-	FireTrigger = Turret
+	ChainedTo = TurretLocationProxy
+	FireTrigger = CommonReloadResetTriggerProxyProxy
 	GetTargetFrom = Turret
 	Location = [1, 0]
 	FireDelay = 0.03
@@ -568,7 +612,7 @@ TurretBase
 			Type = TurretWeapon
 			Location = [0.5, 0.66]
 			Rotation = -90d// Relative to unrotated part.
-			Emitter = BulletEmitter
+			Emitter = BulletEmitterBase
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0
@@ -621,7 +665,7 @@ WeaponSpriteBase
 			Location = [.5, 0]
 			Rotation = 90d
 			Layer = "weapons"
-			ResetAnimationTrigger = CommonReloadResetTriggerProxyProxy
+			ResetAnimationTrigger = CommonReloadResetTriggerProxy
 			AtlasSprite
 			{
 				AnimationFiles
