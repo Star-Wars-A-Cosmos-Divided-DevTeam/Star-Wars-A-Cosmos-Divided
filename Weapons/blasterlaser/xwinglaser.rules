@@ -8,18 +8,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/FixedLaserDesc"
 	Resources
 	[
-		[steel, 8] //
+		[steel, 16]
+		[coil, 8]
 	]  //Cost = 1500
 	AIValueFactor = 1
 
-	TypeCategories = [weapon, uses_power, uses_laser_parts, is_crewed]
+	TypeCategories = [weapon, uses_power, is_crewed]//, uses_laser_parts
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [1, 2]
 	PhysicalRect = [0, 1, 1, 1]
 	SaveRect = &PhysicalRect
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	MaxHealth = 2000
-	InitialPenetrationResistance = 1
+	InitialPenetrationResistance = 3
 	PenetrationRectType = Normal
 	ProhibitAbove = 1
 	MaxDoors = 1
@@ -67,7 +69,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
-			AvailableChoices = [-1, 0, 1, 2]
+			AvailableChoices = [-1, 0, 1, 2]//extra?
 			ToggledOnChoices = [0, 1, 2]
 		}
 		AutoTargetToggle
@@ -80,7 +82,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ModeToggle
 			Mode = FireModeToggle
-			OnModes = [2]
+			OnMode = 2
 		}
 
 		FirePermissionToggle
@@ -110,6 +112,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 2000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -119,7 +122,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
 			ResupplyThreshold = 800
 			OperatinalToggle = PowerToggle
-			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryStorageBar
 		{
@@ -268,31 +270,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Triggers = [Turret]
 		}
 
-		WeaponSprite
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [1.5, 0]
-			Rotation = 90d
-			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitter
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"x_wing/barrel.png"
-				]
-				NormalsAnimationFiles
-				[
-					"x_wing/barrel_normals.png"
-				]
-				Size = [1, 5]
-				AnimationInterval = 0.01
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
-		}
-
 		ReloadProgressBar
 		{
 			Type = ProgressBar
@@ -311,9 +288,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ChargeEffect
 		{
 			Type = TriggeredEffects
-			ChainedTo = Turret
+			ChainedTo = BulletEmitter
 			Trigger = Turret
-			Location = [1.92, 0]
 			AnchorMediaEffects = true
 
 			MediaEffects
@@ -342,8 +318,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = CommonReloadTimer
 			InvertOperationalToggle = true
-			ChainedTo = Turret
-			Location = [1.92, 0]
+			ChainedTo = BulletEmitter
 
 			OperationalRoofLighting
 			{
@@ -382,10 +357,35 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
+		WeaponSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [1.5, 0]
+			Rotation = 90d
+			Layer = "weapons"
+			ResetAnimationTrigger = BulletEmitter
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"x_wing/barrel.png"
+				]
+				NormalsAnimationFiles
+				[
+					"x_wing/barrel_normals.png"
+				]
+				Size = [1, 5]
+				AnimationInterval = 0.01
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+
 		TurretGraphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational,
+			OperationalToggle = IsOperational
 			ChainedTo = Turret
 			Location = [.5, 0]
 			Rotation = 90d
@@ -445,9 +445,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [.5, 1.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			HasZeroResourceSprite = false
+			HasZeroResourceSprite = true
 			ResourceLevels
 			[
+				{
+					File = "batteries0.png"
+					Size = [1, 1]
+				}
 				{
 					File = "batteries1.png"
 					Size = [1, 1]
@@ -552,7 +556,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
-		RecCrew = (&CrewRequired) + (&RecPower) * 4
+		RecCrew = (&CrewRequired) + (&RecPower) * 2
 	}
 
 	StatsByCategory
