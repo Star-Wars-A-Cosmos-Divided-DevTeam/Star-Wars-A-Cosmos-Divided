@@ -8,7 +8,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/RepublicturbolaserswitchableDesc"
 	Resources
 	[
-		[steel, 8] //
+		[steel, 128] //4*4*8*2
+		[coil, 72] //[2, 5] takes 36
+		[coil2, 8] //some extra
 	]  //Cost = 40000 
 	AIValueFactor = 1
 
@@ -86,14 +88,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ModeToggle
 			Mode = FireModeToggle
-			OnModes = [2]
+			OnMode = 2
 		}
 		
 		ExteriorType
 		{
 			Type = UIToggle
 			ToggleID = "SW.exterior_type"
-			Default = -1
+			Default = 0
 			AvailableChoices = [0, 1]
 			AlwaysAllowInBuildMode = true
 		}
@@ -131,7 +133,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CommonOnShootEffectTimer
 		{
 			Type = Timer
-			Duration = 0.56
+			Duration = 0.54
 			AutoStart = true
 			StartTrigger = CommonReloadResetTrigger
 		}
@@ -303,7 +305,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 			*/
 		}
-		GraphicsTurret
+		TurretInsideGraphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
@@ -402,6 +404,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
+		TurretLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
+		}
+
 		TurretCollider
 		{
 			Type = PolygonCollider
@@ -429,6 +437,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ProgressBar
 			OperationalToggle = IsOperational
 			ShowProgressFor = Turret
+			LowColor = [0, 0, 64]
+			HighColor = [0, 0, 255]
 		}
 
 		BulletEmitterBase
@@ -676,7 +686,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
 				ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
-				ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+				//ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
 			}
 		}
 	]

@@ -1,78 +1,9 @@
 Components
 	{
-		CommonReloadResetTriggerProxyProxy
+		ReloadProgressBar : &<../xx9_turbolaser_switchable.rules>/ReloadProgressBarBase
 		{
-			Type = TriggerProxy
-			ComponentID = CommonReloadResetTriggerProxy
-		}
-		
-		WhiteExteriorToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = WhiteExteriorToggle
-		}
-
-		GreyExteriorToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = GreyExteriorToggle
-		}
-
-		WhiteExteriorComponents
-		{
-			Type = ToggledComponents
-			Toggle = WhiteExteriorToggle
-			IncludeInBlueprints = false
-			Components = &<xx9_turbolaser_white.rules>/Components
-		}
-		GreyExteriorComponents
-		{
-			Type = ToggledComponents
-			Toggle = GreyExteriorToggle
-			IncludeInBlueprints = false
-			Components = &<xx9_turbolaser_grey.rules>/Components
-		}
-		
-		FirePermissionToggle
-		{
-			Type = MultiToggle
-			Toggles = [CommonReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
-			Mode = All
-		}
-
-		Turret : &<../xx9_turbolaser_switchable.rules>/TurretBase
-		{
-
-		}
-
-		TurretCollider
-		{
-			Type = PolygonCollider
-			Vertices
-			[
-				[1.1, 1.1]
-				[1.1, -1.1]
-				[-1.1, -1.1]
-				[-1.1, 1.1]
-			]
-			Location = &../Turret/Location
-			IsHigh = true
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = CommonReloadTimer
-			Invert = true
 			LowColor = [64, 0, 0]
 			HighColor = [255, 0, 0]
-		}
-
-		CommonReloadResetTrigger
-		{
-			Type = MultiTrigger
-			Triggers = [Turret]
 		}
 
 		BulletEmitterLeft : &<../xx9_turbolaser_switchable.rules>/BulletEmitterBase
@@ -88,34 +19,6 @@ Components
 			Type = BulletEmitter
 			FireTrigger = Turret
 			Location = [2.5, 0.32]
-		}
-
-		ChargeEffectSound
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Location = [1, 0]
-			Trigger = Turret
-			AnchorMediaEffects = true
-		
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/LaserReCharge
-			]
-		}
-
-		FireEffectSound
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Location = [1, 0]
-			Trigger = BulletEmitterLeft
-			AnchorMediaEffects = true
-	
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/TurbolaserSFX
-			]
 		}
 
 		FireEffectLeft
@@ -137,12 +40,12 @@ Components
 			Trigger = BulletEmitterRight
 		}
 
-		TurretGraphics
+		LightGraphics
 		{
 			Type = Graphics
 			OperationalToggle = CommonOnShootEffectTimer
 			InvertOperationalToggle = true
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Location = [3.425, 0]
 
 			OperationalRoofLighting
@@ -168,7 +71,7 @@ LaserStats
 		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
 		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<../xx9_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = (&~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage) + (&~/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/1/TotalDamage)
+		DamagePerShot = (&~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage) + (&~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/1/TotalDamage)
 		DamagePerSecond = (&DamagePerShot) * (&<../xx9_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 		ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed

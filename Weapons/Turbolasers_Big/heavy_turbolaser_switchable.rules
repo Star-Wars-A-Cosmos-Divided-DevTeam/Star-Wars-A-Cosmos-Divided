@@ -4,14 +4,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	OtherIDs = ["heavy_turbolaser","heavy2_turbolaser","heavy_turbolaser1b","heavy_turbolaser2b","heavy_turbolaser1g","heavy_turbolaser2g"]
 	NameKey = "Parts/heavyturbolaserswitchable"
 	IconNameKey = "Parts/heavyturbolaserswitchableIcon"
-	EditorGroup = "WeaponsEnergy"
 	DescriptionKey = "Parts/HeavyturbolaserswitchableDesc"
+	EditorGroup = "WeaponsEnergy"
 	Resources
 	[
-		[steel, 8] //
+		[steel, 128] //4*4*8*2
+		[coil, 72] //[2, 5] takes 36
+		[coil2, 8] //some extra
 	]  //Cost = 35000 
 	AIValueFactor = 1
-
 	TypeCategories = [weapon, uses_power,  is_crewed]//uses_laser_parts,
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [4, 4]
@@ -86,13 +87,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ModeToggle
 			Mode = FireModeToggle
-			OnModes = [2]
+			OnMode = 2
 		}
 
 		CommonReloadTimer
 		{
 			Type = Timer
-			Duration = 4.5
+			Duration = 4.2
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
@@ -141,7 +142,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.munition_type"
-			Default = -1
+			Default = 0
 			AvailableChoices = [0, 1, 2]
 			AlwaysAllowInBuildMode = true
 		}
@@ -152,19 +153,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = MunitionType
 			OnMode = 0
 		}
-		BlueMunitionToggle
-		{
-			Type = ModeToggle
-			Mode = MunitionType
-			OnMode = 1
-		}
-		GreenMunitionToggle
-		{
-			Type = ModeToggle
-			Mode = MunitionType
-			OnMode = 2
-		}
-
 		RedMunitionComponents
 		{
 			Type = ToggledComponents
@@ -172,12 +160,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = false
 			Components = &<heavy/heavy_turbolaser_red.rules>/Components
 		}
+
+		BlueMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 1
+		}
 		BlueMunitionComponents
 		{
 			Type = ToggledComponents
 			Toggle = BlueMunitionToggle
 			IncludeInBlueprints = false
 			Components = &<heavy/heavy_turbolaser_blue.rules>/Components
+		}
+
+		GreenMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 2
 		}
 		GreenMunitionComponents
 		{
@@ -191,7 +193,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.exterior_type"
-			Default = -1
+			Default = 0
 			AvailableChoices = [0, 1]
 			AlwaysAllowInBuildMode = true
 		}
@@ -202,12 +204,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ExteriorType
 			OnMode = 0
 		}
+		WhiteExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<heavy/heavy_turbolaser_white.rules>/Components
+		}
 
 		GreyExteriorToggle
 		{
 			Type = ModeToggle
 			Mode = ExteriorType
 			OnMode = 1
+		}
+		GreyExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreyExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<heavy/heavy_turbolaser_grey.rules>/Components
 		}
 
 		BatteryStorage
@@ -258,45 +274,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 					{
 						File = "floor_66.png"
-						Size = [4, 4]
-					}
-				]
-			}
-			OperationalLighting
-			{
-				Layer = "lights_add"
-				DamageLevels
-				[
-					{
-						File = "lights4.png"
-						Size = [1.625,1.125]
-					}
-				]
-			}
-			OperationalDoodad
-			{
-				Layer = "doodads_low"
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"console on1.png"
-							"console on2.png"
-							"console on3.png"
-						]
-						Size = [4, 4]
-						AnimationInterval = 0.50
-					}
-				]
-			}
-			NonOperationalDoodad
-			{
-				Layer = "doodads_low"
-				DamageLevels
-				[
-					{
-						File = "console off.png"
 						Size = [4, 4]
 					}
 				]
@@ -359,15 +336,138 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 			*/
 		}
+
+		TurretInsideGraphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [0,0]
+			ChainedTo = Turret
+			Rotation = 90d
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights4.png"
+						Size = [1.625,1.125]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"console on1.png"
+							"console on2.png"
+							"console on3.png"
+						]
+						Size = [4, 4]
+						AnimationInterval = 0.50
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "console off.png"
+						Size = [4, 4]
+					}
+				]
+			}
+		}
+		
+		FirePermissionToggle
+		{
+			Type = MultiToggle
+			Toggles = [CommonReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
+			Mode = All
+		}
+
+		Turret : &~/TurretBase
+		{
+
+		}
+
+		BulletEmitterBase : &~/BulletEmitterBase
+		{
+			FireTrigger 
+		}
+
+		TurretCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[-1.0, -1.2]
+				[1.0, -1.2]
+				[0.9, 1.4]
+				[-0.9, 1.4]
+			]
+			Location = &../Turret/Location
+			IsHigh = true
+		}
+
+		ChargeEffectSound
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = Turret
+			AnchorMediaEffects = true
+		
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/LaserReCharge
+			]
+		}
+
+		FireEffectSound
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Location = [1, 0]
+			Trigger = Turret
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		CommonReloadResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [Turret]
+		}
+
+		TurretLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
+		}
+
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [1.55, 1.6]
+			Location = [0.4, 0.45] //Location = [1.55, 1.6]
+			ChainedTo = Turret
+			Rotation = 90d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
-			Location = [2.45, 1.6]
+			Location = [0.4, -0.45] //Location = [2.45, 1.6]
+			ChainedTo = Turret
+			Rotation = 90d
 		}
 		PartCrew
 		{
@@ -390,8 +490,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		BatterySprites
 		{
+			ChainedTo = Turret
+			Rotation = 90d
 			Type = ResourceSprites
-			Location = [2, 2]
+			Location = [0, 0]//2,2
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			HasZeroResourceSprite = false
@@ -548,17 +650,25 @@ BulletEmitterBase
 	FireTrigger = Turret
 	GetTargetFrom = Turret
 	//No Location is dual barrel
-	FireDelay = 0.20
+	FireDelay = 0.18
 	ResourceStorage = BatteryStorage
 	ResourcesUsed = 480
 	Bullet = &/COMMON_SHOTS/redsmalllasershot
+	Recoil = 40
+}
+ReloadProgressBarBase
+{
+	Type = ProgressBar
+	OperationalToggle = SwitchWeaponCooldownTimer
+	ShowProgressFor = CommonReloadTimer
+	Invert = true
 }
 TurretBase
 		{
 			Type = TurretWeapon
 			Location = [2, 2]
 			Rotation = -90d// Relative to unrotated part.
-			Emitter = BulletEmitterLeft
+			Emitter = BulletEmitterBase
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0 // Uses separate fire timer.
