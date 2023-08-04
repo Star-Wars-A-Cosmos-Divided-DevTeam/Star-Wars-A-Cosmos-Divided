@@ -8,10 +8,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/CISturbolaserswitchableDesc"
 	Resources
 	[
-		[steel, 8] //
+		[steel, 128] //4*4*8*2
+		[coil, 72] //[2, 5] takes 36
+		[coil2, 8] //some extra
 	]  //Cost = 30000 
 	AIValueFactor = 1
-
 	TypeCategories = [weapon, uses_power,  is_crewed]//uses_laser_parts,
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [4, 4]
@@ -43,7 +44,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "CIS/icon_separatist_a.png"
 			SampleMode = Linear
 		}
-		Size = [80, 80]
+		Size = [100, 80]
 	}
 	Components : ^/0/Components
 	{
@@ -87,14 +88,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ModeToggle
 			Mode = FireModeToggle
-			OnModes = [2]
+			OnMode = 2
 		}
 
 		ExteriorType
 		{
 			Type = UIToggle
 			ToggleID = "SW.exterior_type"
-			Default = -1
+			Default = 0
 			AvailableChoices = [0, 1]
 			AlwaysAllowInBuildMode = true
 		}
@@ -132,7 +133,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CommonOnShootEffectTimer
 		{
 			Type = Timer
-			Duration = 0.56
+			Duration = 0.54
 			AutoStart = true
 			StartTrigger = CommonReloadResetTrigger
 		}
@@ -281,7 +282,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 			*/
 		}
-		GraphicsTurret
+
+		TurretInsideGraphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
@@ -380,6 +382,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
+		TurretLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
+		}
+
 		TurretCollider
 		{
 			Type = PolygonCollider
@@ -405,6 +413,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ProgressBar
 			OperationalToggle = IsOperational
 			ShowProgressFor = Turret
+			LowColor = [64, 0, 0]
+			HighColor = [255, 0, 0]
 		}
 
 		BulletEmitterBase
@@ -652,7 +662,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
 				ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
-				ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+				//ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
 			}
 		}
 	]
