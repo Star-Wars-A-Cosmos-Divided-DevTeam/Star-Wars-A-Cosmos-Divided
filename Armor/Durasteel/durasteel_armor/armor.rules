@@ -1,30 +1,36 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rules>
 {
 	NameKey = "Parts/DurasteelArmor"
 	IconNameKey = "Parts/DurasteelArmorIcon"
 	ID = SW.durasteel_armor
-	OtherIDs = ["durasteel_armor"]
+	OtherIDs = [durasteel_armor]
 	EditorGroup = "Defenses"
 	DescriptionKey = "Parts/DurasteelArmorDesc"
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 400
+		[steel, 8] 
+	]
+	AIValueFactor = 0
 	Size = [1, 1]
+	IsRotateable = false
 	SelectionTypeID = "armor"
-	MaxHealth = 8000
-	AreaDamageBlockFactor = .25
+	MaxHealth = 6000
+	//ExplosiveDamageAbsorption = 100%
+	//ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
 	Flammable = false
-	InitialPenetrationResistance = 100
+	//InitialPenetrationResistance = 10
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	UnderlyingPartPerTile = ""
 	CreatePartPerTileWhenGrabbed = ""
 	CrewSpeedFactor = 0
-	Density = 3
-	IsRotateable = true
+	//Density = 3
 	IsWalled = true
 	IsSelfDestructible = false
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
-	IsFlippable = true
+	IgnoreRotationForMirroredSelection = true
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	EditorIcon
 	{
 		Texture
@@ -34,19 +40,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [32, 32]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
 			AbsorbsResourceDrain = 1000
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
-		BlueprintSprite0
-		{
-			File = "blueprints.png"
-			Size = [1, 1]
-		Type=BlueprintSprite;}
+
 		Graphics
 		{
 			Type = Graphics
@@ -96,18 +99,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof2_normals.png"
 						Size = [1, 1]
 					}
 					{
 						File = "roof_33.png"
+						NormalsFile = "roof2_normals_33.png"
 						Size = [1, 1]
 					}
 					{
 						File = "roof_66.png"
+						NormalsFile = "roof2_normals_66.png"
 						Size = [1, 1]
 					}
 				]
 			}
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
 		}
 
 		DestroyedEffects

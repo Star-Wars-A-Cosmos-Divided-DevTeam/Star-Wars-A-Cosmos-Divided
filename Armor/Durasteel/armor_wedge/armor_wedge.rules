@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rules>
 {
 	NameKey = "Parts/DurasteelArmorWedge"
 	IconNameKey = "Parts/DurasteelArmorWedgeIcon"
@@ -8,23 +8,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/DurasteelArmorDesc"
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 200
+		[steel, 8]
+	]
 	Size = [1, 1]
 	AllowedContiguity = [Right, Bottom]
 	SelectionTypeID = "armor"
-	MaxHealth = 4000
-	ExplosiveDamageAbsorption = 100%
-	ExplosiveDamageResistance = 50%
+	MaxHealth = 3000
+	//ExplosiveDamageAbsorption = 100%
+	//ExplosiveDamageResistance = 50%
 	TypeCategories = [armor]
 	Flammable = false
 	CreatePartPerTileWhenDestroyed = ""
 	CreatePartWhenDestroyed = structure_wedge
 	CreatePartPerTileWhenGrabbed = ""
-	InitialPenetrationResistance = 20
+	//InitialPenetrationResistance = 20
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	CrewSpeedFactor = 0
-	Density = 3
+	//Density = 3
 	IsRotateable = true
 	IsWalled = true
 	IsSelfDestructible = false
@@ -49,7 +49,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [32, 32]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		Collider
 		{
@@ -61,12 +61,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[0, 1]
 			]
 		}
+
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
 			AbsorbsResourceDrain = 1000
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -100,16 +103,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "armor.png"
+						NormalsFile = "external_wall_normals.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
 						File = "armor_33.png"
+						NormalsFile = "external_wall_normals_33.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
 						File = "armor_66.png"
+						NormalsFile = "external_wall_normals_66.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
@@ -122,33 +128,36 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
 						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
 						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 				]
 			}
 		}
-		Blueprints
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 1]
-		}
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
 			Location = [.5, .5]
+		}
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
 		}
 	}
 
