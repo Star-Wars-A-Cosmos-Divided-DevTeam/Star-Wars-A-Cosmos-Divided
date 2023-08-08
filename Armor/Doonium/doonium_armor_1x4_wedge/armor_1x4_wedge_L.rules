@@ -1,0 +1,200 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rules>
+{
+	NameKey = "Parts/DooniumArmor2WedgeL"
+	IconNameKey = "Parts/DooniumArmor2WedgeLIcon"
+	ID = SW.doonium_armor4_wedge_L
+	EditorGroup = "Defenses"
+	DescriptionKey = "Parts/DooniumArmorDesc"
+	EditorReplacementPartID = ""
+	Resources
+	[
+		[steel, 24]
+	]
+	//AIValueFactor = 0
+	Size = [1, 4]
+	IsFlippable = true
+	AllowedContiguity = [Right, Bottom]
+	SelectionTypeID = "armor"
+	MaxHealth = 16000 //16000/2*2
+	//ExplosiveDamageAbsorption = 100%
+	//ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	Flammable = false
+	CreatePartPerTileWhenDestroyed = ""
+	CreatePartWhenDestroyed = ""
+	CreatePartPerTileWhenGrabbed = ""
+	InitialPenetrationResistance = 12
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	CrewSpeedFactor = 0
+	//Density = 4 //v:3?
+	IsRotateable = true
+	IsWalled = true
+	IsSelfDestructible = false
+	ExternalWallsByCell
+	[
+		{
+			Key = [0, 0]
+			Value = [TopRight, Right]
+		}
+		{
+			Key = [0, 1]
+			Value = [Right]
+		}
+		{
+			Key = [0, 2]
+			Value = [Right]
+		}
+		{
+			Key = [0, 3]
+			Value = [Right, BottomRight, Bottom, BottomLeft]
+		}
+	]
+	InternalWallsByCell
+	[
+	 	{
+	 		Key = [0, 0]
+	 		Value = [BottomLeft, Left, TopLeft, Top]
+	 	}
+	 	{
+	 		Key = [0, 1]
+	 		Value = [TopLeft, Left, BottomLeft]
+	 	}
+	 	{
+	 		Key = [0, 2]
+	 		Value = [TopLeft, Left, BottomLeft]
+	 	}
+	 	{
+	 		Key = [0, 3]
+	 		Value = [Left, TopLeft]
+	 	}
+	]
+	VirtualInternalCells
+	[
+		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
+		{ExternalCell=[-1, 3]; InternalCell=[0, 4]}
+	]
+	AllowedDoorLocations = []
+	GeneratorRequiresDoor = false
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
+	GenerateRectCollider = false
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 64]
+	}
+	Components : ^/0/Components
+	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[1, 0]
+				[1, 4]
+				[0, 4]
+			]
+		}
+
+		EmpAbsorber
+		{
+			Type = ExplosiveResourceDrainSink
+			ResourceType = battery
+			AbsorbsResourceDrain = 4000
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 2]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 4]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 4]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 4]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "external_walls"
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						NormalsFile = "external_wall_normals.png"
+						Size = [1, 4]
+					}
+					{
+						File = "armor_33.png"
+						NormalsFile = "external_wall_normals_33.png"
+						Size = [1, 4]
+					}
+					{
+						File = "armor_66.png"
+						NormalsFile = "external_wall_normals_66.png"
+						Size = [1, 4]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 4]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 4]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 4]
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, 2]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 4]
+		}
+	}
+
+	Stats
+	{
+		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
+	}
+}

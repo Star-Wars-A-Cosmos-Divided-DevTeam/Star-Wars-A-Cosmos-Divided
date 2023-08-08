@@ -1,0 +1,167 @@
+Part : <./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rules>
+{
+	NameKey = "Parts/DurasteelArmorStructureHybridTri"
+	IconNameKey = "Parts/DurasteelArmorStructureHybridTriIcon"
+	DescriptionKey = "Parts/DurasteelArmorStructureHybridTriDesc"
+	ID = SW.durasteel_armor_structure_hybrid_tri
+	EditorGroups = ["Defenses", "Structure"]
+	Resources
+	[
+		[steel, 4]
+	]
+	//AIValueFactor = 0
+	Size = [1, 1]
+	SelectionTypeID = "armor"
+	MaxHealth = 1500 //4000/4*1.5
+	//ExplosiveDamageAbsorption = 100%
+	//ExplosiveDamageResistance = 50%
+	TypeCategories = [armor]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	Flammable = false
+	CreatePartPerTileWhenGrabbed = ""
+	InitialPenetrationResistance = 3
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	CrewSpeedFactor = 0
+	//Density = 4 //v:3?
+	IsRotateable = true
+	IsWalled = true
+	IsSelfDestructible = false
+	ExternalWalls = [BottomRight, Bottom, BottomLeft]
+	InternalWalls = [Left, TopLeft, Top, TopRight, Right]
+	VirtualInternalCells
+	[
+		{ExternalCell=[-1, 0]; InternalCell=[0, 1]}
+		{ExternalCell=[1, 0]; InternalCell=[0, 1]}
+	]
+	AllowedDoorLocations = []
+	GeneratorRequiresDoor = false
+	GenerateRectCollider = false
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+			MipLevels = max
+		}
+		Size = [32, 32]
+	}
+	Components : ^/0/Components
+	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[.5, .5]
+				[1, 1]
+				[0, 1]
+			]
+		}
+
+		EmpAbsorber
+		{
+			Type = ExplosiveResourceDrainSink
+			ResourceType = battery
+			AbsorbsResourceDrain = 375
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "structure"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "external_walls"
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						NormalsFile = "external_wall_normals.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_33.png"
+						NormalsFile = "external_wall_normals_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_66.png"
+						NormalsFile = "external_wall_normals_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+	}
+
+	Stats
+	{
+		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
+	}
+}
