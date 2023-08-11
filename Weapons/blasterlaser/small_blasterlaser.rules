@@ -12,16 +12,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[coil, 6]
 	]  //Cost = 800
 	AIValueFactor = 1
-
 	TypeCategories = [weapon, uses_power, is_crewed]//uses_laser_parts, 
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [1, 2]
 	PhysicalRect = [0, 1, 1, 1]
+	RectColliderRectType = Normal
 	SaveRect = &PhysicalRect
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	MaxHealth = 2000
-	InitialPenetrationResistance = 1
+	InitialPenetrationResistance = 3
 	PenetrationRectType = Normal
 	ProhibitAbove = 1
 	MaxDoors = 2
@@ -69,7 +69,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
-			AvailableChoices = [-1, 0, 1, 2]
+			//AvailableChoices = [-1, 0, 1, 2]
 			ToggledOnChoices = [0, 1, 2]
 		}
 		AutoTargetToggle
@@ -82,7 +82,56 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ModeToggle
 			Mode = FireModeToggle
-			OnModes = [2]
+			OnMode = 2
+		}
+
+		MunitionType
+		{
+			Type = UIToggle
+			ToggleID = "SW.munition_type"
+			Default = 0
+			//ToggledOnChoices = [0, 1, 2]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		RedMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 0
+		}
+		RedMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedMunitionToggle
+			Components = &<red_blasterlaser.rules>/Components
+		}
+
+		BlueMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 1
+		}
+		BlueMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueMunitionToggle
+			Components = &<blue_blasterlaser.rules>/Components
+		}
+
+		GreenMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 2
+		}
+		GreenMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreenMunitionToggle
+			Components = &<green_blasterlaser.rules>/Components
 		}
 
 		CommonReloadTimer
@@ -131,58 +180,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ModeTrigger
 			Mode = MunitionType
-			TriggerInModes = [0,1,2]
-		}
-
-		MunitionType
-		{
-			Type = UIToggle
-			ToggleID = "SW.munition_type"
-			Default = 0
-			ToggledOnChoices = [0, 1, 2]
-			AlwaysAllowInBuildMode = true
-		}
-
-		RedMunitionToggle
-		{
-			Type = ModeToggle
-			Mode = MunitionType
-			OnMode = 0
-		}
-		RedMunitionComponents
-		{
-			Type = ToggledComponents
-			Toggle = RedMunitionToggle
-			IncludeInBlueprints = true
-			Components = &<red_blasterlaser.rules>/Components
-		}
-
-		BlueMunitionToggle
-		{
-			Type = ModeToggle
-			Mode = MunitionType
-			OnMode = 1
-		}
-		BlueMunitionComponents
-		{
-			Type = ToggledComponents
-			Toggle = BlueMunitionToggle
-			IncludeInBlueprints = true
-			Components = &<blue_blasterlaser.rules>/Components
-		}
-
-		GreenMunitionToggle
-		{
-			Type = ModeToggle
-			Mode = MunitionType
-			OnMode = 2
-		}
-		GreenMunitionComponents
-		{
-			Type = ToggledComponents
-			Toggle = GreenMunitionToggle
-			IncludeInBlueprints = true
-			Components = &<green_blasterlaser.rules>/Components
+			TriggerInModes = [0, 1, 2]
 		}
 
 		BatteryStorage
@@ -190,6 +188,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 2000 //for 40 times firing in 10 secs(40shots)
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -199,7 +198,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
 			ResupplyThreshold = 800
 			OperationalToggle = PowerToggle
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryStorageBar
 		{
@@ -576,6 +574,7 @@ BulletEmitterBase
 	FireDelay = 0.03
 	ResourceStorage = BatteryStorage
 	ResourcesUsed = 50
+	MinResourcesUsed = 50
 	Bullet = &/COMMON_SHOTS/redsmalllasershot
 }
 ReloadProgressBarBase
@@ -618,7 +617,6 @@ TurretBase
 			Type = TurretWeapon
 			Location = [0.5, 0.66]
 			Rotation = -90d// Relative to unrotated part.
-			Emitter = BulletEmitterBase
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0
@@ -628,6 +626,7 @@ TurretBase
 			AIFirepowerRating = 400
 			CanBeGivenExplicitTarget = true
 			TargetSearchesPerSecond = 4
+			Emitter = BulletEmitterBase
 			FirePermissionToggle = FirePermissionToggle
 			HoldTargetAfterCancel = 0.15
 			AutoTargetCrewSafetyDist = 8
@@ -639,12 +638,6 @@ TurretBase
 				{
 					TargetType = ShipParts
 					Toggle = AutoTargetToggle
-					Overridable = true
-				}
-				{
-				    TargetType = Crew
-				    Toggle = AutoTargetToggle
-					Overridable = true
 				}
 			]
 
