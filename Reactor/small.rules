@@ -20,7 +20,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	MaxHealth = 1000
 	AutoDoorMaxPathLength = 5
 	TypeCategories = [reactor, provides_power]
-	CreatePartPerTileWhenDestroyed = ""
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	CreateUnderlyingWhenDestroyed = false
 	IgnoreRotationForMirroredSelection = true
 	EditorIcon
 	{
@@ -31,14 +32,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [44, 44]
 	}
-	Components
+	Components : ^/0/Components
 	{
-		Blueprints
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 1]
-		}
 
 		BatteryStorage
 		{
@@ -47,10 +42,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 2000
 			StartingResources = &MaxResources
 			SuppliesResources = true
+			MinResourcesPickUp = 500
 			MaxResourcesPickUp = 1000
 			ExpectedAmmoGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
-			ToggleOnResources = 501
-			ToggleOffResources = 500
+			ToggleOnResources = 500
+			ToggleOffResources = 499
 		}
 		BatteryProducer
 		{
@@ -328,32 +324,37 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 9000
+					TotalDamage = 18000
 					Radius = 3
 					Delay = .05
-					FireChancePerNDamage = 10%
+					ExpandDuration = .1
+					ExpandStartRadius = 1
+					ExpandLoss = 100%
+					FireChancePerNDamage = 20%
 					ImpulsePerNDamage = 2
 					NDamage = 30
 					Filter
 					{
-						Friendlies = true
 						OperationalHealth = true
 						StructuralHealth = false
+						Friendlies = true
 					}
 				}
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 4500
+					TotalDamage = 5000
 					Radius = 2
 					Delay = .05
-					FireChancePerNDamage = 10%
+					ExpandDuration = .05
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
 					ImpulsePerNDamage = 1
 					NDamage = 15
 					Filter
 					{
-						Friendlies = true
 						OperationalHealth = false
 						StructuralHealth = true
+						Friendlies = true
 					}
 				}
 			]
@@ -377,11 +378,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
 	}
 
 	Stats
 	{
 		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
+		BatteryFillTime = 0
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	}
 }

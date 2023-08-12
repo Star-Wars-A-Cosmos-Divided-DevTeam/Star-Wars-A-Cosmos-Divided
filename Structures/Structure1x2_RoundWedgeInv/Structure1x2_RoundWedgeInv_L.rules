@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<./Data/ships/terran/base_part_terran_structure.rules>/Part
 {
 	NameKey = "Parts/Structure1x2_RoundWedgeInvL"
 	IconNameKey = "Parts/Structure1x2_RoundWedgeInvLIcon"
@@ -13,14 +13,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[steel,2] 
 	]
 	Size = [1, 2]
+	IsFlippable = true
+	SelectionTypeID = "structure"
 	AllowedContiguity = [Right, Bottom]
 	Density = .333
 	MaxHealth = 800
+	ConstructionDuration = 0.5
+	RepairDuration = 0.5
 	HealthType = Structural
 	TypeCategories = [structure]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Flammable = false
 	UnderlyingPartPerTile = ""
+	TempConstructionPartPerTile = cosmoteer.structure
 	CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 0
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
@@ -37,7 +42,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	FlipHRotate = [0, 3, 2, 1]
 	FlipVRotate = [2, 1, 0, 3]
 	GenerateRectCollider = false
-	IsFlippable = true
 	EditorIcon
 	{
 		Texture
@@ -55,23 +59,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Vertices
 			[
 				[0, 2]
-				[0, 1.89]
-				[0.12, 1.85]
-				[0.31, 1.73]
-				[0.54, 1.43]
-				[0.71, 1.05]
-				[0.82, 0.46]
-				[0.87, 0]
-				[1, 0]
+				[0.64,1.28]
 				[1, 2]
 			]
 		}
-		
-		Blueprints
+
+		Collider2
 		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 2]
+			Type = PolygonCollider
+			Vertices
+			[
+				[1, 0]
+				[0.64,1.28]
+				[1, 2]
+			]
 		}
 		
 		Graphics
@@ -102,11 +103,36 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
+		ConstructionEffects
+		{
+			Type = Sprite
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			GetColorFrom = ConstructionTracker
+			Location = [.5, 1]
+			AtlasSprite
+			{
+				File = "structure.png"
+				NormalsFile = "structure_normals.png"
+				Size = [1, 2]
+			}
+			RandomUVRotation = false
+			Layer = "structure_construction"
+			UseConstructionProgressAsDamage = true
+		}
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/StructureDestroyed
 			Location = [.5, 1]
+		}
+		
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
 		}
 	}
 }
