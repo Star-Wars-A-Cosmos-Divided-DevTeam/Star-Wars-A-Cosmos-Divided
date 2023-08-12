@@ -24,37 +24,42 @@ Versions:
 
 ---------------------------------------------------------------------------- */
 
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rules>
+Part : &<../base_part_terran_doonium.rules>/Part
 {
 	NameKey = "Parts/DooniumArmor2x2"
 	IconNameKey = "Parts/DooniumArmor2x2Icon"
 	ID = SW.doonium_armor_2x2
-	EditorGroup = "Defenses"
-	DescriptionKey = "Parts/DooniumArmorDesc"
+	//EditorGroup = "Defenses"
+	//DescriptionKey = "Parts/DooniumArmorDesc"
+	EditorReplacementPartID = corridor //""
 	Resources
 	[
 		[steel, 36] //8*4
 	]
 	//AIValueFactor = 0
 	Size = [2, 2]
-	IsRotateable = false
-	SelectionTypeID = "armor"
+	IsRotateable = false //
+	IsFlippable = false	//
+	//SelectionTypeID = "armor"
 	MaxHealth = 32000 //8000*4
 	//ExplosiveDamageAbsorption = 100%
 	//ExplosiveDamageResistance = 50%
 	//TypeCategories = [armor]
+	//ReceivableBuffs : ^/0/ReceivableBuffs []
 	//Flammable = false
-	//InitialPenetrationResistance = 10
-	UnderlyingPartPerTile = ""
-	CreatePartPerTileWhenGrabbed = ""
-	CrewSpeedFactor = 0
+	InitialPenetrationResistance = 40
+	//ContinuingPenetrationResistance = &InitialPenetrationResistance
+	//UnderlyingPartPerTile = ""
+	//UnderlyingPart = ""
+	//CreatePartPerTileWhenGrabbed = ""
+	//CrewSpeedFactor = 0
 	//Density = 4 //v:3?
-	IsWalled = true
-	IsSelfDestructible = false
-	AllowedDoorLocations = []
-	GeneratorRequiresDoor = false
+	//IsWalled = true
+	//IsSelfDestructible = false
+	//AllowedDoorLocations = []
+	//GeneratorRequiresDoor = false
 	IgnoreRotationForMirroredSelection = true
-	ReceivableBuffs : ^/0/ReceivableBuffs []
+	GenerateRectCollider = true //
 	EditorIcon
 	{
 		Texture
@@ -138,6 +143,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 					}*/
 				]
 			}
+		}
+		
+		ConstructionStructureSprites
+		{
+			Type = SpriteGrid
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			Layer = "structure"
+			RandomUVRotation = true
+			AtlasSprite = &<./Data/ships/terran/structure/structure.rules>/Part/Components/Graphics/Floor/DamageLevels/0
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, .5]
 		}
 
 		Blueprints
