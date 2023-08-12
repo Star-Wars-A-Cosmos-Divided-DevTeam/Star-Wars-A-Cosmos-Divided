@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<./Data/ships/terran/base_part_terran_structure.rules>/Part
 {
 	NameKey = "Parts/structure1x2_Round"
 	IconNameKey = "Parts/structure1x2_RoundIcon"
@@ -13,14 +13,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]
 	AIValueFactor = 0
 	Size = [1, 2]
+
+	SelectionTypeID = "structure"
 	AllowedContiguity = [Bottom]
 	Density = .333
 	MaxHealth = 1500
+	ConstructionDuration = 0.5
+	RepairDuration = 0.5
 	HealthType = Structural
 	TypeCategories = [structure]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Flammable = false
 	UnderlyingPartPerTile = ""
+	TempConstructionPartPerTile = cosmoteer.structure
 	CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 0
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
@@ -33,8 +38,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	IsSelfDestructible = false
 	AllowedDoorLocations = []
 	GeneratorRequiresDoor = false
-	GenerateRectCollider = false
 	NoAutoDoors = true
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
+	GenerateRectCollider = false
 	EditorIcon
 	{
 		Texture
@@ -61,13 +68,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[0.2,  0.42]
 				[0.35, 0.12]
 			]
-		}
-		
-		Blueprints
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 2]
 		}
 		
 		Graphics
@@ -99,7 +99,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+		}
 
+		ConstructionEffects
+		{
+			Type = Sprite
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			GetColorFrom = ConstructionTracker
+			Location = [.5, 1]
+			AtlasSprite
+			{
+				File = "structure.png"
+				NormalsFile = "structure_normals.png"
+				Size = [1, 2]
+			}
+			RandomUVRotation = false
+			Layer = "structure_construction"
+			UseConstructionProgressAsDamage = true
 		}
 
 		DestroyedEffects
@@ -107,6 +124,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
 			Location = [.5, 1]
+		}
+		
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
 		}
 	}
 }
