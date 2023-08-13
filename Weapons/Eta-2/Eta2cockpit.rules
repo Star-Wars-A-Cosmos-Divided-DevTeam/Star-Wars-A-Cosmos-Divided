@@ -8,12 +8,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/Eta2Desc"
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 10000
+		[steel, 16]
+		[coil2, 7]
+		[processor, 1]
+	]
 	AIValueFactor = 5
-
 	Size = [1, 2]
 	SelectionPriority = 0
+	SelectionTypeID = "control_room"
 	MaxHealth = 6200
 	InitialPenetrationResistance = 2
 	PenetrationRectType = Normal
@@ -21,19 +23,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	IsContiguityOrigin = true
 	IsShipForward = true
 	TypeCategories = [command, weapon, uses_power,uses_laser_parts, is_crewed]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 //doors only in the back
 	AllowedDoorLocations
 	[
-		[1,1]
-		[-1,1]
-		[0,2]
-	]
-	RequiresCategories = []
-//comes with one crew member
-	CrewCapacity = 1
-	CrewSpawnLocations
-	[
-		[.5, 1.5]
+		[1, 1]
+		[-1, 1]
+		[0, 2]
 	]
 	
 	EditorIcon
@@ -47,19 +43,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 	Components : ^/0/Components
 	{
-		Blueprints
+		IsOperational
 		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 5]
-			Offset = [0, -1.5]
-		}
-
-		CommandProvider
-		{
-			Type = CommandProvider
-			OperationalToggle = IsOperational
-			CommandPoints = 10//Just so it works
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
 		}
 
 		PowerToggle
@@ -68,40 +56,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 			RequiresCommand = false
-		}
-		FireModeToggle
-		{
-			Type = UIToggle
-			ToggleID = "fire_mode"
-			Default = 1
-			ToggledOnChoices = [0, 1, 2]
-		}
-		AutoTargetToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnModes = [1, 2]
-		}
-		AutoFireToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnMode = 2
-		}
-		IsOperational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
-			Mode = All
-		}
-
-		Sensor
-		{
-			Type = Sensor
-			//lower radius
-			SightRadius = 300
-			RadarRadius = ceil(300*4.5)
-
 		}
 
 		BatteryStorage
@@ -129,12 +83,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Interval = 8
 		}
 
+		CommandProvider
+		{
+			Type = CommandProvider
+			OperationalToggle = IsOperational
+			CommandPoints = 10//Just so it works
+		}
+
+		Sensor
+		{
+			Type = Sensor
+			//lower radius
+			SightRadius = 300
+			RadarRadius = ceil(300*4.5)
+		}
+
 		CrewLocation
 		{
 			Type = CrewLocation
 			Location = [.5, 1.30]
 			Rotation = 180d
 		}
+
 		PartCrew
 		{
 			Type = PartCrew
@@ -152,6 +122,29 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				CrewLocation
 			]
 		}
+
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+
 		Turret
 		{
 			Type = TurretWeapon
@@ -458,6 +451,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				}
 			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 5]
+			Offset = [0, -1.5]
 		}
 	}
 
