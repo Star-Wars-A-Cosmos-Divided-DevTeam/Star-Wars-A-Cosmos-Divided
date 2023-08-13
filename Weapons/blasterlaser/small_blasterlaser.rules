@@ -31,6 +31,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[1, 1]
 		[0, 2]
 	]
+	GenerateRectCollider = false
 	EditorIcon
 	{
 		Texture
@@ -42,6 +43,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 	Components : ^/0/Components
 	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0, 1]
+				[0, 2]
+				[1, 2]
+				[1, 1]
+			]
+		}
+
 		IsOperational
 		{
 			Type = MultiToggle
@@ -209,6 +222,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 255, 0]
 		}
 
+		TurretHolder
+		{
+			Type = Sprite
+			Location = [.5, .5]
+			Layer = "structure"
+			AtlasSprite
+			{
+				File = "turret_holder.png"
+				NormalsFile = "turret_holder_normals.png"
+				Size = [1, 1]
+			}
+		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -324,6 +350,37 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "roof_glows.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_glows_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_glows_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			WallsStencil
+			{
+				Layer = "walls_stencil"
+				Offset = [0, -1.5]
+				DamageLevels
+				[
+					{
+						File = "turret_holder_stencil.png"
+						Size = [1, 1]
+					}
+				]
+			}
 		}
 
 		FirePermissionToggle
@@ -343,9 +400,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FireTrigger 
 		}
 		
-		WeaponSprite : &~/WeaponSpriteBase
+		Weapon_High : &~/WeaponSpriteBase
 		{
 
+		}
+
+		Weapon_Low
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [0.68, 0]
+			Rotation = 90d
+			Layer = "weapons"
+			ResetAnimationTrigger = Turret
+			AtlasSprite
+			{
+				File ="blaster/weapon1.png"
+				Size = [1, 2]
+			}
 		}
 
 		TurretCollider : &~/TurretColliderBase
@@ -377,7 +449,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			Walls
 			{
-				Layer = "walls"
+				Layer = "doodads_high"
 				DamageLevels
 				[
 					{
@@ -607,15 +679,20 @@ ChargeEffectBase
 }
 TurretColliderBase
 {
-	Type = CircleCollider
+	Type = PolygonCollider
+	Vertices
+	[
+		[0, -0.25]
+		[1.65, 0]
+		[0, 0.25]
+		[-0.25, 0]
+	]
 	ChainedTo = Turret
-	Radius = 0.5 //1.0
-	Density = 1.5
 }
 TurretBase
 		{
 			Type = TurretWeapon
-			Location = [0.5, 1]
+			Location = [0.5, 0.75]
 			Rotation = -90d// Relative to unrotated part.
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
@@ -661,7 +738,7 @@ WeaponSpriteBase
 		{
 			Type = Sprite
 			ChainedTo = Turret
-			Location = [0.18, 0]
+			Location = [0.68, 0]
 			Rotation = 90d
 			Layer = "roof_turrets"
 			ResetAnimationTrigger = CommonReloadResetTriggerProxy
