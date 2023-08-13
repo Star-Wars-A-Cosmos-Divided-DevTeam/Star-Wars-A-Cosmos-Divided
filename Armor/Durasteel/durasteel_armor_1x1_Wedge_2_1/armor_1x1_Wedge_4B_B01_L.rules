@@ -1,13 +1,13 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rules>
+Part : &<../base_part_terran_durasteel.rules>/Part
 {
 	NameKey = "Parts/DurasteelArmor_1x1_Wedge_4B_A01_L"
 	IconNameKey = "Parts/DurasteelArmor_1x1_Wedge_4B_A01_LIcon"
 	ID = SW.durasteel_armor_1x1_Wedge_4B_B01_L
 	OtherIDs = [SW.durasteel_armor_1x1_Wedge_4B_B01_R]
 	FlipWhenLoadingIDs = [SW.durasteel_armor_1x1_Wedge_4B_B01_R]
-	EditorGroup = "DefensesSWACD"
-	DescriptionKey = "Parts/DurasteelArmorDesc"
-	EditorReplacementPartID = ""
+	//EditorGroup = "DefensesSWACD"
+	//DescriptionKey = "Parts/DurasteelArmorDesc"
+	//EditorReplacementPartID = ""
 	Resources
 	[
 		[steel, 2]
@@ -16,32 +16,32 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 	Size = [1, 1]
 	IsFlippable = true
 	AllowedContiguity = [Right, Bottom]
-	SelectionTypeID = "armor"
+	//SelectionTypeID = "armor"
 	MaxHealth = 1500 //4000/4*1.5
 	//ExplosiveDamageAbsorption = 100%
 	//ExplosiveDamageResistance = 50%
-	TypeCategories = [armor]
-	Flammable = false
-	CreatePartWhenDestroyed = ""
-	CreatePartPerTileWhenGrabbed = ""
-	InitialPenetrationResistance = 6
-	ContinuingPenetrationResistance = &InitialPenetrationResistance
-	CrewSpeedFactor = 0
+	//TypeCategories = [armor]
+	//Flammable = false
+	//CreatePartWhenDestroyed = ""
+	//CreatePartPerTileWhenGrabbed = ""
+	InitialPenetrationResistance = 4
+	//ContinuingPenetrationResistance = &InitialPenetrationResistance
+	//CrewSpeedFactor = 0
 	//Density = 3
-	IsRotateable = true
-	IsWalled = true
-	IsSelfDestructible = false
+	//IsRotateable = true
+	//IsWalled = true
+	//IsSelfDestructible = false
 	ExternalWalls = [TopRight, Right, BottomRight/*, Bottom, BottomLeft*/]
 	InternalWalls = [/*Bottom, BottomLeft,*/ Left, TopLeft, Top]
 	VirtualInternalCells
 	[
 		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
 	]
-	AllowedDoorLocations = []
-	GeneratorRequiresDoor = false
+	//AllowedDoorLocations = []
+	//GeneratorRequiresDoor = false
 	FlipHRotate = [0, 3, 2, 1]
 	FlipVRotate = [2, 1, 0, 3]
-	GenerateRectCollider = false
+	//GenerateRectCollider = false
 	EditorIcon
 	{
 		Texture
@@ -60,7 +60,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 			[
 				[1, 0]
 				[1, 1]
-				[0.5, 1]
+				[0.5-1/64, 1]
 			]
 		}
 
@@ -149,12 +149,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 				]
 			}
 		}
-
-		Blueprints
+		
+		ConstructionStructureSprites
 		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 1]
+			Type = SpriteGrid
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			Layer = "structure"
+			RandomUVRotation = true
+			AtlasSprite = &<./Data/ships/terran/structure/structure.rules>/Part/Components/Graphics/Floor/DamageLevels/0
 		}
 
 		DestroyedEffects
@@ -162,6 +165,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
 			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
 		}
 	}
 
