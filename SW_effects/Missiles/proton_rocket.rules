@@ -1,0 +1,232 @@
+ID = SW.proton_rocket
+OtherIDs = ["proton_rocket"]
+
+Range = 250
+IdealRange = 150
+Speed = 65
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Density = 0.1
+		Radius = 0.1
+        LinearDamping = 1.1
+    }
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 360d
+		Delay = .1
+		AvoidanceRaycastDistance = 10
+		VelocityCompensation = 80%
+	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+    Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 120
+	}
+
+	NegativeAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [-90, 0]
+		AccelerationOverTime = [0, .75]
+		Direction = FrameOfReferenceVelocity
+	}
+
+	DeathByLifetime
+	{
+		Type = DeathByLifetime
+		Lifetime = 25
+		HasTarget = true
+	}
+
+	DeathByDistanceTraveled
+	{
+		Type = DeathByDistanceTraveled
+		// Distance auto-computed from range.
+		HasTarget = false
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 3200
+		TargetCategory = "missile"
+
+		// No AOE damage when shot down.
+		OnDeath = &../Hit/HitFriendly
+	}
+
+	Hit
+	{
+		Type = SimpleHit
+		SourcePartCollisionDelay = 1.5/30
+
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 1000
+				}
+				{
+					Type = Impulse;
+					Impulse = 20;
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = AreaDamage
+					Damage = 2000
+					Radius = 4
+				}
+				{
+					Type = Impulse;
+					Impulse = 20;
+				}
+			]
+
+			MediaEffects
+			[
+				&<./Data/shots/missile_he/particles/missile_he_hit.rules>
+				&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				//&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
+				&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/bullet_med/bullet_med_hit.wav"
+					Volume = .4
+					SpeedVariation = .4
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .05
+					Duration = .5
+				}
+			]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+					Type = AreaDamage
+					Damage = 1800
+					Radius = 5
+				}
+				{
+					Type = Impulse;
+					Impulse = 20;
+				}
+			]
+
+			MediaEffects
+			[
+				&<./Data/shots/missile_he/particles/missile_he_hit.rules>
+				&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				//&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
+				&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/bullet_med/bullet_med_hit_structure.wav"
+					Volume = .3
+					SpeedVariation = .4
+				}
+			]
+		}
+		HitFriendly
+		{
+			MediaEffects
+			[
+				&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				&<./Data/shots/missile_emp/particles/missile_emp_hit_bolts.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/missile_emp/missile_emp_hit.wav"
+					Volume = 1
+					SpeedVariation = .2
+				}
+			]
+		}
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "missile.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [1.5, 1.5]
+			}
+			FrameCount = 16
+			FrameSize = [128, 128]
+			FramesPerRow = 4
+			FramesPerSecond = 60
+		}
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [5, 5]
+			VertexColor = [240, 160, 240]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/ProtonThrusterTrail
+			&/COMMON_PARTICLES/ProtonTrail
+			&/COMMON_PARTICLES/ProtonThrusterGlow
+		]
+	}
+}
