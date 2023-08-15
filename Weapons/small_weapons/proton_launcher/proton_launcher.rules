@@ -94,7 +94,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CommonReloadTimer
 		{
 			Type = Timer
-			Duration = 6.5
+			Duration = 2//6.5
 			AutoStart = true
 			StartsOn = 0
 			StartTrigger = CommonReloadResetTriggerProxy
@@ -284,8 +284,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			ShowProgressFor = CommonReloadTimer
 			Invert = true
-			LowColor = [64, 0, 0]
-			HighColor = [255, 0, 0]
+			LowColor = [64, 0, 96]
+			HighColor = [160, 0, 255]
 		}
 
 		BulletEmitter : &~/BulletEmitterBase
@@ -449,12 +449,14 @@ TurretStats
 	Stats
 	{
 		Barrels = 1
-		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
+		Salvo = [&../Barrels, &~/Part/Components/CommonReloadTimer/Duration]
+		ROF = 1 / (&~/Part/Components/CommonReloadTimer/Duration)
 		Range = &~/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/TurretBase/FiringArc)
 		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
 		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		PowerPerSecond = (&PowerPerShot) * (&ROF) * (&Barrels)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 }
@@ -469,8 +471,8 @@ BulletStats
 		DamagePerShot =  &~/BulletEmitterBase/Bullet/Components/DamagePool/Damage //Hit/HitOperational/HitEffects/0/Damage
 		DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
-		//DamageArea = &~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
-		//Penetration = &~/BulletEmitterBase/Bullet/Components/Hit/Penetration
+		DamageArea = &~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
+		Penetration = &~/BulletEmitterBase/Bullet/Components/Hit/Penetration
 		Acceleration = &~/BulletEmitterBase/Bullet/Components/Acceleration/Acceleration
 		ShotGuidance = deg(&~/BulletEmitterBase/Bullet/Components/Homing/TurnVelocity)
 		
@@ -528,15 +530,6 @@ TurretBase
 			EnableInDirectControlMode = true
 		}
 	]
-
-	BlueprintArcSprite
-	{
-		Texture = &/INDICATORS/WeaponArc
-		Size = [0, 1.5]
-		Color = [255, 0, 0, 63]
-	}
-	BlueprintArcRadius = 10
-	BlueprintArcSpriteSegments = 64
 
 	CoverageSectorArc
 	{

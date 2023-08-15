@@ -1,73 +1,9 @@
 Components
 	{
-		CommonReloadResetTriggerProxyProxy
+		ReloadProgressBar : &<med_turbolaser_switchable.rules>/ReloadProgressBarBase
 		{
-			Type = TriggerProxy
-			ComponentID = CommonReloadResetTriggerProxy
-		}
-		
-		WhiteExteriorToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = WhiteExteriorToggle
-		}
-
-		GreyExteriorToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = GreyExteriorToggle
-		}
-		
-		WhiteExteriorComponents
-		{
-			Type = ToggledComponents
-			Toggle = WhiteExteriorToggleProxy
-			IncludeInBlueprints = false
-			Components = &<med_turbolaser_white.rules>/Components
-		}
-		
-		GreyExteriorComponents
-		{
-			Type = ToggledComponents
-			Toggle = GreyExteriorToggleProxy
-			IncludeInBlueprints = false
-			Components = &<med_turbolaser_grey.rules>/Components
-		}
-		
-		FirePermissionToggle
-		{
-			Type = MultiToggle
-			Toggles = [CommonReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
-			Mode = All
-		}
-
-		Turret : &<med_turbolaser_switchable.rules>/TurretBase
-		{
-
-		}
-
-		TurretCollider
-		{
-			Type = CircleCollider
-			Location = &../Turret/Location
-			Radius = 0.75
-			IsHigh = true
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = CommonReloadTimer
-			Invert = true
 			LowColor = [64, 0, 0]
 			HighColor = [255, 0, 0]
-		}
-
-		CommonReloadResetTrigger
-		{
-			Type = MultiTrigger
-			Triggers = [Turret]
 		}
 	
 		BulletEmitterLeft : &<med_turbolaser_switchable.rules>/BulletEmitterBase
@@ -81,33 +17,6 @@ Components
 		{
 			Type = BulletEmitter
 			Location = [1.9, -0.3]
-		}
-
-		ChargeEffectSound
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = Turret
-			AnchorMediaEffects = true
-		
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/LaserReCharge
-			]
-		}
-
-		FireEffectSound
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Location = [1, 0]
-			Trigger = Turret
-			AnchorMediaEffects = true
-	
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/TurbolaserSFX
-			]
 		}
 
 		FireEffectLeft
@@ -128,13 +37,13 @@ Components
 			ChainedTo = BulletEmitterRight
 			Trigger = BulletEmitterRight
 		}
-		
-		GraphicsTurret
+
+		LightGraphics
 		{
 			Type = Graphics
 			OperationalToggle = CommonOnShootEffectTimer
 			InvertOperationalToggle = true
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Location = [1.9, 0]
 
 			OperationalRoofLighting
