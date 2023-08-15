@@ -12,11 +12,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[coil, 6]
 	]
 	AIValueFactor = 1
-	TypeCategories = [weapon, uses_power]//uses_laser_parts, 
+	TypeCategories = [weapon, uses_power]//, is_crewed 
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [1, 2]
 	PhysicalRect = [0, 1, 1, 1]
-	RectColliderRectType = Normal
 	SaveRect = &PhysicalRect
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
@@ -589,12 +588,14 @@ TurretStats
 	Stats
 	{
 		Barrels = 1
-		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
+		Salvo = [&../Barrels, &~/Part/Components/CommonReloadTimer/Duration]
+		ROF = 1 / (&~/Part/Components/CommonReloadTimer/Duration)
 		Range = &~/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/TurretBase/FiringArc)
 		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
 		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		PowerPerSecond = (&PowerPerShot) * (&ROF) * (&Barrels)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 }

@@ -13,13 +13,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[coil2, 8] //some extra
 	]  //Cost = 35000 
 	AIValueFactor = 1
-	TypeCategories = [weapon, uses_power,  is_crewed]//uses_laser_parts,
+	TypeCategories = [weapon, uses_power,  is_crewed]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [4, 4]
+	MaxHealth = 42000  
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "turbolasers"
-	MaxHealth = 42000  
 	InitialPenetrationResistance = 5
 	PenetrationRectType = Normal
 	AutoDoorMaxPathLength = 8
@@ -66,7 +66,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
-			CommandPoints = 24
+			CommandPoints = 12 //cannon_deck takes 8???
 		}
 
 		FireModeToggle
@@ -88,6 +88,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ModeToggle
 			Mode = FireModeToggle
 			OnMode = 2
+		}
+		FireAlternatingToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_alternating"
+			Default = 0
+			AvailableChoices = [0]
 		}
 
 		CommonReloadTimer
@@ -125,7 +132,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		SwitchWeaponCooldownTimer
 		{
 			Type = Timer
-			Duration = 9
+			Duration = 12.6
 			AutoStart = true
 			Repeats = false
 			StartsOn = 0
@@ -161,7 +168,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = false
 			Components = &<heavy/heavy_turbolaser_red.rules>/Components
 		}
-
 		BlueMunitionToggle
 		{
 			Type = ModeToggle
@@ -175,7 +181,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = false
 			Components = &<heavy/heavy_turbolaser_blue.rules>/Components
 		}
-
 		GreenMunitionToggle
 		{
 			Type = ModeToggle
@@ -197,8 +202,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 0
 			AvailableChoices = [0, 1]
 			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
 		}
-
 		WhiteExteriorToggle
 		{
 			Type = ModeToggle
@@ -231,9 +236,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 16000
+			MaxResources = 24000
 		}
-
 		BatteryConsumer
 		{
 			Type = ResourceConsumer
@@ -244,7 +248,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -660,18 +663,20 @@ TurretStats
 	Stats
 	{
 		Barrels = 2
-		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
-		Range = (&~/BulletEmitterBase/Bullet/Range)
+		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
+		Salvo = [&../Barrels, &~/Part/Components/CommonReloadTimer/Duration]
+		ROF = 1 / (&~/Part/Components/CommonReloadTimer/Duration)
+		Range = &~/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/TurretBase/FiringArc)
 		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
-		PowerPerShot = (&Barrels) * (&~/BulletEmitterBase/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF) * (&Barrels)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 }
 OperationalRoofLightingBase
 {
-	Size = [2.4, 3.55] //X/2(Desired Radius)+1,15(Distance between Barrels)+X/2=Y
+	Size = [2.4, 3.55] //X+1,15(Distance between Barrels)=Y
 	Z = 1.65 // Controls the "height" of the light for the purposes of normal mapping.
 }
 BulletEmitterBase
@@ -686,7 +691,7 @@ BulletEmitterBase
 	ResourceStorage = BatteryStorage
 	ResourcesUsed = 480
 	Bullet = &/COMMON_SHOTS/redsmalllasershot
-	Recoil = 40
+	Recoil = 48
 }
 ReloadProgressBarBase
 {
@@ -704,13 +709,11 @@ TurretBase
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0 // Uses separate fire timer.
-			FiringArc = 180d;
-			RotateSpeed = 15d;
-			FireThresholdAngle = 2d
-			AIFirepowerRating = 3200
-			//CanBeGivenExplicitTarget = true
-			//TargetSearchesPerSecond = 1
 			FirePermissionToggle = FirePermissionToggle
+			FiringArc = 240d
+			RotateSpeed = 16d
+			FireThresholdAngle = 2d
+			AIFirepowerRating = 6400
 			HoldTargetAfterCancel = 0.15
 			AutoTargetCrewSafetyDist = 8
 			IgnoreSourceShipLowLOSChecks = true
