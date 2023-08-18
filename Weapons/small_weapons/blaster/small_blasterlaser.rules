@@ -228,8 +228,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Layer = "structure"
 			AtlasSprite
 			{
-				File = "../turret_holder.png"
-				NormalsFile = "../turret_holder_normals.png"
+				File = "turret_holder.png"
+				NormalsFile = "turret_holder_normals.png"
 				Size = [1, 1]
 			}
 		}
@@ -237,12 +237,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Graphics
 		{
 			Type = Graphics
-			Location = [.5, 2]
+			Location = [.5, 1.5]
 			OperationalToggle = IsOperational
 			Floor
 			{
 				Layer = "floors"
-				Offset = [0, -0.5]
 				DamageLevels
 				[
 					{
@@ -277,7 +276,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"../doodads on8.png"
 						]
 						Size = [1, 1]
-						Offset = [0, -0.5]
 						AnimationInterval = 0.1
 					}
 				]
@@ -290,14 +288,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "../doodads off.png"
 						Size = [1, 1]
-						Offset = [0, -0.5]
 					}
 				]
 			}
 			OperationalLighting
 			{
 				Layer = "lights_add"
-				Offset = [0, -0.5]
 				DamageLevels
 				[
 					{
@@ -309,7 +305,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Walls
 			{
 				Layer = "walls"
-				Offset = [0, -0.5]
 				DamageLevels
 				[
 					{
@@ -329,7 +324,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Roof
 			{
 				Layer = "roofs"
-				Offset = [0, -0.5]
 				DamageLevels
 				[
 					{
@@ -352,6 +346,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalRoofDoodad
 			{
 				Layer = "roof_doodads"
+				Offset = [0, 0+5/64]
 				DamageLevels
 				[
 					{
@@ -371,11 +366,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			WallsStencil
 			{
 				Layer = "walls_stencil"
-				Offset = [0, -1.5]
+				Offset = [0, -2]
 				DamageLevels
 				[
 					{
-						File = "../turret_holder_stencil.png"
+						File = "turret_holder_stencil.png"
 						Size = [1, 1]
 					}
 				]
@@ -391,6 +386,48 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		Turret : &~/TurretBase
 		{
+			Type = TurretWeapon
+			Location = &~/TurretBase/Location
+			Rotation = &~/TurretBase/Rotation
+			OperationalToggle = IsOperational
+			AutoFireToggle = &~/TurretBase/AutoFireToggle
+			FireInterval = &~/TurretBase/FireInterval
+			FiringArc = &~/TurretBase/FiringArc
+			RotateSpeed = &~/TurretBase/RotateSpeed
+			FireThresholdAngle = &~/TurretBase/FireThresholdAngle
+			AIFirepowerRating = &~/TurretBase/AIFirepowerRating
+			CanBeGivenExplicitTarget = &~/TurretBase/CanBeGivenExplicitTarget
+			TargetSearchesPerSecond = &~/TurretBase/TargetSearchesPerSecond
+			Emitter = &~/TurretBase/Emitter
+			FirePermissionToggle = &~/TurretBase/FirePermissionToggle
+			HoldTargetAfterCancel = &~/TurretBase/HoldTargetAfterCancel
+			AutoTargetCrewSafetyDist = &~/TurretBase/AutoTargetCrewSafetyDist
+			IgnoreSourceShipLOSChecks = &~/TurretBase/IgnoreSourceShipLOSChecks
+			AllowFireWithBlockedLOS = &~/TurretBase/AllowFireWithBlockedLOS
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
 			
 		}
 
@@ -407,11 +444,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Weapon_Low
 		{
 			Type = Sprite
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Location = [0.68, 0]
 			Rotation = 90d
 			Layer = "weapons"
-			ResetAnimationTrigger = Turret
+			ResetAnimationTrigger = CommonReloadResetTriggerProxy
 			AtlasSprite
 			{
 				File ="weapon.png"
@@ -424,7 +461,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		}
 
-		ChargeEffect : &<small_blasterlaser.rules>/ChargeEffectBase
+		ChargeEffect : &~/ChargeEffectBase
 		{
 			
 		}
@@ -636,8 +673,8 @@ FireEffectBase
 ChargeEffectBase
 {
 	Type = TriggeredEffects
-	ChainedTo = Turret
-	Trigger = Turret
+	ChainedTo = TurretLocationProxy
+	Trigger = CommonReloadResetTriggerProxy
 	Location = [1.1, 0]
 	AnchorMediaEffects = true
 
@@ -701,7 +738,7 @@ TurretBase
 WeaponSpriteBase
 		{
 			Type = Sprite
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Location = [0.68, 0]
 			Rotation = 90d
 			Layer = "roof_turrets"

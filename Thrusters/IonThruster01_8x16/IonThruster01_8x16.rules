@@ -29,8 +29,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 192000
+		[steel, 920] //80/9*8*16=1137*81%
+		[coil2, 230] //20/9*8*16=284*81%
+		//[tristeel, 115] //10/9*8*16=142*81%
+	]
 	
 	Size = [8, 20]
 	PhysicalRect = [0, 0, 8, 16]
@@ -43,10 +45,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	InitialPenetrationResistance = 1
 	PenetrationRectType = Normal
 
-	ThrusterForce = 56000 //40%sizedegrade*[normalized] 122,5% of vanilla 1000*8/9 per tile //27000  //(8/3)*(6000)*1.1_^5=27096.140493488458737658554759606
+	ThrusterForce = 56000 //60%sizedegrade*[normalized] 122,5% of vanilla 1000*8/9 per tile //
 	ThrustIncreaseTime = 7.5
 	ThrustRecoveryTime = 3.2
-	FuelUsage = 3000 //40%sizedegrade*[normalized] 133% of vanilla 50*8/9 per tile //950 //11.25*250*(3/4)^5 = ~ 2812.5*(0.8)^5=921.6
+	FuelUsage = 3000 //40%sizedegrade*[normalized] 133% of vanilla 50*8/9 per tile //950
 
 	ProhibitBelow = 24
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine,PowerCellBuff]
@@ -153,31 +155,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			}
 		}
-/*
-		BatterySprites
+
+		MainThrusterLocationProxy
 		{
-			Type = ResourceSprites
-			Location = [1, 0.5]
-			ResourceStorage = BatteryStorage
-			Layer = "doodads_high"
-			HasZeroResourceSprite = false
-			ResourceLevels
-			[
-				{
-					File = "batteries 1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries 2.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries 3.png"
-					Size = [2, 1]
-				}
-			]
+			Type = ChainableProxy
+			ComponentID = MainThruster
 		}
-*/
+
+		MainThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = MainThruster
+		}
+		
+		ReverseThrusterLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = ReverseThruster
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
+		}
+
 		MainThruster
 		{
 			Type = Thruster

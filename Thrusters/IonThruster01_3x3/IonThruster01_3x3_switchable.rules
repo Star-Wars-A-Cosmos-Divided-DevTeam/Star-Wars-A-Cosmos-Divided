@@ -3,16 +3,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	NameKey = "Parts/IonThruster01_3x3"
 	IconNameKey = "Parts/IonThruster01_3x3_Icon"
 	ID = SW.IonThruster01_3x3_switchable
-	OtherIDs = [IonThruster01_3x3,SW.IonThruster01_3x3]//,SW.IonThruster01_5x5_switchable
+	OtherIDs = [IonThruster01_3x3,SW.IonThruster01_3x3]
 	EditorGroup = "Flight"
 	DescriptionKey = "Parts/IonThruster01_3x3_Desc"
 	Resources
 	[
-		[steel, 64]
-		[coil, 16]
-		[coil2, 6]
-	]  //Cost = 20000
-	TypeCategories = [thruster, uses_power]
+		[steel, 100]//125%*80 of vanilla
+		[coil, 12]//extra
+		[coil2, 24]//120%*20 of vanilla
+		//[tristeel, 12]//120%*10 of vanilla
+	]
+	TypeCategories = [thruster, ion_thruster, uses_power]
 	Size = [3, 5]
 	PhysicalRect = [0, 0, 3, 3]
 	SaveRect = &PhysicalRect
@@ -20,14 +21,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
-	MaxHealth = 7200 //7290 //81% of vanilla 9000/9 = 1000 per tile
-
-	ThrusterForce = 10000 //9800 //122,5% of vanilla 8000/9 = 1000*8/9 per tile
-	ThrustIncreaseTime = 3.6
-	ThrustRecoveryTime = 3.6
-	FuelUsage = 520 //532 //133% of vanilla 400/9 = 50*8/9 per tile
-
+	MaxHealth = 7200 //80%*9000 of vanilla
 	ProhibitBelow = 7
+	ThrusterForce = 12800 //160%*8000 of vanilla
+	ThrustIncreaseTime = 6.4 //custom
+	ThrustRecoveryTime = 3.5 //custom
+	FuelUsage = 256 //160%*40%*400 of vanilla
+
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
 
 	ForceManhattenPathInPart = true
@@ -244,6 +244,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ValueProxy
 			ComponentID = MainThruster
 		}
+		
+		ReverseThrusterLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = ReverseThruster
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
+		}
 
 		FloorGrid
 		{
@@ -398,7 +410,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		NozzleGraphics
 		{
 			Type = Graphics
-			Location = [1.5, 4.048]//[1.5, 4.096]
+			Location = [1.5, 4.0+4/64]
 			Floor
 			{
 				Layer = "weapons"
@@ -467,8 +479,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
-
-			Location = [1.5, 4.44]// Relative to upper-left corner of unrotated part.
+			Location = [1.5, 4.44]
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
@@ -490,22 +501,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelUsagePerSecond = (&../../FuelUsage)/20
 			AllowAutoFire = false
 		}
-
-		ReverseThruster
+		ReverseThruster : MainThruster
 		{
-			Type = Thruster
-			OperationalToggle = IsOperational
-			Location = [1.5, 0]
 			Rotation = -90d
-			Force = (&../../ThrusterForce)/16
 			MinActivation = 0
 			MaxActivation = { BaseValue=0.345; BuffType=Engine; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*4
-			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*4
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*2.1
+			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*1.2
+			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
+		}
+
+		ActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = MainThruster
+			LowColor = [0, 0, 0]
+			HighColor = [250, 250, 250]
+			FullColor = [255, 255, 255]
 		}
 
 		ThrustEffectsSounds
