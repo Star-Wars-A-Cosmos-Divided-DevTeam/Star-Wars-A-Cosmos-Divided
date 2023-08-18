@@ -8,10 +8,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/IonThrusterDesc"
 	Resources
 	[
-		[steel, 6]
-		[coil, 2]
-	]  //Cost = 1000
-	TypeCategories = [thruster, uses_power]
+		[steel, 10]//120%*8 of vanilla
+		[coil, 4]//133%*3 of vanilla
+	]
+	TypeCategories = [thruster, ion_thruster, uses_power]
 	Size = [1, 2]
 	PhysicalRect = [0, 0, 1, 1]
 	SaveRect = &PhysicalRect
@@ -19,13 +19,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
-	MaxHealth = 800 //810 //81% vanilla
+	MaxHealth = 800 //80%*1000 of vanilla
 	ProhibitBelow = 3
-	ThrusterForce = 490 //122,5% vanilla
-	ThrustIncreaseTime = 0.96
-	ThrustRecoveryTime = 0.96
-	FuelUsage = 40 //133% vanilla
+	ThrusterForce = 640 //160%*400 of vanilla
+	ThrustIncreaseTime = 0.96 //softer accel
+	ThrustRecoveryTime = 0.96 //softer deccel
+	FuelUsage = 19.2 //160%*40%*30 of vanilla
+
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
+
 	AllowedDoorLocations
 	[
 		[0, -1]
@@ -49,6 +51,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Toggles = [PowerToggle, BatteryStorage]
 			Mode = All
 		}
+		
 		PowerToggle
 		{
 			Type = UIToggle
@@ -68,8 +71,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 1000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -111,7 +114,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = 1
-			//AvailableChoices = [0, 1, 2, 3]
+			AvailableChoices = [0, 1, 2, 3]
+			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
 
@@ -177,6 +181,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
 			AvailableChoices = [0, 1, 2]
+			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
 		GlowToggle
@@ -224,6 +229,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ValueProxy
 			ComponentID = MainThruster
+		}
+		
+		ReverseThrusterLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = ReverseThruster
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
 		}
 
 		Graphics
@@ -411,7 +428,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		NozzleGraphics
 		{
 			Type = Graphics
-			Location = [0.5, 1.50]
+			Location = [0.5, 1.5-1/64]//exactpixelcoords
 			Floor
 			{
 				Layer = "weapons"
@@ -459,13 +476,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		MainThruster
 		{
 			Type = Thruster
-			OperationalToggle = IsOperational,
-			Location = [0.5, 1.225]// Relative to upper-left corner of unrotated part.
+			OperationalToggle = IsOperational
+			Location = [0.5, 1.225]
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
+			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
@@ -482,24 +499,51 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelUsagePerSecond = (&../../FuelUsage)/20
 			AllowAutoFire = false
 		}
-		ReverseThruster
+		ReverseThruster : MainThruster
 		{
-			Type = Thruster
-			OperationalToggle = IsOperational,
-			Location = [0.5, 0]
 			Rotation = -90d
-			Force = (&../../ThrusterForce)/4.9
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.345; BuffType=Engine; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=0.42; BuffType=Engine; BuffMode=Multiply; }
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*2
-			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*2
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = (&../../FuelUsage)/2
+			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*2.1
+			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*1.2
+			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
 			AllowAutoFire = false
 		}
-
+		
+		ActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = MainThruster
+			LowColor = [0, 0, 0]
+			HighColor = [250, 250, 250]
+			FullColor = [255, 255, 255]
+		}
+/*
+		ActivationBarTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThruster
+			MinAmount = 0.01
+		}
+		ActivationBarToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = ActivationBarTrigger
+			StartsOn = false
+		}
+		ActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ActivationBarToggle
+			ShowProgressFor = MainThruster
+			LowColor = [0, 0, 0]
+			HighColor = [250, 250, 250]
+			FullColor = [255, 255, 255]
+		}
+*/
 		ThrustEffectsSound
 		{
 			Type = ContinuousEffects
@@ -556,39 +600,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-/*
-		WhiteThruster
-		{
-			Type = Thruster
-			OperationalToggle = IsOperational,
-			Location = [0.5, 1.225]// Relative to upper-left corner of unrotated part.
-			Rotation = 90d// Relative to unrotated part.
-			Force = &../../ThrusterForce
-			MinActivation = 0
-			MaxActivation = { BaseValue=0.64; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = 60
-			ActivationRecoveryTime = 60
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = (&../../FuelUsage)*0.64
-		}
-	
-		ThrustEffectsWhiteThruster
-		{
-			Type = ContinuousEffects
-			ChainedTo = WhiteThruster
-			FactorMediaEffectsIntensityWith = WhiteThruster
-			MediaEffects
-			[
-				&/COMMON_PARTICLES/IonThruster/Glow/Small/White
-				&/COMMON_PARTICLES/Thruster/Fire/Small/White
-				&/COMMON_PARTICLES/Thruster/PlumeLight/Small/White
-				&/COMMON_PARTICLES/Thruster/Smoke/Small
-				&/COMMON_PARTICLES/Thruster/Sparks/Spread/White
-			]
-		}
-*/
+		
 		OperationEffects
 		{
 			Type = ToggleEffects

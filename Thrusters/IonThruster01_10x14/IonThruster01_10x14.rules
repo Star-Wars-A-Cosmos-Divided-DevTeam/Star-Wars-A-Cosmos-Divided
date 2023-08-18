@@ -29,8 +29,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 196000
+		[steel, 1040] //80/9*10*14=1244*81%
+		[coil2, 260] //20/9*10*14=310*81%
+		//[tristeel, 130] //10/9*10*14=155*81%
+	]
 	
 	Size = [10, 18]
 	PhysicalRect = [0, 0, 10, 14]
@@ -41,10 +43,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeID = "thrusters"
 	MaxHealth = 140000
 
-	ThrusterForce = 42000  //(10/3)*(6000)*1.1_^7=20000*1.1_^7=41815.031625753794348238481160969
-	ThrustIncreaseTime = 0
-	ThrustRecoveryTime = 0
-	FuelUsage = 2100 //17.5*250*(3/4)^7 = ~ 4375*(0.9)^7=2092.5489375
+	ThrusterForce = 42000 //60%sizedegrade*[normalized] 122,5% of vanilla 1000*8/9 per tile //
+	ThrustIncreaseTime = 9.2
+	ThrustRecoveryTime = 4.5
+	FuelUsage = 2100 
 
 	ProhibitBelow = 26
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine,PowerCellBuff]
@@ -141,6 +143,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 				}
 			}
+		}
+
+		MainThrusterLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = MainThruster
+		}
+
+		MainThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = MainThruster
+		}
+		
+		ReverseThrusterLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = ReverseThruster
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
 		}
 
 		MainThruster

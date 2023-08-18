@@ -8,10 +8,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_1x2_Desc"
 	Resources
 	[
-		[steel, 18]//75% of vanilla 24
-		[coil, 6]//66% of vanilla 9
-	]  //Cost = 3000
-	TypeCategories = [thruster, uses_power]
+		[steel, 30]//125%*24 of vanilla
+		[coil, 12]//133%*9 of vanilla
+	]
+	TypeCategories = [thruster, ion_thruster, uses_power]
 	Size = [1, 3]
 	PhysicalRect = [0, 0, 1, 2]
 	SaveRect = &PhysicalRect
@@ -19,13 +19,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
-	MaxHealth = 1600 //1620 //81% of vanilla 2000
+	MaxHealth = 1600 //80%*2000 of vanilla
 	ProhibitBelow = 4
-	ThrusterForce = 1500 //1470 //122,5% of vanilla 1200
-	ThrustIncreaseTime = 1.6
-	ThrustRecoveryTime = 1.6
-	FuelUsage = 140 //133 //133% of vanilla 100 
+	ThrusterForce = 1920 //160%*1200 of vanilla
+	ThrustIncreaseTime = 3.2 //80%*4.0 of vanilla
+	ThrustRecoveryTime = 1.6 //80%*2.0 of vanilla
+	FuelUsage = 64 //160%*40%*100 of vanilla
+
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
+
 	AllowedDoorLocations
 	[
 		[-1, 0]
@@ -62,13 +64,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			CommandPoints = 2
 		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 2800
+			MaxResources = 2000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -111,6 +114,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = 1
 			AvailableChoices = [0, 1, 2, 3]
+			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
 
@@ -176,6 +180,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
 			AvailableChoices = [0, 1, 2]
+			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
 		GlowToggle
@@ -223,6 +228,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ValueProxy
 			ComponentID = MainThruster
+		}
+		
+		ReverseThrusterLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = ReverseThruster
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
 		}
 
 		FloorGrid
@@ -381,7 +398,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		NozzleGraphics
 		{
 			Type = Graphics
-			Location = [.5, 2.6]//Y 2.5?
+			Location = [.5, 2.5+7/64]//exactpixelcoords
 			Floor
 			{
 				Layer = "weapons"
@@ -429,7 +446,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
-			Location = [0.5, 2.56]// Relative to upper-left corner of unrotated part.
+			Location = [0.5, 2.56]
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
@@ -451,22 +468,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelUsagePerSecond = (&../../FuelUsage)/20
 			AllowAutoFire = false
 		}
-		ReverseThruster
+		ReverseThruster : MainThruster
 		{
-			Type = Thruster
-			OperationalToggle = IsOperational,
-			Location = [0.5, 0]
 			Rotation = -90d
-			Force = (&../../ThrusterForce)/4
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.345; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
+			MaxActivation = { BaseValue=0.42; BuffType=Engine; BuffMode=Multiply; }
+			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*2
-			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*2
+			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*2.1
+			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*1.2
 			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
 			AllowAutoFire = false
+		}
+		
+		ActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = MainThruster
+			LowColor = [0, 0, 0]
+			HighColor = [250, 250, 250]
+			FullColor = [255, 255, 255]
 		}
 
 		ThrustEffectsSounds

@@ -84,12 +84,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-		FirePermissionToggle
-		{
-			Type = MultiToggle
-			Toggles = [CommonReloadTimer, FireModeToggle]
-			Mode = All
-		}
 
 		CommonReloadTimer
 		{
@@ -258,9 +252,58 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
+		FirePermissionToggle
+		{
+			Type = MultiToggle
+			Toggles = [CommonReloadTimer, FireModeToggle]
+			Mode = All
+		}
+
 		Turret : &~/TurretBase
 		{
+			Type = TurretWeapon
+			Location = &~/TurretBase/Location
+			Rotation = &~/TurretBase/Rotation
+			OperationalToggle = IsOperational
+			AutoFireToggle = &~/TurretBase/AutoFireToggle
+			FireInterval = &~/TurretBase/FireInterval
+			FiringArc = &~/TurretBase/FiringArc
+			RotateSpeed = &~/TurretBase/RotateSpeed
+			FireThresholdAngle = &~/TurretBase/FireThresholdAngle
+			AIFirepowerRating = &~/TurretBase/AIFirepowerRating
+			CanBeGivenExplicitTarget = &~/TurretBase/CanBeGivenExplicitTarget
+			TargetSearchesPerSecond = &~/TurretBase/TargetSearchesPerSecond
+			Emitter = &~/TurretBase/Emitter
+			FirePermissionToggle = &~/TurretBase/FirePermissionToggle
+			HoldTargetAfterCancel = &~/TurretBase/HoldTargetAfterCancel
+			AutoTargetCrewSafetyDist = &~/TurretBase/AutoTargetCrewSafetyDist
+			IgnoreSourceShipLOSChecks = &~/TurretBase/IgnoreSourceShipLOSChecks
+			AllowFireWithBlockedLOS = &~/TurretBase/AllowFireWithBlockedLOS
 
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+			
 		}
 
 		TurretCollider
@@ -505,17 +548,17 @@ TurretBase
 	Type = TurretWeapon
 	Location = [0.5, 0.39]
 	Rotation = -90d
-	Emitter = BulletEmitter
 	OperationalToggle = IsOperational
 	AutoFireToggle = AutoFireToggle
 	FireInterval = 0
 	FiringArc = 0d
 	ValidArc = 360d
-	FireThresholdAngle = 180d;
 	RotateSpeed = 0d
+	FireThresholdAngle = 180d
 	AIFirepowerRating = 2000
 	CanBeGivenExplicitTarget = true
 	TargetSearchesPerSecond = 1
+	Emitter = BulletEmitter
 	FirePermissionToggle = FirePermissionToggle
 	HoldTargetAfterCancel = 0.15
 	AutoTargetCrewSafetyDist = 8

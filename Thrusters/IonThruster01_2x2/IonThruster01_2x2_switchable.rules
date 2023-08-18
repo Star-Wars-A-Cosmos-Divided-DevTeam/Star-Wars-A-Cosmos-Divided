@@ -8,10 +8,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_2x2_Desc"
 	Resources
 	[
-		[steel, 32] 
-		[coil, 12]
-	]  //Cost = 8000
-	TypeCategories = [thruster, uses_power]
+		[steel, 50]//125%*40 of vanilla
+		[coil2, 14]//140%*10 of vanilla
+	]
+	TypeCategories = [thruster, ion_thruster, uses_power]
 	Size = [2, 3]
 	PhysicalRect = [0, 0, 2, 2]
 	SaveRect = &PhysicalRect
@@ -19,13 +19,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
-	MaxHealth = 3200 //3240 //81% of vanilla 4000
+	MaxHealth = 3200 //80%*4000 of vanilla
 	ProhibitBelow = 5
-	ThrusterForce = 4000 //3920 //122,5% of vanilla 3200
-	ThrustIncreaseTime = 2.7
-	ThrustRecoveryTime = 2.7
-	FuelUsage = 265 //266 //133% of vanilla 200
+	ThrusterForce = 5120 //160%*3200 of vanilla
+	ThrustIncreaseTime = 4.8 //custom
+	ThrustRecoveryTime = 2.1 //custom
+	FuelUsage = 128 //160%*40%*200 of vanilla
+
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
+
 	AllowedDoorLocations
 	[
 		[-1, 0]
@@ -70,10 +72,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 3000
+			MaxResources = 4000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -231,6 +232,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ValueProxy
 			ComponentID = MainThruster
 		}
+		
+		ReverseThrusterLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = ReverseThruster
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
+		}
 
 		FloorGrid
 		{
@@ -387,7 +400,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		NozzleGraphics
 		{
 			Type = Graphics
-			Location = [1, 2.55]
+			Location = [1, 2.5+7/64]//exactpixelcoords
 			Floor
 			{
 				Layer = "weapons"
@@ -396,17 +409,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "nozzle.png"
 						NormalsFile = "nozzle_normals.png"
-						Size = [1.8, 0.9]
+						Size = [1.8, 1.0]
 					}
 					{
 						File = "nozzle_33.png"
 						NormalsFile = "nozzle_normals_33.png"
-						Size = [2, 1]
+						Size = [1.8, 1.0]
 					}
 					{
 						File = "nozzle_66.png"
 						NormalsFile = "nozzle_normals_66.png"
-						Size = [2, 1]
+						Size = [1.8, 1.0]
 					}
 				]
 			}
@@ -440,7 +453,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
-			Location = [1, 2.727]// Relative to upper-left corner of unrotated part.
+			Location = [1, 2.727]
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
@@ -463,23 +476,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelUsagePerSecond = (&../../FuelUsage)/20
 			AllowAutoFire = false
 		}
-		ReverseThruster
+		ReverseThruster : MainThruster
 		{
-			Type = Thruster
-			OperationalToggle = IsOperational
-
-			Location = [1, 0]
 			Rotation = -90d
-			Force = (&../../ThrusterForce)/8
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.345; BuffType=Engine; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=0.42; BuffType=Engine; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*4
-			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*2
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*2.1
+			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*1.2
+			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
 			AllowAutoFire = false
+		}
+		
+		ActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = MainThruster
+			LowColor = [0, 0, 0]
+			HighColor = [250, 250, 250]
+			FullColor = [255, 255, 255]
 		}
 
 		ThrustEffectsSounds
