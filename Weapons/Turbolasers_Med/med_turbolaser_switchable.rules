@@ -1,25 +1,25 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {	
+	ID = SW.turbolaser_med_switchable
+	OtherIDs = [med_turbolaser,med_turbolaser2,med_turbolaserb1,med_turbolaserb2,med_turbolaserg1,med_turbolaserg2,SW.turbolaser_med_switchable_2]
 	NameKey = "Parts/Medturbolaserswitchable"
 	IconNameKey = "Parts/MedturbolaserswitchableIcon"
-	ID = SW.turbolaser_med_switchable
-	OtherIDs = [med_turbolaser,med_turbolaser2,med_turbolaserb1,med_turbolaserb2,med_turbolaserg1,med_turbolaserg2]
-	EditorGroup = "WeaponsEnergy"
 	DescriptionKey = "Parts/MedturbolaserswitchableDesc"
+	EditorGroup = "WeaponsEnergy"
 	Resources
 	[
 		[steel, 48]
 		[coil, 18]
 	]
-	AIValueFactor = 1
+	AIValueFactor = 2
 	TypeCategories = [weapon, uses_power,  is_crewed]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [2, 2]
 	MaxHealth = 8000
-
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "turbolasers"
+	//RequiresCategories = []
 	InitialPenetrationResistance = 5
 	PenetrationRectType = Normal
 	AutoDoorMaxPathLength = 8
@@ -33,11 +33,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	*/
 	AllowedDoorLocations
 	[
+		//[-1, 0]
 		[-1, 1]
+        [0, 2]
 		[1, 2]
         [2, 1]
-        [0, 2]
+       	//[2, 0]
+       	//[1, -1]
+       	//[0, -1]
 	]
+	GenerateRectCollider = true
 	EditorIcon
 	{
 		Texture
@@ -107,7 +112,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
-
 		CommonOnShootEffectTimer
 		{
 			Type = Timer
@@ -115,7 +119,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
-
 		CommonReloadResetTriggerProxy
 		{
 			Type = TriggerProxy
@@ -413,25 +416,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		Turret : &~/TurretBase
 		{
-			Type = TurretWeapon
-			Location = &~/TurretBase/Location
-			Rotation = &~/TurretBase/Rotation
-			OperationalToggle = IsOperational
-			AutoFireToggle = &~/TurretBase/AutoFireToggle
-			FireInterval = &~/TurretBase/FireInterval
-			FiringArc = &~/TurretBase/FiringArc
-			RotateSpeed = &~/TurretBase/RotateSpeed
-			FireThresholdAngle = &~/TurretBase/FireThresholdAngle
-			AIFirepowerRating = &~/TurretBase/AIFirepowerRating
-			CanBeGivenExplicitTarget = &~/TurretBase/CanBeGivenExplicitTarget
-			TargetSearchesPerSecond = &~/TurretBase/TargetSearchesPerSecond
-			Emitter = &~/TurretBase/Emitter
-			FirePermissionToggle = &~/TurretBase/FirePermissionToggle
-			HoldTargetAfterCancel = &~/TurretBase/HoldTargetAfterCancel
-			AutoTargetCrewSafetyDist = &~/TurretBase/AutoTargetCrewSafetyDist
-			IgnoreSourceShipLOSChecks = &~/TurretBase/IgnoreSourceShipLOSChecks
-			IgnoreSourceShipLowLOSChecks = &~/TurretBase/IgnoreSourceShipLowLOSChecks
-			AllowFireWithBlockedLOS = &~/TurretBase/AllowFireWithBlockedLOS
+
 		}
 
 		BulletEmitterBase : &~/BulletEmitterBase
@@ -449,7 +434,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[0.9, 1.4]
 				[-0.9, 1.4]
 			]
-			ChainedTo = Turret
+			Location = &~/TurretBase/Location
 			IsHigh = true
 		}
 

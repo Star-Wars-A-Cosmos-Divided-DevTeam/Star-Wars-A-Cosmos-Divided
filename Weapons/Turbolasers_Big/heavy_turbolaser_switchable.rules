@@ -11,7 +11,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[steel, 128] //4*4*8*2
 		[coil, 72] //[2, 5] takes 36
 		[coil2, 8] //some extra
-	]  //Cost = 35000 
+	]
 	AIValueFactor = 1
 	TypeCategories = [weapon, uses_power,  is_crewed]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
@@ -20,22 +20,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "turbolasers"
+	//RequiresCategories = []
 	InitialPenetrationResistance = 5
 	PenetrationRectType = Normal
 	AutoDoorMaxPathLength = 8
 	MaxDoors = 4
 	AllowedDoorLocations
 	[
+		//[-1, 0]
+		//[-1, 1]
 		[-1, 2]
-		[4, 2]
 		[-1, 3]
-		[4, 3]
 		[0, 4]
 		[1, 4]
 		[2, 4]
 		[3, 4]
+		[4, 3]
+		[4, 2]
+		//[4, 1]
+		//[4, 0]
+		//[3, -1]
+		//[2, -1]
+		//[1, -1]
+		//[0, -1]
 	]
-
 	EditorIcon
 	{
 		Texture
@@ -104,7 +112,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
-
 		CommonOnShootEffectTimer
 		{
 			Type = Timer
@@ -112,7 +119,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
-
 		CommonReloadResetTriggerProxy
 		{
 			Type = TriggerProxy
@@ -154,7 +160,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
-		
+
 		RedMunitionToggle
 		{
 			Type = ModeToggle
@@ -168,6 +174,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = false
 			Components = &<heavy/heavy_turbolaser_red.rules>/Components
 		}
+
 		BlueMunitionToggle
 		{
 			Type = ModeToggle
@@ -181,6 +188,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = false
 			Components = &<heavy/heavy_turbolaser_blue.rules>/Components
 		}
+
 		GreenMunitionToggle
 		{
 			Type = ModeToggle
@@ -194,7 +202,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = false
 			Components = &<heavy/heavy_turbolaser_green.rules>/Components
 		}
-		
+
 		ExteriorType
 		{
 			Type = UIToggle
@@ -356,7 +364,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [0,0]
+			//Location = [0, 0]
 			ChainedTo = Turret
 			Rotation = 90d
 			OperationalLighting
@@ -366,7 +374,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "lights4.png"
-						Size = [1.625,1.125]
+						Size = [1.625, 1.125]
 					}
 				]
 			}
@@ -400,26 +408,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		TurretGhostGraphics
-		{
-			Type = Graphics
-			OperationalToggle = IsOperational
-			Location = [1, 0]
-			ChainedTo = Turret
-			Rotation = 90d
-			Floor
-			{
-				Layer = "doodads_high"
-				DamageLevels
-				[
-					{
-						File = "Heavy/barrel_shadow.png"
-						Size = [4, 5]
-					}
-				]
-			}
-		}
-
 		FirePermissionToggle
 		{
 			Type = MultiToggle
@@ -447,8 +435,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[0.9, 1.4]
 				[-0.9, 1.4]
 			]
-			ChainedTo = Turret
+			Location = &../Turret/Location
 			IsHigh = true
+		}
+
+		CommonReloadResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [Turret]
 		}
 
 		ChargeEffectSound
@@ -478,16 +472,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
-		CommonReloadResetTrigger
-		{
-			Type = MultiTrigger
-			Triggers = [Turret]
-		}
-
 		TurretLocationProxy
 		{
 			Type = ChainableProxy
 			ComponentID = Turret
+		}
+
+		TurretGhostGraphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [1, 0]
+			ChainedTo = Turret
+			Rotation = 90d
+			Floor
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "Heavy/barrel_shadow.png"
+						Size = [4, 5]
+					}
+				]
+			}
 		}
 
 		CrewLocation1
@@ -664,7 +672,7 @@ TurretStats
 	{
 		Barrels = 2
 		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
-		Salvo = [&../Barrels, &~/Part/Components/CommonReloadTimer/Duration]
+		Salvo = [&../Barrels, &../ReloadTime]
 		ROF = 1 / (&~/Part/Components/CommonReloadTimer/Duration)
 		Range = &~/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/TurretBase/FiringArc)

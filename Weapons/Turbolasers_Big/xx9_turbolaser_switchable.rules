@@ -8,32 +8,41 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	EditorGroup = "WeaponsEnergy"
 	Resources
 	[
-		[steel, 128] //4*4*8*2
-		[coil, 72] //[2, 5] takes 36
-		[coil2, 8] //some extra
-	]  //Cost = 34000 
-	AIValueFactor = 1
-	TypeCategories = [weapon, uses_power,  is_crewed]//uses_laser_parts,
+		[steel, 135]
+		[coil, 75]
+		[coil2, 10]
+	]
+	AIValueFactor = 2
+	TypeCategories = [weapon, uses_power,  is_crewed]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [4, 4]
+	MaxHealth = 42000  
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "turbolasers"
-	MaxHealth = 42000  
+	//RequiresCategories = []
 	InitialPenetrationResistance = 5
 	PenetrationRectType = Normal
 	AutoDoorMaxPathLength = 8
 	MaxDoors = 4
 	AllowedDoorLocations
 	[
+		//[-1, 0]
+		//[-1, 1]
 		[-1, 2]
-		[4, 2]
 		[-1, 3]
-		[4, 3]
 		[0, 4]
 		[1, 4]
 		[2, 4]
 		[3, 4]
+		[4, 3]
+		[4, 2]
+		//[4, 1]
+		//[4, 0]
+		//[3, -1]
+		//[2, -1]
+		//[1, -1]
+		//[0, -1]
 	]
 	EditorIcon
 	{
@@ -65,7 +74,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
-			CommandPoints = 24
+			CommandPoints = 12 //cannon_deck takes 8???
 		}
 
 		FireModeToggle
@@ -88,6 +97,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = FireModeToggle
 			OnMode = 2
 		}
+		FireAlternatingToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_alternating"
+			Default = 0
+			AvailableChoices = [0]
+		}
 
 		CommonReloadTimer
 		{
@@ -96,7 +112,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
-
 		CommonOnShootEffectTimer
 		{
 			Type = Timer
@@ -104,7 +119,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
-
 		CommonReloadResetTriggerProxy
 		{
 			Type = TriggerProxy
@@ -160,13 +174,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Components = &<Tower/xx9_turbolaser_red.rules>/Components
 		}
 
-		BlueMunitionToggle
-		{
-			Type = ModeToggle
-			Mode = MunitionType
-			OnMode = 1
-		}
-
 		GreenMunitionToggle
 		{
 			Type = ModeToggle
@@ -189,25 +196,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggledOnChoices = [0, 1]
 			AlwaysAllowInBuildMode = true
 		}
+
 		WhiteExteriorToggle
 		{
 			Type = ModeToggle
 			Mode = ExteriorType
 			OnMode = 0
 		}
-		GreyExteriorToggle
-		{
-			Type = ModeToggle
-			Mode = ExteriorType
-			OnMode = 1
-		}
-
 		WhiteExteriorComponents
 		{
 			Type = ToggledComponents
 			Toggle = WhiteExteriorToggle
 			IncludeInBlueprints = false
 			Components = &<Tower/xx9_turbolaser_white.rules>/Components
+		}
+
+		GreyExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 1
 		}
 		GreyExteriorComponents
 		{
@@ -666,13 +674,13 @@ TurretBase
 		{
 			Type = TurretWeapon
 			Location = [2, 2]
-			Rotation = -90d// Relative to unrotated part.
+			Rotation = -90d
 			Emitter = BulletEmitterBase
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0//4.5
-			FiringArc = 180d;
-			RotateSpeed = 15d;
+			FiringArc = 360d
+			RotateSpeed = 15d
 			FireThresholdAngle = 2d
 			AIFirepowerRating = 3200
 			TargetSearchesPerSecond = 1
