@@ -1,17 +1,17 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+	ID = SW.mining_laser_huge
 	NameKey = "Parts/SWMiningLaserHuge"
 	IconNameKey = "Parts/SWMiningLaserHugeIcon"
-	ID = SW.mining_laser_huge
-	EditorGroups = ["WeaponsEnergy", "Utilities"]
 	DescriptionKey = "Parts/SWMiningLaserHugeDesc"
+	EditorGroups = ["WeaponsEnergy", "Utilities"]
 	Resources
 	[
 		[steel, 96*4]
 		[coil, 36*4]
 	]
 	Size = [4, 6]
-	MaxHealth = 6000
+	MaxHealth = 24000
 	SelectionPriority = 1
 	TypeCategories = [weapon, uses_power, is_crewed, mining]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
@@ -60,7 +60,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 10000 // TODO
+			MaxResources = 49000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
@@ -248,7 +248,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "./Data/ships/common/light_blob.png"
-						Size = [1.75, 1.75]
+						Size = [3.5, 3.5]
 						Z = 1 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
 						VertexColor = [255*1.0, 0, 0]
 					}
@@ -259,7 +259,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Turret
 		{
 			Type = TurretWeapon
-			Location = [2, 4]// Relative to upper-left corner of unrotated part.
+			Location = [2, 3.8]// Relative to upper-left corner of unrotated part.
 			Rotation = -90d // Relative to unrotated part.
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
@@ -267,7 +267,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FiringArc = 270d
 			RotateSpeed = 30d
 			FireThresholdAngle = 0.25d
-			AIFirepowerRating = 800
+			AIFirepowerRating = 2400
 			CanSalvage = true
 			IncludeInFirepowerEstimation = false
 			AlwaysShowCoverage = true
@@ -314,17 +314,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IsHigh = true
 		}
 
-		BeamEmitterBase : <./Data/shots/mining_beam_small/mining_beam_small.rules>
+		BeamEmitterBase : &<../../SW_effects/shots/mining_beam_huge_pink.rules>
 		{
 			Type = BeamEmitter
 			ChainedTo = Turret
 			FireTrigger // none, but field is required
 			GetTargetFrom = Turret
-			Location = [1.484375*.75, 0]
+			Location = [1.484375*1.5, 0]
 			OperationalToggle = IsOperational
 			Duration = .2
 			ResourceStorage = BatteryStorage
-			ResourcesUsed = 120
+			ResourcesUsed = 250
 			MinResourcesUsed = 1
 			Width = abs((&../BeamEmitterLeft/Location/1) - (&../BeamEmitterRight/Location/1)) + (&^/0/Width) / 2
 		}
@@ -333,7 +333,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Oscillator
 			ChainedTo = Turret
 			OperationalToggle = BeamEmitterLeft
-			Location = [59/64, -14/64]
+			Location = [110/64, -28/64] //161/64
 			Angle = -0.5d
 			Interval = 4.0
 			ResetWhenOperational = true
@@ -341,22 +341,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RightOscillator : LeftOscillator
 		{
 			OperationalToggle = BeamEmitterRight
-			Location = [59/64, 14/64]
+			Location = [110/64, 28/64] //161/64
 			Angle = -(&../LeftOscillator/Angle)
 		}
+		
 		BeamEmitterLeft : BeamEmitterBase
 		{
 			ChainedTo = LeftOscillator
 			FireTrigger = Turret
-			Location = [0, -14/64]
-			Width = &<./Data/shots/mining_beam_small/mining_beam_small.rules>/Width // BeamEmitterBase overrides width for targeting purposes.
+			Location = [0, -28/64]
+			Width = &/COMMON_SHOTS/miningbeamhugepink/Width // BeamEmitterBase overrides width for targeting purposes.
 		}
 		BeamEmitterRight : BeamEmitterBase
 		{
 			ChainedTo = RightOscillator
 			FireTrigger = Turret
-			Location = [0, 14/64]
-			Width = &<./Data/shots/mining_beam_small/mining_beam_small.rules>/Width // BeamEmitterBase overrides width for targeting purposes.
+			Location = [0, 28/64]
+			Width = &/COMMON_SHOTS/miningbeamhugepink/Width // BeamEmitterBase overrides width for targeting purposes.
 		}
 
 		CrewLocation
@@ -567,54 +568,54 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [1, 153/64]
+			Location = [2, 306/64]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_low"
 			ResourceLevels
 			[
 				{
 					File = "batteries1.png"
-					Offset = [0.5, 0]
-					Size = [1, 1]
+					Offset = [1, 0]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries2.png"
-					Offset = [0.5, 0]
-					Size = [1, 1]
+					Offset = [1, 0]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries3.png"
-					Offset = [0.5, 0]
-					Size = [1, 1]
+					Offset = [1, 0]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries4.png"
-					Offset = [0.5, 0]
-					Size = [1, 1]
+					Offset = [1, 0]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries5.png"
-					Size = [2, 1]
+					Size = [4, 2]
 				}
 				{
 					File = "batteries6.png"
-					Size = [2, 1]
+					Size = [4, 2]
 				}
 				{
 					File = "batteries7.png"
-					Size = [2, 1]
+					Size = [4, 2]
 				}
 				{
 					File = "batteries8.png"
-					Size = [2, 1]
+					Size = [4, 2]
 				}
 				{
 					File = "batteries9.png"
-					Size = [2, 1]
+					Size = [4, 2]
 				}
 				{
 					File = "batteries10.png"
-					Size = [2, 1]
+					Size = [4, 2]
 				}
 			]
 		}
@@ -638,7 +639,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [1, 1.5]
+			Location = [2, 3]
 			Layer = "indicators"
 			Indicators
 			[
@@ -648,7 +649,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 				}
 
@@ -659,7 +660,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 				}
 
@@ -669,7 +670,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 				}
 			]
