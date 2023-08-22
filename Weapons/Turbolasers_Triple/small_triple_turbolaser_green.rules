@@ -1,117 +1,29 @@
 Components
 	{
-		CommonReloadResetTriggerProxyProxy
+		ReloadProgressBar : &<small_triple_turbolaser.rules>/ReloadProgressBarBase
 		{
-			Type = TriggerProxy
-			ComponentID = CommonReloadResetTriggerProxy
+			LowColor = [0, 64, 0]
+			HighColor = [0, 255, 0]
 		}
 		
-		WhiteExteriorToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = WhiteExteriorToggle
-		}
-
-		GreyExteriorToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = GreyExteriorToggle
-		}
-
-		WhiteExteriorComponents
-		{
-			Type = ToggledComponents
-			Toggle = WhiteExteriorToggle
-			IncludeInBlueprints = false
-			Components = &<small_triple_turbolaser_white.rules>/Components
-		}
-		GreyExteriorComponents
-		{
-			Type = ToggledComponents
-			Toggle = GreyExteriorToggle
-			IncludeInBlueprints = false
-			Components = &<small_triple_turbolaser_grey.rules>/Components
-		}
-
-		FirePermissionToggle
-		{
-			Type = MultiToggle
-			Toggles = [CommonReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
-			Mode = All
-		}
-
-		Turret : &<small_triple_turbolaser.rules>/TurretBase
-		{
-
-		}
-
-		TurretCollider
-		{
-			Type = CircleCollider
-			Location = &../Turret/Location
-			Radius = 0.81
-			IsHigh = true
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = CommonReloadTimer
-			Invert = true
-			LowColor = [64, 0, 0]
-			HighColor = [255, 0, 0]
-		}
-
-		CommonReloadResetTrigger
-		{
-			Type = MultiTrigger
-			Triggers = [Turret]
-		}
-
 		BulletEmitterMid : &<small_triple_turbolaser.rules>/BulletEmitterBase
 		{
 			Location = [1.52, 0]
+			FireTrigger = ShootMidTriggerProxy
 			Bullet = &/COMMON_SHOTS/greentriplelasershot
 		}
 
 		BulletEmitterLeft : BulletEmitterMid
 		{
 			Location = [1.52, -0.3]
+			FireTrigger = ShootLeftTriggerProxy
 		}
 
 		BulletEmitterRight : BulletEmitterMid
 		{
 			Location = [1.52, 0.3]
+			FireTrigger = ShootRightTriggerProxy
 		}
-
-		ChargeEffectSound
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = Turret
-			AnchorMediaEffects = true
-		
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/LaserReCharge
-			]
-		}
-
-		FireEffectSound
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Location = [1, 0]
-			Trigger = Turret
-			AnchorMediaEffects = true
-	
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/TurbolaserSFX
-			]
-		}
-
 
 		FireEffectMid
 		{
@@ -119,7 +31,7 @@ Components
 			ChainedTo = BulletEmitterMid
 			Trigger = BulletEmitterMid
 			AnchorMediaEffects = true
-	
+
 			MediaEffects
 			[
 				&/COMMON_PARTICLES/GreenLaserShoot
@@ -132,14 +44,13 @@ Components
 			Trigger = BulletEmitterLeft
 		}
 
-
 		FireEffectRight : FireEffectMid
 		{
 			ChainedTo = BulletEmitterRight
 			Trigger = BulletEmitterRight
 		}
-		
-		GraphicsTurret
+
+		LightGraphics
 		{
 			Type = Graphics
 			OperationalToggle = CommonOnShootEffectTimer
