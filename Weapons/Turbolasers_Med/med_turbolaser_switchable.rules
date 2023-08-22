@@ -14,8 +14,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	AIValueFactor = 2
 	TypeCategories = [weapon, uses_power,  is_crewed]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
+	ProhibitedBy : ^/0/ProhibitedBy [tall]
 	Size = [2, 2]
-	MaxHealth = 8000
+	MaxHealth = 5000
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "turbolasers"
@@ -25,7 +26,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	AutoDoorMaxPathLength = 8
 	MaxDoors = 3
 	/*
-	ProhibitedBy : ^/0/ProhibitedBy [tall]
 	ProhibitRects
 	[
 		[tall, [0, -1, 2, 1]]
@@ -312,7 +312,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"console on3.png"
 						]
 						Size = [2, 2]
-						//Offset = [0, 0]//-0.67
 						AnimationInterval = 0.50
 					}
 				]
@@ -325,7 +324,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "console off.png"
 						Size = [2, 2]
-						//Offset = [0, 0]//-0.67
 					}
 				]
 			}
@@ -630,6 +628,7 @@ TurretStats
 		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
 		PowerPerSecond = (&PowerPerShot) * (&ROF) * (&Barrels)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
 	}
 }
 OperationalRoofLightingBase
@@ -665,13 +664,13 @@ TurretBase
 			Rotation = -90d
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			FireInterval = 0
+			FireInterval = 0 // Uses separate fire timer.
 			FiringArc = 240d
 			RotateSpeed = 21d
 			FireThresholdAngle = 2d
 			AIFirepowerRating = 1600
-			CanBeGivenExplicitTarget = true
-			TargetSearchesPerSecond = 4
+			//CanBeGivenExplicitTarget = true
+			//TargetSearchesPerSecond = 4
 			Emitter = BulletEmitterBase
 			FirePermissionToggle = FirePermissionToggle
 			HoldTargetAfterCancel = 0.15

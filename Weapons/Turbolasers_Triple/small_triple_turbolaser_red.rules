@@ -1,177 +1,11 @@
 Components
 	{
-		CommonReloadResetTriggerProxyProxy
+		ReloadProgressBar : &<small_triple_turbolaser.rules>/ReloadProgressBarBase
 		{
-			Type = TriggerProxy
-			ComponentID = CommonReloadResetTriggerProxy
-		}
-		
-		WhiteExteriorToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = WhiteExteriorToggle
-		}
-
-		GreyExteriorToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = GreyExteriorToggle
-		}
-
-		WhiteExteriorComponents
-		{
-			Type = ToggledComponents
-			Toggle = WhiteExteriorToggle
-			IncludeInBlueprints = false
-			Components = &<small_triple_turbolaser_white.rules>/Components
-		}
-		GreyExteriorComponents
-		{
-			Type = ToggledComponents
-			Toggle = GreyExteriorToggle
-			IncludeInBlueprints = false
-			Components = &<small_triple_turbolaser_grey.rules>/Components
-		}
-
-		FireTimerProxy
-		{
-			Type = ToggleProxy
-			ComponentID = FireTimer
-		}
-		
-		FirePermissionToggle
-		{
-			Type = MultiToggle
-			Toggles = [FireTimerProxy, SwitchWeaponCooldownTimer, FireModeToggle] //CommonReloadTimer, 
-			Mode = All
-		}
-		Turret : &<small_triple_turbolaser.rules>/TurretBase
-		{
-
-		}
-
-		TurretCollider
-		{
-			Type = CircleCollider
-			Location = &../Turret/Location
-			Radius = 0.81
-			IsHigh = true
-		}
-/*
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = CommonReloadTimer
-			Invert = true
 			LowColor = [64, 0, 0]
 			HighColor = [255, 0, 0]
 		}
-*/
-		CommonReloadResetTrigger
-		{
-			Type = MultiTrigger
-			Triggers = [Turret]
-		}
 		
-		ShootSynchronizedComponents
-		{
-			Type = ToggledComponents
-			Toggle = FireAlternatingToggle
-			Invert = true
-			Components
-			{
-				FireTimer
-				{
-					Type = Timer
-					OperationalToggle = IsOperational
-					Duration = 1
-					AutoStart = true
-					StartTrigger = Turret
-				}
-
-				ReloadProgressBar
-				{
-					Type = ProgressBar
-					OperationalToggle = IsOperational
-					ShowProgressFor = FireTimer
-					Invert = true
-				}
-
-				ShootLeftTrigger
-				{
-					Type = TriggerProxy
-					ComponentID = Turret
-				}
-
-				ShootMidTrigger
-				{
-					Type = TriggerProxy
-					ComponentID = Turret
-				}
-
-				ShootRightTrigger
-				{
-					Type = TriggerProxy
-					ComponentID = Turret
-				}
-			}
-		}
-
-		ShootAlternatingComponents
-		{
-			Type = ToggledComponents
-			Toggle = FireAlternatingToggle
-			Components
-			{
-				FireTimer
-				{
-					Type = Timer
-					OperationalToggle = IsOperational
-					Duration = 0.333333
-					AutoStart = true
-					StartTrigger = Turret
-				}
-
-				ReloadProgressBar
-				{
-					Type = ProgressBar
-					OperationalToggle = IsOperational
-					ShowProgressFor = FireTimer
-					Invert = true
-				}
-
-				ShootCycle
-				{
-					Type = ModeCycle
-					ModeRange = [0, 2]
-					IncrementTrigger = Turret
-					StartingMode = 2 // First shot will switch to mode 0.
-				}
-
-				ShootLeftTrigger
-				{
-					Type = ModeTrigger
-					Mode = ShootCycle
-					TriggerInModes = [0]
-				}
-
-				ShootMidTrigger
-				{
-					Type = ModeTrigger
-					Mode = ShootCycle
-					TriggerInModes = [1]
-				}
-
-				ShootRightTrigger
-				{
-					Type = ModeTrigger
-					Mode = ShootCycle
-					TriggerInModes = [2]
-				}
-			}
-		}
-
 		BulletEmitterMid : &<small_triple_turbolaser.rules>/BulletEmitterBase
 		{
 			Location = [1.52, 0]
@@ -191,40 +25,13 @@ Components
 			FireTrigger = ShootRightTriggerProxy
 		}
 
-		ChargeEffectSound
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = Turret
-			AnchorMediaEffects = true
-		
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/LaserReCharge
-			]
-		}
-
-		FireEffectSound
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Location = [1, 0]
-			Trigger = Turret
-			AnchorMediaEffects = true
-	
-			MediaEffects
-			[
-				&/COMMON_SOUNDS/TurbolaserSFX
-			]
-		}
-
 		FireEffectMid
 		{
 			Type = TriggeredEffects
 			ChainedTo = BulletEmitterMid
 			Trigger = BulletEmitterMid
 			AnchorMediaEffects = true
-	
+
 			MediaEffects
 			[
 				&/COMMON_PARTICLES/RedLaserShoot
@@ -237,19 +44,18 @@ Components
 			Trigger = BulletEmitterLeft
 		}
 
-
 		FireEffectRight : FireEffectMid
 		{
 			ChainedTo = BulletEmitterRight
 			Trigger = BulletEmitterRight
 		}
-		
-		GraphicsTurret
+
+		LightGraphics
 		{
 			Type = Graphics
 			OperationalToggle = CommonOnShootEffectTimer
 			InvertOperationalToggle = true
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Location = [1.52, 0]
 
 			OperationalRoofLighting
@@ -278,7 +84,7 @@ LaserStats
 		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
 		DamagePerSecond = (&DamagePerShot) * (&<small_triple_turbolaser.rules>/TurretStats/Stats/ROF)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
-		ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
+		//ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
 		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
 	}
 }
