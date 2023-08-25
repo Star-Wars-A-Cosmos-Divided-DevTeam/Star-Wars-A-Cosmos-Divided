@@ -8,16 +8,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/FixedMediumLaserDesc"
 	Resources
 	[
-		[steel, 8]
-	]  //Cost = 2000
-	AIValueFactor = 1
-
+		[steel, 16]
+		[coil, 6]
+	]
+	AIValueFactor = 2
 	TypeCategories = [weapon, uses_power,is_crewed]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [1, 2]
 	PhysicalRect = [0, 1, 1, 1]
 	SaveRect = &PhysicalRect
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
+	SelectionTypeID = "blasterlasers"
 	MaxHealth = 2000
 	InitialPenetrationResistance = 1
 	PenetrationRectType = Normal
@@ -29,6 +31,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[1, 1]
 		[0, 2]
 	]
+	GenerateRectCollider = false
 	EditorIcon
 	{
 		Texture
@@ -40,10 +43,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 	Components : ^/0/Components
 	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0, 1]
+				[0, 2]
+				[1, 2]
+				[1, 1]
+			]
+		}
+
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles = [PowerToggle, BatteryStorage]
 			Mode = All
 		}
 
@@ -100,7 +115,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			StartsOn = 0
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
-
+		CommonOnShootEffectTimer
+		{
+			Type = Timer
+			Duration = 0.25
+			AutoStart = true
+			StartsOn = 0
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
 		CommonReloadResetTriggerProxy
 		{
 			Type = TriggerProxy
@@ -249,41 +271,42 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				Offset = [0, 0+5/64]
+				DamageLevels
+				[
+					{
+						File = "../roof_glows.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../roof_glows_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../roof_glows_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
 		}
 
 		Turret : &~/TurretBase
 		{
-			Type = TurretWeapon
-			Location = &~/TurretBase/Location
-			Rotation = &~/TurretBase/Rotation
-			OperationalToggle = IsOperational
-			AutoFireToggle = &~/TurretBase/AutoFireToggle
-			FireInterval = &~/TurretBase/FireInterval
-			FiringArc = &~/TurretBase/FiringArc
-			RotateSpeed = &~/TurretBase/RotateSpeed
-			FireThresholdAngle = &~/TurretBase/FireThresholdAngle
-			AIFirepowerRating = &~/TurretBase/AIFirepowerRating
-			CanBeGivenExplicitTarget = &~/TurretBase/CanBeGivenExplicitTarget
-			TargetSearchesPerSecond = &~/TurretBase/TargetSearchesPerSecond
-			Emitter = &~/TurretBase/Emitter
-			FirePermissionToggle = &~/TurretBase/FirePermissionToggle
-			HoldTargetAfterCancel = &~/TurretBase/HoldTargetAfterCancel
-			AutoTargetCrewSafetyDist = &~/TurretBase/AutoTargetCrewSafetyDist
-			IgnoreSourceShipLOSChecks = &~/TurretBase/IgnoreSourceShipLOSChecks
-			IgnoreSourceShipLowLOSChecks = &~/TurretBase/IgnoreSourceShipLowLOSChecks
-			AllowFireWithBlockedLOS = &~/TurretBase/AllowFireWithBlockedLOS
+
 		}
 
 		TurretCollider
 		{
 			Type = PolygonCollider
-			ChainedTo = Turret
+			Location = &~/TurretBase/Location
 			Vertices
 			[
-				[1.1, 1.1]
-				[1.1, -1.1]
-				[-1.1, -1.1]
-				[-1.1, 1.1]
+				[4, 0]
+				[0.34, -0.16]
+				[0.34, 0.16]
 			]
 			IsHigh = false
 		}
@@ -337,10 +360,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
-		GraphicsExtraLight
+		LightGraphics
 		{
 			Type = Graphics
-			OperationalToggle = CommonReloadTimer
+			OperationalToggle = CommonOnShootEffectTimer
 			InvertOperationalToggle = true
 			ChainedTo = BulletEmitter
 			Location = [0, 0]
@@ -358,29 +381,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-		}
-
-		CrewLocation
-		{
-			Type = CrewLocation
-			Location = [.5, 1.75]
-		}
-
-		PartCrew
-		{
-			Type = PartCrew
-			Crew = 1
-			DefaultPriority = &/PRIORITIES/Weapon_Crew
-			PrerequisitesBeforeCrewing = [PowerToggle]
-			HighPriorityPrerequisites = [BatteryStorage]
-			CrewDestinations
-			[
-				&../../CrewLocation/Location
-			]
-			CrewLocations
-			[
-				CrewLocation
-			]
 		}
 		
 		WeaponSprite
@@ -555,16 +555,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [1, 1]
 					}
 				}
-
-				// No crew.
-				{
-					Toggle = PartCrew
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
-					}
-				}
 			]
 		}
 		BlueprintSprite
@@ -578,11 +568,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		CrewRequired = &~/Part/Components/PartCrew/Crew
+		CrewRequired = 0 //&~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
-		RecCrew = (&CrewRequired) + (&RecPower) * 2
+		RecCrew = (&RecPower) * 4//(&CrewRequired) + 
 	}
 
 	StatsByCategory
