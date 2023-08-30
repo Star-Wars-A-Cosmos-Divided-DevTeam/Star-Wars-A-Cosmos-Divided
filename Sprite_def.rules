@@ -1,0 +1,134 @@
+Sprite Def : <./skipper's_nerves.rules>
+
+
+Icon:
+    -Code-Snippet:
+```rules
+    EditorIcon
+    {
+        Texture
+        {
+            File = "icon.png"
+            SampleMode = Linear
+        }
+        Size = [32, 32]
+    }
+```Sprite-Rules
+    -Core Sprite: cut/made to same size as &Armor/Core_Sprite
+    -External_Grey_Wall: need to make selfmade border walls in similar thiccness (7px) to other walls using icon grey aka RGB(127, 127, 127) & dark icon grey RGB(139, 139, 139) or my premade ones in Armor/Doonium/wall_parts
+
+
+Blueprints:
+    -Code-Snippet:
+```rules
+        Blueprints
+        {
+            Type = BlueprintSprite
+            File = "blueprints.png"
+            Size = [1, 1]
+        }
+```Sprite-Rules
+    -Core Sprite: cut/made to same size as &Armor/Core_Sprite
+    -Roof_Colour_Border: Included in all External_Blueprint_Walls.
+    -External_Blueprint_Walls: use vanilla Style ext_blueprints_xx.png sprites found in ./Data/ships/terran/walls or my premade ones in Armor/Doonium/wall_parts
+
+
+Armor:
+    -Code-Snippet:
+```rules
+            Floor
+            {
+                Layer = "floors"
+                DamageLevels
+                [
+                    {
+                        File = "armor.png"//should be floor.png but lets save 3 equal sprites
+                        Size = [1, 1]
+                        UVRotation = 0
+                    }
+                    {
+                        File = "armor_33.png"//should be floor_33.png but lets save 3 equal sprites
+                        Size = [1, 1]
+                        UVRotation = 0
+                    }
+                    {
+                        File = "armor_66.png"//should be floor_66.png but lets save 3 equal sprites
+                        Size = [1, 1]
+                        UVRotation = 0
+                    }
+                ]
+            }
+```Sprite-Rules
+    -Core_Sprite: The Series specific sprite according to in partname declared (under-)size aka 1 Quarter = 16px * 64px etc.
+    -Roof_Colour_Border: BETWEEN Core Sprite & External Roof Walls using Vanilla Roof Green aka RGB(0, 230, 0); 2px thicc  for straight parts, 1px in the nearest corner to core sprite for 90° edges. INCLUDED in my sprites in Armor/Doonium/wall_parts or roofxx.png sprites found in ./Data/ships/terran/walls
+    -External_Roof_Walls: use vanilla Style external_xx_xx.png sprites found in ./Data/ships/terran/walls or my premade ones in Armor/Doonium/wall_parts which INCLUDE Roof Colour Border 
+
+
+External_Wall_Normals: <- NEW
+    -Code-Snippet:
+```lua
+			Walls
+			{
+				Layer = "external_walls"
+				DamageLevels
+				[
+					{
+						File = "armor.png"                              //<- Same as Armor
+						NormalsFile = "external_wall_normals.png"       //<- NEW Sprite used to give IN Part External Walls Normals
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_33.png"                           //<- Same as Armor
+						NormalsFile = "external_wall_normals_33.png"    //<- NEW Sprite used to give IN Part External Walls Normals
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_66.png"                           //<- Same as Armor
+						NormalsFile = "external_wall_normals_66.png"    //<- NEW Sprite used to give IN Part External Walls Normals
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+```Sprite-Rules
+    -Core Sprite: a grey box/whatever at same size as &Armor/Core_Sprite
+    -Roof_Colour_Border: Different & Included in all External_Wall_Normals.
+    -External_Normals: use vanilla Style external_normals_xx_xx.png sprites found in ./Data/ships/terran/walls or my premade ones in Armor/Doonium/wall_parts
+//YES THE GREY-Borders NEED TO ADD UP NOT OVERLAP NOT OVERWRITE
+
+
+Roof & Roof_Normals:
+-Code-Snippet:
+```lua
+            Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"                   
+						NormalsFile = "roof_normals.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+```Sprite-Rules
+    -Core Sprite only: cut/made to same size as &Armor/Core_Sprite [greened (Vanilla Roof Green aka RGB(0, 230, 0)) for roof & Normalized per Hand or thru SkipperWraith and his GIMP Plugin for normals] + whatever pattern the series uses.
+    -no walls //showing thru from &Armor
+    -no borders //showing thru from &Armor
+    -Roof_Variants? sure be creative just tell me and i will widen the toggle/ provide the needed controller files...
