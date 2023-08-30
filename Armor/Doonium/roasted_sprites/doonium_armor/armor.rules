@@ -1,0 +1,225 @@
+Part : &<../base_part_terran_doonium.rules>/Part //
+{
+	NameKey = "Parts/DooniumArmor"
+	IconNameKey = "Parts/DooniumArmorIcon"
+	ID = SW.doonium_armor
+	OtherIDs = [doonium_armor]
+	//EditorGroup = "Defenses"
+	//DescriptionKey = "Parts/DooniumArmorDesc"
+	EditorReplacementPartID = corridor //""
+	Resources
+	[
+		[steel, 8]
+	]
+	//AIValueFactor = 0
+	Size = [1, 1]
+	IsRotateable = false //
+	IsFlippable = false	//
+	//SelectionTypeID = "armor"
+	MaxHealth = 8000
+	//ExplosiveDamageAbsorption = 100%
+	//ExplosiveDamageResistance = 50%
+	//TypeCategories = [armor]
+	//ReceivableBuffs : ^/0/ReceivableBuffs []
+	//Flammable = false
+	//UnderlyingPartPerTile = ""
+	UnderlyingPart = cosmoteer.structure
+	//CreatePartPerTileWhenGrabbed = ""
+	//InitialPenetrationResistance = 10
+	//ContinuingPenetrationResistance = &InitialPenetrationResistance
+	//CrewSpeedFactor = 0
+	//Density = 4 //v:3?
+	//IsWalled = true
+	//IsSelfDestructible = false
+	//AllowedDoorLocations = []
+	//GeneratorRequiresDoor = false
+	IgnoreRotationForMirroredSelection = true
+	GenerateRectCollider = true //
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+	Components : ^/0/Components
+	{
+		ArmorRoofType
+		{
+			Type = UIToggle
+			ToggleID = "SW.armor_roof_type"
+			Default = 0
+			AvailableChoices = [0, 1]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		OldArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 0
+		}
+		OldArmorRoofToggleComponents
+		{
+			Type = ToggledComponents
+			Toggle = OldArmorRoofToggle
+			Components = &<roof.rules>/Components
+		}
+
+		VanillaArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 1
+		}
+		VanillaArmorRoofToggleComponents
+		{
+			Type = ToggledComponents
+			Toggle = VanillaArmorRoofToggle
+			Components = &<roof2.rules>/Components
+		}
+
+		ArmorRoofNormalType
+		{
+			Type = UIToggle
+			ToggleID = "SW.armor_roof_normal_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		OldArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 0
+		}
+
+		VanillaArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 1
+		}
+
+		BlankArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 2
+		}
+		
+		OldArmorRoofNormalProxy
+		{
+			Type = ToggleProxy
+			ComponentID = OldArmorRoofNormalToggle
+		}
+		VanillaArmorRoofNormalProxy
+		{
+			Type = ToggleProxy
+			ComponentID = VanillaArmorRoofNormalToggle
+		}
+		BlankArmorRoofNormalProxy
+		{
+			Type = ToggleProxy
+			ComponentID = BlankArmorRoofNormalToggle
+		}
+
+		EmpAbsorber
+		{
+			Type = ExplosiveResourceDrainSink
+			ResourceType = battery
+			AbsorbsResourceDrain = 2000
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "armor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "armor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "armor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "armor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			/*Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 1]
+					}
+				]
+			}*/
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+	}
+
+	Stats
+	{
+		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
+	}
+}
