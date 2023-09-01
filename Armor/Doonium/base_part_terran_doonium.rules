@@ -20,7 +20,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	EditorGroup = "Doonium"
 	DescriptionKey = "Parts/DooniumArmorDesc"
-	EditorReplacementPartID = ""//corridor
+	EditorReplacementPartID = "" //corridor
 	Resources
 	[
 		[steel, 8]
@@ -30,12 +30,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Density = 6 //v:3?
 	//HealthType = Operational
 	ExplosiveDamageAbsorption = 100%
-	ExplosiveDamageResistance = 60%
+	ExplosiveDamageResistance = (60%-0.000000004%)
 	Flammable = false
-	UnderlyingPartPerTile = "" //cosmoteer.structure
+	//UnderlyingPartPerTile = "" //cosmoteer.structure
 	UnderlyingPart = "" //cosmoteer.structure
 	CreatePartPerTileWhenGrabbed = "" //corridor
-	TempConstructionPartPerTile = cosmoteer.structure
+	//TempConstructionPartPerTile = "" //cosmoteer.structure
 	//DestroyedPartHealthFraction = 50%
 	//CrewKillChanceWhenDestroyed = 25%
 	//CrewThrowSpeedWhenDestroyed = 10
@@ -68,7 +68,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	FlipVRotate = [2, 1, 0, 3] //using vanila def mostly
 	InitialPenetrationResistance = 8 //common value// most files use own def
 	ContinuingPenetrationResistance = (&InitialPenetrationResistance)/2 //shared scaler
-	PenetrationRectType = Physical //shared across all
+	//PenetrationRectType = Physical //shared across all
 	ReceivableBuffs : ^/0/ReceivableBuffs [] //common own type buffs later?
 
 	Components : ^/0/Components
@@ -82,6 +82,33 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RectType = Physical
 			RandomUVRotation = true
 			AtlasSprite = &<./Data/ships/terran/structure/structure.rules>/Part/Components/Graphics/Floor/DamageLevels/0
+		}
+
+		ConstructionProgressSprites
+		{
+			Type = BlendSpriteGrid
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			Layer = "construction"
+			AmbiguousSprites = &<./Data/ships/terran/construction/scaffolding.rules>/AmbiguousSprites
+			AllowUndefinedBlendSprites = true
+			BlendsWithCategories = []
+			AlwaysBlendWithSelf = true
+			UseConstructionProgressAsDamage = true
+		}
+
+		ConstructionProgressAnimationSprites
+		{
+			Type = BlendSpriteGrid
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			GetColorFrom = ConstructionTracker
+			Layer = "construction_delta"
+			AmbiguousSprites = &<./Data/ships/terran/construction/scaffolding_delta/scaffolding_delta.rules>/AmbiguousSprites
+			AllowUndefinedBlendSprites = true
+			BlendsWithCategories = []
+			AlwaysBlendWithSelf = true
+			UseConstructionProgressAsDamage = true
 		}
 	}
 }
