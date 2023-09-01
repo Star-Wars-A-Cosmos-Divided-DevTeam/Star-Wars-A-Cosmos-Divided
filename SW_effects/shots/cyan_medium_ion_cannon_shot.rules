@@ -2,7 +2,8 @@ ID = SW.cyan_medium_ion_cannon_shot
 OtherIDs = ["blue_medium_ion_cannon_shot","SW.blue_medium_ion_cannon_shot"]
 
 Range = 500
-IdealRange = 310
+IdealRange = [60, 420]
+IdealRadius = [5, 50]
 Speed = 60
 
 Components
@@ -11,7 +12,7 @@ Components
 	{
 		Type = CirclePhysics
 		Radius = 0.01
-		Density = 0.0001
+		Density = 0.1
 	}
 
 	Death
@@ -24,7 +25,7 @@ Components
 	{
 		Type = Targetable
 		Health = 4000
-		TargetCategory = "laser"
+		TargetCategory = "ion_shot"
 	}
 
 
@@ -32,16 +33,18 @@ Components
 	{
 		Type = PenetratingHit
 		FactorEffectsWith = Targetable
-		SourceShipCollisionDelay = 10
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+
+		HitCrew = &HitOperational
 
 		HitShield
 		{
 			HitEffects
 			[
 				{
-
 					Type = Damage
-
 					Damage = 5000
 
 				}

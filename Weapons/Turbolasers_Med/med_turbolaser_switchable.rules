@@ -12,7 +12,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[coil, 18]
 	]
 	AIValueFactor = 2
-	TypeCategories = [weapon, uses_power,  is_crewed]
+	TypeCategories = [weapon, uses_power, is_crewed]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	ProhibitedBy : ^/0/ProhibitedBy [tall]
 	Size = [2, 2]
@@ -43,6 +43,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
        	//[0, -1]
 	]
 	GenerateRectCollider = true
+
 	EditorIcon
 	{
 		Texture
@@ -52,7 +53,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [54, 64]
 	}
-	
+
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -241,7 +242,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatteryStorage
 		{
 			Type = ResourceStorage
-			ResourceType = battery 
+			ResourceType = battery
 			MaxResources = 6000 //7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
 		}
 		BatteryConsumer
@@ -250,7 +251,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 640
+			ResupplyThreshold = 1000
 			OperationalToggle = PowerToggle
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
@@ -639,8 +640,8 @@ OperationalRoofLightingBase
 BulletEmitterBase
 {
 	Type = BulletEmitter
-	ChainedTo = Turret
-	FireTrigger = Turret
+	ChainedTo = TurretLocationProxy
+	FireTrigger = CommonReloadResetTriggerProxy
 	GetTargetFrom = Turret
 	//No Location is dual barrel
 	OperationalToggle = IsOperational
@@ -664,7 +665,7 @@ TurretBase
 			Rotation = -90d
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			FireInterval = 0 // Uses separate fire timer.
+			FireInterval = 0 // Uses separate common fire timer.
 			FiringArc = 240d
 			RotateSpeed = 21d
 			FireThresholdAngle = 2d
