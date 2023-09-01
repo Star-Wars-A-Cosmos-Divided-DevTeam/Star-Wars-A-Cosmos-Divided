@@ -156,7 +156,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CommonReloadTimer
 		{
 			Type = Timer
-			Duration = 4.2
+			Duration = 5.3
 			AutoStart = true
 			StartTrigger = CommonReloadResetTrigger
 		}
@@ -172,7 +172,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = CommonOnShootEffectTimer
 			InvertOperationalToggle = true
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Location = [2.75, 1.04]
 
 			OperationalRoofLighting
@@ -195,7 +195,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = CommonOnShootEffectTimer
 			InvertOperationalToggle = true
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Location = [2.75, -1.04]
 
 			OperationalRoofLighting
@@ -337,7 +337,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = IsOperational
 			//Location = [0, 0]
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Rotation = 90d
 			OperationalLighting
 			{
@@ -471,7 +471,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BulletEmitterBase
 		{
 			Type = BulletEmitter
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			FireTrigger
 			GetTargetFrom = Turret
 			FireDelay = 0.15
@@ -540,25 +540,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ChainedTo = BulletEmitterRight
 			Trigger = BulletEmitterRight
 		}
-/*
-		TurretLocationProxy
-		{
-			Type = ChainableProxy
-			ComponentID = Turret
-		}
-*/
+
 		CrewLocation1
 		{
 			Type = CrewLocation
 			Location = [0.4, 0.45]
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Rotation = 90d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
 			Location = [0.4, -0.45]
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Rotation = 90d
 		}
 		PartCrew
@@ -583,7 +577,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		BatterySprites
 		{
-			ChainedTo = Turret
+			ChainedTo = TurretLocationProxy
 			Rotation = 90d
 			Type = ResourceSprites
 			Location = [0, 0]//2,2
@@ -638,12 +632,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
+			Toggle = IsOperational
 			Location = [2, 2]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
-
 
 		DestroyedEffects
 		{
