@@ -143,7 +143,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.exterior_type"
-			Default = 2
+			Default = 0
 			ToggledOnChoices = [0, 1]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
@@ -182,6 +182,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 10000
+			ToggleOnResources = (&~/Part/Components/BulletEmitterBase/ResourcesUsed) * (&~/TurretStats/Stats/Barrels)
+			ToggleOffResources = (&ToggleOnResources) -1
 		}
 		BatteryConsumer
 		{
@@ -233,7 +235,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "lights5.png"
+						File = "lights5_2.png"
 						Size = [4, 4]
 					}
 				]
@@ -364,7 +366,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		TurretCollider
 		{
 			Type = CircleCollider
-			Location = &../Turret/Location
+			Location = &~/TurretBase/Location
 			Radius = 1.64
 			Density = 1.5
 		}
@@ -396,6 +398,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Bullet = &/COMMON_SHOTS/cyanheavyioncannonshot
 			ResourceStorage = BatteryStorage
 			ResourcesUsed = 1200
+			MinResourcesUsed = 1200
 		}
 
 		BulletEmitterLeft : BulletEmitterBase
@@ -472,14 +475,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = CrewLocation
 			Location = [0.4, 0.45]
 			ChainedTo = TurretLocationProxy
-			Rotation = 270d
+			Rotation = 90d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
 			Location = [0.4, -0.45]
 			ChainedTo = TurretLocationProxy
-			Rotation = 270d
+			Rotation = 90d
 		}
 		PartCrew
 		{
@@ -614,7 +617,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Size = [4, 4]
 		}
 	}
-	
+	/*
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -624,7 +627,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecCrew = (&CrewRequired) + (&RecPower) * 2
 		
 	}
-	/*
 	StatsByCategory
 	[
 		{
