@@ -1,0 +1,112 @@
+Part : &<./Data/ships/terran/base_part_terran_structure.rules>/Part
+{
+	ID = SW.structure_durateel
+	OtherIDs = [structure_durasteel]
+	NameKey = "Parts/Structure"
+	IconNameKey = "Parts/StructureIcon"
+	DescriptionKey = "Parts/StructureDesc"
+	EditorGroups = ["Durasteel", "Structure"]
+	Resources
+	[
+		[SW.durasteel, 1]
+	]
+	AIValueFactor = 0
+	Size = [1, 1]
+	SelectionTypeID = "structure"
+	Density = .333*2
+	MaxHealth = 1000*2
+	ConstructionDuration = 0.5
+	RepairDuration = 0.5
+	HealthType = Structural
+	TypeCategories = [structure]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	Flammable = false
+	UnderlyingPartPerTile = ""
+	CreatePartPerTileWhenGrabbed = ""
+	InitialPenetrationResistance = 0
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	CrewSpeedFactor = 0
+	AllowedDoorLocations = []
+	IsExternal = true
+	ExternalWalls = [None]
+	InternalWalls = [All]
+	IsRotateable = false
+	IsWalled = false
+	IsSelfDestructible = false
+	GeneratorRequiresDoor = false
+	NoAutoDoors = true
+	IgnoreRotationForMirroredSelection = true
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+	Components : ^/0/Components
+	{
+		Graphics
+		{
+			Type = Graphics
+			Location = [.5, .5]
+			Floor
+			{
+				Layer = "structure"
+				RandomUVRotation = true
+				DamageLevels
+				[
+					{
+						File = "structure_durasteel.png"
+						NormalsFile = "structure_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "structure_durasteel_33.png"
+						NormalsFile = "structure_normals_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "structure_durasteel_66.png"
+						NormalsFile = "structure_normals_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+
+		ConstructionEffects
+		{
+			Type = Sprite
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			GetColorFrom = ConstructionTracker
+			Location = [.5, .5]
+			AtlasSprite
+			{
+				File = "structure_mask_combined.png"
+				NormalsFile = "structure_normals.png"
+				Size = [1, 1]
+				//VertexColor = [255, 0, 0, 255]
+			}
+			RandomUVRotation = false
+			Layer = "structure_construction"
+			UseConstructionProgressAsDamage = true
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/StructureDestroyed
+			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+	}
+}
