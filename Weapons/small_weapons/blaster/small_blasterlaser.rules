@@ -150,7 +150,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CommonReloadTimer
 		{
 			Type = Timer
-			Duration = 0.25
+			Duration = 0.375
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
@@ -584,13 +584,14 @@ TurretStats
 		Barrels = 1
 		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
 		Salvo = [&../Barrels, &../ReloadTime]
-		ROF = 1 / (&~/Part/Components/CommonReloadTimer/Duration)
+		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
 		Range = &~/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/TurretBase/FiringArc)
 		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
 		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * (&ROF) * (&Barrels)
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
 	}
 }
 OperationalRoofLightingBase
