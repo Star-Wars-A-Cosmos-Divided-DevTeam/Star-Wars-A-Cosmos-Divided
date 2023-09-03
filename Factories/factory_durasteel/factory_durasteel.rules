@@ -7,24 +7,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/FactoryDuraSteelDesc"
 	Resources
 	[
-		[steel, 104]
-		[coil2, 58]
+		[steel, 128]
+		[coil2, 64]
 		[processor, 12]
 	]
-	Size = [4, 3]
+	Size = [6, 4]
 	IsFlippable = false //IsFlippable = true
 	SelectionPriority = 1
 	MaxHealth = 12000
-	TypeCategories = [provides_SW.durasteel, uses_carbon, uses_SW.zersium, uses_power]
-	ReceivableBuffs : ^/0/ReceivableBuffs [Factory]
+	TypeCategories = [provides_SW.durasteel, uses_carbon, uses_SW.zersium, uses_steel, uses_power]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW.Factory, Factory]
 	AllowedDoorLocations
 	[
 		[-1, 2]
-		[0, 3]
-		[1, 3]
-		[2, 3]
-		[3, 3]
-		[4, 2]
+		[-1, 3]
+		[0, 4]
+		[1, 4]
+		[2, 4]
+		[3, 4]
+		[4, 4]
+		[5, 4]
+		[6, 2]
+		[6, 3]
 	]
 	EditorIcon
 	{
@@ -40,7 +44,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, CarbonSplitter, ZersiumSplitter,  BatteryStorage]
+			Toggles = [PowerToggle, CarbonSplitter, ZersiumSplitter, SteelSplitter, BatteryStorage]
 			Mode = All
 		}
 
@@ -59,18 +63,46 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			CommandPoints = 1
 		}
 
-		CarbonStorage
+		SteelStorage
 		{
 			Type = TypedResourceGrid
-			ResourceType = carbon
-			GridRect = [0, 1, 1, 2]
+			ResourceType = steel
+			GridRect = [4, 2, 2, 2]
 			Layer = "doodads_low"
 			SpriteInset = [16/64, 6/64, 2/64, 9/64]
 			ToggleOnResources = &../ResourceConverter/From/0/Quantity
 			ToggleOffResources = (&ToggleOnResources) - 1
 			RandomSpriteRotation = true
 		}
+		SteelConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = steel
+			Storage = SteelStorage
+			DefaultPriority = &/PRIORITIES/Factory_Supply
+			OperationalToggle = PowerToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+		SteelSplitter
+		{
+			Type = InlineResourceConverter
+			ResourceType = steel
+			FromStorage = SteelStorage
+			FromQuantity = 1
+			ToQuantity = 2
+		}
 
+		CarbonStorage
+		{
+			Type = TypedResourceGrid
+			ResourceType = carbon
+			GridRect = [0, 2, 1, 2]
+			Layer = "doodads_low"
+			SpriteInset = [16/64, 6/64, 2/64, 9/64]
+			ToggleOnResources = &../ResourceConverter/From/1/Quantity
+			ToggleOffResources = (&ToggleOnResources) - 1
+			RandomSpriteRotation = true
+		}
 		CarbonConsumer
 		{
 			Type = ResourceConsumer
@@ -80,7 +112,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			ConsumptionToggleButtonOffset = [0, -.4]
 		}
-		
 		CarbonSplitter
 		{
 			Type = InlineResourceConverter
@@ -94,12 +125,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = TypedResourceGrid
 			ResourceType = SW.zersium
-			GridRect = [3, 1, 1, 2]
+			GridRect = [1, 2, 1, 2]
 			Layer = "doodads_low"
-			SpriteInset = [2/64, 6/64, 16/64, 9/64]
+			SpriteInset = [16/64, 6/64, 2/64, 9/64]
+			ToggleOnResources = &../ResourceConverter/From/2/Quantity
+			ToggleOffResources = (&ToggleOnResources) - 1
 			RandomSpriteRotation = true
 		}
-
 		ZersiumConsumer
 		{
 			Type = TypedResourceGridConsumer
@@ -109,7 +141,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			ConsumptionToggleButtonOffset = [0, -.4]
 		}
-
 		ZersiumSplitter
 		{
 			Type = InlineResourceConverter
@@ -123,7 +154,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = TypedResourceGrid
 			ResourceType = SW.durasteel
-			GridRect = [1, 2, 2, 1]
+			GridRect = [2, 2, 2, 2]
 			Layer = "doodads_low"
 			SpriteInset = [6/64, 3/64, 6/64, 12/64]
 			SuppliesResources = true
@@ -158,12 +189,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			From
 			[
 				{
-					Storage = CarbonStorage
+					Storage = SteelStorage
 					Quantity = 2
 				}
 				{
-					Storage = ZersiumSplitter
+					Storage = CarbonSplitter
 					Quantity = 1
+				}
+				{
+					Storage = ZersiumSplitter
+					Quantity = 2
 				}
 				{
 					Storage = BatteryStorage
@@ -172,8 +207,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 			ToStorage = DuraSteelStorage
-			ToQuantity = 1
-			Interval = 2
+			ToQuantity = 2
+			Interval = 0.5
+			CheckResourceLimits = true
 		}
 
 		ConvertEffects
@@ -206,22 +242,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Sprite
 			OnlyWithFlip = false
-			Location = [2, 1.5]
+			Location = [3, 2]
 			Layer = "floors"
 			DamageLevels
 			[
 				{
 					File = "floor.png"
-					Size = [4, 3]
+					Size = [6, 4]
 				}
 				/*
 				{
 					File = "floor_33.png"
-					Size = [4, 3]
+					Size = [6, 4]
 				}
 				{
 					File = "floor_66.png"
-					Size = [4, 3]
+					Size = [6, 4]
 				}
 				*/
 			]
@@ -231,22 +267,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Sprite
 			OnlyWithFlip = true
-			Location = [2, 1.5]
+			Location = [3, 2]
 			Layer = "floors"
 			DamageLevels
 			[
 				{
 					File = "floor_flipped.png"
-					Size = [4, 3]
+					Size = [6, 4]
 				}
 				/*
 				{
 					File = "floor_flipped_33.png"
-					Size = [4, 3]
+					Size = [6, 4]
 				}
 				{
 					File = "floor_flipped_66.png"
-					Size = [4, 3]
+					Size = [6, 4]
 				}
 				*/
 			]
@@ -255,144 +291,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Graphics
 		{
 			Type = Graphics
-			Location = [2, 1.5]
+			Location = [3, 2]
 			OperationalToggle = IsOperational
 			//DoodadToggle = ResourceConverter
-			/*
-			ToggleOnDoodad
-			{
-				Layer = "doodads_low"
-				Offset = [0, -.5]
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"doodads_on1.png"
-							"doodads_on2.png"
-							"doodads_on3.png"
-							"doodads_on4.png"
-							"doodads_on5.png"
-							"doodads_on6.png"
-							"doodads_on7.png"
-							"doodads_on8.png"
-						]
-						Size = [4, 2]
-						AnimationInterval = 0.125
-					}
-					{
-						AnimationFiles
-						[
-							"doodads_on1_33.png"
-							"doodads_on2_33.png"
-							"doodads_on3_33.png"
-							"doodads_on4_33.png"
-							"doodads_on5_33.png"
-							"doodads_on6_33.png"
-							"doodads_on7_33.png"
-							"doodads_on8_33.png"
-						]
-						Size = [4, 2]
-						AnimationInterval = 0.125
-					}
-					{
-						AnimationFiles
-						[
-							"doodads_on1_66.png"
-							"doodads_on2_66.png"
-							"doodads_on3_66.png"
-							"doodads_on4_66.png"
-							"doodads_on5_66.png"
-							"doodads_on6_66.png"
-							"doodads_on7_66.png"
-							"doodads_on8_66.png"
-						]
-						Size = [4, 2]
-						AnimationInterval = 0.125
-					}
-				]
-			}
-			*/
-			/*
-			ToggleOffDoodad
-			{
-				Layer = "walls" //Wall layer so the robotic arm sprites are draw over the resources sprites
-				Offset = [0, -.5]
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"doodads_idle1.png"
-							"doodads_idle2.png"
-							"doodads_idle3.png"
-							"doodads_idle4.png"
-							"doodads_idle5.png"
-							"doodads_idle6.png"
-							"doodads_idle7.png"
-							"doodads_idle8.png"
-						]
-						Size = [4, 2]
-						AnimationInterval = 0.125
-						AnimationStartTime = WhenSpawned
-					}
-					{
-						AnimationFiles
-						[
-							"doodads_idle1_33.png"
-							"doodads_idle2_33.png"
-							"doodads_idle3_33.png"
-							"doodads_idle4_33.png"
-							"doodads_idle5_33.png"
-							"doodads_idle6_33.png"
-							"doodads_idle7_33.png"
-							"doodads_idle8_33.png"
-						]
-						Size = [4, 2]
-						AnimationInterval = 0.125
-						AnimationStartTime = WhenSpawned
-					}
-					{
-						AnimationFiles
-						[
-							"doodads_idle1_66.png"
-							"doodads_idle2_66.png"
-							"doodads_idle3_66.png"
-							"doodads_idle4_66.png"
-							"doodads_idle5_66.png"
-							"doodads_idle6_66.png"
-							"doodads_idle7_66.png"
-							"doodads_idle8_66.png"
-						]
-						Size = [4, 2]
-						AnimationInterval = 0.125
-						AnimationStartTime = WhenSpawned
-					}
-				]
-			}
-			*/
-			/*
-			NonOperationalDoodad
-			{
-				Layer = "walls" //Wall layer so the robotic arm sprites are draw over the resources sprites
-				Offset = [.5, -.5]
-				DamageLevels
-				[
-					{
-						File = "doodads_off.png"
-						Size = [3, 2]
-					}
-					{
-						File = "doodads_off_33.png"
-						Size = [3, 2]
-					}
-					{
-						File = "doodads_off_66.png"
-						Size = [3, 2]
-					}
-				]
-			}
-			*/
 			Walls
 			{
 				Layer = "walls"
@@ -400,15 +301,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "walls.png"
-						Size = [4, 3]
+						Size = [6, 4]
 					}
 					{
 						File = "walls_33.png"
-						Size = [4, 3]
+						Size = [6, 4]
 					}
 					{
 						File = "walls_66.png"
-						Size = [4, 3]
+						Size = [6, 4]
 					}
 				]
 			}
@@ -419,7 +320,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "lights.png"
-						Size = [4, 3]
+						Size = [6, 4]
 					}
 				]
 			}
@@ -431,17 +332,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "roof.png"
 						NormalsFile = "roof_normals.png"
-						Size = [4, 3]
+						Size = [6, 4]
 					}
 					{
 						File = "roof_33.png"
 						NormalsFile = "roof_normals_33.png"
-						Size = [4, 3]
+						Size = [6, 4]
 					}
 					{
 						File = "roof_66.png"
 						NormalsFile = "roof_normals_66.png"
-						Size = [4, 3]
+						Size = [6, 4]
 					}
 				]
 			}
@@ -759,7 +660,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [2, 1.5]
+			Location = [3, 2]
 			Layer = "indicators"
 			Indicators
 			[
@@ -769,26 +670,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
-					}
-				}
-
-				// No carbon.
-				{
-					Toggle = CarbonSplitter
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoResource
-						Size = [1, 1]
-					}
-				}
-
-				// No SW.zersium.
-				{
-					Toggle = ZersiumSplitter
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoResource
 						Size = [1, 1]
 					}
 				}
@@ -805,12 +686,72 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
+		IndicatorSteel
+		{
+			Type = IndicatorSprites
+			Location = [3, 2]
+			Layer = "indicators"
+			Indicators
+			[
+				// No steel.
+				{
+					Toggle = SteelSplitter
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoResource
+						Offset = [0, 2]
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		IndicatorCarbon
+		{
+			Type = IndicatorSprites
+			Location = [3, 2]
+			Layer = "indicators"
+			Indicators
+			[
+				// No carbon.
+				{
+					Toggle = CarbonSplitter
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoResource
+						Offset = [0, -2]
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		IndicatorZersium
+		{
+			Type = IndicatorSprites
+			Location = [3, 2]
+			Layer = "indicators"
+			Indicators
+			[
+				// No SW.zersium.
+				{
+					Toggle = ZersiumSplitter
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoResource
+						Offset = [0, -3]
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
 		Blueprints
 		{
 			Type = BlueprintSprite
 			OnlyWithFlip = false
 			File = "blueprints.png"
-			Size = [4, 3]
+			Size = [6, 4]
 		}
 
 		BlueprintsFlipped
@@ -818,7 +759,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = BlueprintSprite
 			OnlyWithFlip = true
 			File = "blueprints_flipped.png"
-			Size = [4, 3]
+			Size = [6, 4]
 		}
 	}
 
@@ -826,9 +767,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	{
 		DuraSteelProduction = (&~/Part/Components/ResourceConverter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval)
 		DuraSteelCapacity = (&~/Part/Components/DuraSteelStorage/GridRect/2) * (&~/Part/Components/DuraSteelStorage/GridRect/3) * (&<../../Resources/durasteel/durasteel.rules>/MaxStackSize)
+		SteelCapacity = (&~/Part/Components/CarbonStorage/GridRect/2) * (&~/Part/Components/CarbonStorage/GridRect/3) * (&<./Data/resources/steel/steel.rules>/MaxStackSize)
+		SteelPerDuraSteel = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+		SteelPerSecond = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/Interval)
+		DuraSteelSteelUsage = [&../SteelPerDuraSteel, &../SteelPerSecond]
 		CarbonCapacity = (&~/Part/Components/CarbonStorage/GridRect/2) * (&~/Part/Components/CarbonStorage/GridRect/3) * (&<./Data/resources/carbon/carbon.rules>/MaxStackSize)
-		CarbonPerDuraSteel = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
-		CarbonPerSecond = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/Interval)
+		CarbonPerDuraSteel = (&~/Part/Components/CarbonSplitter/FromQuantity) / (&~/Part/Components/CarbonSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+		CarbonPerSecond = (&~/Part/Components/CarbonSplitter/FromQuantity) / (&~/Part/Components/CarbonSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval)
 		DuraSteelCarbonUsage = [&../CarbonPerDuraSteel, &../CarbonPerSecond]
 		ZersiumCapacity = (&~/Part/Components/ZersiumStorage/GridRect/2) * (&~/Part/Components/ZersiumStorage/GridRect/3) * (&<../../Resources/zersium/zersium.rules>/MaxStackSize)
 		ZersiumPerDuraSteel = (&~/Part/Components/ZersiumSplitter/FromQuantity) / (&~/Part/Components/ZersiumSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
