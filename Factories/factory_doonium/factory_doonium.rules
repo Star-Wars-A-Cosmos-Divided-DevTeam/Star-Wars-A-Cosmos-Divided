@@ -9,19 +9,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	[
 		[steel, 4]
 		[coil2, 80]
-		[SW.doonium, 64]
+		[SW.doonium, 16]
 	]
-	Size = [2, 3]
+	Size = [4, 4]
+	IsFlippable = true
 	SelectionPriority = 1
-	MaxHealth = 6000
+	MaxHealth = 16000
 	TypeCategories = [provides_SW.doonium_ingots, uses_SW.doonium, uses_power]
-	ReceivableBuffs : ^/0/ReceivableBuffs [Factory]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW.Factory, Factory]
 	AllowedDoorLocations
 	[
 		[-1, 2]
-		[0, 3]
-		[1, 3]
-		[2, 2]
+		[-1, 3]
+		[0, 4]
+		[1, 4]
+		[2, 4]
+		[3, 4]
+		[4, 3]
+		[4, 2]
 	]
 	EditorIcon
 	{
@@ -30,7 +35,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [42.66, 64]
+		Size = [64, 64]
 	}
 	Components : ^/0/Components
 	{
@@ -58,17 +63,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		DooniumStorage
 		{
-			Type = ResourceStorage
+			Type = TypedResourceGrid
 			ResourceType = SW.doonium
-			MaxResources = 20
-			DelayBeforeReadyToUse = 0.7
-			UITileRect = [.5 + 7/64, .4 + 7/64, 1 - 14/64, 1 - 14/64]
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
-			DropResourcesWhenDestroyed = true
+			GridRect = [0, 2, 2, 2]
+			Layer = "doodads_low"
+			SpriteInset = [8/64, 6/64, 2/64, 9/64]
+			RandomSpriteRotation = true
 		}
 		DooniumConsumer
 		{
-			Type = ResourceConsumer
+			Type = TypedResourceGridConsumer
 			ResourceType = SW.doonium
 			Storage = DooniumStorage
 			DefaultPriority = &/PRIORITIES/Factory_Supply
@@ -80,13 +84,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = TypedResourceGrid
 			ResourceType = SW.doonium_ingot
-			GridRect = [0, 2, 2, 1]
+			GridRect = [2, 2, 2, 2]
 			Layer = "doodads_low"
-			SpriteInset = [8/64, 3/64, 8/64, 12/64]
+			SpriteInset = [2/64, 6/64, 8/64, 9/64]
 			SuppliesResources = true
 			SupplyToggleButtonOffset = [0, -.4]
-			ToggleOnResources = &../ResourceConverter/From/0/Quantity
-			ToggleOffResources = (&ToggleOnResources) - 1
 			RandomSpriteRotation = true
 			InitToMaxResources = 0
 			AllowExternalPickupAndDelivery = true
@@ -96,7 +98,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 2000
+			MaxResources = 4000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
@@ -115,26 +117,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			From
 			[
-			    {
-			        Storage = DooniumStorage
-			        Quantity = 20
-			    }
-			    {
-			        Storage = BatteryStorage
-			        Quantity = 1000
-			        MinQuantityForConversion = 1
-			    }
+				{
+					Storage = DooniumStorage
+					Quantity = 1
+				}
+				{
+					Storage = BatteryStorage
+					Quantity = 40
+					MinQuantityForConversion = 1
+				}
 			]
 			ToStorage = DooniumIngotStorage
-			ToQuantity = 20
-			Interval = 1.3//{ BaseValue=1; BuffType=Factory; BuffMode=Divide; }
+			ToQuantity = 1
+			Interval = 1
+			CheckResourceLimits = true
 		}
 
 		ConvertEffects
 		{
 			Type = TriggeredEffects
 			Trigger = ResourceConverter
-			Location = [1, 1.5]
+			Location = [2, 2]
 			MediaEffects
 			[
 				: /BASE_SOUNDS/AudioInterior
@@ -156,102 +159,184 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = BatteryStorage
 		}
 
+		FloorSprite
+		{
+			Type = Sprite
+			OnlyWithFlip = false
+			Location = [2, 2]
+			Layer = "floors"
+			DamageLevels
+			[
+				{
+					File = "floor.png"
+					Size = [4, 4]
+				}
+				{
+					File = "floor_33.png"
+					Size = [4, 4]
+				}
+				{
+					File = "floor_66.png"
+					Size = [4, 4]
+				}
+			]
+		}
+
+		FloorSpriteFlipped
+		{
+			Type = Sprite
+			OnlyWithFlip = true
+			Location = [2, 2]
+			Layer = "floors"
+			DamageLevels
+			[
+				{
+					File = "floor_flipped.png"
+					Size = [4, 4]
+				}
+				{
+					File = "floor_flipped_33.png"
+					Size = [4, 4]
+				}
+				{
+					File = "floor_flipped_66.png"
+					Size = [4, 4]
+				}
+			]
+		}
+
 		Graphics
 		{
 			Type = Graphics
-			Location = [1, 1.5]
+			Location = [2, 2]
 			OperationalToggle = IsOperational
 			DoodadToggle = ResourceConverter
-			Floor
+			ToggleOnDoodad
 			{
-				Layer = "floors"
+				Layer = "doodads_low"
+				Offset = [0, -.5]
 				DamageLevels
 				[
 					{
-						File = "floor.png"
-						Size = [2, 3]
+						AnimationFiles
+						[
+							"doodads_on1.png"
+							"doodads_on2.png"
+							"doodads_on3.png"
+							"doodads_on4.png"
+							"doodads_on5.png"
+							"doodads_on6.png"
+							"doodads_on7.png"
+							"doodads_on8.png"
+						]
+						Size = [4, 3]
+						AnimationInterval = 0.125
 					}
 					{
-						File = "floor_33.png"
-						Size = [2, 3]
+						AnimationFiles
+						[
+							"doodads_on1_33.png"
+							"doodads_on2_33.png"
+							"doodads_on3_33.png"
+							"doodads_on4_33.png"
+							"doodads_on5_33.png"
+							"doodads_on6_33.png"
+							"doodads_on7_33.png"
+							"doodads_on8_33.png"
+						]
+						Size = [4, 3]
+						AnimationInterval = 0.125
 					}
 					{
-						File = "floor_66.png"
-						Size = [2, 3]
+						AnimationFiles
+						[
+							"doodads_on1_66.png"
+							"doodads_on2_66.png"
+							"doodads_on3_66.png"
+							"doodads_on4_66.png"
+							"doodads_on5_66.png"
+							"doodads_on6_66.png"
+							"doodads_on7_66.png"
+							"doodads_on8_66.png"
+						]
+						Size = [4, 3]
+						AnimationInterval = 0.125
 					}
 				]
 			}
-			ToggleOnDoodad
+			ToggleOffDoodad
 			{
-				Layer = "doors"
-				Offset = [0, -0.25]
+				Layer = "doodads_low"
+				Offset = [0, -.5]
 				DamageLevels
 				[
 					{
 						AnimationFiles
 						[
-							"doonium_ingot_1.png"
-							"doonium_ingot_2.png"
-							"doonium_ingot_3.png"
-							"doonium_ingot_4.png"
-							"doonium_ingot_5.png"
-							"doonium_ingot_6.png"
-							"doonium_ingot_7.png"
-							"doonium_ingot_8.png"
-							"doonium_ingot_9.png"
-							"doonium_ingot_10.png"
-							"doonium_ingot_11.png"
-							"doonium_ingot_12.png"
-							"doonium_ingot_13.png"
+							"doodads_idle1.png"
+							"doodads_idle2.png"
+							"doodads_idle3.png"
+							"doodads_idle4.png"
+							"doodads_idle5.png"
+							"doodads_idle6.png"
+							"doodads_idle7.png"
+							"doodads_idle8.png"
 						]
-						Size = [2, 2]
-						AnimationInterval = 0.1
+						Size = [4, 3]
+						AnimationInterval = 0.125
 						AnimationStartTime = WhenSpawned
-						ClampAnimation = true
 					}
 					{
 						AnimationFiles
 						[
-							"doonium_ingot_1_33.png"
-							"doonium_ingot_2_33.png"
-							"doonium_ingot_3_33.png"
-							"doonium_ingot_4_33.png"
-							"doonium_ingot_5_33.png"
-							"doonium_ingot_6_33.png"
-							"doonium_ingot_7_33.png"
-							"doonium_ingot_8.png"
-							"doonium_ingot_9.png"
-							"doonium_ingot_10.png"
-							"doonium_ingot_11.png"
-							"doonium_ingot_12.png"
-							"doonium_ingot_13.png"
+							"doodads_idle1_33.png"
+							"doodads_idle2_33.png"
+							"doodads_idle3_33.png"
+							"doodads_idle4_33.png"
+							"doodads_idle5_33.png"
+							"doodads_idle6_33.png"
+							"doodads_idle7_33.png"
+							"doodads_idle8_33.png"
 						]
-						Size = [2, 2]
-						AnimationInterval = 0.1
+						Size = [4, 3]
+						AnimationInterval = 0.125
 						AnimationStartTime = WhenSpawned
-						ClampAnimation = true
 					}
 					{
 						AnimationFiles
 						[
-							"doonium_ingot_1_66.png"
-							"doonium_ingot_2_66.png"
-							"doonium_ingot_3_66.png"
-							"doonium_ingot_4_66.png"
-							"doonium_ingot_5_66.png"
-							"doonium_ingot_6_66.png"
-							"doonium_ingot_7_66.png"
-							"doonium_ingot_8.png"
-							"doonium_ingot_9.png"
-							"doonium_ingot_10.png"
-							"doonium_ingot_11.png"
-							"doonium_ingot_12.png"
-							"doonium_ingot_13.png"
+							"doodads_idle1_66.png"
+							"doodads_idle2_66.png"
+							"doodads_idle3_66.png"
+							"doodads_idle4_66.png"
+							"doodads_idle5_66.png"
+							"doodads_idle6_66.png"
+							"doodads_idle7_66.png"
+							"doodads_idle8_66.png"
 						]
-						Size = [2, 2]
-						AnimationInterval = 0.1
+						Size = [4, 3]
+						AnimationInterval = 0.125
 						AnimationStartTime = WhenSpawned
-						ClampAnimation = true
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, -.5]
+				DamageLevels
+				[
+					{
+						File = "doodads_off.png"
+						Size = [4, 3]
+					}
+					{
+						File = "doodads_off_33.png"
+						Size = [4, 3]
+					}
+					{
+						File = "doodads_off_66.png"
+						Size = [4, 3]
 					}
 				]
 			}
@@ -262,15 +347,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "walls.png"
-						Size = [2, 3]
+						Size = [4, 4]
 					}
 					{
 						File = "walls_33.png"
-						Size = [2, 3]
+						Size = [4, 4]
 					}
 					{
 						File = "walls_66.png"
-						Size = [2, 3]
+						Size = [4, 4]
 					}
 				]
 			}
@@ -281,36 +366,56 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "lights.png"
-						Size = [2, 3]
+						Size = [4, 4]
 					}
 				]
 			}
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
-				Offset = [0, -29/64]
+				Offset = [-62/64, -57/64]
 				DamageLevels
 				[
 					{
 						File = "./Data/ships/common/light_blob.png"
-						Size = [4, 4]
-						Z = 0.5 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
-						VertexColor = [240*1.5,240*1.5,240*1.5]
+						Size = [5, 5]
+						Z = .5 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+						VertexColor = [255*1.4, 0, 0]
 					}
 				]
 			}
 		}
-		
+
+		Graphics2
+		{
+			Type = Graphics
+			Location = [2, 2]
+			OperationalToggle = IsOperational
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				Offset = [62/64, -57/64]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [5, 5]
+						Z = .5 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+						VertexColor = [255*1.4, 0, 0]
+					}
+				]
+			}
+		}
+
 		RoofDoorOpenToggle
 		{
 			Type = CrewDestinationProximityToggle
 			Distance = 3
 		}
-
 		RoofDoorSprite
 		{
 			Type = OpenCloseSprite
-			Location = [1, 1.5]
+			Location = [2, 2]
 			OperationalToggle = RoofDoorOpenToggle
 			Layer = "roofs"
 			OpenDamageLevels
@@ -334,7 +439,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						"roof_normals5.png"
 						"roof_normals6.png"
 					]
-					Size = [2, 3]
+					Size = [4, 4]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -358,7 +463,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						"roof_normals5_33.png"
 						"roof_normals6_33.png"
 					]
-					Size = [2, 3]
+					Size = [4, 4]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -382,7 +487,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						"roof_normals5_66.png"
 						"roof_normals6_66.png"
 					]
-					Size = [2, 3]
+					Size = [4, 4]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -409,7 +514,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						"roof_normals2.png"
 						"roof_normals1.png"
 					]
-					Size = [2, 3]
+					Size = [4, 4]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -433,7 +538,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						"roof_normals2_33.png"
 						"roof_normals1_33.png"
 					]
-					Size = [2, 3]
+					Size = [4, 4]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -457,7 +562,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						"roof_normals2_66.png"
 						"roof_normals1_66.png"
 					]
-					Size = [2, 3]
+					Size = [4, 4]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -468,7 +573,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [1, 2]
+			Location = [84/64, 92/64]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			ResourceLevels
@@ -476,127 +581,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				{
 					File = "batteries1.png"
 					Size = [1, 1]
-					Offset = [-.5, 0]
 				}
 				{
 					File = "batteries2.png"
-					Size = [2, 1]
-				}
-			]
-		}
-
-		DooniumSprites
-		{
-			Type = ResourceSprites
-			Location = [1, 1]
-			ResourceStorage = DooniumStorage
-			Layer = "doodads_low"
-			HasZeroResourceSprite = true
-			ResourceLevels
-			[
-				{
-					AnimationFiles
-					[
-						"doonium0-1.png"
-						"doonium0-2.png"
-						"doonium0-3.png"
-						"doonium0-4.png"
-						"doonium0-5.png"
-						"doonium0-6.png"
-					]
-					Size = [2, 2]
-					AnimationInterval = 0.1
-					ClampAnimation = true
+					Size = [1, 1]
 				}
 				{
-					File = "doonium1.png"
-					Size = [2, 2]
+					File = "batteries3.png"
+					Size = [1, 1]
 				}
 				{
-					File = "doonium2.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium3.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium4.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium5.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium6.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium7.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium8.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium9.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium10.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium11.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium12.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium13.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium14.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium15.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium16.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium17.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium18.png"
-					Size = [2, 2]
-				}
-				{
-					File = "doonium19.png"
-					Size = [2, 2]
-				}
-				{
-					AnimationFiles
-					[
-						"doonium20-1.png"
-						"doonium20-2.png"
-						"doonium20-3.png"
-						"doonium20-4.png"
-						"doonium20-5.png"
-						"doonium20-6.png"
-					]
-					Size = [2, 2]
-					AnimationInterval = 0.1
-					ClampAnimation = true
+					File = "batteries4.png"
+					Size = [1, 1]
 				}
 			]
 		}
@@ -604,7 +600,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [1, 1.5]
+			Location = [2, 2]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
@@ -613,14 +609,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
-			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [1, 1.5]
+			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
+			Location = [2, 2]
 		}
 
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [1, 1.5]
+			Location = [2, 2]
 			Layer = "indicators"
 			Indicators
 			[
@@ -659,8 +655,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Blueprints
 		{
 			Type = BlueprintSprite
+			OnlyWithFlip = false
 			File = "blueprints.png"
-			Size = [2, 3]
+			Size = [4, 4]
+		}
+
+		BlueprintsFlipped
+		{
+			Type = BlueprintSprite
+			OnlyWithFlip = true
+			File = "blueprints_flipped.png"
+			Size = [4, 4]
 		}
 	}
 
@@ -668,7 +673,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	{
 		DooniumIngotProduction = (&~/Part/Components/ResourceConverter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval)
 		DooniumIngotCapacity = (&~/Part/Components/DooniumIngotStorage/GridRect/2) * (&~/Part/Components/DooniumIngotStorage/GridRect/3) * (&<../../Resources/doonium_ingot/doonium_ingot.rules>/MaxStackSize)
-		DooniumCapacity = &~/Part/Components/DooniumStorage/MaxResources
+		DooniumCapacity = (&~/Part/Components/DooniumStorage/GridRect/2) * (&~/Part/Components/DooniumStorage/GridRect/3) * (&<../../Resources/doonium/doonium.rules>/MaxStackSize)
 		DooniumPerDooniumIngot = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
 		DooniumPerSecond = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/Interval)
 		DooniumIngotDooniumUsage = [&../DooniumPerDooniumIngot, &../DooniumPerSecond]
