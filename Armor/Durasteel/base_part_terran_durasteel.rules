@@ -1,3 +1,21 @@
+/**
+ * Durasteel armor base part definition.
+ *  
+ * @EditorGroup Durasteel - Editor group name
+ * @DescriptionKey Parts/DurasteelArmorDesc - Common Shared Localization key for description text
+ * @Resources [[steel, 8]] - Resources required to construct this part
+ * @FractionalCostToRepair 20% - Fraction of full cost to repair when damaged
+ * @Density 6 - Part density
+ * @ExplosiveDamageAbsorption 100% - Percentage of explosive damage absorbed
+ * @ExplosiveDamageResistance 60% - Resistance to remaining explosive damage
+ * @IsRotateable true - Part can be rotated
+ * @IsFlippable true - Part can be flipped
+ * @IsWalled true - Part is walled
+ * @TypeCategories [durasteelarmor, armor] - Part type category tags 
+ * @InitialPenetrationResistance 8 - Initial penetration resistance 
+ * @ContinuingPenetrationResistance 4 - Continuing penetration resistance
+ * @Components - Shared Components definitions 
+*/
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	EditorGroup = "Durasteel"
@@ -9,21 +27,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]
 	AIValueFactor = 0 //removes AI targetting //shared across all
 	FractionalCostToRepair = 20%
+	ConstructionDuration = 0.5 //Buff
+	RepairDuration = 0.5 //Buff
 	Density = 4 //v:3?
 	//HealthType = Operational
 	ExplosiveDamageAbsorption = 100%
 	ExplosiveDamageResistance = 81%
 	Flammable = false
-	UnderlyingPartPerTile = "" //cosmoteer.structure
+	//UnderlyingPartPerTile = "" //cosmoteer.structure
 	UnderlyingPart = "" //cosmoteer.structure
 	CreatePartPerTileWhenGrabbed = "" //corridor
-	TempConstructionPartPerTile = cosmoteer.structure
+	//TempConstructionPartPerTile = "" //cosmoteer.structure
 	//DestroyedPartHealthFraction = 50%
 	//CrewKillChanceWhenDestroyed = 25%
 	//CrewThrowSpeedWhenDestroyed = 10
 	CrewSpeedFactor = 0 //no crew movement wanted
 	//CrewCongestedSpeedFactor = .3
-	//CrewFireSpeedFactor = .2;
+	//CrewFireSpeedFactor = .2
 	//ProhibitLeft = 0
 	//ProhibitRight = 0
 	//ProhibitAbove = 0
@@ -49,23 +69,49 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	FlipHRotate = [0, 3, 2, 1] //using vanila def mostly
 	FlipVRotate = [2, 1, 0, 3] //using vanila def mostly
 	InitialPenetrationResistance = 16 //common value// most files use own def
-	ContinuingPenetrationResistance = (&InitialPenetrationResistance)/1.5 //shared scaler
+	ContinuingPenetrationResistance = floor((&InitialPenetrationResistance)/2.5) //shared scaler
 	PenetrationRectType = Physical //shared across all
 	ReceivableBuffs : ^/0/ReceivableBuffs [] //common own type buffs later?
-	
+
 	Components : ^/0/Components
 	{
-		
-			ConstructionStructureSprites
-			{
-				Type = SpriteGrid
-				IncludeWhenUnderConstruction = true
-				IncludeWhenNotUnderConstruction = false
-				Layer = "structure"
-				RectType = Physical
-				RandomUVRotation = true
-				AtlasSprite = &<./Data/ships/terran/structure/structure.rules>/Part/Components/Graphics/Floor/DamageLevels/0
-			}
+		ConstructionStructureSprites
+		{
+			Type = SpriteGrid
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			Layer = "structure"
+			RectType = Physical
+			RandomUVRotation = true
+			AtlasSprite = &<./Data/ships/terran/structure/structure.rules>/Part/Components/Graphics/Floor/DamageLevels/0
+		}
+
+		ConstructionProgressSprites
+		{
+			Type = BlendSpriteGrid
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			Layer = "construction"
+			AmbiguousSprites = &<./Data/ships/terran/construction/scaffolding.rules>/AmbiguousSprites
+			AllowUndefinedBlendSprites = true
+			BlendsWithCategories = []
+			AlwaysBlendWithSelf = true
+			UseConstructionProgressAsDamage = true
+		}
+
+		ConstructionProgressAnimationSprites
+		{
+			Type = BlendSpriteGrid
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			GetColorFrom = ConstructionTracker
+			Layer = "construction_delta"
+			AmbiguousSprites = &<./Data/ships/terran/construction/scaffolding_delta/scaffolding_delta.rules>/AmbiguousSprites
+			AllowUndefinedBlendSprites = true
+			BlendsWithCategories = []
+			AlwaysBlendWithSelf = true
+			UseConstructionProgressAsDamage = true
+		}
 	}
 }
 		DummyCollider//copymelol
