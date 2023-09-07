@@ -119,7 +119,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			}
 		}
-/*
+
 		ThrusterEffectAmountType
 		{
 			Type = UIToggle
@@ -147,7 +147,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectAmountType
 			OnMode = 2
 		}
-		
+
 		GlowProxy
 		{
 			Type = ToggleProxy
@@ -163,29 +163,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = FullsetToggle
 		}
-*/
-		MainThrusterLocationProxy
-		{
-			Type = ChainableProxy
-			ComponentID = MainThruster
-		}
-		MainThrusterValueProxy
-		{
-			Type = ValueProxy
-			ComponentID = MainThruster
-		}
-
-		ReverseThrusterLocationProxy
-		{
-			Type = ChainableProxy
-			ComponentID = ReverseThruster
-		}
-		ReverseThrusterValueProxy
-		{
-			Type = ValueProxy
-			ComponentID = ReverseThruster
-		}
-/*
+*//*
 		EngineFloorGraphics
 		{
 			Type = Sprite
@@ -205,7 +183,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [1.5, 0.5]
 			OperationalToggle = IsOperational
 
-			AnimationSpeedFactor = MainThruster
+			AnimationSpeedFactor = MainThrusterBase
 			AnimationSpeedFactorRenormalize = [0.64, 2.1]
 
 			Floor
@@ -390,33 +368,66 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 */
-		MainThruster
+		MainThrusterLLocationProxy
 		{
-			Type = Thruster
-			OperationalToggle = IsOperational
-			Location = [0.5, 1.225]
-			Rotation = 90d// Relative to unrotated part.
-			Force = &../../ThrusterForce
-			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = &MinActivation
-			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			Type = ChainableProxy
+			ComponentID = MainThrusterL
 		}
-		LateralThruster : MainThruster
+
+		MainThrusterRLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = MainThrusterR
+		}
+
+		ThrusterEffectsValue
+		{
+			Type = MultiValue
+			Values = [MainThrusterL, MainThrusterR, ReverseThrusterL, ReverseThrusterR]
+			Mode = Max
+		}
+
+		ThrusterLEffectsValue
+		{
+			Type = MultiValue
+			Values = [MainThrusterL, ReverseThrusterL]
+			Mode = Max
+		}
+
+		ThrusterREffectsValue
+		{
+			Type = MultiValue
+			Values = [MainThrusterR, ReverseThrusterR]
+			Mode = Max
+		}
+
+		MainThrusterBase : &~/MainThrusterBase
+		{
+			MinActivation = 0
+			MaxActivation = 0
+		}
+
+		MainThrusterL : &~/MainThrusterBase
+		{
+			Location = [0.5, 1.225]
+		}
+		MainThrusterR : &~/MainThrusterBase
+		{
+			Location = [2.5, 1.225]
+		}
+
+		LateralThruster : &~/MainThrusterBase
 		{
 			Rotation = 0d
-			MinActivation = -0.2
-			MaxActivation = 0.2
+			MinActivation = -0.4
+			MaxActivation = 0.4
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			FuelUsagePerSecond = (&../../FuelUsage)/5
 			AllowAutoFire = false
 		}
-		ReverseThruster : MainThruster
+
+		ReverseThrusterL : MainThrusterL
 		{
 			Rotation = -90d
 			MinActivation = 0
@@ -428,22 +439,36 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
 			AllowAutoFire = false
 		}
-		
+
+		ReverseThrusterR : MainThrusterR
+		{
+			Rotation = -90d
+			MinActivation = 0
+			MaxActivation = { BaseValue=0.42; BuffType=Engine; BuffMode=Multiply; }
+			MinUncommandedActivation = 0
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*2.1
+			ActivationRecoveryTime = (&../../ThrustRecoveryTime)*1.2
+			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
+			AllowAutoFire = false
+		}
+/*
 		ActivationBar
 		{
 			Type = ProgressBar
 			OperationalToggle = IsOperational
-			ShowProgressFor = MainThruster
+			ShowProgressFor = MainThrusterBase
 			LowColor = [0, 0, 0]
 			HighColor = [250, 250, 250]
 			FullColor = [255, 255, 255]
 		}
+*/
 /*
 		ActivationBarTrigger
 		{
 			Type = ThresholdTrigger
-			AmountFrom = MainThruster
-			MinAmount = 0.01
+			AmountFrom = MainThrusterBase
+			MinAmount = 0.05
 		}
 		ActivationBarToggle
 		{
@@ -455,17 +480,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ProgressBar
 			OperationalToggle = ActivationBarToggle
-			ShowProgressFor = MainThruster
+			ShowProgressFor = MainThrusterBase
 			LowColor = [0, 0, 0]
 			HighColor = [250, 250, 250]
 			FullColor = [255, 255, 255]
 		}
 */
+		
+
 		ThrustEffectsSound
 		{
 			Type = ContinuousEffects
-			ChainedTo = MainThruster
-			FactorMediaEffectsIntensityWith = MainThruster
+			ChainedTo = MainThrusterBase
+			FactorMediaEffectsIntensityWith = Thruster_Effects_Value
 			MediaEffects
 			[
 				: /COMMON_SOUNDS/ThrusterRumble
@@ -480,16 +507,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
-			AmountFrom = MainThruster
+			AmountFrom = Thruster_Effects_Value
 			MinAmount = 0.5
 		}
 
 		BurstEffects
 		{
 			Type = TriggeredEffects
-			ChainedTo = MainThruster
+			ChainedTo = MainThrusterBase
 			Trigger = BurstTrigger
-			FactorMediaEffectsIntensityWith = MainThruster
+			FactorMediaEffectsIntensityWith = Thruster_Effects_Value
 			AnchorMediaEffects = true
 			MediaEffects
 			[
@@ -505,7 +532,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterHum
 		{
 			Type = ContinuousEffects
-			Location = [.5, .5]
+			Location = [1.5, .5]
 			OperationalToggle = IsOperational
 			MediaEffects
 			[
@@ -583,3 +610,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 }
 Size = Small
+
+MainThrusterBase
+{
+	Type = Thruster
+	OperationalToggle = IsOperational
+	Location = [1.5, 1.225]
+	Rotation = 90d// Relative to unrotated part.
+	Force = &../../ThrusterForce
+	MinActivation = 0
+	MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
+	MinUncommandedActivation = &MinActivation
+	MaxUncommandedActivation = &MaxActivation
+	ActivationIncreaseTime = &../../ThrustIncreaseTime
+	ActivationRecoveryTime = &../../ThrustRecoveryTime
+	FuelStorage = BatteryStorage
+	FuelUsagePerSecond = &../../FuelUsage
+}
