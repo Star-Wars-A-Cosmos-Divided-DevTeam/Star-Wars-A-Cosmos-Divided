@@ -186,7 +186,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Sprite
 			ChainedTo = MainThrusterLLocationProxy
-			Location = [-3-20/64, 20/64]
+			Location = [-3-20/64, 18/64]
 			Rotation = -90d
 			Layer = "roof_doodads"
 			ResetAnimationTrigger = BurstTrigger
@@ -207,11 +207,57 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
+		EngineFloorGraphicsL
+		{
+			Type = Sprite
+			ChainedTo = MainThrusterLLocationProxy
+			Location = [-3-20/64, 18/64]
+			Rotation = -90d
+			Layer = "structure"
+			ResetAnimationTrigger = BurstTrigger
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"engine_l.png"// Loop back to beginning and clamp there.
+				]
+				NormalsAnimationFiles
+				[
+					"engine_l_normals.png"
+				]
+				Size = [2, 7]
+				AnimationInterval = 1
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+
+		EngineLightsGraphicsL
+		{
+			Type = Graphics
+			ChainedTo = MainThrusterLLocationProxy
+			Location = [-0.049, 0]
+			Rotation = -90d
+			OperationalToggle = IsOperational
+			
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [1.2, 0.6]
+					}
+				]
+			}
+		}
+
 		EngineGraphicsR
 		{
 			Type = Sprite
 			ChainedTo = MainThrusterRLocationProxy
-			Location = [-3-20/64, -20/64]
+			Location = [-3-20/64, -18/64]
 			Rotation = -90d
 			Layer = "roof_doodads"
 			ResetAnimationTrigger = BurstTrigger
@@ -229,6 +275,53 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				AnimationInterval = 1
 				AnimationStartTime = MinValue
 				ClampAnimation = true
+			}
+		}
+
+		EngineFloorGraphicsR
+		{
+			Type = Sprite
+			ChainedTo = MainThrusterRLocationProxy
+			Location = [-3-20/64, -18/64]
+			Rotation = -90d
+			Layer = "structure"
+			ResetAnimationTrigger = BurstTrigger
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"engine_r.png"// Loop back to beginning and clamp there.
+				]
+				NormalsAnimationFiles
+				[
+					"engine_r_normals.png"
+				]
+				Size = [2, 7]
+				AnimationInterval = 1
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+
+		EngineLightsGraphicsR
+		{
+			Type = Graphics
+			ChainedTo = MainThrusterRLocationProxy
+			Location = [-0.049, 0]
+			Rotation = -90d
+			OperationalToggle = IsOperational
+			
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						MirrorU = true
+						Size = [1.2, 0.6]
+					}
+				]
 			}
 		}
 
@@ -719,7 +812,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		ThrusterForce = &~/Part/ThrusterForce
+		ThrusterForce = &~/Part/ThrusterForce*2
 		ThrusterRampUp = &~/Part/ThrustIncreaseTime
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
