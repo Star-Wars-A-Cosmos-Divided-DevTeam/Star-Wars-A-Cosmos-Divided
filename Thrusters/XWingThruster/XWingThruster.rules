@@ -276,7 +276,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		GraphicsArmorL
+		GraphicsArmorLeft
 		{
 			Type = Graphics
 			Location = [1, 0.5]
@@ -323,7 +323,78 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		GraphicsArmorR
+		EngineRoofGraphicsLeft
+		{
+			Type = Sprite
+			ChainedTo = MainThrusterLeftLocationProxy
+			Location = [-3-20/64, 18/64]
+			Rotation = -90d
+			Layer = "SW.roof_engines"
+			ResetAnimationTrigger = BurstTrigger
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"engine_l.png"// Loop back to beginning and clamp there.
+				]
+				NormalsAnimationFiles
+				[
+					"engine_l_normals.png"
+				]
+				Size = [2, 7]
+				AnimationInterval = 1
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+
+		EngineStructureGraphicsLeft
+		{
+			Type = Sprite
+			ChainedTo = MainThrusterLeftLocationProxy
+			Location = [-3-20/64, 18/64]
+			Rotation = -90d
+			Layer = "SW.structure_engines"
+			ResetAnimationTrigger = BurstTrigger
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"engine_l.png"// Loop back to beginning and clamp there.
+				]
+				NormalsAnimationFiles
+				[
+					"engine_l_normals.png"
+				]
+				Size = [2, 7]
+				AnimationInterval = 1
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+
+		EngineLightsGraphicsLeft
+		{
+			Type = Graphics
+			ChainedTo = MainThrusterLeftLocationProxy
+			Location = [-0.049, 0]
+			Rotation = -90d
+			OperationalToggle = IsOperational
+			
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [1.2, 0.6]
+					}
+				]
+			}
+		}
+
+		GraphicsArmorRight
 		{
 			Type = Graphics
 			Location = [4, 0.5]
@@ -376,81 +447,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		EngineRoofGraphicsL
+		EngineRoofGraphicsRight
 		{
 			Type = Sprite
-			ChainedTo = MainThrusterLLocationProxy
-			Location = [-3-20/64, 18/64]
-			Rotation = -90d
-			Layer = "SW.roof_engines"
-			ResetAnimationTrigger = BurstTrigger
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"engine_l.png"// Loop back to beginning and clamp there.
-				]
-				NormalsAnimationFiles
-				[
-					"engine_l_normals.png"
-				]
-				Size = [2, 7]
-				AnimationInterval = 1
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
-		}
-
-		EngineStructureGraphicsL
-		{
-			Type = Sprite
-			ChainedTo = MainThrusterLLocationProxy
-			Location = [-3-20/64, 18/64]
-			Rotation = -90d
-			Layer = "SW.structure_engines"
-			ResetAnimationTrigger = BurstTrigger
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"engine_l.png"// Loop back to beginning and clamp there.
-				]
-				NormalsAnimationFiles
-				[
-					"engine_l_normals.png"
-				]
-				Size = [2, 7]
-				AnimationInterval = 1
-				AnimationStartTime = MinValue
-				ClampAnimation = true
-			}
-		}
-
-		EngineLightsGraphicsL
-		{
-			Type = Graphics
-			ChainedTo = MainThrusterLLocationProxy
-			Location = [-0.049, 0]
-			Rotation = -90d
-			OperationalToggle = IsOperational
-			
-			OperationalLighting
-			{
-				Layer = "lights_add"
-				DamageLevels
-				[
-					{
-						File = "lights.png"
-						Size = [1.2, 0.6]
-					}
-				]
-			}
-		}
-
-		EngineRoofGraphicsR
-		{
-			Type = Sprite
-			ChainedTo = MainThrusterRLocationProxy
+			ChainedTo = MainThrusterRightLocationProxy
 			Location = [-3-20/64, -18/64]
 			Rotation = -90d
 			Layer = "SW.roof_engines"
@@ -472,10 +472,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		EngineStructureGraphicsR
+		EngineStructureGraphicsRight
 		{
 			Type = Sprite
-			ChainedTo = MainThrusterRLocationProxy
+			ChainedTo = MainThrusterRightLocationProxy
 			Location = [-3-20/64, -18/64]
 			Rotation = -90d
 			Layer = "SW.structure_engines"
@@ -497,10 +497,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		EngineLightsGraphicsR
+		EngineLightsGraphicsRight
 		{
 			Type = Graphics
-			ChainedTo = MainThrusterRLocationProxy
+			ChainedTo = MainThrusterRightLocationProxy
 			Location = [-0.049, 0]
 			Rotation = -90d
 			OperationalToggle = IsOperational
@@ -518,69 +518,49 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-/*
-		BatterySprites
-		{
-			Type = ResourceSprites
-			Location = [.5, 0.5]
-			ResourceStorage = BatteryStorage
-			Layer = "doodads_low"
-			HasZeroResourceSprite = true
-			ResourceLevels
-			[
-				{
-					File = "../IonThruster01_1x1/batteries 0.png"
-					Size = [1, 1]
-				}
-				{
-					File = "../IonThruster01_1x1/batteries 1.png"
-					Size = [1, 1]
-				}
-			]
-		}
-*/
-		MainThrusterLLocationProxy
+
+		MainThrusterLeftLocationProxy
 		{
 			Type = ChainableProxy
-			ComponentID = MainThrusterL
+			ComponentID = MainThrusterLeft
 		}
 
-		MainThrusterRLocationProxy
+		MainThrusterRightLocationProxy
 		{
 			Type = ChainableProxy
-			ComponentID = MainThrusterR
+			ComponentID = MainThrusterRight
 		}
 
-		ThrusterLEffectsValueProxy
+		ThrusterLeftEffectsValueProxy
 		{
 			Type = ValueProxy
-			ComponentID = ThrusterLEffectsValue
+			ComponentID = ThrusterLeftEffectsValue
 		}
 
-		ThrusterREffectsValueProxy
+		ThrusterRightEffectsValueProxy
 		{
 			Type = ValueProxy
-			ComponentID = ThrusterREffectsValue
+			ComponentID = ThrusterRightEffectsValue
 		}
 
 		ThrusterEffectsValue
 		{
 			Type = MultiValue
-			Values = [MainThrusterL, MainThrusterR, ReverseThrusterL, ReverseThrusterR]
+			Values = [MainThrusterLeft, MainThrusterRight, ReverseThrusterLeft, ReverseThrusterRight]
 			Mode = Max
 		}
 
-		ThrusterLEffectsValue
+		ThrusterLeftEffectsValue
 		{
 			Type = MultiValue
-			Values = [MainThrusterL, ReverseThrusterL]
+			Values = [MainThrusterLeft, ReverseThrusterLeft]
 			Mode = Max
 		}
 
-		ThrusterREffectsValue
+		ThrusterRightEffectsValue
 		{
 			Type = MultiValue
-			Values = [MainThrusterR, ReverseThrusterR]
+			Values = [MainThrusterRight, ReverseThrusterRight]
 			Mode = Max
 		}
 
@@ -590,17 +570,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxActivation = 0
 		}
 
-		MainThrusterL : &~/MainThrusterBase
+		MainThrusterLeft : &~/MainThrusterBase
 		{
 			Location = [2.5-1-30/64, 3-8/64]
 		}
 
-		MainThrusterR : &~/MainThrusterBase
+		MainThrusterRight : &~/MainThrusterBase
 		{
 			Location = [2.5+1+30/64, 3-8/64]
 		}
 
-		LateralThruster : &~/MainThrusterBase
+		LateralThruster : MainThrusterBase
 		{
 			Rotation = 0d
 			MinActivation = -0.05
@@ -611,7 +591,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AllowAutoFire = false
 		}
 
-		ReverseThrusterL : MainThrusterL
+		ReverseThrusterLeft : MainThrusterLeft
 		{
 			Rotation = -90d
 			MinActivation = 0
@@ -624,7 +604,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AllowAutoFire = false
 		}
 
-		ReverseThrusterR : MainThrusterR
+		ReverseThrusterRight : MainThrusterRight
 		{
 			Rotation = -90d
 			MinActivation = 0
@@ -681,8 +661,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrustLEffectsGlowMagenta
 		{
 			Type = ContinuousEffects
-			ChainedTo = MainThrusterLLocationProxy
-			FactorMediaEffectsIntensityWith = ThrusterLEffectsValue
+			ChainedTo = MainThrusterLeftLocationProxy
+			FactorMediaEffectsIntensityWith = ThrusterLeftEffectsValue
 			MediaEffects
 			[
 				&/COMMON_PARTICLES/IonThruster/Glow/Med/Magenta
@@ -692,8 +672,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrustREffectsGlowMagenta
 		{
 			Type = ContinuousEffects
-			ChainedTo = MainThrusterRLocationProxy
-			FactorMediaEffectsIntensityWith = ThrusterREffectsValue
+			ChainedTo = MainThrusterRightLocationProxy
+			FactorMediaEffectsIntensityWith = ThrusterRightEffectsValue
 			MediaEffects
 			[
 				&/COMMON_PARTICLES/IonThruster/Glow/Med/Magenta
@@ -719,7 +699,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterHum
 		{
 			Type = ContinuousEffects
-			Location = [1.5, .5]
+			Location = [2.5, 0.5]
 			OperationalToggle = IsOperational
 			MediaEffects
 			[
@@ -731,11 +711,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [2.5, 0.5]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_low"
+			HasZeroResourceSprite = true
+			ResourceLevels
+			[
+				{
+					File = "../IonThruster01_1x1/batteries 0.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../IonThruster01_1x1/batteries 1.png"
+					Size = [1, 1]
+				}
+			]
+		}
+
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [1.5, .5]
+			Location = [2.5, 0.5]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
@@ -744,8 +744,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
-			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyed
-			Location = [1.5, .5]
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [2.5, 0.5]
 		}
 
 		Indicators
