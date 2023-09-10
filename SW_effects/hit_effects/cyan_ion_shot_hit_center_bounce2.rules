@@ -1,0 +1,409 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rot
+			RotationOut = rot
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = scale
+			ScaleOut = scale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = index
+			ValueType = Int
+			FromValue = 0
+			ToValue = 7
+			Name = "random sprite index"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.1
+			ToValue = 0.5
+			Name = "random lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = flip
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0
+				Y = 0
+			}
+			ToValue
+			{
+				X = 0
+				Y = 1
+			}
+			Name = "Random Flip"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = true
+			Colors
+			[
+				{
+					Rf = 0.078431375
+					Gf = 0.19607843
+					Bf = 0
+					Af = 0.5882353
+				}
+				{
+					Rf = 0.15686275
+					Gf = 0.19607843
+					Bf = 0
+					Af = 0.5882353
+				}
+				{
+					Rf = 0.23529412
+					Gf = 0.09803922
+					Bf = 0
+					Af = 0.5882353
+				}
+				{
+					Rf = 0.3137255
+					Gf = 0.09803922
+					Bf = 0
+					Af = 0.5882353
+				}
+				{
+					Rf = 0.39215687
+					Gf = 0.19607843
+					Bf = 0
+					Af = 0.5882353
+				}
+				{
+					Rf = 0.43137255
+					Gf = 0.23529412
+					Bf = 0.19607843
+					Af = 0.5882353
+				}
+				{
+					Rf = 0.47058824
+					Gf = 0.29411766
+					Bf = 0.09803922
+					Af = 0.5882353
+				}
+				{
+					Rf = 0.78431374
+					Gf = 0.39215687
+					Bf = 0.09803922
+					Af = 0.5882353
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = baseScale
+			BIn = scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "apply base scale"
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = frameAdd
+			Invert = false
+			ValueType = Int
+			FromValue = 0
+			ToValue = 4
+			Name = "add frames over life"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Int
+			AIn = index
+			BIn = frameAdd
+			ResultOut = newIndex
+			Operator = Add
+			Name = "combine new frames with index"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvSprites
+			SpriteIndexIn = newIndex
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 1024
+				Y = 1024
+			}
+			SpriteSize
+			{
+				X = 512
+				Y = 256
+			}
+			SpriteCount = 8
+			SpritesPerRow = 2
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = true
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvFlip
+			FlipXYIn = flip
+			UvRectInOut = uv_rect
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "apply velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn = uv_rect
+		BaseSize
+		{
+			X = 1
+			Y = 0.5
+		}
+		Offset
+		{
+			X = 0.5
+			Y = -0.35
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
+			File = particle_lightning.shader
+		}
+		_centerColor
+		{
+			Rf = 1
+			Gf = 0.9882353
+			Bf = 0
+			Af = 1
+		}
+		_outerColor
+		{
+			Rf = 0.7490196
+			Gf = 1
+			Bf = 0.3529412
+			Af = 1
+		}
+		_bloomColor
+		{
+			Rf = 0.89411765
+			Gf = 1
+			Bf = 0.37254903
+			Af = 1
+		}
+		Texture
+		{
+			File = disruptor_bolt_hit_bounce.png
+			MipLevels = max
+			FixTransparentColors = true
+			SampleMode = Linear
+			UMode = Wrap
+			VMode = Wrap
+		}
+		TargetBlendMode
+		{
+			SourceRgbFactor = One
+			DestRgbFactor = One
+			RgbOperator = Add
+			SourceAlphaFactor = InverseDestAlpha
+			DestAlphaFactor = One
+			AlphaOperator = Add
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 0
+	EmitPerOneShot
+	{
+		Min = 15
+		Max = 20
+	}
+	PreInitializers
+	[
+		{
+			Type = SetRandom
+			DataOut = scale
+			ValueType = Float
+			FromValue = 0.3
+			ToValue = 1
+			Name = "random base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = WorldLocationFromPartCenter
+			LocationOut = location
+			CenterType = Physical
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandomCircle
+			LocationOut = dist
+			Circle
+			{
+				Center
+				{
+					X = 0
+					Y = 0
+				}
+				Radius = 0.5
+			}
+			Perimeter = true
+			Name = "create circular offset"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = dist
+			ResultOut = location
+			Operator = Add
+			Name = "combine offset with center"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AlignToVelocity
+			VelocityIn = dist
+			RotationInOut = rot
+			Name = "align away from center"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = DisruptorLightningUpper
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 0
+IsFancy = true
+IsFancyLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 5
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.4028235E+38
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Junk = true
+	TargetedJunk
+}
+Delay = 0.08
+IgnoreIntensity = false
