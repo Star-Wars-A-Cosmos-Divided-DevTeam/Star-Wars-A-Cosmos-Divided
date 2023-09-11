@@ -6,41 +6,80 @@ Def
 	Initializers
 	[
 		{
-			Type = LocationToWorldSpace
-			LocationIn = location
-			LocationOut = location
-			Name = ""
+			Type = LocationFromSource
+			LocationOut = source_location
+			Name = "World location from source"
 			Enabled = true
 			UpdateAfterInit = false
 		}
 		{
-			Type = RotationToWorldSpace
-			RotationIn = rot
-			RotationOut = rot
+			Type = WorldLocationFromPartRect
+			LocationOut = dest_location
+			RectType = Physical
+			Inflate = 0
+			RestrictToPartColliders = false
+			Name = "World destination from part rect"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = seed
+			ValueType = Int
+			FromValue = -2147483648
+			ToValue = 2147483647
+			Name = "Random seed"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetWorldSpaceScale
+			ScaleOut = base_scale
+			LocalScale = 1
 			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.1
+			ToValue = 1.5
+			Name = "Random Lifetime"
 			Enabled = true
 			UpdateAfterInit = false
 		}
 		{
 			Type = ScaleToWorldSpace
-			ScaleIn = scale
-			ScaleOut = baseScale
+			ScaleIn = base_scale
+			ScaleOut = base_scale
 			Name = ""
 			Enabled = true
 			UpdateAfterInit = false
 		}
 		{
-			Type = VelocityToWorldSpace
-			VelocityIn = velocity
-			VelocityOut = velocity
-			Name = ""
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = InheritVelocity
-			VelocityInOut = velocity
-			Name = ""
+			Type = SetRandom
+			DataOut = flip_xy
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0
+				Y = 1
+			}
+			ToValue
+			{
+				X = 0
+				Y = 1
+			}
+			Name = "random flip"
 			Enabled = true
 			UpdateAfterInit = false
 		}
@@ -49,31 +88,56 @@ Def
 			DataOut = index
 			ValueType = Int
 			FromValue = 0
-			ToValue = 15
-			Name = "random sprite index"
+			ToValue = 7
+			Name = "random index"
 			Enabled = true
 			UpdateAfterInit = false
 		}
 		{
-			Type = SetRandom
-			DataOut = lifetime
-			ValueType = Float
-			FromValue = 0.1
-			ToValue = 0.6
-			Name = "random lifetime"
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = SetBulletBarrierID
-			BarrierIDOut = barrier
+			Type = UvSprites
+			SpriteIndexIn = index
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 1024
+				Y = 512
+			}
+			SpriteSize
+			{
+				X = 512
+				Y = 128
+			}
+			SpriteCount = 8
+			SpritesPerRow = 2
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = false
 			Name = ""
-			Enabled = true
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvFlip
+			FlipXYIn = flip_xy
+			UvRectInOut = uv_rect
+			Name = ""
+			Enabled = false
 			UpdateAfterInit = false
 		}
 	]
 	Updaters
 	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 5
+			Name = Lifetime
+			Enabled = false
+			UpdateAfterInit = false
+		}
 		{
 			Type = VariableLifetime
 			LifeInOut = life
@@ -83,44 +147,48 @@ Def
 			UpdateAfterInit = false
 		}
 		{
-			Type = ColorRamp
+			Type = Operator
+			DataType = Vector2
+			AIn = source_location
+			BIn = velocity
+			ResultOut = source_location
+			Operator = AddDt
+			Name = "Apply source loc velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = dest_location
+			BIn = velocity
+			ResultOut = dest_location
+			Operator = AddDt
+			Name = "Apply dest loc velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
 			LerpIn = life
-			ColorOut = color
+			DataOut = color
 			Invert = false
-			Colors
-			[
-				{
-					Rf = 0
-					Gf = 0.039215688
-					Bf = 0
-					Af = 1
-				}
-				{
-					Rf = 0.13725491
-					Gf = 1
-					Bf = 0.19607843
-					Af = 0.39215687
-				}
-				{
-					Rf = 0.4862745
-					Gf = 1
-					Bf = 1
-					Af = 0.29411766
-				}
-				{
-					Rf = 0.8627451
-					Gf = 0.39215687
-					Bf = 0.5882353
-					Af = 0.39215687
-				}
-				{
-					Rf = 1
-					Gf = 0.039215688
-					Bf = 0
-					Af = 0.019607844
-				}
-			]
-			Name = ""
+			ValueType = Color
+			FromValue
+			{
+				Rf = 1
+				Gf = 1
+				Bf = 1
+				Af = 1
+			}
+			ToValue
+			{
+				Rf = 1
+				Gf = 1
+				Bf = 1
+				Af = 0
+			}
+			Name = "Color lerp"
 			Enabled = true
 			UpdateAfterInit = true
 		}
@@ -130,43 +198,79 @@ Def
 			DataOut = scale
 			Invert = false
 			ValueType = Float
-			FromValue = 0.81
-			ToValue = 2.1
-			Name = ""
+			FromValue = 1
+			ToValue = 0.75
+			Name = "Scale lerp"
 			Enabled = true
-			UpdateAfterInit = false
+			UpdateAfterInit = true
 		}
 		{
 			Type = Operator
 			DataType = Float
-			AIn = baseScale
-			BIn = scale
+			AIn = scale
+			BIn = base_scale
 			ResultOut = scale
 			Operator = Multiply
-			Name = "apply base scale"
+			Name = "Apply base scale"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 1
+					Gf = 1.9607843
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1.5686275
+					Gf = 1.7647059
+					Bf = 0.5882353
+					Af = 1
+				}
+				{
+					Rf = 1.9607843
+					Gf = 1.9607843
+					Bf = 0.19607843
+					Af = 0.39215687
+				}
+				{
+					Rf = 1.9607843
+					Gf = 1.7647059
+					Bf = 0
+					Af = 0
+				}
+			]
+			Name = ""
 			Enabled = true
 			UpdateAfterInit = false
 		}
 		{
 			Type = Lerp
 			LerpIn = life
-			DataOut = frameAdd
+			DataOut = newFrames
 			Invert = false
 			ValueType = Int
 			FromValue = 0
-			ToValue = 4
-			Name = "add frames over life"
+			ToValue = 32
+			Name = "add frames"
 			Enabled = true
 			UpdateAfterInit = false
 		}
 		{
 			Type = Operator
 			DataType = Int
-			AIn = index
-			BIn = frameAdd
+			AIn = newFrames
+			BIn = index
 			ResultOut = newIndex
 			Operator = Add
-			Name = "combine new frames with index"
+			Name = ""
 			Enabled = true
 			UpdateAfterInit = false
 		}
@@ -177,15 +281,15 @@ Def
 			TextureSize
 			{
 				X = 1024
-				Y = 1024
+				Y = 512
 			}
 			SpriteSize
 			{
-				X = 256
-				Y = 256
+				X = 512
+				Y = 128
 			}
-			SpriteCount = 16
-			SpritesPerRow = 4
+			SpriteCount = 8
+			SpritesPerRow = 2
 			PixelOffset
 			{
 				X = 0
@@ -197,40 +301,9 @@ Def
 			UpdateAfterInit = false
 		}
 		{
-			Type = Operator
-			DataType = Vector2
-			AIn = location
-			BIn = velocity
-			ResultOut = location
-			Operator = AddDt
-			Name = "apply velocity"
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = Lerp
-			LerpIn = life
-			DataOut = scale2
-			Invert = false
-			ValueType = Vector2
-			FromValue
-			{
-				X = 1
-				Y = 0.1
-			}
-			ToValue
-			{
-				X = 1
-				Y = 3
-			}
-			Name = ""
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = Barrier
-			BarrierIDIn = barrier
-			LocationIn = location
+			Type = UvFlip
+			FlipXYIn = flip_xy
+			UvRectInOut = uv_rect
 			Name = ""
 			Enabled = true
 			UpdateAfterInit = false
@@ -238,178 +311,131 @@ Def
 	]
 	Renderer
 	{
-		Type = StandardQuadRenderer
-		LocationIn = location
+		Type = LightningRenderer
+		LineSprite
+		{
+			Shader
+			{
+				File = shader/sprite_lightning.shader
+			}
+			_centerColor
+			{
+				Rf = 0
+				Gf = 0.9882353
+				Bf = 1
+				Af = 1
+			}
+			_outerColor
+			{
+				Rf = 0.3529412
+				Gf = 0.7490196
+				Bf = 1
+				Af = 1
+			}
+			_bloomColor
+			{
+				Rf = 0.37254903
+				Gf = 1
+				Bf = 0.89411765
+				Af = 1
+			}
+			Texture
+			{
+				File = cyan_ion_shot_lightning.png
+				MipLevels = max
+				FixTransparentColors = true
+				SampleMode = Linear
+				UMode = Wrap
+				VMode = Wrap
+			}
+			TargetBlendMode
+			{
+				SourceRgbFactor = One
+				DestRgbFactor = One
+				RgbOperator = Add
+				SourceAlphaFactor = InverseDestAlpha
+				DestAlphaFactor = One
+				AlphaOperator = Add
+			}
+		}
+		LineThickness = [ 0.1, 1.5 ]
+		EnableLightningShaderAnimation = true
+		SourceLocationIn = source_location
+		DestLocationIn = dest_location
 		ScaleIn = scale
-		Scale2In = scale2
-		RotationIn = rot
 		ColorIn = color
-		UvRectIn = uv_rect
-		BaseSize
+		UVRectIn = uv_rect
+		TimeIn = life
+		SeedIn = seed
+		DistPerSegment = 2
+		XOffsetPerlin
 		{
-			X = 1
-			Y = 1
+			Seed = 0
+			GridSize = 10
+			Repeat = 0
+			Octaves = 1
+			Persistence = 0.5
+			OutputExponent = 2
+			OutputScale = 4
+			OutputShift = 0
+			ClampOutput
+			{
+				Min = -0.5
+				Max = 0.5
+			}
 		}
-		Offset
+		YOffsetPerlin
 		{
-			X = 0
-			Y = 0.25
+			Seed = 0
+			GridSize = 3
+			Repeat = 0
+			Octaves = 1
+			Persistence = 0.5
+			OutputExponent = 1
+			OutputScale = 2
+			OutputShift = 0
+			ClampOutput
+			{
+				Min = -0.3
+				Max = 0.3
+			}
 		}
+		BulgeExponent = 1
 		Name = ""
 	}
 	Material
-	{
-		Shader
-		{
-			File = shader/particle_lightning.shader
-		}
-		_centerColor
-		{
-			Rf = 0
-			Gf = 0.9882353
-			Bf = 1
-			Af = 1
-		}
-		_outerColor
-		{
-			Rf = 0.3529412
-			Gf = 0.7490196
-			Bf = 1
-			Af = 1
-		}
-		_bloomColor
-		{
-			Rf = 0.37254903
-			Gf = 1
-			Bf = 0.89411765
-			Af = 1
-		}
-		Texture
-		{
-			File = cyan_ion_shot_discharge.png
-			MipLevels = max
-			FixTransparentColors = true
-			SampleMode = Linear
-			UMode = Wrap
-			VMode = Wrap
-		}
-		TargetBlendMode
-		{
-			SourceRgbFactor = One
-			DestRgbFactor = One
-			RgbOperator = Add
-			SourceAlphaFactor = InverseDestAlpha
-			DestAlphaFactor = One
-			AlphaOperator = Add
-		}
-	}
 	DeleteMode = Fast
 	EnableMultithreading = false
 	InitCapacity = 256
 }
 EmitterDef
 {
-	EmitPerSecond = 3
+	EmitPerSecond = 0
 	EmitPerOneShot
 	{
-		Min = 0
-		Max = 0
+		Min = 2
+		Max = 3
 	}
 	PreInitializers
 	[
 		{
 			Type = SetRandom
-			DataOut = scale
+			DataOut = base_scale
 			ValueType = Float
-			FromValue = 0.1
-			ToValue = 0.6
-			Name = "random base scale"
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = SetRandom
-			DataOut = rot
-			ValueType = Angle
-			FromValue = 0d
-			ToValue = 360d
-			Name = ""
-			Enabled = false
-			UpdateAfterInit = false
-		}
-		{
-			Type = SetRandom
-			DataOut = location
-			ValueType = Vector2
-			FromValue
-			{
-				X = 0
-				Y = -0.05
-			}
-			ToValue
-			{
-				X = 0
-				Y = 0.05
-			}
-			Name = "random location"
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = SetRandomVelocityFromPoint
-			LocationIn = location
-			VelocityOut = velocity
-			Speed
-			{
-				Min = 3
-				Max = 5
-			}
-			AwayFromPoint
-			{
-				X = 0.5
-				Y = 0
-			}
-			ConvertPointToWorldSpace = false
-			Name = ""
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = AlignToVelocity
-			VelocityIn = velocity
-			RotationInOut = rot
-			Name = ""
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = SetValue
-			DataOut = rotAdd
-			ValueType = Angle
-			Value = -90d
-			Name = ""
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = Operator
-			DataType = Angle
-			AIn = rot
-			BIn = rotAdd
-			ResultOut = rot
-			Operator = Add
-			Name = ""
+			FromValue = 0.8
+			ToValue = 1
+			Name = "Random Scale"
 			Enabled = true
 			UpdateAfterInit = false
 		}
 	]
 	PostInitializers[]
 }
-Bucket = DisruptorLightningUpper
+Bucket = Upper2
 UseRealTime = false
 PenetratingBucket
 MinIntensity = 0
-IsFancy = false
+IsFancy = true
 IsFancyLight = false
 IsSimple = false
 Sharing = Global
@@ -420,7 +446,7 @@ UseCustomShapeForOffScreenCheck = false
 MaxEmissionZoom = 3.4028235E+38
 ScaleEmissionWithIntensity = false
 ScaleEmissionWithBeamLength = false
-ScaleEmissionWithWorldVelocity = true
+ScaleEmissionWithWorldVelocity = false
 ScaleEmissionWithPartSize = false
 ScaleEmissionWithPartPhysicalSize = false
 CaptureBackBuffer = false
@@ -447,5 +473,5 @@ Filter
 	Junk = true
 	TargetedJunk
 }
-Delay = 0.1
+Delay = 0
 IgnoreIntensity = false
