@@ -12,7 +12,7 @@ Copyright (c) 2017-2023
 
 Our Offical Discord: [Star Wars: A Cosmos Divided][discord_link]
 
-If u have questions, feedback or issues feel free to use the mod-discussion channel.
+If u have questions, feedback or issues feel free to use the [mod-discussion channel][discord_discussion_link].
 
 Description
 ===========
@@ -97,3 +97,4 @@ If you have any problem, suggestion, comment, or you found a bug in my
 mod, you can post in the mod section of the Cosmoteer Forum, in the Official Discord, or on our linked Discord.
 
 [discord_link]: https://discord.gg/XxmMsdwtcF
+[discord_disccusion_link]: https://discord.com/channels/358437446314098699/358437446746374145
