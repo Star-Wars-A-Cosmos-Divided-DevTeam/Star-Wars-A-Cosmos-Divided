@@ -4,7 +4,7 @@ OtherIDs = ["blue_medium_ion_cannon_shot","SW.blue_medium_ion_cannon_shot"]
 Range = 500
 IdealRange = [60, 420]
 IdealRadius = [5, 50]
-Speed = 60
+Speed = 120
 
 Components
 {
@@ -27,11 +27,33 @@ Components
 		Health = 4000
 		TargetCategory = "ion_shot"
 	}
-
+/*
+	MediaEffects1
+	{
+		Type = MediaEffects
+		Offset = [-0.1, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/CyanIonShotPlumeLight
+		]
+	}
+*/
+	MediaEffects3
+	{
+		Type = MediaEffects
+		Offset = [16/64, 0]
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/CyanIonShotLightning
+		]
+	}
 
 	Hit
 	{
 		Type = PenetratingHit
+		Penetration = 50 // Enough to get through one shield and lose half penetration.
+		PenetratesOperational = false
 		FactorEffectsWith = Targetable
 		
 		CrewCollisions = {Enemies=true; Junk=true}
@@ -44,9 +66,21 @@ Components
 			HitEffects
 			[
 				{
-					Type = Damage
-					Damage = 5000
+					Type = ResourceDrain
+					ResourceType = battery
+					Amount = 2000
+					TreatShieldAsPart = true
 
+					MediaEffectsOnDrain
+					[
+						&/COMMON_PARTICLES/CyanShipDrain
+						&/COMMON_PARTICLES/CyanIonShotHitSizzle
+						&/COMMON_SOUNDS/IonDischarge
+					]
+				}
+				{
+					Type = Damage
+					Damage = 2000
 				}
 				{
 					Type = Impulse;
@@ -71,14 +105,13 @@ Components
 		}
 		HitOperational
 		{
+			ReduceEffectsByPenetration = true
+
 			HitEffects
 			[
 				{
-
 					Type = Damage
-
-					Damage = 500
-
+					Damage = 400
 				}
 				{
 					Type = Impulse;
@@ -106,11 +139,8 @@ Components
 			HitEffects
 			[
 				{
-
 					Type = Damage
-
-					Damage = 250
-
+					Damage = 125
 				}
 				{
 					Type = Impulse;
@@ -132,16 +162,14 @@ Components
 		}
 		PenetratingOperational
 		{
+			// No effect.
 		}
 		PenetratingStructural
 		{
+			// No effect.
 		}
-		FinishedPenetratingOperational
-		{
-		}
-		FinishedPenetratingStructural
-		{
-		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
 	}
 	
 	Sprite

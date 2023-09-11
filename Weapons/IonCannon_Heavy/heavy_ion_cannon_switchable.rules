@@ -181,7 +181,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 10000
+			MaxResources = 25000
 			ToggleOnResources = (&~/Part/Components/BulletEmitterBase/ResourcesUsed) * (&~/TurretStats/Stats/Barrels)
 			ToggleOffResources = (&ToggleOnResources) -1
 		}
@@ -371,47 +371,36 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Density = 1.5
 		}
 
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = CommonReloadTimer
+			Invert = true
+			LowColor = [8, 64, 64]
+			HighColor = [49, 255, 255]
+		}
+
 		CommonReloadResetTrigger
 		{
 			Type = MultiTrigger
 			Triggers = [Turret]
 		}
 
-		ReloadProgressBar
+		BulletEmitterBase : &~/BulletEmitterBase
 		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = Turret
-			LowColor = [8, 64, 64]
-			HighColor = [164, 255, 255]
-		}
-
-		BulletEmitterBase
-		{
-			Type = BulletEmitter
-			ChainedTo = TurretLocationProxy
 			FireTrigger
-			GetTargetFrom = Turret
-			FireDelay = 0.15
-			Location = [0, 0]
-			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/cyanheavyioncannonshot
-			ResourceStorage = BatteryStorage
-			ResourcesUsed = 1200
-			MinResourcesUsed = 1200
 		}
 
-		BulletEmitterLeft : BulletEmitterBase
+		BulletEmitterLeft : &~/BulletEmitterBase
 		{
 			Type = BulletEmitter
-			FireTrigger = Turret
 			Location = [2.375, -0.164]
 		}
 
-		BulletEmitterRight : BulletEmitterBase
+		BulletEmitterRight : &~/BulletEmitterBase
 		{
 			Type = BulletEmitter
-			FireTrigger = Turret
 			Location = [2.375, 0.164]
 		}
 
@@ -617,7 +606,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Size = [4, 4]
 		}
 	}
-	/*
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -633,23 +621,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			NameKey = "StatCategories/HeavyCyanIoncannonshot"
 			Stats
 			{
-				ShieldDamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+				ShieldDamagePerShot = &~/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/1/Damage
 				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/TurretStats/Stats/ROF)
 				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-				DamagePerShot = (&~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage) + (&~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/1/TotalDamage)
+				DamagePerShot = &~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
 				DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				ShotSpeed = &~/Part/Components/BulletEmitterBase/Bullet/Speed
-				//ShotHP = &~/Part/Components/BulletEmitterBase/Bullet/Components/Targetable/Health
+				ShotSpeed = &~/BulletEmitterBase/Bullet/Speed
+				//ShotHP = &~/BulletEmitterBase/Bullet/Components/Targetable/Health
 			}
 		}
 	]
-	*/
 	StatsNotesKey = "Stats/CommandBridge_Notes"
 }
 OperationalRoofLightingBase
 {
-	Size = [1.6, 1.6] //X(Desired Radius)+barrelspacing(Distance between Barrels)+X(Desired Radius)=Y 
+	Size = [1.6, 1.8] //X(Desired Radius)+barrelspacing(Distance between Barrels)+X(Desired Radius)=Y 
 	Z = 1.45 // Controls the "height" of the light for the purposes of normal mapping.
 }
 TurretStats
@@ -669,6 +656,21 @@ TurretStats
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
 	}
+}
+BulletEmitterBase
+{
+	Type = BulletEmitter
+	OperationalToggle = IsOperational
+	ChainedTo = TurretLocationProxy
+	FireTrigger = CommonReloadResetTriggerProxy
+	GetTargetFrom = Turret
+	Location = [0, 0]
+	FireDelay = 0.15
+	ResourceStorage = BatteryStorage
+	ResourcesUsed = 1250
+	MinResourcesUsed = 1250
+	Bullet = &/COMMON_SHOTS/cyanheavyioncannonshot
+	Recoil = 25
 }
 TurretBase
 		{
