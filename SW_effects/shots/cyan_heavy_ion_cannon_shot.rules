@@ -1,9 +1,10 @@
 ID = SW.cyan_heavy_ion_cannon_shot
 OtherIDs = ["heavy_ion_cannon_shot","SW.blue_heavy_ion_cannon_shot"]
 
-Range = 700
-IdealRange = 400
-Speed = 50
+Range = 720
+IdealRange = [160, 450]
+IdealRadius = [5, 50]
+Speed = 160
 
 Components
 {
@@ -24,15 +25,36 @@ Components
 	{
 		Type = Targetable
 		Health = 4000
-		TargetCategory = "laser"
+		TargetCategory = "ion_shot"
 	}
-
+/*
+	MediaEffects1
+	{
+		Type = MediaEffects
+		Offset = [-0.1, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/CyanIonShotPlumeLight
+		]
+	}
+*/
+	MediaEffects3
+	{
+		Type = MediaEffects
+		Offset = [45/64, 0]
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/CyanIonShotLightning
+		]
+	}
 
 	Hit
 	{
 		Type = PenetratingHit
+		Penetration = 40 // Enough to get through one shield and lose half penetration.
+		PenetratesOperational = false
 		FactorEffectsWith = Targetable
-		SourceShipCollisionDelay = 10
 		
 		CrewCollisions = {Enemies=true; Junk=true}
 		SourceShipLowCollisions = false
@@ -44,11 +66,21 @@ Components
 			HitEffects
 			[
 				{
+					Type = ResourceDrain
+					ResourceType = battery
+					Amount = 4000
+					TreatShieldAsPart = true
 
+					MediaEffectsOnDrain
+					[
+						&/COMMON_PARTICLES/CyanShipDrain
+						&/COMMON_PARTICLES/CyanIonShotHitSizzle
+						&/COMMON_SOUNDS/IonDischarge
+					]
+				}
+				{
 					Type = Damage
-
 					Damage = 4000
-
 				}
 				{
 					Type = Impulse;
@@ -73,14 +105,13 @@ Components
 		}
 		HitOperational
 		{
+			ReduceEffectsByPenetration = true
+
 			HitEffects
 			[
 				{
-
 					Type = Damage
-
-					Damage = 400
-
+					Damage = 300
 				}
 				{
 					Type = Impulse;
@@ -134,16 +165,14 @@ Components
 		}
 		PenetratingOperational
 		{
+			// No effect.
 		}
 		PenetratingStructural
 		{
+			// No effect.
 		}
-		FinishedPenetratingOperational
-		{
-		}
-		FinishedPenetratingStructural
-		{
-		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
 	}
 
 	Sprite
@@ -171,17 +200,30 @@ Components
 		}
 	}
 
-	/*Sprite
+	GlowSprite
 	{
 		Type = Sprite
-		RenderBucket = BulletUpper3
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
 		Sprite
 		{
-			Texture = "cyan_ion.png"
-			Size = [1.75, 0.81]
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [2.5, 1.2]
+			VertexColor = [0, 240, 240]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
 		}
-	}*/
-
+	}
+/*
 	MediaEffects
 	{
 		Type = MediaEffects
@@ -193,4 +235,5 @@ Components
 			&/COMMON_PARTICLES/CyanIonShotGlow
 		]
 	}
+*/
 }
