@@ -1,4 +1,4 @@
-<font color="blue">COSMOTEER</font>﻿﻿
+COSMOTEER
 
 Web site: https://www.cosmoteer.net/ 
 Forum: https://forum.cosmoteer.net/
