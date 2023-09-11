@@ -10,7 +10,7 @@ Web site: https://www.starwars.com/
 Star Wars: A Cosmos Divided Mod by ClassicJam & Lafiel
 Copyright (c) 2017-2023
 
-Our Offical Discord: https://discord.gg/XxmMsdwtcF
+Our Offical Discord: [Star Wars: A Cosmos Divided][discord_link]
 
 If u have questions, feedback or issues feel free to use the mod-discussion channel.
 
@@ -95,3 +95,5 @@ Feedback
 
 If you have any problem, suggestion, comment, or you found a bug in my
 mod, you can post in the mod section of the Cosmoteer Forum, in the Official Discord, or on our linked Discord.
+
+[discord_link]: (https://discord.gg/XxmMsdwtcF)
