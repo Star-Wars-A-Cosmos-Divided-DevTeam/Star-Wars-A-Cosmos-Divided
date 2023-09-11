@@ -3,19 +3,19 @@ COSMOTEER
 Web site: https://www.cosmoteer.net/ 
 Forum: https://forum.cosmoteer.net/
 
-STAR WARS
+STAR WARS 
 
-Web site: https://www.starwars.com/
+Web site: https://www.starwars.com/ 
 
-Star Wars: A Cosmos Divided Mod by ClassicJam & Lafiel
-Copyright (c) 2017-2023
-
-Our Offical Discord: [Star Wars: A Cosmos Divided][discord_link]
-
-If u have questions, feedback or issues feel free to use the [mod-discussion channel][discord_discussion_link].
-
-Description
-===========
+Star Wars: A Cosmos Divided Mod by ClassicJam & Lafiel 
+Copyright (c) 2017-2023 
+ 
+Our Offical Discord: [Star Wars: A Cosmos Divided][discord_link] 
+ 
+If u have questions, feedback or issues feel free to use the [mod-discussion channel][discord_discussion_link]. 
+ 
+Description 
+=========== 
 Star Wars: A Cosmos Divided is the definitive Star Wars experience for Cosmoteer. It introduces new weapons from the Star Wars universe into the game, new technology tiers and superweapons.
 
 It includes new types of parts, such as droids, new armor classes, and now all types of shapes from Kroom's New Armor Expanded. 
@@ -63,36 +63,36 @@ due to loss of data or any other reason.
 
 Credits
 =====================
-Star Wars: A Cosmos Divided (Classic)
-Founded by ClassicJam
+Star Wars: A Cosmos Divided (Classic) 
+Founded by ClassicJam 
 
-Lead Programmer/Vision Director - ClassicJam (2017-2022*)
-Lead Programmer - Lafiel (2017-)
-Lead Programmer - Jesus3747 (2019)
-Programmer - yobeefjerky (2017-2018)
-Programmer - Skipper Wraith (2019-)
-Artist - IVIemories
-Artist - Meranera
-Artist - Kroom
-Artist - Stormi-Chan
-Balancing - FormularSumo
-French Translation - Aels
+Lead Programmer/Vision Director - ClassicJam (2017-2022*) 
+Lead Programmer - Lafiel (2017-) 
+Lead Programmer - Jesus3747 (2019) 
+Programmer - yobeefjerky (2017-2018) 
+Programmer - Skipper Wraith (2019-) 
+Artist - IVIemories 
+Artist - Meranera 
+Artist - Kroom 
+Artist - Stormi-Chan 
+Balancing - FormularSumo 
+French Translation - Aels 
 
 Special Thanks
-- GhostTaker, for inspiring the creation of this project, 2017.
-- Bubbet, for providing some custom parts to be used in the project, 2017.
+- GhostTaker, for inspiring the creation of this project, 2017. 
+- Bubbet, for providing some custom parts to be used in the project, 2017. 
 
-Star Wars: A Cosmos Divided 1.0 (Modern)
-Vision Director, Consultant - ClassicJam
-Lead Programmer - Skipper Wraith
-Lead Programmer - Lafiel
-Programmer - JaniTNT
-Programmer - Rojamahorse
-Artist - Roasted
-
-Feedback
-========
-
+Star Wars: A Cosmos Divided 1.0 (Modern) 
+Vision Director, Consultant - ClassicJam 
+Lead Programmer - Skipper Wraith 
+Lead Programmer - Lafiel 
+Programmer - JaniTNT 
+Programmer - Rojamahorse 
+Artist - Roasted 
+ 
+Feedback 
+======== 
+ 
 If you have any problem, suggestion, comment, or you found a bug in my
 mod, you can post in the mod section of the Cosmoteer Forum, in the Official Discord, or on our linked Discord.
 
