@@ -97,4 +97,4 @@ If you have any problem, suggestion, comment, or you found a bug in my
 mod, you can post in the mod section of the Cosmoteer Forum, in the Official Discord, or on our linked Discord.
 
 [discord_link]: https://discord.gg/XxmMsdwtcF
-[discord_disccusion_link]: https://discord.com/channels/358437446314098699/358437446746374145
+[discord_discussion_link]: https://discord.com/channels/358437446314098699/358437446746374145
