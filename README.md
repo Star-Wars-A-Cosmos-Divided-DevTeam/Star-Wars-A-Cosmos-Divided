@@ -1,21 +1,22 @@
 # Star Wars: A Cosmos Divided Mod by ClassicJam & Lafiel
 
-Copyright (c) 2017-2023
+Copyright (©) 2017-2023
 
 Our Offical Discord: [Star Wars: A Cosmos Divided][discord_link]
 
 If u have questions, feedback or issues feel free to use the [mod-discussion channel][discord_discussion_link].
 
-COSMOTEER
+## COSMOTEER
 
 Web site: <https://www.cosmoteer.net/>
 Forum: <https://forum.cosmoteer.net/>
 
-STAR WARS
+## STAR WARS
 
 Web site: <https://www.starwars.com/>
 
-Description
+## Description
+
 ===========
 
 Star Wars: A Cosmos Divided is the definitive Star Wars experience for Cosmoteer. It introduces new weapons from the Star Wars universe into the game, new technology tiers and superweapons.
@@ -24,12 +25,13 @@ It includes new types of parts, such as droids, new armor classes, and now all t
 
 You can also download the Ships Pack add-on, which will add dozens of ships from the Star Wars universe into your game.
 
-System Requirements & Limitations
+## System Requirements & Limitations
 =================================
 
 * This version of the mod works with Cosmoteer version 0.15.13 through 0.15.14 It is not compatible with pre-Cosmoteer 0.15.13 versions.
 * If you are using on an older computer the mod may overwhelm your processor or memory.
-Minium System Requirements
+
+* Minium System Requirements
  o CPU: Intel® Core 2 Duo e4600 Dual-Core Processor or AMD Equivalent (Dual Core Intel i5/AMD FX-4100 or equivalent/better recommended)
  o Memory: 2GB (6GB+ Recommended)
  o Video Card: 512MB DirectX® 10.0-Compliant or better.
