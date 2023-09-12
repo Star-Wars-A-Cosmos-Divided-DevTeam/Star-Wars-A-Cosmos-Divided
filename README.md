@@ -95,12 +95,12 @@ Special Thanks
 
 ### Star Wars: A Cosmos Divided 1.0 (Modern)
 
-Vision Director, Consultant - ClassicJam
+Vision Director, Consultant - ClassicJam  
 Lead Programmer - SkipperWraith (2022-)  
-Lead Programmer - Lafiel
-Programmer - JaniTNT
-Programmer - Rojamahorse
-Artist - Roasted
+Lead Programmer - Lafiel  
+Programmer - JaniTNT (2023-)  
+Programmer - Rojamahorse (2023-)  
+Artist - Roasted (2022-)  
 
 ## Feedback
 
