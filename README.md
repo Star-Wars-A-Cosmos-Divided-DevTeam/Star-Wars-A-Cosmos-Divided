@@ -72,8 +72,6 @@ due to loss of data or any other reason.
 
 =====================
 
-Star Wars: A Cosmos Divided (Classic)  
-Founded by ClassicJam  
 ### Star Wars: A Cosmos Divided (Classic)
 
 Founded by ClassicJam
@@ -95,7 +93,6 @@ Special Thanks
 * GhostTaker, for inspiring the creation of this project, 2017.  
 * Bubbet, for providing some custom parts to be used in the project, 2017.  
 
-Star Wars: A Cosmos Divided 1.0 (Modern)  
 ### Star Wars: A Cosmos Divided 1.0 (Modern)
 
 Vision Director, Consultant - ClassicJam
