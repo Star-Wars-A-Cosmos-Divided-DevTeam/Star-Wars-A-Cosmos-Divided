@@ -5,34 +5,45 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ID = SW.imperial_probe_droid
 	OtherIDs = ["imperial_probe_droid"]
 	EditorGroup = "Droids"
-	EditorGroupKey = "EditorGroups/Misc"
+	//EditorGroupKey = "EditorGroups/Misc"
 	DescriptionKey = "Parts/ImperialProbeDroidDesc"
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 10000
+		[steel, 16]
+		[coil, 8]
+		[coil2, 2]
+		[processor, 1]
+	]
 	AIValueFactor = 1
 
 	Size = [1, 1]
-	MaxHealth = 1000
+	IsRotateable = false
+	AllowedContiguity = []
+	MaxHealth = 8000
 	SelectionPriority = 0
 	Flammable = true
-	CreatePartPerTileWhenDestroyed = ""
+	UnderlyingPartPerTile = ""
 	CreatePartPerTileWhenGrabbed = ""
-	InitialPenetrationResistance = 1
+	InitialPenetrationResistance = 5
 	CrewSpeedFactor = 0
+	Density = 0.272
 	TypeCategories = [command, reactor, thruster, sensors]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	CreateUnderlyingWhenDestroyed = false
+	IgnoreRotationForMirroredSelection = true
 	IsExternal = true
 	ExternalWalls = [None]
 	InternalWalls = [None]
 	GeneratorRequiresDoor = false
 	NoAutoDoors = true
-	ThrusterForce = 20
+	ThrusterForce = 8
 	FuelUsage = 10
 	ThrustIncreaseTime = 0
 	ThrustRecoveryTime = 0
 	AllowedDoorLocations []
-        EditorIcon
+	GenerateRectCollider = true
+    
+	EditorIcon
 	{
 		Texture
 		{
@@ -41,40 +52,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [64, 64]
 	}
-	Components
+	Components : ^/0/Components
 	{
-		MyRepeatingTimerTrigger
-		{
-			Type = Timer
-			Duration = 70
-			AutoStart = true
-			Repeats = true
-		}
-		MyTriggeredEffects
-		{
-			Type = TriggeredEffects
-			Trigger = MyRepeatingTimerTrigger
-			MediaEffects
-			[
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "PRBdroidchatter.wav"
-					Volume = 1.0
-				}
-			]
-		}
-		BlueprintSprite0
-
-		{
-			Type=BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 1]
-		}
 
 		CommandProvider
-
 		{
 			Type = CommandProvider
+			OperationalToggle = IsOperational
+			CommandPoints = 1
+		}
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 1
+		}
+		CommandToggle
+		{
+			Type = CommandToggle
 		}
 
 		IsOperational
@@ -89,23 +84,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
-		}
-		FireModeToggle
-		{
-			Type = UIToggle
-			ToggleID = "fire_mode"
-			Default = 1
-			ToggledOnChoices = [1]
+			RequiresCommand = false
 		}
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 2000
-			StartingAmmo = &MaxResources
-			ToggleOnResources = 2000
-			//PrerequisiteUnmetAmmo = 0
+			StartingResources = &MaxResources
+			SuppliesResources = true
+			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+			MinResourcesPickUp = 500
+			MaxResourcesPickUp = 1000
+			ToggleOnResources = 400
+			ToggleOffResources = (&ToggleOnResources)-1
 		}
 		BatteryProducer
 		{
@@ -114,120 +106,204 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToQuantity = 400
 			Interval = 1
 		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = BatteryStorage
+			ShowProgressFor = BatteryStorage
+			LowColor = [0, 63, 255]
+			HighColor = [0, 63, 255]
+			FullColor = [0, 63, 255]
+		}
 		Sensor
 		{
 			Type = Sensor
-			SightRadius = 1000
-			RadarRadius = 1ceil(000*4.5)
-
+			OperationalToggle = IsOperational
+			SightRadius = 1250
+			RadarRadius = 4500
 		}
+
+		Thruster1
+		{
+			Type = Thruster
+			OperationalToggle = IsOperational
+			Location = [.5, .75]// Relative to upper-left corner of unrotated part.
+			Rotation = 90d// Relative to unrotated part.
+			Force = &../../ThrusterForce
+			MinActivation = 0
+			MaxActivation = 1
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationRecoveryTime = &../../ThrustRecoveryTime
+			FuelStorage = BatteryStorage
+			FuelUsagePerSecond = &../../FuelUsage
+		}
+		LateralThruster1 : Thruster1
+		{
+			Rotation = 45d
+			MinActivation = -0.05
+			MaxActivation = 0.05
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			FuelUsagePerSecond = (&../../FuelUsage)/20
+			AllowAutoFire = false
+		}
+		Thruster2 : Thruster1
+		{
+			Location = [0.25, 0.5]
+			Rotation = 180d// Relative to main thruster.
+		}
+		LateralThruster2 : Thruster2
+		{
+			Rotation = 45d
+			MinActivation = -0.05
+			MaxActivation = 0.05
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			FuelUsagePerSecond = (&../../FuelUsage)/20
+			AllowAutoFire = false
+		}
+		Thruster3 : Thruster1
+		{
+			Location = [0.5, 0.25]
+			Rotation = 270d// Relative to main thruster.
+		}
+		LateralThruster3 : Thruster3
+		{
+			Rotation = 45d
+			MinActivation = -0.05
+			MaxActivation = 0.05
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			FuelUsagePerSecond = (&../../FuelUsage)/20
+			AllowAutoFire = false
+		}
+		Thruster4 : Thruster1
+		{
+			Location = [0.75, 0.5]
+			Rotation = 0d// Relative to main thruster.
+		}
+		LateralThruster4 : Thruster4
+		{
+			Rotation = 45d
+			MinActivation = -0.05
+			MaxActivation = 0.05
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			FuelUsagePerSecond = (&../../FuelUsage)/20
+			AllowAutoFire = false
+		}
+
+		ThrusterEffectsValue
+		{
+			Type = MultiValue
+			Values = [Thruster1, Thruster2, Thruster3, Thruster4]
+			Mode = Max
+		}
+
+		MediaEffects
+		{
+			Type = ContinuousEffects
+			Location = [0.5, 0.75]
+			Rotation = 90d
+			FactorMediaEffectsIntensityWith = ThrusterEffectsValue
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/IonThruster/Glow/Small/Red
+				&/COMMON_PARTICLES/Thruster/Fire/Small/Red
+				&/COMMON_PARTICLES/Thruster/PlumeLight/Small/Red
+				&/COMMON_PARTICLES/Thruster/Smoke/Small
+				&/COMMON_PARTICLES/Thruster/Sparks/Spread/Red
+			]
+		}
+		
 		ArcShield
 		{
 			Type = ArcShield
-			OperationalToggle = IsOperational
-
-			Radius = 1.5
-			Arc = 360d
-			DrainAmmoFrom = BatteryStorage
-			PenetrationResistance = [5, 0]
-			AmmoDrainPerDamage = 1
 			Rotation = -90d
+			Radius = 3
+			Arc = 180.9d // 2 Halfs so the Texture doesn't get Strechted
+			OperationalToggle = IsOperational
+			DrainResourcesFrom = BatteryStorage
 			Location = [0.5, 0.5]
+			PenetrationResistance = [7, 0]
+			ResourceDrainPerDamage = 1
 
 			BlueprintArcSprite
 			{
-				Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+				Texture
+				{
+					File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
+					UVMode = Wrap
+					SampleMode = Linear
+					MipLevels = 1
+				}
 				Size = [0, 1.5]
 				Color = [0, 0, 255, 127]
 			}
 			BlueprintArcSpriteSegments = 64
-
+		
 			CoverageArcSprite
 			{
-				Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+				Texture
+				{
+					File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+					UVMode = Wrap
+					SampleMode = Linear
+					MipLevels = 1
+				}
 				Size = [0, 1.5]
 				Color = [255, 255, 255, 127]
 			}
 			CoverageArcSpriteSegments = 64
-			HitMediaEffects
-			[
-				{
-					Type = ArcShield
-					FadeInTime = .1
-					FadeOutTime = .5
-					Radius = &~/Part/Components/ArcShield/Radius
-					Arc = 20d
-					ArcSprite
-					{
-						Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
-						_waveTex
-						{
-							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
-							UVMode = Wrap
-						}
-						_waveSpeed = -2
-						_waveAlpha = .75
-						_waveCurveInterval = 1
-						_waveCurveMagnitude = .25
-						_waveCurveUOffsetPerSecond = 0
-						//TargetBlendMode = Add
-						_fullPowerColor = [0, 0, 255, 191]
-						_lowPowerColor = [255, 0, 0, .191]
-						_lowPowerThicknessExponent = .6
-						TargetBlendMode = Add
-						Size = [0, 3]
-					}
-					ArcSpriteSegments = 12
-					Bucket = Upper3
-				}
 
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/ships/terran/shield_gen_small/shield_hit.wav"
-					Volume = 1
-					Speed = 1
-					IgnoreIntensity = true
-					SpeedVariation = .25
-					MaxConcurrent = 10
-				}
-			]
-		}
-		ArcShieldEffect
-		{
-			Type = ContinuousEffects
-			ChainedTo = ArcShield
-			FactorMediaEffectsIntensityWith = BatteryStorage
-			Location = [&~/Part/Components/ArcShield/Radius, 0]
-			OperationalToggle = IsOperational
-			MediaEffects
+			ShieldMediaEffects
 			[
 				{
 					Type = ArcShield
-					Radius = &~/Part/Components/ArcShield/Radius
-					Arc = &~/Part/Components/ArcShield/Arc
+					Radius = 3
+					Arc = 180.9d // 2 Halfs so the Texture doesn't get Strechted
 					FadeInTime = .25
 					FadeOutTime = .25
 					FadeFromScale = .8
 					ArcSprite
 					{
-						Texture = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
 						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
 						_waveTex
 						{
 							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
 							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_maskTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_mask.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
 						}
 						_waveSpeed = 1
 						_waveAlpha = 1
 						_waveCurveInterval = .5
 						_waveCurveMagnitude = .35
 						_waveCurveUOffsetPerSecond = .2
-						_fullPowerColor = [0, 0, 255, 127]
-						_lowPowerColor = [255, 0, 0, 127]
+						_fullPowerColor1 = &<../../Shields/ColorTuner.rules>/Blue/_fullPowerColor1
+						_lowPowerColor1 = &<../../Shields/ColorTuner.rules>/Blue/_lowPowerColor1
+						_fullPowerColor2 = &<../../Shields/ColorTuner.rules>/Blue/_fullPowerColor2
+						_lowPowerColor2 = &<../../Shields/ColorTuner.rules>/Blue/_lowPowerColor2
 						_lowPowerThicknessExponent = .6
+						_xScale = 2
 						TargetBlendMode = Add
-						Size = [0, 1.5]
+						Size = [0, 1]
 					}
 					ArcSpriteSegments = 64
 					Bucket = Lower1
@@ -248,99 +324,79 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					IgnoreIntensity = true
 				}
 			]
-		}
-		ShieldOperationEffects
-		{
-			Type = ToggleEffects
-			Toggle = IsOperational,
-			ChainedTo = ArcShieldEffect
-			ToggledOnMediaEffects
+			
+			HitMediaEffects
 			[
-				: /BASE_SOUNDS/AudioExterior
 				{
-					Sound = "./Data/ships/terran/shield_gen_small/activate.wav"
-					Volume = .5
-					Speed = 1
-					IgnoreIntensity = true
+					Type = ArcShield
+					FadeInTime = .1
+					FadeOutTime = .5
+					Radius = 3
+					Arc = 12d//20d
+					ArcSprite
+					{
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_original.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
+						_waveTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_maskTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_original.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_waveSpeed = -2
+						_waveAlpha = .75
+						_waveCurveInterval = 1
+						_waveCurveMagnitude = .25
+						_waveCurveUOffsetPerSecond = 0
+						//TargetBlendMode = Add
+						_fullPowerColor1 = &<../../Shields/ColorTuner.rules>/BlueHit/_fullPowerColor1
+						_lowPowerColor1 = &<../../Shields/ColorTuner.rules>/BlueHit/_lowPowerColor1
+						_fullPowerColor2 = &<../../Shields/ColorTuner.rules>/BlueHit/_fullPowerColor2
+						_lowPowerColor2 = &<../../Shields/ColorTuner.rules>/BlueHit/_lowPowerColor2
+						_lowPowerThicknessExponent = .6
+						_xScale = 1
+						TargetBlendMode = Add
+						Size = [0, 3]
+					}
+					ArcSpriteSegments = 6
+					Bucket = Upper3
 				}
+				&/COMMON_SOUNDS/ShieldHit
 			]
-			ToggledOffMediaEffects
-			[
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/ships/terran/shield_gen_small/deactivate.wav"
-					Volume = .5
-					Speed = 1
-					IgnoreIntensity = true
-				}
-			]
-		}
+		}	
 
-		MainThruster1
+		ArcShield90 : ArcShield
 		{
-			Type = Thruster
-			OperationalToggle = IsOperational,
-			Location = [.5, 1]// Relative to upper-left corner of unrotated part.
-			Rotation = 90d// Relative to unrotated part.
-			Force = &../../ThrusterForce
-			MinActivation = -.95
-			MaxActivation = 1
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			Rotation = 90d
 		}
 
-		LateralThruster1
-		{
-			Type = Thruster
-			OperationalToggle = IsOperational,
-			ChainedTo = MainThruster1
-			Rotation = 90d// Relative to main thruster.
-			Force = &../../ThrusterForce
-			MinActivation = -0.8
-			MaxActivation = 0.8
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = 0
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
-		}
-
-		ThrustEffects1
-		{
-			Type = ContinuousEffects
-			ChainedTo = MainThruster1
-			FactorMediaEffectsIntensityWith = MainThruster1
-			MediaEffects
-			[
-				&<./Data/ships/terran/thruster_small/particles/thruster_glow_small.txt>
-
-				: /COMMON_SOUNDS/ThrusterRumble
-				{
-					Volume = .25
-					Speed = 1
-					MaxConcurrentVolume = .5
-				}
-			]
-		}
-
-		BurstTrigger1
+		BurstTrigger
 		{
 			Type = ThresholdTrigger
-			AmountFrom = MainThruster1
+			AmountFrom = ThrusterEffectsValue
 			MinAmount = .5
 		}
 
-		BurstEffects1
+		BurstEffects
 		{
 			Type = TriggeredEffects
-			ChainedTo = MainThruster1
-			Trigger = BurstTrigger1
-			FactorMediaEffectsIntensityWith = MainThruster1
+			ChainedTo = Thruster1
+			Trigger = BurstTrigger
+			FactorMediaEffectsIntensityWith = ThrusterEffectsValue
 			AnchorMediaEffects = true
 			MediaEffects
 			[
@@ -351,96 +407,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					MaxConcurrentVolume = 1
 				}
 			]
-		}
-		MainThruster2
-		{
-			Type = Thruster
-			OperationalToggle = IsOperational,
-			Location = [.5, 0]// Relative to upper-left corner of unrotated part.
-			Rotation = -90d// Relative to unrotated part.
-			Force = &../../ThrusterForce
-			MinActivation = -.95
-			MaxActivation = 1
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
-		}
-
-		LateralThruster2
-		{
-			Type = Thruster
-			OperationalToggle = IsOperational,
-			ChainedTo = MainThruster2
-			Rotation = 90d// Relative to main thruster.
-			Force = &../../ThrusterForce
-			MinActivation = -0.8
-			MaxActivation = 0.8
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = 0
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
-		}
-
-		ThrustEffects2
-		{
-			Type = ContinuousEffects
-			ChainedTo = MainThruster2
-			FactorMediaEffectsIntensityWith = MainThruster2
-			MediaEffects
-			[
-				&<./Data/ships/terran/thruster_small/particles/thruster_glow_small.txt>
-
-				: /COMMON_SOUNDS/ThrusterRumble
-				{
-					Volume = .25
-					Speed = 1
-					MaxConcurrentVolume = .5
-				}
-			]
-		}
-
-		BurstTrigger2
-		{
-			Type = ThresholdTrigger
-			AmountFrom = MainThruster2
-			MinAmount = .5
-		}
-
-		BurstEffects2
-		{
-			Type = TriggeredEffects
-			ChainedTo = MainThruster2
-			Trigger = BurstTrigger2
-			FactorMediaEffectsIntensityWith = MainThruster2
-			AnchorMediaEffects = true
-			MediaEffects
-			[
-				: /COMMON_SOUNDS/ThrusterBurst
-				{
-					Volume = .5
-					Speed = 1
-					MaxConcurrentVolume = 1
-				}
-			]
-		}
-		OperationEffects
-		{
-			Type = ToggleEffects;
-			Toggle = IsOperational,
-			Location = [.5, 1];
-			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn;
-			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff;
 		}
 
 		Graphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational,
+			OperationalToggle = IsOperational
 			Location = [.5, .5]
 			Floor
 			{
@@ -463,92 +435,63 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 			Roof
 			{
-				Layer = "roofs";
-				DamageLevels
-				[
-					{
-						File = "roof.png";
-						Size = [1, 1];
-					}
-					{
-						File = "roof_33.png";
-						Size = [1, 1];
-					}
-					{
-						File = "roof_66.png";
-						Size = [1, 1];
-					}
-				]
-			}
-			NonOperationalRoofDoodad
-			{
-				Layer = "roof_doodads"
+				Layer = "roofs"
 				DamageLevels
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [1, 1]
 					}
-				]
-			}
-		}
-		InternalGraphics
-		{
-			Type = Graphics;
-			OperationalToggle = IsOperational,
-			Location = [1, 1];
-
-			Floor
-			{
-				Layer = "floors";
-				DamageLevels
-				[
 					{
-						File = "internal.png"
+						File = "roof_33.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals.png"
 						Size = [1, 1]
 					}
 				]
 			}
 		}
-
+/*
+		MyRepeatingTimerTrigger
+		{
+			Type = Timer
+			Duration = 35
+			AutoStart = true
+			Repeats = true
+		}
+		MyTriggeredEffects
+		{
+			Type = TriggeredEffects
+			Trigger = MyRepeatingTimerTrigger
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "PRBdroidchatter.wav"
+					Volume = 1.0
+				}
+			]
+		}
+*/
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational
+			Location = [.5, .5]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
 
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 			Location = [.5, .5]
-			HitEffects
-			[
-				{
-					Type = AreaDamage
-					Damage = 800
-					Radius = 2
-					Delay = .05
-					Filter
-					{
-						Friendlies = true
-						OperationalHealth = true
-						StructuralHealth = false
-					}
-				}
-				{
-					Type = AreaDamage
-					Damage = 400
-					Radius = 1
-					Delay = .05
-					Filter
-					{
-						Friendlies = true
-						OperationalHealth = false
-						StructuralHealth = true
-					}
-				}{
-					Type = AreaImpulse
-					Impulse = 10
-					Radius = 4
-					Delay = .05
-				}
-			]
 		}
 		Indicators
 		{
@@ -578,6 +521,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
 	}
 }
