@@ -21,9 +21,10 @@ Web site: <https://www.starwars.com/>
 ===========
 
 Star Wars: A Cosmos Divided is the definitive Star Wars experience for Cosmoteer.  
-It introduces new weapons from the Star Wars universe into the game, new technology tiers and superweapons.  
-It includes new types of parts, such as droids, new armor classes, and now all types of shapes from Kroom's New Armor Expanded.  
-You can also download the Ships Pack add-on, which will add dozens of ships from the Star Wars universe into your game.  
+It introduces new weapons, reactors, shields, thrusters & utility parts from the Star Wars universe into the game including 2 new technology tiers /*and superweapons*/.  
+It also includes new types of parts, such as droids, 2 new armor classes with all types of shapes from the old Kroom's New Armor Expanded Mod and even more.  
+You can also Download the Star Wars: A Cosmos Divided Factions mod (requires this Mod here) and the Star Wars: A Cosmos Divided Music Add-On Mod (Standalone)  
+/*You can also download the Ships Pack add-on, which will add dozens of ships from the Star Wars universe into your game.*/
 
 ## System Requirements & Limitations
 
