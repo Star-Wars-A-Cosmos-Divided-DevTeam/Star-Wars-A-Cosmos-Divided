@@ -95,12 +95,25 @@ Special Thanks
 
 ### Star Wars: A Cosmos Divided 1.0 (Modern)
 
-Vision Director, Consultant - ClassicJam  
+Vision Director, Consultant - ClassicJam (2022- )  
 Lead Programmer - SkipperWraith (2022-)  
 Lead Programmer - Lafiel  
 Programmer - JaniTNT (2023-)  
 Programmer - Rojamahorse (2023-)  
-Artist - Roasted (2022-)  
+Artist - Roasted (2022-)
+
+### Translators
+
+German - SkipperWraith, Wolfram  
+English - Classicjam, SkipperWraith  
+French = English or ChatGPT (searching translators)  
+Italian = English or ChatGPT (searching translators)  
+Spanish - Rojamahorse  
+Japanese = English or ChatGPT (searching translators)  
+Portuguese = English or ChatGPT (searching translators)  
+Russian = English or ChatGPT (searching translators)  
+Turkish = English or ChatGPT (searching translators)  
+//Chinese = English or ChatGPT (searching translators)  
 
 ## Feedback
 
