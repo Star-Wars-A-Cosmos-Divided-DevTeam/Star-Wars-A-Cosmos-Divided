@@ -1,0 +1,433 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Convert location to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rot
+			RotationOut = rot
+			Name = "Convert rotation to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = sprite_index
+			ValueType = Int
+			FromValue = 0
+			ToValue = 63
+			Name = "Random sprite index"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetWorldSpaceScale
+			ScaleOut = base_scale
+			LocalScale = 1
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 1
+			ToValue = 2.5
+			Name = "Random lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandomHsvColor
+			ColorOut = randColor
+			HueRange
+			{
+				Min = 0
+				Max = 0
+			}
+			SaturationRange
+			{
+				Min = 0
+				Max = 0
+			}
+			ValueRange
+			{
+				Min = 0.2
+				Max = 0.8
+			}
+			AlphaRange
+			{
+				Min = 0.5
+				Max = 1
+			}
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 0.7
+			Name = Lifetime
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = frame
+			Invert = false
+			ValueType = Int
+			FromValue = 0
+			ToValue = 48
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Int
+			AIn = sprite_index
+			BIn = frame
+			ResultOut = sprite
+			Operator = Add
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvAnimation
+			TimeIn = life
+			UvRectOut = uv_rect
+			Framerate = 32
+			TextureSize
+			{
+				X = 256
+				Y = 512
+			}
+			FrameSize
+			{
+				X = 128
+				Y = 512
+			}
+			FrameCount = 16
+			FramesPerRow = 4
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = false
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvSprites
+			SpriteIndexIn = sprite
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 1024
+				Y = 1024
+			}
+			SpriteSize
+			{
+				X = 128
+				Y = 128
+			}
+			SpriteCount = 64
+			SpritesPerRow = 8
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = true
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 3
+			ToValue = 3
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0.39215687
+					Gf = 0.39215687
+					Bf = 0.39215687
+					Af = 0.23529412
+				}
+				{
+					Rf = 0.078431375
+					Gf = 0.078431375
+					Bf = 0.078431375
+					Af = 0.078431375
+				}
+				{
+					Rf = 0
+					Gf = 0
+					Bf = 0
+					Af = 0
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvFlip
+			FlipXYIn = flip_xy
+			UvRectInOut = uv_rect
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = ParticleLightNormal
+			LocationIn = location
+			LightNormalOut = light_normal
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = base_scale
+			BIn = scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "Apply scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Color
+			AIn = randColor
+			BIn = color
+			ResultOut = color
+			Operator = Multiply
+			Name = "Apply random color"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = LitQuadRenderer
+		LightNormalIn = light_normal
+		DiffuseShader
+		NormalsShader
+		{
+			File = ../../../../common_effects/particles/particle_normals_smoke.shader
+		}
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In = scale2
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn = uv_rect
+		BaseSize
+		{
+			X = 1
+			Y = 1
+		}
+		Offset
+		{
+			X = 0.5
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
+			File = ../../../../common_effects/particles/particle_lit.shader
+		}
+		_normalsTexture
+		{
+			File = chaingun_shoot_smoke_normals.png
+			MipLevels = 8
+			SampleMode = Linear
+		}
+		Texture
+		{
+			File = chaingun_shoot_smoke.png
+			MipLevels = 8
+			SampleMode = Linear
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 0
+	EmitPerOneShot
+	{
+		Min = 1
+		Max = 1
+	}
+	PreInitializers
+	[
+		{
+			Type = SetValue
+			DataOut = location
+			ValueType = Vector2
+			Value
+			{
+				X = -0.45
+				Y = 0
+			}
+			Name = "Init location"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = scale2
+			ValueType = Vector2
+			FromValue
+			{
+				X = 1.4
+				Y = 1.8
+			}
+			ToValue
+			{
+				X = 2
+				Y = 2
+			}
+			Name = "random scale2"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = flip_xy
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0
+				Y = -1
+			}
+			ToValue
+			{
+				X = 0
+				Y = 1
+			}
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = ChaingunSmoke
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 0
+IsFancy = true
+IsFancyLight = false
+IsSimpleLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 1
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.4028235E+38
+MaxParticleCount = 2147483647
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Neutrals = true
+	TargetedNeutrals
+	Junk = true
+	TargetedJunk
+	Deconstruction
+}
+Delay = 0
+IgnoreIntensity = false

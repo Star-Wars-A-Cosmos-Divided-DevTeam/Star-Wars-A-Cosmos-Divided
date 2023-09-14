@@ -1,0 +1,149 @@
+Range = 240
+IdealRange = [60, 220]
+IdealRadius = [5, 50]
+Width = .5
+HitEffectsScaleOverRange = [1, 1]
+
+CrewCollisions = {Enemies=true; Junk=true}
+HitCrew = &HitOperational
+
+BeamMediaEffects
+[
+	// The bullet beam effect.
+	{
+		Type = Beam
+		BeamSprite
+		{
+			Texture
+			{
+				File = chaingun_trail.png
+				SampleMode = Linear
+				MipLevels = max
+				UVMode = Wrap
+			}
+			_noiseTex
+			{
+				File = ../../common_effects/particles/noise_gradient.png
+				MipLevels = max
+				SampleMode = Linear
+				UVMode = Wrap
+			}
+			Shader = "chaingun_bullet.shader"
+			_extraBeginLength = 0
+			_extraEndLength = 0.25
+			_color1 = [30, 20, 20, 255]
+			_color2 = [255, 211, 165, 255]
+			_endFadeLength = 2;
+			Size = [100%, 16]
+			VertexColor = [255, 255, 255, 255]
+			TargetBlendMode = Add
+		}
+		FadeInTime = 0
+		FadeOutTime = 0.09
+		RandomTimeOffset = [0, 1]
+		Bucket = ChaingunBullet
+	}
+
+	//The distortion effect.
+	{
+		Type = Beam
+		BeamSprite
+		{
+			Texture
+			{
+				File = chaingun_trail.png
+				SampleMode = Linear
+				MipLevels = max
+				UVMode = Wrap
+			}
+			_noiseTex
+			{
+				File = ../../common_effects/particles/noise_gradient.png
+				MipLevels = max
+				SampleMode = Linear
+				UVMode = Wrap
+			}
+			Shader = "chaingun_distortion.shader"
+			_extraBeginLength = 0
+			_extraEndLength = -2
+			_color1 = [30, 20, 20, 255]
+			_color2 = [255, 211, 165, 255]
+			_endFadeLength = 4;
+			Size = [100%, 8]
+			VertexColor = [255, 255, 255, 255]
+			TargetBlendMode = AlphaBlend
+		}
+		FadeInTime = 0
+		FadeOutTime = 0.12
+		RandomTimeOffset = [0, 1]
+		CaptureBackBuffer = True
+		Bucket = ChaingunDistortion
+		IsFancy = True
+	}
+
+	// Beam lighting.
+	{
+		Type = Beam
+		BeamSprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Shader = "./Data/common_effects/fancy_beam_light.shader"
+			Size = [100%, 7]
+			_extraBeginLength = (&Size/1) / 2
+			_extraEndLength = (&Size/1) / 2
+			VertexColor = [255, 159, 61, 255]
+			_z = 0.4
+			_litReflectiveStrength = 12
+			_litAdditiveStrength = 0
+			_unlitAdditiveStrength = 0
+			_nrmlStrengthLimit = 1.0
+			TargetBlendMode
+			{
+				SourceRgbFactor = InverseDestColor
+				DestRgbFactor = One
+				RgbOperator = Add
+				SourceAlphaFactor = Zero
+				DestAlphaFactor = One
+				AlphaOperator = Add
+			}
+		}
+		Bucket = Upper4
+		IsLight = true
+		FadeInTime = 0
+		FadeOutTime = .06
+	}
+]
+
+HitShield = &HitOperational
+HitOperational
+{
+	HitEffects
+	[
+		{
+			Type = Damage
+			Damage = 500
+		}
+	]
+	MediaEffects
+	[
+		&<particles/chaingun_sparks.rules>
+		&<particles/chaingun_hit.rules>
+		&<particles/chaingun_hit_flash.rules>
+		&<particles/chaingun_hit_smoke.rules>
+
+		: /BASE_SOUNDS/AudioExterior
+		{
+			RandomSounds = ["chaingun_hit_01.wav", "chaingun_hit_02.wav", "chaingun_hit_03.wav", "chaingun_hit_04.wav"]
+			Speed = 1
+			Volume = .3
+			SpeedVariation = .4
+			MaxConcurrent = 30
+		}
+	]
+}
+HitStructural = &HitOperational
