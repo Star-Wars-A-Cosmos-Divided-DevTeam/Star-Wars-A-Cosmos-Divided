@@ -82,7 +82,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
-			//AvailableChoices = [-1, 0, 1, 2]
+			AvailableChoices = [-1, 0, 1, 2]
 			ToggledOnChoices = [0, 1, 2]
 		}
 		AutoTargetToggle
@@ -98,12 +98,44 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnMode = 2
 		}
 
+		FirePrefToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_pref"
+			Default = 1
+		}
+		FirePrefAttack
+		{
+			Type = ModeToggle
+			Mode = FirePrefToggle
+			OnModes = [0, 2]
+		}
+		FirePrefDefend
+		{
+			Type = ModeToggle
+			Mode = FirePrefToggle
+			OnModes = [1, 2]
+		}
+		AttackToggle
+		{
+			Type = MultiToggle
+			Toggles = [AutoTargetToggle, FirePrefAttack, PDTurretToggle]
+			Mode = All
+		}
+		DefendToggle
+		{
+			Type = MultiToggle
+			Toggles = [AutoTargetToggle, FirePrefDefend, PDTurretToggle]
+			Mode = All
+		}
+
 		MunitionType
 		{
 			Type = UIToggle
 			ToggleID = "SW.munition_type"
 			Default = 0
-			//ToggledOnChoices = [0, 1, 2]
+			ToggledOnChoices = [0, 1, 2, 4]
+			AvailableChoices = [0, 1, 2, 4]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
@@ -147,11 +179,65 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Components = &<green_blasterlaser.rules>/Components
 		}
 
+		YellowMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 4
+		}
+		YellowMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = YellowMunitionToggle
+			Components = &<yellow_pdlaser.rules>/Components
+		}
+
+		NormalTurretToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnModes = [0, 1, 2]
+		}
+		NormalTurretComponents
+		{
+			Type = ToggledComponents
+			Toggle = NormalTurretToggle
+			Components = &<small_blasterlaser_normal.rules>/Components
+		}
+
+		PDTurretToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 4
+		}
+		PDTurretComponents
+		{
+			Type = ToggledComponents
+			Toggle = PDTurretToggle
+			Components = &<small_blasterlaser_pd.rules>/Components
+		}
+
+		IsOperationalAndNormalTurretToggle
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, NormalTurretToggle]
+			Mode = All
+		}
+
+		IsOperationalAndPDTurretToggle
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, PDTurretToggle]
+			Mode = All
+		}
+
 		CommonReloadTimer
 		{
 			Type = Timer
 			Duration = 0.375
 			AutoStart = true
+			Toggle = IsOperationalAndNormalTurretToggle
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
 		CommonOnShootEffectTimer
@@ -159,6 +245,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Timer
 			Duration = 0.25
 			AutoStart = true
+			Toggle = IsOperationalAndNormalTurretToggle
+			StartsOn = 0
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+		PDReloadTimer
+		{
+			Type = Timer
+			Duration = 2/30
+			AutoStart = true
+			Toggle = IsOperationalAndPDTurretToggle
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+		PDOnShootEffectTimer
+		{
+			Type = Timer
+			Duration = 2/30
+			AutoStart = true
+			Toggle = IsOperationalAndPDTurretToggle
 			StartsOn = 0
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
@@ -191,7 +295,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ModeTrigger
 			Mode = MunitionType
-			TriggerInModes = [0, 1, 2]
+			TriggerInModes = [0, 1, 2, 4]
 		}
 
 		BatteryStorage
@@ -342,26 +446,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			OperationalRoofDoodad
-			{
-				Layer = "roof_doodads"
-				Offset = [0, 0+5/64]
-				DamageLevels
-				[
-					{
-						File = "../roof_glows.png"
-						Size = [1, 1]
-					}
-					{
-						File = "../roof_glows_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "../roof_glows_66.png"
-						Size = [1, 1]
-					}
-				]
-			}
 			WallsStencil
 			{
 				Layer = "walls_stencil"
@@ -383,34 +467,75 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = All
 		}
 
+		PDFirePermissionToggle
+		{
+			Type = MultiToggle
+			Toggles = [PDReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
+			Mode = All
+		}
+
 		Turret : &~/TurretBase
 		{
 
 		}
 
+		PDTurret
+		{
+			Type = TurretWeapon
+			Location = [0.5, 0.75]
+			Rotation = -90d// Relative to unrotated part.
+			OperationalToggle = IsOperationalAndPDTurretToggle
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 0
+			FiringArc = 210d
+			RotateSpeed = 1080d
+			FireThresholdAngle = 1d
+			AIFirepowerRating = 150
+			CanBeGivenExplicitTarget = false
+			Emitter = BulletEmitterBase
+			TargetSearchesPerSecond = 4 // Default is 2.
+			HoldTargetAfterCancel = .5
+			TargetPathThickness = .2
+			EstimateFirepowerToggle = AttackToggle
+			AlwaysShowCoverage = true
+			AllowDirectControl = false
+			FirePermissionToggle = PDFirePermissionToggle
+			AutoTargetCrewSafetyDist = 8
+
+			AutoTargets
+			[
+				{
+					TargetType = Bullets
+					BulletTargetCategories = [missile, mine, bullet]
+					Toggle = DefendToggle
+				}
+				{
+					TargetType = ShipParts
+					Toggle = AttackToggle
+					Overridable = true
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
 		BulletEmitterBase : &~/BulletEmitterBase
 		{
-			FireTrigger 
-		}
-		
-		Weapon_High : &~/WeaponSpriteBase
-		{
-
-		}
-
-		Weapon_Low
-		{
-			Type = Sprite
-			ChainedTo = TurretLocationProxy
-			Location = [0.68, 0]
-			Rotation = 90d
-			Layer = "weapons"
-			ResetAnimationTrigger = CommonReloadResetTriggerProxy
-			AtlasSprite
-			{
-				File ="weapon.png"
-				Size = [1, 2]
-			}
+			FireTrigger
 		}
 
 		TurretCollider : &~/TurretColliderBase
@@ -426,13 +551,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CommonReloadResetTrigger
 		{
 			Type = MultiTrigger
-			Triggers = [Turret]
+			Triggers = [Turret, PDTurret]
 		}
 
 		TurretLocationProxy
 		{
 			Type = ChainableProxy
 			ComponentID = Turret
+		}
+
+		PDTurretLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = PDTurret
 		}
 
 		TurretGraphics
@@ -653,10 +784,10 @@ TurretBase
 			Type = TurretWeapon
 			Location = [0.5, 0.75]
 			Rotation = -90d
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalAndNormalTurretToggle
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0
-			FiringArc = 200d
+			FiringArc = 210d
 			RotateSpeed = 65d
 			FireThresholdAngle = 3d
 			AIFirepowerRating = 400
@@ -692,30 +823,6 @@ TurretBase
 				Texture = &/INDICATORS/VerticalGradient
 				VertexColor = [255, 255, 255, 51]
 				QuadCount = 64
-			}
-		}
-WeaponSpriteBase
-		{
-			Type = Sprite
-			ChainedTo = TurretLocationProxy
-			Location = [0.68, 0]
-			Rotation = 90d
-			Layer = "roof_turrets"
-			ResetAnimationTrigger = CommonReloadResetTriggerProxy
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"weapon.png"// Loop back to beginning and clamp there.
-				]
-				NormalsAnimationFiles
-				[
-					"weapon_normals.png"
-				]
-				Size = [1, 2]
-				AnimationInterval = 0.1
-				AnimationStartTime = MinValue
-				ClampAnimation = true
 			}
 		}
 /*
