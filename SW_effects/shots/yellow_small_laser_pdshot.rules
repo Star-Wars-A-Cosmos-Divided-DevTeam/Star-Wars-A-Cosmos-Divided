@@ -2,14 +2,14 @@ ID = SW.yellow_small_laser_pdshot_common
 OtherIDs = ["small_pointlaser_shot1"]
 Range = 250
 IdealRange = [60, 200]
-Speed = 400
+Speed = 420
 
 Components
 {
 	Physics
 	{
 		Type = CirclePhysics
-		Radius = 0.1
+		Radius = 0.12
 		Density = 0.0001
 	}
 
@@ -24,6 +24,46 @@ Components
 		Type = Targetable
 		Health = 100
 		TargetCategory = "laser"
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		//ReduceScaleWith = Hit
+		//ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{ 
+					File = "yellow_laser.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [1.75, 1.75]
+			}
+			FrameCount = 8
+			FrameSize = [128, 128]
+			FramesPerRow = 2
+			FramesPerSecond = 60
+		}
+		NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
+	}
+	
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		//FactorEffectsWith = Hit
+		//FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/YellowLaserShotGlow
+		]
 	}
 
 	Hit
@@ -79,59 +119,6 @@ Components
 			MediaEffects = &../HitBullet/MediaEffects
 		}
 		HitStructural = &HitOperational
-
-		PenetratingOperational
-		{
-		}
-		PenetratingStructural
-		{
-		}
-		FinishedPenetratingOperational
-		{
-		}
-		FinishedPenetratingStructural
-		{
-		}
-	}
-
-
-	Sprite
-	{
-		Type = AnimatedSprite
-		RenderBucket = BulletUpper3
-		//ReduceScaleWith = Hit
-		//ReduceScaleExponent = 0.5
-		Animation
-		{
-			AtlasSprite
-			{
-				Texture
-				{ 
-					File = "laser.png"
-					SampleMode = Linear
-					MipLevels = max
-				}
-				Size = [1.75, 1.75]
-			}
-			FrameCount = 8
-			FrameSize = [128, 128]
-			FramesPerRow = 2
-			FramesPerSecond = 60
-		}
-		NormalsTexture = &Animation/AtlasSprite/Texture
-		DiffuseShader = "./Data/default.shader"
-		NormalsShader = "./Data/no_normals.shader"
-	}
-	
-
-	MediaEffects
-	{
-		Type = MediaEffects
-		FactorEffectsWith = Hit
-		FactorEffectsExponent = 0.5
-		MediaEffects
-		[
-			&/COMMON_PARTICLES/YellowLaserShotGlow
-		]
 	}
 }
+
