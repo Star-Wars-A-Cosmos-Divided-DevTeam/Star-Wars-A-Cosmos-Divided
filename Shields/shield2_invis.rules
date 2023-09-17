@@ -43,14 +43,14 @@ Components
 						_waveCurveInterval = .5
 						_waveCurveMagnitude = .35
 						_waveCurveUOffsetPerSecond = .2
-						_fullPowerColor1 = &<ColorTuner.rules>/Invisible/_fullPowerColor1
-						_lowPowerColor1 = &<ColorTuner.rules>/Invisible/_lowPowerColor1
-						_fullPowerColor2 = &<ColorTuner.rules>/Invisible/_fullPowerColor2
-						_lowPowerColor2 = &<ColorTuner.rules>/Invisible/_lowPowerColor2
+						_fullPowerColor1 = &<ShieldTuner.rules>/Invisible/_fullPowerColor1
+						_lowPowerColor1 = &<ShieldTuner.rules>/Invisible/_lowPowerColor1
+						_fullPowerColor2 = &<ShieldTuner.rules>/Invisible/_fullPowerColor2
+						_lowPowerColor2 = &<ShieldTuner.rules>/Invisible/_lowPowerColor2
 						_lowPowerThicknessExponent = .6
-						_xScale = 2
+						_xScale = &<ShieldTuner.rules>/Med/_xScale
 						TargetBlendMode = Add
-						Size = [0, 2.4]
+						Size = &<ShieldTuner.rules>/Med/Size
 					}
 					ArcSpriteSegments = 64
 					Bucket = Lower1
@@ -79,7 +79,7 @@ Components
 					FadeInTime = .1
 					FadeOutTime = .5
 					Radius = &<shield2.rules>/ShieldStatBase/Radius
-					Arc = 12d//20d
+					Arc = &<ShieldTuner.rules>/HitArc
 					ArcSprite
 					{
 						Texture
@@ -108,14 +108,14 @@ Components
 						_waveCurveMagnitude = .25
 						_waveCurveUOffsetPerSecond = 0
 						//TargetBlendMode = Add
-						_fullPowerColor1 = &<ColorTuner.rules>/InvisibleHit/_fullPowerColor1
-						_lowPowerColor1 = &<ColorTuner.rules>/InvisibleHit/_lowPowerColor1
-						_fullPowerColor2 = &<ColorTuner.rules>/InvisibleHit/_fullPowerColor2
-						_lowPowerColor2 = &<ColorTuner.rules>/InvisibleHit/_lowPowerColor2
+						_fullPowerColor1 = &<ShieldTuner.rules>/Invisible/_fullPowerColor1
+						_lowPowerColor1 = &<ShieldTuner.rules>/Invisible/_lowPowerColor1
+						_fullPowerColor2 = &<ShieldTuner.rules>/Invisible/_fullPowerColor2
+						_lowPowerColor2 = &<ShieldTuner.rules>/Invisible/_lowPowerColor2
 						_lowPowerThicknessExponent = .6
-						_xScale = 1
+						_xScale = &<ShieldTuner.rules>/Med/_xScale
 						TargetBlendMode = Add
-						Size = [0, 3]
+						Size = &<ShieldTuner.rules>/Med/Size
 					}
 					ArcSpriteSegments = 6
 					Bucket = Upper3
@@ -127,5 +127,73 @@ Components
 		ArcShield90 : ArcShield
 		{
 			Rotation = 90d
+		}
+
+		EmitterEffect
+		{
+			Type = ContinuousEffects
+			ChainedTo = ArcShield
+			Rotation = 90d
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			Location = [0, (&<ShieldTuner.rules>/Med/Size/1)/2]
+			OperationalToggle = IsOperational
+			BlockedByOperationalParts = false
+			ParentToShip = true
+			MediaEffects
+			[
+				{
+					Type = ArcShield
+					Radius = (&<ShieldTuner.rules>/Med/Size/1)/2
+					Arc = &<shield1.rules>/ShieldStatBase/Arc
+					FadeInTime = .25
+					FadeOutTime = .25
+					ArcSprite
+					{
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						UVRect = [0, 1, 1, -1]
+						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
+						_waveTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_maskTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_mask.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						_waveSpeed = -1
+						_waveAlpha = 1
+						_waveCurveInterval = .5
+						_waveCurveMagnitude = .35
+						_waveCurveUOffsetPerSecond = .2
+						_fullPowerColor1 = &<ShieldTuner.rules>/Invisible/_fullPowerColor1
+						_lowPowerColor1 = &<ShieldTuner.rules>/Invisible/_lowPowerColor1
+						_fullPowerColor2 = &<ShieldTuner.rules>/Invisible/_fullPowerColor2
+						_lowPowerColor2 = &<ShieldTuner.rules>/Invisible/_lowPowerColor2
+						_lowPowerThicknessExponent = .6
+						TargetBlendMode = Add
+						_xScale = (&<ShieldTuner.rules>/Med/_xScale)/8
+						Size = [0, (&<ShieldTuner.rules>/Med/Size/1)/2]
+					}
+					ArcSpriteSegments = 64
+					Bucket = Upper1
+				}
+			]
+		}
+
+		EmitterEffect90 : EmitterEffect
+		{
+			ChainedTo = ArcShield90
 		}
 	}

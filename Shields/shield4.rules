@@ -21,17 +21,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	MaxHealth = 16000
 	TypeCategories = [defense, uses_power]
 	PenetrationRectType = Normal
-	MaxDoors = 6
+	MaxDoors = 4
 	AllowedDoorLocations
 	[
-		[-1, 2]
 		[-1, 3]
 		[0, 4]
 		[1, 4]
 		[2, 4]
 		[3, 4]
 		[4, 3]
-		[4, 2]
 	]
 	EditorIcon
 	{
@@ -73,6 +71,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			MaxResources = 128000
 			ToggleOnResources = 32000
+			ToggleOffResources = 0
 			DrainOnFtlJump = true
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
@@ -82,7 +81,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Defense_Supply
-			ResupplyThreshold = 32000
+			ResupplyThreshold = 0
 			OperationalToggle = PowerToggle
 		}
 		BatteryStorageBar
@@ -167,11 +166,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = true
 			Components = &<shield4_invis.rules>/Components
 		}
+
+		ShieldEmitterLoop
+		{
+			Type = ContinuousEffects
+			Location = [2, 2]
+			OperationalToggle = IsOperational
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExteriorDetail
+				{
+					Sound = "./Data/Ships/terran/shield_gen_small/shield_emitter_loop.wav"
+					Volume = .2
+					Speed = 1
+					MaxConcurrent = 1
+					MaxConcurrentVolume = .4
+					IgnoreIntensity = true
+				}
+			]
+		}
 		
 		ShieldOperationEffects
 		{
 			Type = ToggleEffects
-			//ChainedTo = ArcShield
 			Location = [2, 2]
 			Toggle = IsOperational
 			ToggledOnMediaEffects
@@ -219,7 +237,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [4, 4]
 					}
 				]
-			}
+			}/*
 			OperationalLighting
 			{
 				Layer = "lights_add"
@@ -230,7 +248,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [4, 4]
 					}
 				]
-			}
+			}*/
 			OperationalRoofDoodad
 			{
 				Layer = "roof_doodads"
@@ -979,18 +997,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = (&PowerUsageContinuous) + 0.5
-		RecCrew = (&RecPower) * 4
+		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
+		RecCrew = (&RecPower)
 	}
 }
 ShieldStatBase
 {
 	OperationalToggle = IsOperational
 	BlockedByOperationalParts = false
-	Radius = 45
+	Radius = 40
 	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
 	DrainResourcesFrom = BatteryStorage
-	Location = [2, 1.5]
+	Location = [2, 1.25]
 	PenetrationResistance = [128, 0]
 	ResourceDrainPerDamage = 0.5
 
@@ -1003,8 +1021,8 @@ ShieldStatBase
 			SampleMode = Linear
 			MipLevels = 1
 		}
-		_xScale = 2.7
-		Size = [0, 4]
+		_xScale = &<ShieldTuner.rules>/Huge/_xScale
+		Size = &<ShieldTuner.rules>/Huge/Size
 		UVRect = [0, 1, 2, 1]
 		Color = [50, 50, 255, 127]
 	}
@@ -1019,8 +1037,8 @@ ShieldStatBase
 			SampleMode = Linear
 			MipLevels = 1
 		}
-		_xScale = 2.7
-		Size = [0, 4]
+		_xScale = &<ShieldTuner.rules>/Huge/_xScale
+		Size = &<ShieldTuner.rules>/Huge/Size
 		UVRect = [0, 1, 2, 1]
 		Color = [255, 255, 255, 127]
 	}
