@@ -78,7 +78,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Defense_Supply
-			ResupplyThreshold = 1000
+			ResupplyThreshold = 0
 			OperationalToggle = PowerToggle
 		}
 		BatteryStorageBar
@@ -162,10 +162,29 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Components = &<shield1_invis.rules>/Components
 		}
 
+		ShieldEmitterLoop
+		{
+			Type = ContinuousEffects
+			Location = [0.5, 0.5]
+			OperationalToggle = IsOperational
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExteriorDetail
+				{
+					Sound = "./Data/Ships/terran/shield_gen_small/shield_emitter_loop.wav"
+					Volume = .2
+					Speed = 1
+					MaxConcurrent = 1
+					MaxConcurrentVolume = .4
+					IgnoreIntensity = true
+				}
+			]
+		}
+
 		ShieldOperationEffects
 		{
 			Type = ToggleEffects
-			//ChainedTo = ArcShield
 			Location = [0.5, 0.5]
 			Toggle = IsOperational
 			ToggledOnMediaEffects
@@ -213,7 +232,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [1, 1]
 					}
 				]
-			}
+			}/*
 			OperationalLighting
 			{
 				Layer = "lights_add"
@@ -225,7 +244,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [1, 1]
 					}
 				]
-			}
+			}*/
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -417,18 +436,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = (&PowerUsageContinuous) + 0.5
-		RecCrew = (&RecPower) * 4
+		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
+		RecCrew = (&RecPower)
 	}
 }
 ShieldStatBase
 {
-	Radius = 9
-	Arc = 180.9d // 2 Halfs so the Texture doesn't get Strechted
+	Type = ArcShield
+	Radius = 10
+	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
 	OperationalToggle = IsOperational
 	BlockedByOperationalParts = false
 	DrainResourcesFrom = BatteryStorage
-	Location = [0.5, 0.5] //0.25
+	Location = [0.5, 7/64] //0.25
 	PenetrationResistance = [5, 0]
 	ResourceDrainPerDamage = 0.6666
 
@@ -441,7 +461,7 @@ ShieldStatBase
 			SampleMode = Linear
 			MipLevels = 1
 		}
-		Size = [0, 1.5]
+		Size = &<ShieldTuner.rules>/Small/Size
 		Color = [0, 0, 255, 127]
 	}
 	BlueprintArcSpriteSegments = 64
@@ -455,7 +475,7 @@ ShieldStatBase
 			SampleMode = Linear
 			MipLevels = 1
 		}
-		Size = [0, 1.5]
+		Size = &<ShieldTuner.rules>/Small/Size
 		Color = [255, 255, 255, 127]
 	}
 	CoverageArcSpriteSegments = 64

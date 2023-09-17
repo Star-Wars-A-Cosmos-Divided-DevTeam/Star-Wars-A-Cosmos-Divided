@@ -80,6 +80,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			MaxResources = 128000
 			ToggleOnResources = 32000
+			ToggleOffResources = 0
 			DrainOnFtlJump = true
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
@@ -174,11 +175,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = true
 			Components = &<shield8_invis.rules>/Components
 		}
+
+		ShieldEmitterLoop
+		{
+			Type = ContinuousEffects
+			Location = [4, 4]
+			OperationalToggle = IsOperational
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExteriorDetail
+				{
+					Sound = "./Data/Ships/terran/shield_gen_small/shield_emitter_loop.wav"
+					Volume = .2
+					Speed = 1
+					MaxConcurrent = 1
+					MaxConcurrentVolume = .4
+					IgnoreIntensity = true
+				}
+			]
+		}
 		
 		ShieldOperationEffects
 		{
 			Type = ToggleEffects
-			//ChainedTo = ArcShield
 			Location = [4, 4]
 			Toggle = IsOperational
 			ToggledOnMediaEffects
@@ -226,7 +246,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [8, 8]
 					}
 				]
-			}
+			}/*
 			OperationalLighting
 			{
 				Layer = "lights_add"
@@ -237,7 +257,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [8, 8]
 					}
 				]
-			}
+			}*/
 			OperationalRoofDoodad
 			{
 				Layer = "roof_doodads"
@@ -318,7 +338,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = PowerToggle
 			Location = [4, 4]
-
+			
 			AnimationSpeedFactor = BatteryStorage
 			AnimationSpeedFactorRenormalize = [0, 10.0]
 
@@ -986,18 +1006,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = (&PowerUsageContinuous) + 0.5
-		RecCrew = (&RecPower) * 4
+		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
+		RecCrew = (&RecPower)
 	}
 }
 ShieldStatBase
 {
 	OperationalToggle = IsOperational
 	BlockedByOperationalParts = false
-	Radius = 81
+	Radius = 80
 	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
 	DrainResourcesFrom = BatteryStorage
-	Location = [4, 3]
+	Location = [4, 2.5]
 	PenetrationResistance = [256, 0]
 	ResourceDrainPerDamage = 0.5
 
@@ -1010,8 +1030,8 @@ ShieldStatBase
 			SampleMode = Linear
 			MipLevels = 1
 		}
-		_xScale = 2.7
-		Size = [0, 4]
+		_xScale = &<ShieldTuner.rules>/Giga/_xScale
+		Size = &<ShieldTuner.rules>/Giga/Size
 		UVRect = [0, 1, 2, 1]
 		Color = [50, 50, 255, 127]
 	}
@@ -1026,8 +1046,8 @@ ShieldStatBase
 			SampleMode = Linear
 			MipLevels = 1
 		}
-		_xScale = 2.7
-		Size = [0, 4]
+		_xScale = &<ShieldTuner.rules>/Giga/_xScale
+		Size = &<ShieldTuner.rules>/Giga/Size
 		UVRect = [0, 1, 2, 1]
 		Color = [255, 255, 255, 127]
 	}
