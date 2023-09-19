@@ -22,6 +22,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	TypeCategories = [defense, uses_power]
 	PenetrationRectType = Normal
 	MaxDoors = 4
+	ForceManhattanPathInPart = true
+	BlockedTravelCells
+	[
+		[0, 0]
+		[1, 0]
+		[2, 0]
+		[3, 0]
+		[0, 1]
+		[1, 1]
+		[2, 1]
+		[3, 1]
+		[0, 2]
+		[3, 2]
+	]
 	AllowedDoorLocations
 	[
 		[-1, 3]
@@ -65,24 +79,60 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			//Requires 0 Stationary Crew so
 		}
 
-		BatteryStorage
+		BatteryStorageLeft
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 128000
-			ToggleOnResources = 32000
+			MaxResources = (&~/MaxResources)/2
+			ToggleOnResources = (&~/MaxResources)/4
 			ToggleOffResources = 0
 			DrainOnFtlJump = true
+			DeliveryLocation = [1.25, 2.5]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-		BatteryConsumer
+		BatteryStorageRight : BatteryStorageLeft
+		{
+			Toggle = BatteryStorageLeftAndPowerToggle
+			ToggleOnResources = 1
+			ToggleOffResources = 0
+			DeliveryLocation = [4-(&~/Part/Components/BatteryStorageLeft/DeliveryLocation/0), &~/Part/Components/BatteryStorageLeft/DeliveryLocation/1]
+		}
+
+		BatteryConsumerLeft
 		{
 			Type = ResourceConsumer
 			ResourceType = battery
-			Storage = BatteryStorage
+			Storage = BatteryStorageLeft
 			DefaultPriority = &/PRIORITIES/Defense_Supply
-			ResupplyThreshold = 0
 			OperationalToggle = PowerToggle
+			ResupplyThreshold = 1
+		}
+		BatteryConsumerRight : BatteryConsumerLeft
+		{
+			Storage = BatteryStorageRight
+			OperationalToggle = BatteryStorageLeftAndPowerToggle
+		}
+		BatteryStorageLeftAndPowerToggle
+		{
+			Type = MultiToggle
+			Toggles = [BatteryStorageLeft, PowerToggle]
+			Mode = All
+		}
+
+		BatteryStoragePrereq
+		{
+			Type = MultiToggle
+			Toggles = [BatteryStorageLeft, BatteryStorageRight]
+			Mode = All
+		}
+
+		BatteryStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorageLeft, BatteryStorageRight]
+			AddMode = PrioritizeLeastResources
+			RemoveMode = PrioritizeMostResources
 		}
 		BatteryStorageBar
 		{
@@ -94,7 +144,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [0, 0, 255]
 			Height = 10
 		}
-		BatteryStorageBar2
+		LoadingStorageBar
 		{
 			Type = ProgressBar
 			OperationalToggle = BatteryStorage
@@ -990,12 +1040,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
+		ShieldHP = (&~/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
 		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
 		ShieldArc = deg(360d)
 		ShieldDist = (&~/ShieldStatBase/Radius)
 		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		PowerCapacity = (&~/MaxResources) / 1000
 
 		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
 		RecCrew = (&RecPower)
@@ -1003,7 +1053,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 }
 ShieldStatBase
 {
-	OperationalToggle = IsOperational
+	OperationalToggle = BatteryStoragePrereq
 	BlockedByOperationalParts = false
 	Radius = 40
 	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
@@ -1044,3 +1094,4 @@ ShieldStatBase
 	}
 	CoverageArcSpriteSegments = 64
 }
+MaxResources = 128000
