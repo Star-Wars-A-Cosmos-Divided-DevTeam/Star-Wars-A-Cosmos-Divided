@@ -8,18 +8,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/CockpitARCDesc"
 	Resources
 	[
-		[steel, 24]
-		[coil2, 12]
+		[steel, 32]
+		[coil2, 18]
 		[processor, 1]
 	]
 	AIValueFactor = 5
 	Size = [1, 2]
 	SelectionPriority = 0
-	MaxHealth = 3000
-	InitialPenetrationResistance = 2
-	PenetrationRectType = Normal
-	IsContiguityOrigin = true
-	IsShipForward = true
+	MaxHealth = 3500
+	InitialPenetrationResistance = 4
+//	PenetrationRectType = Normal
+//	IsContiguityOrigin = true
+	ContiguityOriginPriority = 1
+//	IsShipForward = true
 	SelectionTypeID = "control_room"
 	TypeCategories = [command, uses_power, is_crewed]
 	MaxDoors = 3
@@ -65,12 +66,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
-		Sensor
-		{
-			Type = Sensor				//lower radius
-			SightRadius = 300
-			RadarRadius = ceil(300*4.5)
-		}
 
 		BatteryConsumer
 		{
@@ -97,13 +92,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CommandProvider
 			OperationalToggle = IsOperational
-			CommandPoints = 25  //Remember to update tooltip.
+			CommandPoints = 45  //Remember to update tooltip.
+		}
+
+		Sensor
+		{
+			Type = Sensor				//lower radius
+			SightRadius = 300
+			RadarRadius = ceil(300*4.5)
 		}
 
 		CrewLocation
 		{
 			Type = CrewLocation
-			Location = [.5, 1.33]
+			Location = [.5, 1]
 		}
 
 		PartCrew
@@ -126,7 +128,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Graphics
 		{
 			Type = Graphics
-			Location = [0.5,1]
+			Location = [.5,1]
 			OperationalToggle = IsOperational
 			Floor
 			{
@@ -155,38 +157,38 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						AnimationFiles
 						[
-							"doodads_lights_a.png"
-							"doodads_lights_b.png"
-							"doodads_lights_c.png"
-							"doodads_lights_d.png"
-							"doodads_lights_e.png"
+							"doodads_on1.png"
+							"doodads_on2.png"
+							"doodads_on3.png"
+							"doodads_on4.png"
+							"doodads_on5.png"
 						]
 						Size = [1, 2]
-						AnimationInterval = 0.125
+						AnimationInterval = 0.25
 					}
 					{
 						AnimationFiles
 						[
-							"doodads_lights_a.png"
-							"doodads_lights_b.png"
-							"doodads_lights_c.png"
-							"doodads_lights_d.png"
-							"doodads_lights_e.png"
+							"doodads_on1_33.png"
+							"doodads_on2_33.png"
+							"doodads_on3_33.png"
+							"doodads_on4_33.png"
+							"doodads_on5_33.png"
 						]
 						Size = [1, 2]
-						AnimationInterval = 0.125
+						AnimationInterval = 0.25
 					}
 					{
 						AnimationFiles
 						[
-							"doodads_lights_a.png"
-							"doodads_lights_b.png"
-							"doodads_lights_c.png"
-							"doodads_lights_d.png"
-							"doodads_lights_e.png"
+							"doodads_on1_66.png"
+							"doodads_on2_66.png"
+							"doodads_on3_66.png"
+							"doodads_on4_66.png"
+							"doodads_on5_66.png"
 						]
 						Size = [1, 2]
-						AnimationInterval = 0.125
+						AnimationInterval = 0.25
 					}
 				]
 			}
@@ -196,71 +198,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "doodads_lights_off.png"
+						File = "doodads_off.png"
 						Size = [1, 2]
 					}
 					{
-						File = "doodads_lights_off.png"
+						File = "doodads_off_33.png"
 						Size = [1, 2]
 					}
 					{
-						File = "doodads_lights_off.png"
+						File = "doodads_off_66.png"
 						Size = [1, 2]
 					}					
 				]
-					Graphics_Seat
-		{
-			Type = Graphics
-			Location = [0.5, 1]
-			OperationalToggle = IsOperational
-			OperationalDoodad
-			{
-				Layer = "doodads_low"
-				DamageLevels
-				[
-					{
-						File = "doodads_on.png"
-						Offset = [0, 0]
-						Size = [1, 2]
-					}
-					{
-						File = "doodads_on.png"
-						Offset = [0, 0]
-						Size = [1, 2]
-					}
-					{
-						File = "doodads_on.png"
-						Offset = [0, 0]
-						Size = [1, 2]
-					}
-				]
 			}
-			NonOperationalDoodad
-			{
-				Layer = "doodads_low"
-				DamageLevels
-				[
-					{
-						File = "doodads_off.png"
-						Offset = [0, 0]
-						Size = [1, 2]
-					}
-					{
-						File = "doodads_off.png"
-						Offset = [0, 0]
-						Size = [1, 2]
-					}
-					{
-						File = "doodads_off.png"
-						Offset = [0, 0]
-						Size = [1, 2]
-					}
-				]
-			}
-			
-		}
-			}
-/*
 			OperationalLighting
 			{
 				Layer = "lights_add"
@@ -271,9 +221,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [1, 2]
 					}
 				]
-
 			}
-*/
 			Walls
 			{
 				Layer = "walls"
@@ -293,15 +241,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-
 			Roof
 			{
 				Layer = "roofs"
 				DamageLevels
 				[
 					{
-						File = "roofa.png"
-						NormalsFile = "roofa_normals.png"
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [1, 2]
 					}
 					{
@@ -321,7 +268,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [0.5, 1]
+			Location = [.5, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			ResourceLevels
@@ -341,7 +288,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
-			Location = [0.5, 1]
+			Location = [.5, 1]
 			Rotation = 0d
 			Force = 100
 			MinActivation = -1
@@ -358,7 +305,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [0.5, 1]
+			Location = [.5, 1]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
@@ -368,13 +315,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [0.5, 1]
+			Location = [.5, 1]
 		}
 
 		OperationSoundLoop
 		{
 			Type = ContinuousEffects
-			Location = [0.5, 1]
+			Location = [.5, 1]
 			OperationalToggle = IsOperational
 			MediaEffects
 			[
@@ -392,7 +339,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [0.5, 1]
+			Location = [.5, 1]
 			Layer = "indicators"
 			Indicators
 			[
