@@ -1,0 +1,28 @@
+name: Merge main-stable into sub-"type-name" branches
+
+on:
+  push:
+    branches: 
+      -main-stable
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out the repository
+      uses: actions/checkout@v3
+
+    - name: Merge main-stable into sub-"type-name" branches
+      run: |
+        # Erstelle eine Liste der sub-"type-name" Branches, die du aktualisieren möchtest
+        branches=("sub-experimental-rojamahorse" "sub-art-roasted" "sub-experimental-janiTNT")
+
+        # Schleife durch die Liste und führe die Änderungen aus main-stable in jeden Branch zusammen
+        for branch in "${branches[@]}"; do
+          git checkout "$branch"
+          git merge main-stable --no-edit
+          git push origin "$branch"
+        done
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
