@@ -1,0 +1,162 @@
+Components
+{
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [4, 4] // Relative to upper-left corner of unrotated part.
+			Rotation = -90d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 0.8 //no less than 0.4
+			FiringArc = 320d
+			RotateSpeed = 160d
+			FireThresholdAngle = 1d
+			IgnoreSourceShipLOSChecks = true
+			HoldTargetAfterCancel = 0.5
+			AIFirepowerRating = 8000
+			FirePermissionToggle = FireModeToggle
+
+			Emitter = WeaponEmitter
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		WeaponEmitter
+		{
+			Type = BulletEmitter
+			Location = [2.125, -0.78125] //-50,-132
+			ChainedTo = Turret
+			FireTrigger = Turret
+			GetTargetFrom = Turret
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/greenmedlasershot
+			FireDelay = 0
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 100
+			Burst = 2
+			BurstDelay = 0.06666
+			UseAmmoPerShotInBurst = true
+			MinResourcesUsed = 100
+		}
+		WeaponEmitter2 : WeaponEmitter
+		{
+			Location = [2.125, 0.78125]
+			FireDelay = 0.2
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = WeaponEmitter
+			Trigger = WeaponEmitter
+			AnchorMediaEffects = true
+
+			MediaEffects
+
+			[
+
+				&/COMMON_PARTICLES/SmallGreenLaserShoot
+
+			] 
+		}
+		FireEffect2 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = WeaponEmitter2
+		}
+		TurretGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [0, 0]
+			Rotation = 90d
+			//OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "roof_doodads"
+				Offset = [0, 0.25]
+				DamageLevels
+				[
+					{
+						File = "turret02.png"
+						Size = [3, 4]
+					}
+				]
+			}
+		}
+		BarrelSpriteL
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [36/64, -48/64]
+			Rotation = 90d
+			Layer = "roof_turrets"
+			ResetAnimationTrigger = WeaponEmitter
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"barrel[1,3]04_02.png"
+					"barrel[1,3]04_03.png"
+					"barrel[1,3]04_01.png"
+				]
+				Size = [1, 3]
+				MirrorU = true
+				AnimationInterval = 0.0625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}	
+		BarrelSpriteR
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [36/64, 48/64]
+			Rotation = 90d
+			Layer = "roof_turrets"
+			ResetAnimationTrigger = WeaponEmitter2
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"barrel[1,3]04_02.png"
+					"barrel[1,3]04_03.png"
+					"barrel[1,3]04_01.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = 0.0625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}	
+
+}

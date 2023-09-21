@@ -1,0 +1,477 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationFromSource
+			LocationOut = source_location
+			Name = "World location from source"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = WorldLocationFromPartRect
+			LocationOut = dest_location
+			RectType = Physical
+			Inflate = 0
+			RestrictToPartColliders = false
+			Name = "World destination from part rect"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = seed
+			ValueType = Int
+			FromValue = -2147483648
+			ToValue = 2147483647
+			Name = "Random seed"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetWorldSpaceScale
+			ScaleOut = base_scale
+			LocalScale = 1
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.1
+			ToValue = 1.5
+			Name = "Random Lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = base_scale
+			ScaleOut = base_scale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = flip_xy
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0
+				Y = 1
+			}
+			ToValue
+			{
+				X = 0
+				Y = 1
+			}
+			Name = "random flip"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = index
+			ValueType = Int
+			FromValue = 0
+			ToValue = 7
+			Name = "random index"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvSprites
+			SpriteIndexIn = index
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 1024
+				Y = 512
+			}
+			SpriteSize
+			{
+				X = 512
+				Y = 128
+			}
+			SpriteCount = 8
+			SpritesPerRow = 2
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = false
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvFlip
+			FlipXYIn = flip_xy
+			UvRectInOut = uv_rect
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 5
+			Name = Lifetime
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = source_location
+			BIn = velocity
+			ResultOut = source_location
+			Operator = AddDt
+			Name = "Apply source loc velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = dest_location
+			BIn = velocity
+			ResultOut = dest_location
+			Operator = AddDt
+			Name = "Apply dest loc velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = color
+			Invert = false
+			ValueType = Color
+			FromValue
+			{
+				Rf = 1
+				Gf = 1
+				Bf = 1
+				Af = 1
+			}
+			ToValue
+			{
+				Rf = 1
+				Gf = 1
+				Bf = 1
+				Af = 0
+			}
+			Name = "Color lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 1
+			ToValue = 0.75
+			Name = "Scale lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = scale
+			BIn = base_scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "Apply base scale"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 1
+					Gf = 1.9607843
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1.5686275
+					Gf = 1.7647059
+					Bf = 0.5882353
+					Af = 1
+				}
+				{
+					Rf = 1.9607843
+					Gf = 1.9607843
+					Bf = 0.19607843
+					Af = 0.39215687
+				}
+				{
+					Rf = 1.9607843
+					Gf = 1.7647059
+					Bf = 0
+					Af = 0
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = newFrames
+			Invert = false
+			ValueType = Int
+			FromValue = 0
+			ToValue = 32
+			Name = "add frames"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Int
+			AIn = newFrames
+			BIn = index
+			ResultOut = newIndex
+			Operator = Add
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvSprites
+			SpriteIndexIn = newIndex
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 1024
+				Y = 512
+			}
+			SpriteSize
+			{
+				X = 512
+				Y = 128
+			}
+			SpriteCount = 8
+			SpritesPerRow = 2
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = true
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvFlip
+			FlipXYIn = flip_xy
+			UvRectInOut = uv_rect
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = LightningRenderer
+		LineSprite
+		{
+			Shader
+			{
+				File = shader/sprite_lightning.shader
+			}
+			_centerColor
+			{
+				Rf = 0
+				Gf = 0.9882353
+				Bf = 1
+				Af = 1
+			}
+			_outerColor
+			{
+				Rf = 0.3529412
+				Gf = 0.7490196
+				Bf = 1
+				Af = 1
+			}
+			_bloomColor
+			{
+				Rf = 0.37254903
+				Gf = 1
+				Bf = 0.89411765
+				Af = 1
+			}
+			Texture
+			{
+				File = cyan_ion_shot_lightning.png
+				MipLevels = max
+				FixTransparentColors = true
+				SampleMode = Linear
+				UMode = Wrap
+				VMode = Wrap
+			}
+			TargetBlendMode
+			{
+				SourceRgbFactor = One
+				DestRgbFactor = One
+				RgbOperator = Add
+				SourceAlphaFactor = InverseDestAlpha
+				DestAlphaFactor = One
+				AlphaOperator = Add
+			}
+		}
+		LineThickness = [ 0.1, 1.5 ]
+		EnableLightningShaderAnimation = true
+		SourceLocationIn = source_location
+		DestLocationIn = dest_location
+		ScaleIn = scale
+		ColorIn = color
+		UVRectIn = uv_rect
+		TimeIn = life
+		SeedIn = seed
+		DistPerSegment = 2
+		XOffsetPerlin
+		{
+			Seed = 0
+			GridSize = 10
+			Repeat = 0
+			Octaves = 1
+			Persistence = 0.5
+			OutputExponent = 2
+			OutputScale = 4
+			OutputShift = 0
+			ClampOutput
+			{
+				Min = -0.5
+				Max = 0.5
+			}
+		}
+		YOffsetPerlin
+		{
+			Seed = 0
+			GridSize = 3
+			Repeat = 0
+			Octaves = 1
+			Persistence = 0.5
+			OutputExponent = 1
+			OutputScale = 2
+			OutputShift = 0
+			ClampOutput
+			{
+				Min = -0.3
+				Max = 0.3
+			}
+		}
+		BulgeExponent = 1
+		Name = ""
+	}
+	Material
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 0
+	EmitPerOneShot
+	{
+		Min = 4
+		Max = 4
+	}
+	PreInitializers
+	[
+		{
+			Type = SetRandom
+			DataOut = base_scale
+			ValueType = Float
+			FromValue = 0.42
+			ToValue = 0.64
+			Name = "Random Scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = Upper2
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 0
+IsFancy = true
+IsFancyLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 5
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.4028235E+38
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Junk = true
+	TargetedJunk
+}
+Delay = 0
+IgnoreIntensity = false

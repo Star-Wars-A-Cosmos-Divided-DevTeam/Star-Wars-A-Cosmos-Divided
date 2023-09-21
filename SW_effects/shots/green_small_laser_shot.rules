@@ -1,0 +1,160 @@
+ID = SW.greensmalllasershot_common
+OtherIDs = ["greensmalllasershot"]
+Range = 300
+IdealRange = [60, 250]
+IdealRadius = [5, 50]
+Speed = 120
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.00001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 400
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+
+		HitCrew = &HitOperational
+		
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 75
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 125
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/GreenLaserHit
+				&/COMMON_PARTICLES/GreenLaserFlash
+				&/COMMON_PARTICLES/GreenLaserSparks
+	
+				&/COMMON_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 62
+				}
+				{
+					Type = Impulse;
+					Impulse = 1.25;
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/GreenLaserHitStruct
+
+				&/COMMON_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational
+		{
+			// No effect.
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational
+		{
+			// No effect.
+		}
+		FinishedPenetratingStructural
+		{
+			// No effect.
+		}
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		//ReduceScaleWith = Hit
+		//ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "green_laser.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [0.64, 0.64]
+			}
+			FrameCount = 8
+			FrameSize = [128, 128]
+			FramesPerRow = 2
+			FramesPerSecond = 32
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/SmallGreenLaserShotGlow
+		]
+	}
+}
+

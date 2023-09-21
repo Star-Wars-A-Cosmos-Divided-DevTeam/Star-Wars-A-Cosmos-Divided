@@ -1,0 +1,241 @@
+ID = SW.cyan_heavy_ion_cannon_shot
+OtherIDs = ["heavy_ion_cannon_shot","SW.blue_heavy_ion_cannon_shot"]
+
+Range = 720
+IdealRange = [160, 450]
+IdealRadius = [5, 50]
+Speed = 160
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 4000
+		TargetCategory = "ion_shot"
+	}
+/*
+	MediaEffects1
+	{
+		Type = MediaEffects
+		Offset = [-0.1, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/CyanIonShotPlumeLight
+		]
+	}
+*/
+	MediaEffects3
+	{
+		Type = MediaEffects
+		Offset = [45/64, 0]
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/CyanIonShotTrailLightning
+		]
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		Penetration = 40 // Enough to get through one shield and lose half penetration.
+		PenetratesOperational = false
+		FactorEffectsWith = Targetable
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+
+		HitCrew = &HitOperational
+		
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = ResourceDrain
+					ResourceType = battery
+					Amount = 4000
+					TreatShieldAsPart = true
+
+					MediaEffectsOnDrainFactor = .0005
+					MediaEffectsOnDrain
+					[
+						&/COMMON_PARTICLES/CyanShipDrain
+						&/COMMON_PARTICLES/CyanIonShotHitSizzle
+						&/COMMON_PARTICLES/CyanIonShotLightning
+						&/COMMON_SOUNDS/IonDischarge
+					]
+				}
+				{
+					Type = Damage
+					Damage = 4000
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/CyanHit
+				&/COMMON_PARTICLES/CyanFlash
+				&/COMMON_PARTICLES/CyanSparks
+
+				&/COMMON_SOUNDS/IonDischarge
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitOperational
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 300
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/SmallCyanHit
+				&/COMMON_PARTICLES/SmallCyanFlash
+				&/COMMON_PARTICLES/SmallCyanSparks
+
+				&/COMMON_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+
+					Type = Damage
+
+					Damage = 200
+
+				}
+				{
+					Type = Impulse;
+					Impulse = 1.25;
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/CyanHit
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/laser_bolt_small/laser_bolt_small_hit.wav"
+					Volume = .3
+					SpeedVariation = .4
+				}
+			]
+		}
+		PenetratingOperational
+		{
+			// No effect.
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "shot_cyan.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [1.75, 0.81]
+			}
+			FrameCount = 1
+			FrameSize = [128, 64]
+			FramesPerRow = 1
+			FramesPerSecond = 60
+		}
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [2.5, 1.2]
+			VertexColor = [0, 240, 240]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
+	}
+/*
+	MediaEffects
+	{
+		Type = MediaEffects
+		InheritVelocityFrom = Physics
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/CyanIonShotGlow
+		]
+	}
+*/
+}

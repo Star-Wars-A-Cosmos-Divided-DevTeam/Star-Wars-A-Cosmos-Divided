@@ -1,0 +1,348 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+Description:
+Currently prototyping
+
+Simple scaled up version of Ion Thruster with progressive power increase.
+Uses the same system as Abh to give thruster roof cover choices to match desired
+building form or totally cover the nozzles and prohibitive areas.
+Buttons might need to be changed later with community mod.
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.14
+
+---------------------------------------------------------------------------- */ 
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	ID = SW.IonThruster01_20x26
+	NameKey = "Parts/IonThruster01_20x26"
+	IconNameKey = "Parts/IonThruster01_20x26_Icon"
+	DescriptionKey = "Parts/IonThruster01_20x26_Desc"
+
+	EditorGroups = ["Flight", "TechIII"]
+	TypeCategories = [thruster, uses_power]
+	RequiresCategories = [bridge1]
+
+	Resources
+	[
+		[steel, 3600] //80/9*20*26=4622*81%
+		[coil2, 920] //20/9*20*26=1155*81%
+		//[tristeel, 460] //10/9*20*26=577*81%
+	]
+	Size = [20, 33]
+	PhysicalRect = [0, 0, 20, 26]
+	SaveRect = &PhysicalRect
+	BoundingRectType = Physical
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "thrusters"
+	MaxHealth = 520000
+
+	ThrusterForce = 142000 //50%sizedegrade*[normalized] 122,5% of vanilla 1000*8/9 per tile //
+	ThrustIncreaseTime = 14.5
+	ThrustRecoveryTime = 6.4
+	FuelUsage = 4200
+
+	ProhibitBelow = 32
+	ReceivableBuffs : ^/0/ReceivableBuffs [Engine,PowerCellBuff]
+
+	AllowedDoorLocations
+	[
+		[-1, 0]
+		[-1, 1]
+		[0, -1]
+		[1, -1]
+		[2, -1]
+		[3, -1]
+		[4, -1]
+		[5, -1]
+		[6, -1]
+		[7, -1]
+		[8, -1]
+		[9, -1]
+		[10, -1]
+		[11, -1]
+		[12, -1]
+		[13, -1]
+		[14, -1]
+		[15, -1]
+		[16, -1]
+		[17, -1]
+		[18, -1]
+		[19, -1]
+		[20, 0]
+		[20, 1]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [48, 92]
+	}
+	Components : ^/0/Components, &<graphics20x26_toggles.rules>, &<graphics20x26_doodads.rules>, &<graphics20x26_walls.rules>, &<graphics20x26_roof.rules>, &<graphics20x26_floor.rules>
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 260 //520 //1 per tile
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 81000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+
+		EngineBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = Engine
+		}
+		ToggledBatteryConsumer
+		{
+			Type = ToggledComponents
+			Toggle = EngineBuffToggle
+			Invert = true
+			IncludeInBlueprints = true
+			Components
+			{
+				BatteryConsumer
+				{
+					Type = ResourceConsumer
+					ResourceType = battery
+					Storage = BatteryStorage
+					DefaultPriority = &/PRIORITIES/Thruster_Supply
+					ResupplyThreshold = 1000
+					OperationalToggle = PowerToggle
+					ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+				}
+			}
+		}
+
+		MainThrusterLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = MainThruster
+		}
+
+		MainThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = MainThruster
+		}
+		
+		ReverseThrusterLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = ReverseThruster
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
+		}
+
+		MainThruster
+		{
+			Type = Thruster
+			OperationalToggle = IsOperational
+
+			Location = [10, 26.5]// Relative to upper-left corner of unrotated part.
+			Rotation = 90d// Relative to unrotated part.
+			Force = &../../ThrusterForce
+			MinActivation = 0
+			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
+			MinUncommandedActivation = 0
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationRecoveryTime = &../../ThrustRecoveryTime
+			FuelStorage = BatteryStorage
+			FuelUsagePerSecond = &../../FuelUsage
+		}
+		LateralThruster : MainThruster
+		{
+			Rotation = 0d
+			Force = (&../../ThrusterForce)/4
+			MinActivation = -0.05
+			MaxActivation = 0.05
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			AllowAutoFire = false
+		}
+
+		ReverseThruster
+		{
+			Type = Thruster
+			OperationalToggle = IsOperational
+
+			Location = [10, 0.5]
+			Rotation = -90d
+			Force = (&../../ThrusterForce)/64
+			MinActivation = 0
+			MaxActivation = 0.345
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = (&../../ThrustIncreaseTime)
+			ActivationRecoveryTime = (&../../ThrustRecoveryTime)
+			FuelStorage = BatteryStorage
+			FuelUsagePerSecond = &../../FuelUsage
+			AllowAutoFire = false
+		}
+
+		ThrustEffectsSounds
+		{
+			Type = ContinuousEffects
+			ChainedTo = MainThruster
+			FactorMediaEffectsIntensityWith = MainThruster
+			MediaEffects
+			[
+				: /COMMON_SOUNDS/ThrusterRumble
+				{
+					Volume = .125
+					Speed = 1.5
+					MaxConcurrentVolume = .25
+				}
+			]
+		}
+
+		BurstTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThruster
+			MinAmount = 0.5
+		}
+
+		BurstEffects
+		{
+			Type = TriggeredEffects
+			ChainedTo = MainThruster
+			Trigger = BurstTrigger
+			FactorMediaEffectsIntensityWith = MainThruster
+			AnchorMediaEffects = true
+			MediaEffects
+			[
+				: /COMMON_SOUNDS/ThrusterBurst
+				{
+					Volume = .25
+					Speed = 1.5
+					MaxConcurrentVolume = .5
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational,
+			Location = [10, 13]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [10, 13]
+		}
+
+		ThrusterHum
+		{
+			Type = ContinuousEffects
+			Location = [10, 13]
+			OperationalToggle = IsOperational
+			MediaEffects
+			[
+				: /COMMON_SOUNDS/ThrusterHum
+				{
+					Volume = .1
+					Speed = 1.25
+					MaxConcurrentVolume = 1
+				}
+			]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [10, 13]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [8, 8]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [8, 8]
+					}
+				}
+			]
+		}
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [20, 35.44134]
+			Offset = [0, 1.22067] //[0, 9.44134]
+		}
+	}
+
+	Stats
+	{
+		ThrusterForce = &~/Part/ThrusterForce
+		ThrusterRampUp = &~/Part/ThrustIncreaseTime
+		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = (&ThrusterPowerUsage)
+		RecCrew = (&RecPower) * 4
+	}
+}

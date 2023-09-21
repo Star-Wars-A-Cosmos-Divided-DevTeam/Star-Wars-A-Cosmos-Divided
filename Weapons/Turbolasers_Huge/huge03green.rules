@@ -1,0 +1,39 @@
+		WeaponEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = ShootLeftTriggerProxy
+			GetTargetFrom = Turret
+			Location = [9.5625, -1.5625]  //-100,-606
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/greenmedlasershot
+			SourceShipCollisions = false
+			//Spread = [-2.5d, 2.5d]
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 200 //250-350?
+			//Recoil = 10
+		}
+		WeaponEmitter2 : &WeaponEmitter
+		{
+			Location = [9.5625, 1.5625]
+		}
+		FireEffect
+		{
+			Type = TriggeredEffects
+
+			ChainedTo = WeaponEmitter
+			Trigger = WeaponEmitter
+			AnchorMediaEffects = true
+
+			MediaEffects
+
+			[
+				&/COMMON_SOUNDS/TurbolaserSFX
+				&/COMMON_PARTICLES/SmallGreenLaserShoot
+			] 
+		}
+		FireEffect2 : FireEffect
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = WeaponEmitter2
+		}

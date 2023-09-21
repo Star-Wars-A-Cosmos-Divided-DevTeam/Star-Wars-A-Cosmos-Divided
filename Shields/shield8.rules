@@ -1,0 +1,1093 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	NameKey = "Parts/Large1"
+	IconNameKey = "Parts/Large1"
+	ID = SW.bubble_generator_giga_switchable
+	//OtherIDs = []
+	EditorGroups = ["Defenses", "TechIII"]
+	DescriptionKey = "Parts/Large1Desc"
+	Resources
+	[
+		[steel, 1024]
+		[coil, 360]
+		[coil2, 120]
+		[diamond, 16]
+		[processor, 64]
+	]
+	AIValueFactor = 3.115
+	Size = [8, 8]
+	SelectionPriority = 1
+	SelectionTypeID = "bubble_shield_gen"
+	SelectionTypeByRotation = true
+	MaxHealth = 64000
+	TypeCategories = [defense, uses_power]
+	PenetrationRectType = Normal
+	MaxDoors = 12
+	ForceManhattanPathInPart = true
+	AllowedDoorLocations
+	[
+		[-1, 5]
+		[-1, 6]
+		[-1, 7]
+		[0, 8]
+		[1, 8]
+		[2, 8]
+		[3, 8]
+		[4, 8]
+		[5, 8]
+		[6, 8]
+		[7, 8]
+		[8, 7]
+		[8, 6]
+		[8, 5]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "Shield_Roasted_4x4/icon.png"
+			SampleMode = Linear
+		}
+		Size = [82.66, 82.66]
+	}
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 96
+			//Requires 0 Stationary Crew so
+		}
+
+		BatteryStorageLeft
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = (&~/MaxResources)/2
+			ToggleOnResources = (&~/MaxResources)/4
+			ToggleOffResources = 0
+			DrainOnFtlJump = true
+			DeliveryLocation = [2, 5.65]
+		}
+		BatteryStorageRight : BatteryStorageLeft
+		{
+			Toggle = BatteryStorageLeftAndPowerToggle
+			ToggleOnResources = 1
+			ToggleOffResources = 0
+			DeliveryLocation = [6, 5.65]
+		}
+
+		BatteryConsumerLeft
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorageLeft
+			DefaultPriority = &/PRIORITIES/Defense_Supply
+			OperationalToggle = PowerToggle
+			ResupplyThreshold = 0
+		}
+		BatteryConsumerRight : BatteryConsumerLeft
+		{
+			Storage = BatteryStorageRight
+			OperationalToggle = BatteryStorageLeftAndPowerToggle
+		}
+		BatteryStorageLeftAndPowerToggle
+		{
+			Type = MultiToggle
+			Toggles = [BatteryStorageLeft, PowerToggle]
+			Mode = All
+		}
+
+		BatteryStoragePrereq
+		{
+			Type = MultiToggle
+			Toggles = [BatteryStorageLeft, BatteryStorageRight]
+			Mode = All
+		}
+
+		BatteryStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorageLeft, BatteryStorageRight]
+			//AddMode = PrioritizeLeastResources
+			//RemoveMode = PrioritizeMostResources
+		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [0, 0, 255]
+			HighColor = [0, 0, 255]
+			FullColor = [0, 0, 255]
+			Height = 10
+		}
+		LoadingStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = BatteryStorage
+			InvertOperationalToggle = true
+			ShowProgressFor = BatteryStorage
+			LowColor = [255, 192, 0]
+			HighColor = [255, 192, 0]
+			FullColor = [255, 192, 0]
+			ValueRange = [&~/Part/Components/BatteryStorageLeft/ToggleOffResources, &~/Part/Components/BatteryStorageLeft/ToggleOnResources]
+			Height = 10
+		}
+
+		PowerDrain
+		{
+			Type = ResourceConverter
+			FromStorage = BatteryStorage
+			OperationalToggle = IsOperational
+			FromQuantity = 400
+			MinFromQuantityForConversion = 1
+			Interval = 1
+		}
+
+		ShieldColorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.shield_color_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2]
+			AlwaysAllowInBuildMode = true
+		}
+
+		BlueShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 0
+		}
+		BlueShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield8_cyanblue.rules>/Components
+		}
+
+		WhiteShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 1
+		}
+		WhiteShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield8_white.rules>/Components
+		}
+
+		InvisShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 2
+		}
+		InvisShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = InvisShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield8_invis.rules>/Components
+		}
+
+		ShieldEmitterLoop
+		{
+			Type = ContinuousEffects
+			Location = [4, 4]
+			OperationalToggle = IsOperational
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExteriorDetail
+				{
+					Sound = "./Data/Ships/terran/shield_gen_small/shield_emitter_loop.wav"
+					Volume = .2
+					Speed = 1
+					MaxConcurrent = 1
+					MaxConcurrentVolume = .4
+					IgnoreIntensity = true
+				}
+			]
+		}
+		
+		ShieldOperationEffects
+		{
+			Type = ToggleEffects
+			Location = [4, 4]
+			Toggle = IsOperational
+			ToggledOnMediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/Ships/terran/shield_gen_small/activate.wav"
+					Volume = .5
+					Speed = 1.2
+					IgnoreIntensity = true
+				}
+			]
+			ToggledOffMediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/Ships/terran/shield_gen_small/deactivate.wav"
+					Volume = .5
+					Speed = 1.2
+					IgnoreIntensity = true
+				}
+			]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [4, 4]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_4x4/floor.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/floor_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/floor_66.png"
+						Size = [8, 8]
+					}
+				]
+			}/*
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_4x4/lights.png"
+						Size = [8, 8]
+					}
+				]
+			}*/
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_4x4/roof_glows.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/roof_glows_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/roof_glows_66.png"
+						Size = [8, 8]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [13, 13]
+						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [16, 120, 255]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_4x4/walls.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/walls_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/walls_66.png"
+						Size = [8, 8]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_4x4/roof.png"
+						NormalsFile = "Shield_Roasted_4x4/roof_normals.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/roof_33.png"
+						NormalsFile = "Shield_Roasted_4x4/roof_normals_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/roof_66.png"
+						NormalsFile = "Shield_Roasted_4x4/roof_normals_66.png"
+						Size = [8, 8]
+					}
+				]
+			}
+		}
+
+		DoodadGraphics
+		{
+			Type = Graphics
+			OperationalToggle = PowerToggle
+			Location = [4, 4]
+			
+			AnimationSpeedFactor = BatteryStorage
+			AnimationSpeedFactorRenormalize = [0, 10.0]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"Shield_Roasted_4x4/doodads_on1.png"
+							"Shield_Roasted_4x4/doodads_on2.png"
+							"Shield_Roasted_4x4/doodads_on3.png"
+							"Shield_Roasted_4x4/doodads_on4.png"
+							"Shield_Roasted_4x4/doodads_on5.png"
+							"Shield_Roasted_4x4/doodads_on6.png"
+							"Shield_Roasted_4x4/doodads_on7.png"
+							"Shield_Roasted_4x4/doodads_on8.png"
+							"Shield_Roasted_4x4/doodads_on9.png"
+							"Shield_Roasted_4x4/doodads_on10.png"
+							"Shield_Roasted_4x4/doodads_on11.png"
+							"Shield_Roasted_4x4/doodads_on12.png"
+							"Shield_Roasted_4x4/doodads_on13.png"
+							"Shield_Roasted_4x4/doodads_on14.png"
+							"Shield_Roasted_4x4/doodads_on15.png"
+							"Shield_Roasted_4x4/doodads_on16.png"
+							"Shield_Roasted_4x4/doodads_on17.png"
+							"Shield_Roasted_4x4/doodads_on18.png"
+							"Shield_Roasted_4x4/doodads_on19.png"
+							"Shield_Roasted_4x4/doodads_on20.png"
+							"Shield_Roasted_4x4/doodads_on21.png"
+							"Shield_Roasted_4x4/doodads_on22.png"
+							"Shield_Roasted_4x4/doodads_on23.png"
+							"Shield_Roasted_4x4/doodads_on24.png"
+							"Shield_Roasted_4x4/doodads_on25.png"
+							"Shield_Roasted_4x4/doodads_on26.png"
+							"Shield_Roasted_4x4/doodads_on27.png"
+							"Shield_Roasted_4x4/doodads_on28.png"
+							"Shield_Roasted_4x4/doodads_on29.png"
+							"Shield_Roasted_4x4/doodads_on30.png"
+							"Shield_Roasted_4x4/doodads_on31.png"
+							"Shield_Roasted_4x4/doodads_on32.png"
+							"Shield_Roasted_4x4/doodads_on33.png"
+							"Shield_Roasted_4x4/doodads_on34.png"
+							"Shield_Roasted_4x4/doodads_on35.png"
+							"Shield_Roasted_4x4/doodads_on36.png"
+							"Shield_Roasted_4x4/doodads_on37.png"
+							"Shield_Roasted_4x4/doodads_on38.png"
+							"Shield_Roasted_4x4/doodads_on39.png"
+							"Shield_Roasted_4x4/doodads_on40.png"
+							"Shield_Roasted_4x4/doodads_on41.png"
+							"Shield_Roasted_4x4/doodads_on42.png"
+							"Shield_Roasted_4x4/doodads_on43.png"
+							"Shield_Roasted_4x4/doodads_on44.png"
+							"Shield_Roasted_4x4/doodads_on45.png"
+							"Shield_Roasted_4x4/doodads_on46.png"
+							"Shield_Roasted_4x4/doodads_on47.png"
+							"Shield_Roasted_4x4/doodads_on48.png"
+							"Shield_Roasted_4x4/doodads_on49.png"
+							"Shield_Roasted_4x4/doodads_on50.png"
+							"Shield_Roasted_4x4/doodads_on51.png"
+							"Shield_Roasted_4x4/doodads_on52.png"
+						]
+						Size = [8, 8]
+						AnimationInterval = 0.1923
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_4x4/doodads_off.png"
+						Size = [8, 8]
+					}
+				]
+			}
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [4, 4]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_low"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "Shield_Roasted_4x4/Batteries1.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries2.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries3.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries4.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries5.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries6.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries7.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries8.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries9.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries10.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries11.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries12.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries13.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries14.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries15.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries16.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries17.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries18.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries19.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries20.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries21.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries22.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries23.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries24.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries25.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries26.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries27.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries28.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries29.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries30.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries31.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries32.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries33.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries34.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries35.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries36.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries37.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries38.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries39.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries40.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries41.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries42.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries43.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries44.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries45.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries46.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries47.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries48.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries49.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries50.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries51.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries52.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries53.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries54.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries55.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries56.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries57.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries58.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries59.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries60.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries61.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries62.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries63.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries64.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries65.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries66.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries67.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries68.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries69.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries70.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries71.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries72.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries73.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries74.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries75.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries76.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries77.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries78.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries79.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries80.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries81.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries82.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries83.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries84.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries85.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries86.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries87.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries88.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries89.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries90.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries91.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries92.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries93.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries94.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries95.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries96.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries97.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries98.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries99.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries100.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries101.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries102.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries103.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries104.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries105.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries106.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries107.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries108.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries109.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries110.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries111.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries112.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries113.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries114.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries115.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries116.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries117.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries118.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries119.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries120.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries121.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries122.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries123.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries124.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries125.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries126.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries127.png"
+					Size = [8, 8]
+				}
+				{
+					File = "Shield_Roasted_4x4/Batteries128.png"
+					Size = [8, 8]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational,
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [4, 4]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [4, 4]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [4, 4]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [4, 4]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "Shield_Roasted_4x4/blueprints.png"
+			Size = [8, 8]
+		}
+	}
+
+	Stats
+	{
+		ShieldHP = (&~/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
+		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
+		ShieldArc = deg(360d)
+		ShieldDist = (&~/ShieldStatBase/Radius)
+		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
+		PowerCapacity = (&~/MaxResources) / 1000
+
+		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
+		RecCrew = (&RecPower)
+	}
+}
+ShieldStatBase
+{
+	OperationalToggle = BatteryStoragePrereq
+	BlockedByOperationalParts = false
+	Radius = 80
+	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
+	DrainResourcesFrom = BatteryStorage
+	Location = [4, 2.5]
+	PenetrationResistance = [256, 0]
+	ResourceDrainPerDamage = 0.5
+
+	BlueprintArcSprite
+	{
+		Texture
+		{
+			File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		_xScale = &<ShieldTuner.rules>/Giga/_xScale
+		Size = &<ShieldTuner.rules>/Giga/Size
+		UVRect = [0, 1, 2, 1]
+		Color = [50, 50, 255, 127]
+	}
+	BlueprintArcSpriteSegments = 64
+
+	CoverageArcSprite
+	{
+		Texture
+		{
+			File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		_xScale = &<ShieldTuner.rules>/Giga/_xScale
+		Size = &<ShieldTuner.rules>/Giga/Size
+		UVRect = [0, 1, 2, 1]
+		Color = [255, 255, 255, 127]
+	}
+	CoverageArcSpriteSegments = 64
+}
+MaxResources = 128000

@@ -1,0 +1,544 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	NameKey = "Parts/CommandBridge2"
+	IconNameKey = "Parts/CommandBridge2Icon"
+	ID = SW.commandbridge2
+	OtherIDs = ["commandbridge2"]
+
+	EditorGroup = "TechII"
+	DescriptionKey = "Parts/CommandBridge2Desc"
+	AIValueFactor = 5
+
+	Size = [6, 7]
+	SelectionPriority = 0
+	Resources
+	[
+		[tristeel, 632]
+		[coil2, 246]
+		[processor, 220]
+	]  //632*200+246*300+220*2500=750200  //Cost = 750000
+	MaxHealth = 84000//7000
+	InitialPenetrationResistance = 2
+	PenetrationRectType = Normal
+	IsContiguityOrigin = true
+	IsShipForward = true
+	SelectionTypeID = "control_room"
+	TypeCategories = [command, bridge2]
+	RequiresCategories = [bridge1]
+	AllowedDoorLocations
+	[
+		[3, 7]
+		[2, 7] 
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [47, 55]
+	}
+	Components : ^/0/Components
+	{
+
+		CommandProvider
+		{
+			Type = CommandProvider
+			OperationalToggle = IsOperational
+			CommandPoints = 22000 // Remember to update tooltip.
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+
+		Sensor
+		{
+			Type = Sensor
+			SightRadius = 3000
+			RadarRadius = ceil(3000*4.5)
+
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 10000
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
+			ResupplyThreshold = 5000
+			OperationalToggle = PowerToggle
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		PowerDrain
+		{
+			Type = ResourceConverter
+			FromStorage = BatteryStorage
+			FromQuantity = 500
+			Interval = 8// Drains 1,5 power every minute.
+		}
+		
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [3, 0.9]
+			Rotation = 0d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [2.1, 2.35]
+			Rotation = 0d
+		}
+		CrewLocation3
+		{
+			Type = CrewLocation
+			Location = [2.1, 3.25]
+			Rotation = 0d
+		}
+		CrewLocation4
+		{
+			Type = CrewLocation
+			Location = [2.1, 4.15]
+			Rotation = 0d
+		}
+		CrewLocation5
+		{
+			Type = CrewLocation
+			Location = [2.1, 5]
+			Rotation = 0d
+		}
+		CrewLocation6
+		{
+			Type = CrewLocation
+			Location = [2.1, 5.9]
+			Rotation = 0d
+		}
+		CrewLocation7
+		{
+			Type = CrewLocation
+			Location =  [1.5, 5.1]
+			Rotation = -95d
+		}
+		CrewLocation8
+		{
+			Type = CrewLocation
+			Location = [1.5, 4.2]
+			Rotation = -95d
+		}
+		CrewLocation9
+		{
+			Type = CrewLocation
+			Location = [1.55, 3.35]
+			Rotation = -90d
+		}
+		CrewLocation10
+		{
+			Type = CrewLocation
+			Location = [3.9, 2.35]
+			Rotation = 0d
+		}
+		CrewLocation11
+		{
+			Type = CrewLocation
+			Location = [3.9, 3.25]
+			Rotation = 0d
+		}
+		CrewLocation12
+		{
+			Type = CrewLocation
+			Location = [3.9, 4.15]
+			Rotation = 0d
+		}
+		CrewLocation13
+		{
+			Type = CrewLocation
+			Location = [3.9, 5]
+			Rotation = 0d
+		}
+		CrewLocation14
+		{
+			Type = CrewLocation
+			Location = [3.9, 5.9]
+			Rotation = 0d
+		}
+		CrewLocation15
+		{
+			Type = CrewLocation
+			Location = [4.5, 5.1]
+			Rotation = 95d
+		}
+		CrewLocation16
+		{
+			Type = CrewLocation
+			Location = [4.5, 4.2]
+			Rotation = 95d
+		}
+		CrewLocation17
+		{
+			Type = CrewLocation
+			Location = [4.45, 3.35]
+			Rotation = 90d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 17
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			AbandonWhenOnFire = false
+			CrewDestinations
+			[
+				[3, 0.9]
+				[2.1, 4.15]
+				[2.1, 3.25]
+				[2.1, 2.35]
+				[2.1, 5]
+				[2.1, 5.9]
+				[1.5, 5.1]
+				[1.5, 4.2]
+				[1.55, 3.35]
+				[3.9, 4.15]
+				[3.9, 3.25]
+				[3.9, 2.35]
+				[3.9, 5]
+				[3.9, 5.9]
+				[4.5, 5.1]
+				[4.5, 4.2]
+				[4.45, 3.35]
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+				CrewLocation3
+				CrewLocation4
+				CrewLocation5
+				CrewLocation6
+				CrewLocation7
+				CrewLocation8
+				CrewLocation9
+				CrewLocation10
+				CrewLocation11
+				CrewLocation12
+				CrewLocation13
+				CrewLocation14
+				CrewLocation15
+				CrewLocation16
+				CrewLocation17
+			]
+		}
+		GraphicsCrew4 : &~/GraphicsCrewDoodadLightBase
+		{
+			ChainedTo = CrewLocation4
+		}
+		GraphicsCrew5 : &~/GraphicsCrewDoodadLightBase
+		{
+			ChainedTo = CrewLocation5
+		}
+		GraphicsCrew6 : &~/GraphicsCrewDoodadLightBase
+		{
+			ChainedTo = CrewLocation6
+		}
+		GraphicsCrew12 : &~/GraphicsCrewDoodadLightBase
+		{
+			ChainedTo = CrewLocation12
+		}
+		GraphicsCrew13 : &~/GraphicsCrewDoodadLightBase
+		{
+			ChainedTo = CrewLocation13
+		}
+		GraphicsCrew14 : &~/GraphicsCrewDoodadLightBase
+		{
+			ChainedTo = CrewLocation14
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+
+			Location = [3,3.5]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [6, 7]
+					}
+					{
+						File = "floor_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "floor_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights2.png"
+						Size = [6,7]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads1.png"
+							"doodads2.png"
+						]
+						Size = [6,7]
+						AnimationInterval = 0.80
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [6, 7]
+					}
+					{
+						File = "walls_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "walls_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "templates/roof_shaded_withwindows.png"
+						NormalsFile = "templates/roof_windowless_shaded_normal.png"
+						Size = [6, 7]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
+		}
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [3, 6.2]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "batteries_1.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_2.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_3.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_4.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_5.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_6.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_7.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_8.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_9.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries_10.png"
+					Size = [3, 1]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational,
+			Location = [3, 3.5]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [3, 3.5]
+		}
+		OperationSoundLoop
+		{
+			Type = ContinuousEffects
+			Location = [3, 3.5]
+			OperationalToggle = IsOperational
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					Sound = "./Data/ships/terran/control_room_small/operating.wav"
+					Volume = .15
+					MaxConcurrentVolume = .3
+					Speed = .75
+					MaxConcurrent = 1
+				}
+			]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [3, 3.5]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [2, 2]
+					}
+				}
+				 //Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [3, 3]
+					}
+				}
+
+				 //No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [3, 3]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [6, 7]
+		}
+	}
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		SightRange = &~/Part/Components/Sensor/SightRadius
+		RadarRange = &~/Part/Components/Sensor/RadarRadius
+
+
+		RecPower = &PowerUsageContinuousMinutes
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+
+	StatsNotesKey = "Stats/CommandBridge_Notes"
+}
+		
+GraphicsCrewDoodadLightBase
+{
+	Type = Graphics
+	OperationalToggle = IsOperational
+
+	OperationalRoofLighting
+	{
+		Layer = "roof_lights_fancy"
+		DamageLevels
+		[
+			{
+				File = "./Data/ships/common/light_blob.png"
+				Size = [2, 2]
+				Z = 2.5
+				VertexColor = [0, 40, 114]
+			}
+		]
+	}
+}

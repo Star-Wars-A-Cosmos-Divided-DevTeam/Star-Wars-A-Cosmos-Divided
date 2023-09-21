@@ -1,0 +1,182 @@
+Part : &<../base_part_terran_durasteel.rules>/Part
+{
+	NameKey = "Parts/DurasteelArmorStructureHybrid1x2"
+	IconNameKey = "Parts/DurasteelArmorStructureHybrid1x2Icon"
+	DescriptionKey = "Parts/DurasteelArmorStructureHybrid1x2Desc"
+	ID = SW.durasteel_armor_structure_hybrid_1x2
+	EditorGroups = ["DuraSteel", "Structure"]
+	EditorReplacementPartID = structure
+	Resources
+	[
+		[SW.durasteel, 10]
+	]
+	//AIValueFactor = 0
+	Size = [1, 2]
+	IsFlippable = true
+	//SelectionTypeID = "armor"
+	MaxHealth = 6000 //8000/2*1.5
+	//ExplosiveDamageAbsorption = 100%
+	//ExplosiveDamageResistance = 50%
+	//TypeCategories = [armor]
+	//ReceivableBuffs : ^/0/ReceivableBuffs []
+	//Flammable = false
+	CreatePartPerTileWhenGrabbed = structure
+	InitialPenetrationResistance = 10
+	//ContinuingPenetrationResistance = &InitialPenetrationResistance
+	//CrewSpeedFactor = 0
+	//Density = 4 //v:3?
+	//IsRotateable = true
+	//IsWalled = true
+	//IsSelfDestructible = false
+	ExternalWallsByCell
+	[
+		{
+			Key = [0, 0]
+			Value = [TopRight, Right]
+		}
+		{
+			Key = [0, 1]
+			Value = [Right, BottomRight, Bottom, BottomLeft]
+		}
+	]
+	InternalWallsByCell
+	[
+		{
+			Key = [0, 0]
+			Value = [BottomLeft, Left, TopLeft, Top]
+		}
+		{
+			Key = [0, 1]
+			Value = [Left, TopLeft]
+		}
+	]
+	VirtualInternalCells
+	[
+		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
+		{ExternalCell=[-1, 1]; InternalCell=[0, 2]}
+	]
+	//AllowedDoorLocations = []
+	//GeneratorRequiresDoor = false
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
+	//GenerateRectCollider = false
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+			MipLevels = max
+		}
+		Size = [32, 64]
+	}
+	Components : ^/0/Components
+	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[1, 0]
+				[1, 2]
+				[0, 2]
+			]
+		}
+
+		EmpAbsorber
+		{
+			Type = ExplosiveResourceDrainSink
+			ResourceType = battery
+			AbsorbsResourceDrain = 1500
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 1]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "structure"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 2]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "external_walls"
+				DamageLevels
+				[
+					{
+						File = "../durasteel_armor_1x2_wedge/armor.png"
+						NormalsFile = "external_wall_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "../durasteel_armor_1x2_wedge/armor_33.png"
+						NormalsFile = "external_wall_normals_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "../durasteel_armor_1x2_wedge/armor_66.png"
+						NormalsFile = "external_wall_normals_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "../durasteel_armor_1x2_wedge/roof.png"
+						NormalsFile = "../durasteel_armor_1x2_wedge/roof_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "../durasteel_armor_1x2_wedge/roof_33.png"
+						NormalsFile = "../durasteel_armor_1x2_wedge/roof_normals_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "../durasteel_armor_1x2_wedge/roof_66.png"
+						NormalsFile = "../durasteel_armor_1x2_wedge/roof_normals_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, 1]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
+		}
+	}
+
+	Stats
+	{
+		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
+	}
+}

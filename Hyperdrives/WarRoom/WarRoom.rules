@@ -1,0 +1,479 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	NameKey = "Parts/WarRoom"
+	IconNameKey = "Parts/WarRoomIcon"
+	ID = SW.WarRoom
+
+	EditorGroups = ["Flight", "TechIII"]
+	DescriptionKey = "Parts/WarRoomDesc"
+	Resources
+	[
+		[steel, 360]
+		[coil2, 80]
+		[processor, 16]
+	]
+	//reduce cost by adding durasteel as an part cost? durasteel factory is 35k rn...
+	Size = [6, 7]
+	SelectionPriority = 0
+	MaxHealth = 20000
+	AutoDoorMaxPathLength = 5
+	RequiresCategories = []
+	TypeCategories = [WarRoom]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	AllowedDoorLocations
+	[
+		[3, -1]
+		[2, -1]
+
+		[-1, 2]
+		[6, 2]
+		[-1, 3]
+		[6, 3]
+		[-1, 4]
+		[6, 4]
+
+		[3, 7]
+		[2, 7]
+	]
+	ForceManhattenPathInPart = true
+	BlockedTravelCells
+	[
+		[2, 3]
+		[3, 3]
+	]
+	HasNonContiguousPathing = true
+	BlockedTravelCellDirections
+	[
+		//----- Cell [1,1] -----
+		{
+			Key = [1, 1]
+			Value = [Up]
+		}
+		{
+			Key = [1, 0]
+			Value = [Down]
+		}
+		{
+			Key = [0, 1]
+			Value = [Right]
+		}
+		{
+			Key = [2, 1]
+			Value = [Left]
+		}
+
+		//----- Cell [4,1] -----
+		{
+			Key = [4, 1]
+			Value = [Up]
+		}
+		{
+			Key = [4, 0]
+			Value = [Down]
+		}
+		{
+			Key = [3, 1]
+			Value = [Right]
+		}
+		{
+			Key = [5, 1]
+			Value = [Left]
+		}
+
+		//----- Cell [1,5] -----
+		{
+			Key = [1, 5]
+			Value = [Up]
+		}
+		{
+			Key = [1, 4]
+			Value = [Down]
+		}
+		{
+			Key = [0, 5]
+			Value = [Right]
+		}
+		{
+			Key = [2, 5]
+			Value = [Left]
+		}
+
+		//----- Cell [4,5] -----
+		{
+			Key = [4, 5]
+			Value = [Up]
+		}
+		{
+			Key = [4, 4]
+			Value = [Down]
+		}
+		{
+			Key = [3, 5]
+			Value = [Right]
+		}
+		{
+			Key = [5, 5]
+			Value = [Left]
+		}
+	]
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [47, 55]
+	}
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 42
+		}
+
+		Sensor
+		{
+			Type = Sensor
+			SightRadius = 2500
+			RadarRadius = ceil(500*9)
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 6000
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Utility_Supply
+			ResupplyThreshold = 1000
+			OperationalToggle = PowerToggle
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		PowerDrain
+		{
+			Type = ResourceConverter
+			FromStorage = BatteryStorage
+			FromQuantity = 100
+			Interval = 3
+		}
+
+		CrewLocation1 //CircleTop
+		{
+			Type = CrewLocation
+			Location = [3, 2.27]
+			Rotation = 180d
+		}
+		CrewLocation2 //CircleLeft
+		{
+			Type = CrewLocation
+			Location = [1.75, 3.5]
+			Rotation = 90d
+		}
+		CrewLocation3 //CircleRight
+		{
+			Type = CrewLocation
+			Location = [4.25, 3.5]
+			Rotation = 270d
+		}
+		CrewLocation4 //CircleBottom
+		{
+			Type = CrewLocation
+			Location = [3, 4.72]
+			Rotation = 0d
+		}
+		CrewLocation5
+		{
+			Type = CrewLocation
+			Location = [1.5, 1.85]
+			Rotation = 0d
+		}
+		CrewLocation6
+		{
+			Type = CrewLocation
+			Location = [4.5, 1.85]
+			Rotation = 0d
+		}
+		CrewLocation7
+		{
+			Type = CrewLocation
+			Location =  [1.85, 5.5]
+			Rotation = 270d
+		}
+		CrewLocation8
+		{
+			Type = CrewLocation
+			Location = [4.15, 5.5]
+			Rotation = 90d
+		}
+
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 8
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [BatteryStorage]
+			AbandonWhenOnFire = false
+			CrewDestinations
+			[
+				[3, 2.27]
+				[1.75, 3.5]
+				[4.25, 3.5]
+				[3, 4.72]
+
+				[1.5, 2]
+				[4.5, 2]
+				[2, 5.5]
+				[3.99, 5.5]
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+				CrewLocation3
+				CrewLocation4
+				CrewLocation5
+				CrewLocation6
+				CrewLocation7
+				CrewLocation8
+			]
+			SwitchLocationInterval = [5, 10]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+
+			Location = [3,3.5]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [6, 7]
+					}
+					{
+						File = "floor_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "floor_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [6,7]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads1.png"
+							"doodads2.png"
+						]
+						Size = [6,7]
+						AnimationInterval = 0.80
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [6, 7]
+					}
+					{
+						File = "walls_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "walls_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [6, 7]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
+		}
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [3, 3.5]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			ResourceLevels
+			[
+				{
+					File = "batteries_1.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_2.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_3.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_4.png"
+					Size = [2, 2]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational
+
+			Location = [1, 1]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+			Location = [3,3.5]
+		}
+/*
+		OperationSoundLoop
+		{
+			Type = ContinuousEffects
+			Location = [3,3.5]
+			OperationalToggle = IsOperational
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					Sound = "cockpit_operating.wav"
+					Volume = .15
+					MaxConcurrentVolume = .3
+					Speed = .75
+					MaxConcurrent = 1
+				}
+			]
+		}
+*/
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [3, 3.5]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [4, 4]
+					}
+				}
+				 //Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [4, 4]
+					}
+				}
+				 //No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [4, 4]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [6, 7]
+		}
+    }
+}

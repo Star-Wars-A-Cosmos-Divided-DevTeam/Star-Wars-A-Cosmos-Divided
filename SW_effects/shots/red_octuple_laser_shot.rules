@@ -1,0 +1,158 @@
+ID = SW.red_octuple_laser_shot_common
+OtherIDs = ["red_octuple_laser_shot"]
+Range = 450
+IdealRange = [60, 250]
+IdealRadius = [5, 50]
+Speed = 90
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.1
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 1600
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		Penetration = 0 // Enough to get through one shield and lose half penetration.
+		PenetratesOperational = false
+		SourceShipCollisionDelay = 10
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 1000
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 1000
+					TreatShieldAsPart = true
+				}
+				{
+					Type = Impulse
+					Impulse = 2.5
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/RedLaserHit
+				&/COMMON_PARTICLES/RedLaserFlash
+				&/COMMON_PARTICLES/RedLaserSparks
+	
+				&/COMMON_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 500
+					TreatShieldAsPart = true
+				}
+				{
+					Type = Impulse
+					Impulse = 1.25
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/RedLaserHitStruct
+
+				&/COMMON_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational
+		{
+			// No effect.
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational
+		{
+			// No effect.
+		}
+		FinishedPenetratingStructural
+		{
+			// No effect.
+		}
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "lasershotred.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [2, 1]
+			}
+			FrameCount = 2
+			FrameSize = [64, 32]
+			FramesPerRow = 1
+			FramesPerSecond = 60
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/RedLaserShotGlow
+		]
+	}
+}

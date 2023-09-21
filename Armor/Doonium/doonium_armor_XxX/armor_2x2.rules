@@ -1,0 +1,169 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+
+Description:
+This part is meant to reduce lag for large builds.
+The idea is to have a large part that when damaged and gets destroyed gets replaced by smaller 1x1 parts.
+The solution implemented here is the "low-persistence" methode:
+Where the large part has 1% of the total health it normally would represent. 
+This was choosen to prevent simple destrution by stray PD shots or low damage shots which usually tend to be employed on mass, hence, extend the lag reduction goal.
+When the part is destroyed the replacing 1x1 parts appear at 98% of their nominal heatlh. This is done for balance reasons.
+The gap of 1% is intentional to compensate for loss damage values from powerful shots exceeding the part's 1% health.
+This means on average there's a 0.5% discrepancy in damage loss or health loss. Higher excess damage loss cannot be accounted with current mechanics. 
+Needless to say the loss fraction increases proportional to part size even with constant percentage.
+It is currently not possible or viable to achieve better precision for balance. 
+
+
+Versions:
+
+ o 1.0 Cosmoteer 0.14.4+ compatible; cosmoteer 0.15.14 mod introduction
+
+
+---------------------------------------------------------------------------- */
+
+Part : &<../base_part_terran_doonium.rules>/Part
+{
+	NameKey = "Parts/DooniumArmor2x2"
+	IconNameKey = "Parts/DooniumArmor2x2Icon"
+	ID = SW.doonium_armor_2x2
+	//EditorGroup = "Defenses"
+	//DescriptionKey = "Parts/DooniumArmorDesc"
+	EditorReplacementPartID = SW.doonium_armor //""
+	Resources
+	[
+		[SW.doonium_ingot, 32] //8*4
+	]
+	//AIValueFactor = 0
+	Size = [2, 2]
+	IsRotateable = false //
+	IsFlippable = false	//
+	//SelectionTypeID = "armor"
+	MaxHealth = 32000 //4000*4*2
+	//ExplosiveDamageAbsorption = 100%
+	//ExplosiveDamageResistance = 50%
+	//TypeCategories = [armor]
+	//ReceivableBuffs : ^/0/ReceivableBuffs []
+	//Flammable = false
+	InitialPenetrationResistance = 36
+	//ContinuingPenetrationResistance = &InitialPenetrationResistance
+	//UnderlyingPartPerTile = ""
+	//UnderlyingPart = ""
+	//CreatePartPerTileWhenGrabbed = SW.doonium_armor
+	//CrewSpeedFactor = 0
+	//Density = 4 //v:3?
+	//IsWalled = true
+	//IsSelfDestructible = false
+	//AllowedDoorLocations = []
+	//GeneratorRequiresDoor = false
+	IgnoreRotationForMirroredSelection = true
+	GenerateRectCollider = true //
+	EditorIcon
+	{
+		Texture
+		{
+			File = "../../icon2x2.png"
+			SampleMode = Linear
+		}
+		Size = [64, 64]
+	}
+	Components : ^/0/Components
+	{
+		EmpAbsorber
+		{
+			Type = ExplosiveResourceDrainSink
+			ResourceType = battery
+			AbsorbsResourceDrain = 8000
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
+		}
+		
+		Graphics
+		{
+			Type = Graphics
+			Location = [1, 1]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						Size = [2, 2]
+					}
+					/*{
+						File = "armor_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "armor_66.png"
+						Size = [2, 2]
+					}*/
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						Size = [2, 2]
+					}
+					/*{
+						File = "armor_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "armor_66.png"
+						Size = [2, 2]
+					}*/
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [2, 2]
+					}
+					/*{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [2, 2]
+					}*/
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "../../blueprints2x2.png"
+			Size = [2, 2]
+		}
+	}
+
+	Stats
+	{
+		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
+	}
+}
+
+

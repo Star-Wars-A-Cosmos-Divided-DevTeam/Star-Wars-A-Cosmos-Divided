@@ -1,0 +1,804 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+Description:
+Currently prototyping
+
+Leaning on CIS/Republican floor and side mounted internal "flak cannons".
+Technically same as carronade.
+Visual options not implemented.
+
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.14
+
+---------------------------------------------------------------------------- */ 
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	NameKey = "Parts/TurbolaserFlakCannon01"
+	IconNameKey = "Parts/TurbolaserFlakCannon01Icon"
+	ID = SW.turbolaser_flak_cannon01
+	DescriptionKey = "Parts/TurbolaserFlakCannon01Desc"
+	EditorGroups = ["WeaponsEnergy", "TechIII"]
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 24000
+	AIValueFactor = 1
+
+	TypeCategories = [weapon, uses_power,is_crewed]
+	Size = [4, 6]
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "cannons"
+	MaxHealth = 24000
+	InitialPenetrationResistance = 5
+	PenetrationRectType = Normal
+
+	ProhibitRects
+	[
+		[0, -4, 4, 2]
+		[1, -2, 2, 1]
+	]
+	AllowedDoorLocations
+	[
+		[-1, 2]
+		[4, 2]
+		[-1, 3]
+		[4, 3]
+		[-1, 4]
+		[4, 4]
+		[-1, 5]
+		[4, 5]
+                [0, 6]
+                [1, 6]
+                [2, 6]
+                [3, 6]
+	]
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [46, 92]
+	}
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles
+			[
+				PowerToggle
+				//BatteryStorage
+				PartCrew
+			]
+			Mode = All
+		}
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			ToggledOnChoices = [1]
+		}
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+		WeaponTimerBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SWWeaponTimerBuff
+			BuffAmount = 60%
+		}
+/*
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 10000
+		}
+		BatteryConsumer
+		{
+			Type = TypedResourceGridConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 1000
+			OperatinalToggle = PowerToggle
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+*/
+		LoadedAmmo
+		{
+			Type = ResourceStorage
+			ResourceType = bullet
+			MaxResources = 1
+			DelayBeforeReadyToUse = .25
+			AnticipateMoreResourcesFrom = ["AmmoStorage"]
+		}
+
+		AmmoStorage
+		{
+			Type = ResourceStorage
+			ResourceType = bullet
+			MaxResources = 40
+		}
+		AmmoConsumer
+		{
+			Type = TypedResourceGridConsumer
+			ResourceType = bullet
+			Storage = AmmoStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			AdditionalStorageForJobPriority = [LoadedAmmo]
+			OperationalToggle = PowerToggle
+			ReceiveAmmoMediaEffects = &/COMMON_EFFECTS/AmmoDeliver
+		}
+
+		AmmoPrereq
+		{
+			Type = MultiResourceStorage
+			ResourceType = bullet
+			ResourceStorages = [LoadedAmmo, AmmoStorage]
+		}
+
+		AmmoLoader
+		{
+			Type = ResourceConverter
+			FromStorage = AmmoStorage
+			ToStorage = LoadedAmmo
+			FromQuantity = 1
+			ToQuantity = 1
+			DelayTrigger = Turret
+			DelayAfterTrigger = .5
+		}
+
+		LoadEffects
+		{
+			Type = TriggeredEffects
+			Trigger = AmmoLoader
+			MediaEffects = &/COMMON_EFFECTS/AmmoLoad
+		}
+
+		FloorGraphics1
+		{
+			Type = Graphics
+			Location = [2, 3]
+			OperationalToggle = IsOperational,
+			Floor
+			{
+				Layer = "floors"
+				Offset = [-1, -2]
+				DamageLevels
+				[
+					{
+						File = "../floor06[2,2]01.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../floor06[2,2]01_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../floor06[2,2]01_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			Walls : &Floor
+			{
+				Offset = [1, -2]
+			}
+			Roof : &Floor
+			{
+				Offset = [-1, 0]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad : &Floor
+			{
+				Offset = [1, 0]
+			}
+			OperationalRoofDoodad = &NonOperationalRoofDoodad
+			NonOperationalRoofDoodad : &Floor
+			{
+				Offset = [-1, 2]
+			}
+			OperationalRoofWindows = &NonOperationalRoofWindows
+			NonOperationalRoofWindows : &Floor
+			{
+				Offset = [1, 2]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "../FixedLightLaserCannon/lights.png"
+						Size = [4, 6]
+					}
+				]
+			}
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			Location = [2, 3]
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, 2]
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../FalconLaser/console on1.png"
+							"../FalconLaser/console on2.png"
+							"../FalconLaser/console on3.png"
+						]
+						Size = [2, 2]
+						AnimationInterval = 0.50
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, 2]
+				DamageLevels
+				[
+					{
+						File = "../FalconLaser/console off.png"
+						Size = [2, 2]
+						//Offset = [0, 0]//-0.67]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "../walls01[4,6].png"
+						Size = [4, 6]
+					}
+/*
+					{
+						File = "../walls01[4,6]_33.png"
+						Size = [4, 6]
+					}
+					{
+						File = "../walls01[4,6]_66.png"
+						Size = [4, 6]
+					}
+*/
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						Size = [4, 6]
+					}
+/*
+					{
+						File = "roof_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "roof_66.png"
+						Size = [2, 3]
+					}
+*/
+				]
+			}
+			RoofWindows
+			{
+				Layer = "roof_windows"
+				Offset = [0, 2]
+				DamageLevels
+				[
+					{
+						File = "../FalconLaser/roof_windows.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../FalconLaser/roof_windows_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../FalconLaser/roof_windows_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+		}
+
+		Turret
+		{
+			Type = TurretWeapon
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			Location = [2, 1]
+			Rotation = -90d
+			FireInterval = .6
+			FiringArc = 40d
+			RotateSpeed = 90d
+			FireThresholdAngle = 1d
+			AIFirepowerRating = 1600
+			IgnoreSourceShipLOSChecks = true
+			//AllowFireWithBlockedLOS = true
+			FirePermissionToggle = FireModeToggle
+			Emitter = BulletEmitter
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = Turret
+			GetTargetFrom = Turret
+			Location = [155/64, 0]  //0,-151
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/greenheavylasershot  //temporary
+			ResourceStorage = LoadedAmmo //BatteryStorage
+			ResourcesUsed = 1
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = BulletEmitter
+			Location = [155/64, 0]  //0,-151
+
+			MediaEffects
+			[
+				: /PARTICLES/GreenLaserShoot
+				{
+					Delay = 0
+				}
+
+				:/BASE_SOUNDS/AudioExterior
+				{
+					Sound = "../Turbolaser SFX.wav"
+					Volume = .75
+					SpeedVariation = .25
+				}
+
+				:/BASE_SHAKE
+				{
+					ShakeAmount = .025
+					Duration = .25
+				}
+			]
+		}
+
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [1.55, 4.6]
+			Rotation = 180d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [2.45, 4.6]
+			Rotation = 180d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 2
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [AmmoPrereq] //[BatteryStorage]
+			CrewDestinations
+			[
+				&../../CrewLocation1/Location
+				&../../CrewLocation2/Location
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+			]
+		}
+
+		BarrelSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			//Location = [0.5, 0]
+			Rotation = 90d
+			Layer = "weapons"
+			ResetAnimationTrigger = BulletEmitter
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"barrel01.png"
+				]
+				Size = [1, 6]
+				AnimationInterval = 0.0625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+/*
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [2, 3.5]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../FalconLaser/batteries1.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../FalconLaser/batteries2.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../FalconLaser/batteries3.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../FalconLaser/batteries4.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../FalconLaser/batteries5.png"
+					Size = [2, 2]
+				}
+			]
+		}
+*/
+		AmmoSprites_1
+		{
+			Type = ResourceSprites
+			Location = [0.5, 5.5]
+			ResourceStorage = AmmoStorage
+			Layer = "doodads_low"
+			RangeLow = 0
+			RangeHigh = 10
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../bullets_pile01.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile02.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile03.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile04.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile05.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile06.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile07.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile08.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile09.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../bullets_pile10.png"
+					Size = [1, 1]
+				}
+			]
+		}
+		AmmoSprites_2
+		{
+			Type = ResourceSprites
+			Location = [0.5, 5.5]
+			ResourceStorage = AmmoStorage
+			Layer = "doodads_low"
+			RangeLow = 10
+			RangeHigh = 20
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../bullets_pile01.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625] //26
+				}
+				{
+					File = "../bullets_pile02.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile03.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile04.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile05.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile06.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile07.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile08.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile09.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+				{
+					File = "../bullets_pile10.png"
+					Size = [1, 1]
+					Offset = [0, 0.40625]
+				}
+			]
+		}
+
+		AmmoSprites2_1 : &AmmoSprites_1
+		{
+			Location = [3.5, 5.5]
+			RangeLow = 20
+			RangeHigh = 30
+		}
+		AmmoSprites2_2 : &AmmoSprites_2
+		{
+			Location = [3.5, 5.5]
+			RangeLow = 30
+			RangeHigh = 40
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational,
+			Location = [2, 3]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [2, 3]
+
+			FactorHitEffectsWith = AmmoStorage
+			HitEffects
+			[
+				{
+					Type = AreaDamage
+					Damage = 400
+					Radius = 2
+					Delay = .05
+					Filter
+					{
+						Friendlies = true
+						OperationalHealth = true
+						StructuralHealth = false
+					}
+				}
+				{
+					Type = AreaDamage
+					Damage = 200
+					Radius = 2
+					Delay = .05
+					Filter
+					{
+						Friendlies = true
+						OperationalHealth = false
+						StructuralHealth = true
+					}
+				}
+				{
+					Type = AreaFires
+					FireChancePerTile = .1
+					Radius = 4
+					Falloff = 0
+					Delay = .05
+					Filter
+					{
+						Friendlies = true
+					}
+				}
+			]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [2, 3]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+/*
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1, 1]
+					}
+				}
+*/
+				// Out of ammo.
+				{
+					Toggle = AmmoPrereq
+					Delay = &~/Part/Components/Turret/FireInterval
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoAmmo
+						Size = [1.5, 1.5]
+					}
+				}
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+		BlueprintSprite
+		{
+			Type=BlueprintSprite
+			File = "blueprints01.png"
+			Size = [4, 6]
+		}
+		BlueprintSpriteBarrel
+		{
+			Type=BlueprintSprite
+			File = "blueprints_barrel01.png"
+			Size = [1, 6]
+			Offset = [0, -2]
+		}
+	}
+
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		//PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		AmmoCapacity = (&~/Part/Components/AmmoStorage/MaxResources) + (&~/Part/Components/LoadedAmmo/MaxResources)
+
+		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/HeavyGreenLasershot"
+			Stats
+			{
+				ShieldDamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
+				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				DamagePerSecond = (&DamagePerShot) * (&ROF)
+				Damage = [&../DamagePerShot, &../DamagePerSecond]
+				ROF = 1 / ((&~/Part/Components/Turret/FireInterval) + (&~/Part/Components/LoadedAmmo/DelayBeforeReadyToUse))
+				Range = &~/Part/Components/BulletEmitter/Bullet/Range
+				Arc = deg(&~/Part/Components/Turret/FiringArc)
+				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+				ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Speed
+				ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Targetable/Health
+				PowerPerShot = (&~/Part/Components/BulletEmitter/ResourcesUsed) / 1000
+				PowerPerSecond = (&PowerPerShot) * (&ROF)
+				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+			}
+		}
+	]
+} 

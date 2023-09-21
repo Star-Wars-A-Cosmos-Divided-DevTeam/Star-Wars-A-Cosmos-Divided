@@ -1,0 +1,187 @@
+Part : &<../base_part_terran_doonium.rules>/Part
+{
+	NameKey = "Parts/DooniumArmor_1x1_1Quarter"
+	IconNameKey = "Parts/DooniumArmor1x1"
+	ID = SW.doonium_armor_1x1_1Quarter
+	//EditorGroup = "DefensesSWACD"
+	//DescriptionKey = "Parts/DooniumArmorDesc"
+	//EditorReplacementPartID = ""
+	Resources
+	[
+		[SW.doonium_ingot, 2]
+	]
+	FractionalCostToRepair = 50%
+	//AIValueFactor = 0
+	Size = [1, 1]
+	AllowedContiguity = [Top, Right, Bottom]
+	//SelectionTypeID = "armor"
+	MaxHealth = 2000 //4000/4*2
+	//ExplosiveDamageAbsorption = 100%
+	//ExplosiveDamageResistance = 50%
+	//TypeCategories = [armor]
+	//ReceivableBuffs : ^/0/ReceivableBuffs []
+	//Flammable = false
+	//UnderlyingPartPerTile = ""
+	//UnderlyingPart = ""
+	//CreatePartPerTileWhenGrabbed = ""
+	InitialPenetrationResistance = 3
+	//ContinuingPenetrationResistance = &InitialPenetrationResistance
+	//CrewSpeedFactor = 0
+	//Density = 4 //v:3?
+	//IsRotateable = true
+	//IsWalled = true
+	//IsSelfDestructible = false
+	ExternalWalls = [TopRight, Right, BottomRight]
+	InternalWalls = [TopLeft, Left, BottomLeft]
+	VirtualInternalCells
+	[
+		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
+		{ExternalCell=[0, 1]; InternalCell=[1, 0]}
+	]
+	//AllowedDoorLocations = []
+	//GeneratorRequiresDoor = false
+	//FlipHRotate = [2, 1, 0, 3]
+	//FlipVRotate = [0, 3, 2, 1]
+	//GenerateRectCollider = false
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+	Components : ^/0/Components
+	{
+		DumyCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0.50-1/64, 0.50-1/64]
+				[0.50-1/64, 0.50+1/64]
+				[0.50+1/64, 0.50+1/64]
+				[0.50+1/64, 0.50-1/64]
+			]
+		}
+
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[1, 0]
+				[0.75, 0]
+				[0.75, 1]
+				[1, 1]
+			]
+		}
+		
+		EmpAbsorber
+		{
+			Type = ExplosiveResourceDrainSink
+			ResourceType = battery
+			AbsorbsResourceDrain = 500
+			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			// This is needed so that armor shows up in ship ghosts.
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"//external_
+				DamageLevels
+				[
+					{
+						File = "armor.png"
+						//NormalsFile = "external_wall_normals.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_33.png"
+						//NormalsFile = "external_wall_normals_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "armor_66.png"
+						//NormalsFile = "external_wall_normals_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 1]
+						UVRotation = 0
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+	}
+
+	Stats
+	{
+		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
+	}
+}

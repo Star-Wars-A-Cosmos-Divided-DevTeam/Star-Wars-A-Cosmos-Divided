@@ -1,0 +1,182 @@
+Components
+	{
+		SwitchTimerTrigger
+		{
+			Type = Timer
+			Duration = 2.75
+			AutoStart = true
+			Repeats = false
+		}
+		SwitchTimerProgressBar
+		{
+			Type = ProgressBar
+			ShowProgressFor = SwitchTimerTrigger
+			Invert = true
+			OperationalToggle = SwitchCooldownToggle
+			InvertOperationalToggle = true
+		}
+
+		SwitchCooldownToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = SwitchTimerTrigger
+			StartsOn = false
+		}
+		WeaponIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, SwitchCooldownToggle,FirePermissionToggle]
+			Mode = All
+		}
+
+		//for alternate fire 100% * 1 s = 1.0 s
+		WeaponTimerBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SWWeaponTimerBuff
+			BuffAmount = 100%
+		}
+		Turret
+		{
+			Type = TurretWeapon
+			OperationalToggle = WeaponIsOperational  //IsOperational
+			AutoFireToggle = AutoFireToggle
+			Location = [1, 0]
+			Rotation = -90d
+			FireInterval = 0
+			FiringArc = 40d
+			RotateSpeed = 90d
+			FireThresholdAngle = 1d
+			AIFirepowerRating = 1600
+			IgnoreSourceShipLOSChecks = true
+			//AllowFireWithBlockedLOS = true
+			FirePermissionToggle = FirePermissionToggle
+			Emitter = BulletEmitterBase
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitterBase // Doesn't actually fire; only used for targeting and as a base for the left and right emitters.
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger // none, but field is required
+			GetTargetFrom = Turret
+			Location = [2.3125, -0.40625]
+			OperationalToggle = IsOperational
+			FireDelay = 0
+			Bullet = &/COMMON_SHOTS/redheavylasershot
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 250
+		}
+
+		BulletEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = ShootLeftTriggerProxy
+			GetTargetFrom = Turret
+			Location = [2.3125, -0.40625]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/redheavylasershot
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 250
+		}
+		BulletEmitter2 : &BulletEmitter
+		{
+			FireTrigger = ShootRightTriggerProxy
+			Location = [2.3125, 0.40625]
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = BulletEmitter
+			Location = [2.2125, -0.50625]
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/SmallRedLaserShoot
+				&/COMMON_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		FireEffect2 : &FireEffect
+		{
+			Trigger = BulletEmitter2
+			Location = [2.2125, 0.50625]
+		}
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .8
+			Density = 1.5
+		}
+
+		BarrelSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [0.5, 0]
+			Rotation = 90d
+			Layer = "weapons"
+			ResetAnimationTrigger = BulletEmitter
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"turret.png"
+				]
+				Size = [3, 3]
+				AnimationInterval = 0.0625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+	}
+
+LaserStats
+{
+	NameKey = "StatCategories/HeavyRedLasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<turbolaser_carronade.rules>/Part/Stats/ROF)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&<turbolaser_carronade.rules>/Part/Stats/ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}

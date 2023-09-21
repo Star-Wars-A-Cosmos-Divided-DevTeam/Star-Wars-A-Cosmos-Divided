@@ -1,0 +1,828 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD Orbital Autocannon
+
+Author : Lafiel
+
+Description:
+Quick and dirty fast prototyping version, 
+
+based on Orbital Autocannon mounted on Mandator IV-class Siege Dreadnought
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.14
+
+
+---------------------------------------------------------------------------- */
+
+Part : /BASE_PART_TERRAN
+{
+	NameKey = "Parts/OrbitalAutocannon"
+	IconNameKey = "Parts/OrbitalAutocannonIcon"
+	ID = SW.orbital_autocannon
+	DescriptionKey = "Parts/OrbitalAutocannonDesc"
+	EditorGroup = "TechIII"
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 10000000
+	Size = [12, 48]
+	Density = 2
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	MaxHealth = 576000
+	TypeCategories = [weapon, uses_power, is_crewed,siege_cannon,axial_weapon]
+	RequiresCategories = [bridge1,WarRoom]
+
+	ReceivableBuffs : ^/0/ReceivableBuffs [SWTurretPerimeter]
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [46, 92]
+	}
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, PartCrew,{Toggle=PerimeterToggle; Invert=true}]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
+
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+/*
+		AmmoPrereq
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorage]
+			//ToggleOnResources = 19001
+			//ToggleOffResources = 3750
+		}
+*/
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 12000
+			DelayBeforeReadyToUse = .5
+			ToggleOnResources = 8000
+			ToggleOffResources = 999
+		}
+		BatteryConsumer
+		{
+			Type = TypedResourceGridConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+//-----------------------------------------------------------------------------
+
+		//there shall be no other weapons in front
+		AxialWeaponForwardPerimeterProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = SWTurretPerimeter
+			BuffAmount = 20
+			BuffArea = [0, -1000, 12, 1000]
+			BuffsSelf = false
+			Criteria
+			{
+				Category = axial_weapon
+				//Rot = 0
+				//Left = 0
+				//Right = 6
+				//Bottom = 0
+			}
+		}
+
+		AxialWeaponSidesPerimeterProvider
+		{
+			Type = GridBuffProvider
+			BuffType = SWTurretPerimeter
+			BuffAmount = 10
+			GridDistance = 100
+			BuffsSelf = false
+			Criteria
+			{
+				Category = axial_weapon
+				//Rot = 0
+				//Left = 0
+				//Right = 6
+				//Bottom = 0
+			}
+		}
+
+		PerimeterToggle
+		{
+			Type = BuffToggle
+			BuffType = SWTurretPerimeter
+			MinBuffValue = 14
+			//MaxBuffValue = 2
+			//Invert = true
+		}
+		NotPerimeterToggle
+		{
+			Type = MultiToggle
+			Toggles
+			[
+				PerimeterToggle
+			]
+			Mode = All
+			Invert = true
+		}
+
+//-----------------------------------------------------------------------------
+
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [6, 0]
+			Rotation = -90d
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 4
+			FiringArc = 10d  //preferable no more than 10d no less than 5d
+			RotateSpeed = 45d
+			FireThresholdAngle = 1d
+			IgnoreSourceShipLOSChecks = true
+			HoldTargetAfterCancel = 0.5
+			AIFirepowerRating = 6400
+			FirePermissionToggle = FireModeToggle //FirePermissionToggle
+
+			Emitter = WeaponEmitter
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		WeaponEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = Turret
+			GetTargetFrom = Turret
+			Location = [0, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/redsiegeparticleshot
+			FireDelay = 0
+			Spread = [-0d, 0d]
+			Burst = 2
+			BurstDelay = 1 //movie accurate 24 frames
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 2000
+		}
+
+//-----------------------------------------------------------------------------
+		FloorGraphics1
+		{
+			Type = Graphics
+			Location = [6, 12]
+			Floor
+			{
+				Layer = "floors"
+				Offset = [-3, -6]
+				DamageLevels
+				[
+					{
+						File = "../floor06[6,12].png"
+						Size = [6, 12]
+					}
+/*
+					{
+						File = "../floor06[6,12]_33.png"
+						Size = [6, 12]
+					}
+					{
+						File = "../floor06[6,12]_66.png"
+						Size = [6, 12]
+					}
+*/
+				]
+			}
+			Walls : &Floor
+			{
+				Offset = [3, -6]
+			}
+			Roof : &Floor
+			{
+				Offset = [-3, 6]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad : &Floor
+			{
+				Offset = [3, 6]
+			}
+		}
+		FloorGraphics2 : &FloorGraphics1
+		{
+			Location = [6, 36]
+		}
+
+		WallsGraphics //corners
+		{
+			Type = Graphics
+			Location = [6, 24]
+			Floor
+			{
+				Layer = "walls"
+				Offset = [-5.5, -23.5]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/Walls/wall02.png"
+						UVRotation = 1
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall02_33.png"
+						UVRotation = 1
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall02_66.png"
+						UVRotation = 1
+						Size = [1, 1]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				Offset = [5.5, -23.5]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/Walls/wall02.png"
+						UVRotation = 2
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall02_33.png"
+						UVRotation = 2
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall02_66.png"
+						UVRotation = 2
+						Size = [1, 1]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "walls"
+				Offset = [-5.5, 23.5]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/Walls/wall02.png"
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall02_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall02_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalRoofWindows = &NonOperationalRoofWindows
+			NonOperationalRoofWindows
+			{
+				Layer = "walls"
+				Offset = [5.5, 23.5]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/Walls/wall02.png"
+						UVRotation = 3
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall02_33.png"
+						UVRotation = 3
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall02_66.png"
+						UVRotation = 3
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+		WallsGraphics2 //edge
+		{
+			Type = Graphics
+			Location = [6, 24]
+			Floor
+			{
+				Layer = "walls"
+				Offset = [0, -23.5]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/Walls/wall04.png"
+						Size = [10, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall04_33.png"
+						Size = [10, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall04_66.png"
+						Size = [10, 1]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				Offset = [0, 23.5]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/Walls/wall04.png"
+						UVRotation = 2
+						Size = [10, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall04_33.png"
+						UVRotation = 2
+						Size = [10, 1]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall04_66.png"
+						UVRotation = 2
+						Size = [10, 1]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "walls"
+				Offset = [-5.5, 0]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/Walls/wall04.png"
+						UVRotation = 3
+						Size = [1, 46]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall04_33.png"
+						UVRotation = 3
+						Size = [1, 46]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall04_66.png"
+						UVRotation = 3
+						Size = [1, 46]
+					}
+				]
+			}
+			OperationalRoofWindows = &NonOperationalRoofWindows
+			NonOperationalRoofWindows
+			{
+				Layer = "walls"
+				Offset = [5.5, 0]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/Walls/wall04.png"
+						UVRotation = 1
+						Size = [1, 46]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall04_33.png"
+						UVRotation = 1
+						Size = [1, 46]
+					}
+					{
+						File = "./Data/ships/terran/Walls/wall04_66.png"
+						UVRotation = 1
+						Size = [1, 46]
+					}
+				]
+			}
+		}
+
+		RoofGraphics
+		{
+			Type = Graphics
+			Location = [6, 24]
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "../../Thrusters/roof_cover_[1,1].png"
+						Size = [12, 48]
+					}
+				]
+			}
+		}
+		CoreGraphics
+		{
+			Type = Graphics
+			Location = [6, 24] //[2, 4]
+			OperationalToggle = IsOperational
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, -20]
+				DamageLevels
+				[
+					{
+						File = "../kyber_crystal_red_on.png"
+						Size = [2, 4]
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, -20]
+				DamageLevels
+				[
+					{
+						File = "../kyber_crystal_red_off.png"
+						Size = [2, 4]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "../deathstar_superlaser/lights-r[3,4].png"
+						Size = [12, 48]
+					}
+				]
+			}
+		}
+		CoreGraphics2
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			Location = [6, 19.5] //0,-652+300
+			Floor
+			{
+				Layer = "weapons"
+				Offset = [0, -208/64]
+				DamageLevels
+				[
+					{
+						File = "../../Superweapons/cannon_power_block3.png"
+						Size = [3, 9]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "weapons"
+				Offset = [0, 208/64]
+				DamageLevels
+				[
+					{
+						File = "../../Superweapons/cannon_power_block3.png"
+						Size = [3, 9]
+						MirrorV = true
+					}
+				]
+			}
+		}
+		CoreGraphics3 : &CoreGraphics2
+		{
+			Location = [6, 35] //992+300
+		}
+		OutlineGlowGraphics
+		{
+			Type = Graphics
+			Location = [6, 24]
+			OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "../edge_glow_red[2,4].png"
+						Size = [24, 96] //[18, 72] //[12, 48]
+					}
+				]
+			}
+		}
+		BarrelGraphics
+		{
+			Type = Graphics
+			//ChainedTo = Turret
+			Location = [6, -35.5]
+			Floor
+			{
+				Layer = "structure"
+				//Offset = [-0.03125, -6.046875]
+				DamageLevels
+				[
+					{
+						File = "barrel.png"
+						Size = [18, 71] // 162x640 //[21.3, 71] 192x640
+					}
+				]
+			}
+		}
+//-----------------------------------------------------------------------------
+		ConsoleGraphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [6, 3.5]
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [-1.578125, 0]; // [.921875, 0];
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../../Superweapons/deathstar_superlaser/SW_console01_on1.png"
+							"../../Superweapons/deathstar_superlaser/SW_console01_on2.png"
+							"../../Superweapons/deathstar_superlaser/SW_console01_on3.png"
+						]
+						UVRotation = 1
+						Size = [1, 2]
+						AnimationInterval = 0.125
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [-1.578125, 0];
+				DamageLevels
+				[
+					{
+						File = "../../Superweapons/deathstar_superlaser/SW_console01_off.png"
+						UVRotation = 1
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [1.578125, 0]; // [5.078125, 0];
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../../Superweapons/deathstar_superlaser/SW_console01_on1.png"
+							"../../Superweapons/deathstar_superlaser/SW_console01_on2.png"
+							"../../Superweapons/deathstar_superlaser/SW_console01_on3.png"
+						]
+						UVRotation = 3
+						Size = [1, 2]
+						AnimationInterval = 0.125
+					}
+				]
+			}
+			NonOperationalRoofDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [1.578125, 0];
+				DamageLevels
+				[
+					{
+						File = "../../Superweapons/deathstar_superlaser/SW_console01_off.png"
+						UVRotation = 3
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+//-----------------------------------------------------------------------------
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [4.421875, 3.15]  // [.921875, 3.5]
+			Rotation = -90d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [4.421875, 3.85]
+			Rotation = -90d
+		}
+		CrewLocation3
+		{
+			Type = CrewLocation
+			Location = [7.578125, 3.15]  // [3.078125, 3.5]
+			Rotation = 90d
+		}
+		CrewLocation4
+		{
+			Type = CrewLocation
+			Location = [7.578125, 3.85]
+			Rotation = 90d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 4
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				&../../CrewLocation1/Location
+				&../../CrewLocation2/Location
+				&../../CrewLocation3/Location
+				&../../CrewLocation4/Location
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+				CrewLocation3
+				CrewLocation4
+			]
+		}
+
+//-----------------------------------------------------------------------------
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [6, 24]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turret Perimeter
+				{
+					Toggle = NotPerimeterToggle
+					ShowInBuildMode = true
+					AtlasSprite
+					{
+						File = &/INDICATORS/SWMinimumDistance
+						Size = [8, 8]
+					}
+				}
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [8, 8]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [8, 8]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [8, 8]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "../blueprints.png"
+			Size = [12, 48]
+		}
+		BlueprintsCrystal
+		{
+			Type = BlueprintSprite
+			File = "../blueprints_kyber_crystal.png"
+			Size = [2, 4]
+			Offset = [0, -20]
+		}
+		BlueprintsArrow
+		{
+			Type = BlueprintSprite
+			File = "../blueprints_arrow_head_blue_large.png"
+			Size = [1, 1]
+			Offset = [0, -23.5]
+		}
+	}
+
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 1 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/WeaponEmitter/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+	}
+
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/RedSiegeParticleShot"
+			Stats
+			{
+				ShieldDamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
+				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+				DamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
+				Damage = [&../DamagePerShot, &../DamagePerSecond]
+				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
+				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
+				PowerPerShot = (&~/Part/Components/WeaponEmitter/ResourcesUsed) / 1000
+				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
+				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+			}
+		}
+	]
+}

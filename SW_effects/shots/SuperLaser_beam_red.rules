@@ -1,0 +1,156 @@
+SuperLaser_beam_red
+{
+Type = Beam
+Range = 1000
+IdealRange = 500
+Duration = 10
+HitInterval = .1
+HitEffectsScaleOverRange = [1, 1]
+MediaEffectsScaleOverRange = [1, 1]
+ReceivableBuffs = [RailgunShot]
+
+
+BeamMediaEffects
+[
+	{
+		Type = Beam
+		BeamSprite
+		{
+			Texture
+			{
+				File = "./Data/shots/ion_beam/beam_base.png"
+
+				SampleMode = Linear
+				MipLevels = max
+			}
+			_baseColor = [255, 255, 255, 255]
+			Shader = "./Data/shots/ion_beam/beam.shader"
+			_sizePulseFactor = 1.2
+			_sizePulseInterval = .1
+			_sizePulseUOffsetFactor = -.03
+			Size = [3.5, 0]
+			VertexColor = [255, 255, 255, 217]
+		}
+		FadeInTime = .25
+		FadeOutTime = .25
+		Bucket = Lower2
+		ExtraEndLength = 1
+		ThicknessOverIntensity = [0, 1]
+		ClampIntensity = [0, 100]
+		IntensityExponent = 0.75
+	}
+
+	&<./Data/shots/ion_beam/particles/ion_beam_emit_sparks.rules>
+
+
+	: /BASE_SOUNDS/AudioExterior
+	{
+		Sound = "./Data/shots/ion_beam/ion_beam.wav"
+		Volume = 1
+		MaxConcurrent = 1
+		MaxConcurrentVolume = 1
+		RampUpTime = .25
+		RampDownTime = .25
+
+		DynamicVolume : ^/0/DynamicVolume
+		{
+			UseCustomShapeForDistance = true
+		}
+		DynamicFilter : ^/0/DynamicFilter
+		{
+			UseCustomShapeForDistance = true
+		}
+	}
+]
+
+HitShield = &HitOperational
+HitOperational
+{
+	HitEffects
+	[
+		{
+			Type = Damage
+			Damage = 1000
+		}
+		{
+			Type = AreaDamage
+			Damage = 2000
+			Radius = 8
+			Delay = .05
+		}
+		{
+			Type = Impulse
+			Impulse = 25
+		}
+	]
+
+	MediaEffects
+	[
+		&<./Data/shots/ion_beam/particles/ion_beam_hit.rules>
+
+		&<./Data/shots/ion_beam/particles/ion_beam_hit_flash.rules>
+
+		&<./Data/shots/ion_beam/particles/ion_beam_hit_sparks.rules>
+
+		: /BASE_SOUNDS/AudioExterior
+		{
+			Sound = "./Data/shots/ion_beam/ion_beam_emit.wav"
+			Volume = .5
+			MaxConcurrent = 1
+			MaxConcurrentVolume = 1
+			RampUpTime = .25
+			RampDownTime = .25
+		}
+		: /BASE_SHAKE
+		{
+			ShakeAmount = .05
+			Duration = .5
+		}
+	]
+}
+
+HitStructural
+{
+	HitEffects
+	[
+		{
+			Type = Damage
+			Damage = 500
+		}
+
+		{
+			Type = AreaDamage
+			Damage = 1000
+			Radius = 4
+			Delay = .05
+		}
+
+		{
+			Type = Impulse
+			Impulse = 4
+		}
+	]
+
+	MediaEffects
+	[
+		&<./Data/shots/ion_beam/particles/ion_beam_hit.rules>
+
+		: /BASE_SOUNDS/AudioExterior
+		{
+			Sound = "./Data/shots/ion_beam/ion_beam_hit.wav"
+			Volume = .25
+			MaxConcurrent = 1
+			MaxConcurrentVolume = .5
+			RampUpTime = .25
+			RampDownTime = .25
+		}
+
+		: /BASE_SHAKE
+		{
+			ShakeAmount = .025
+			Duration = .5
+		}
+	]
+}
+
+}

@@ -1,0 +1,190 @@
+ID = SW.blue_republic_laser_shot_common
+OtherIDs = ["blue_republic_laser_shot"]
+Range = 650
+IdealRange = [60, 600]
+IdealRadius = [5, 50]
+Speed = 60
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.1
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 3200
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 3800
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 1000
+					Radius = 4
+					Filter
+					{
+						Friendlies = false
+					}
+				}
+				{
+					Type = Impulse;
+					Impulse = 7.5;
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 3700
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 2500
+					Radius = 6
+					Filter
+					{
+						Friendlies = false
+					}
+				}
+				{
+					Type = Impulse
+					Impulse = 2.5
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/BlueLaserHit
+				&/COMMON_PARTICLES/BlueLaserFlash
+				&/COMMON_PARTICLES/BlueLaserSparks
+	
+				&/COMMON_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+					Type = AreaDamage
+					Damage = 3150
+					Radius = 3
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 1800
+					Radius = 6
+					Filter
+					{
+						Friendlies = false
+					}
+				}
+				{
+					Type = Impulse
+					Impulse = 1.25
+				}
+			]
+
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/BlueLaserHitStruct
+
+				&/COMMON_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational
+		{
+			// No effect.
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational
+		{
+			// No effect.
+		}
+		FinishedPenetratingStructural
+		{
+			// No effect.
+		}
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "blue_laser.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [1.75, 1.75]
+			}
+			FrameCount = 8
+			FrameSize = [128, 128]
+			FramesPerRow = 2
+			FramesPerSecond = 60
+		}
+		NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/COMMON_PARTICLES/BlueLaserShotGlow
+		]
+	}
+}
