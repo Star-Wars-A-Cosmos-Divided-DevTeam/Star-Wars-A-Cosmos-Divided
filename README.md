@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Star Wars: A Cosmos Divided Mod by ClassicJam & Lafiel
 
 Copyright (©) 2017-2023
