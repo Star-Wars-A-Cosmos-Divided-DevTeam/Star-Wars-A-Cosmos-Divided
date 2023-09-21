@@ -18,7 +18,7 @@ Components
 	Homing
 	{
 		Type = TargetHoming
-		TurnVelocity = 36d
+		TurnVelocity = 360d // changed from 36 - typo this is what is preventing the projectile from hitting its target
 		Delay = .1
 		AvoidanceRaycastDistance = 10
 		VelocityCompensation = 80%
@@ -67,12 +67,94 @@ Components
 		OnDeath = &../Hit/HitFriendly
 	}
 
-	DamagePool
+
+/* Rojamahorse */
+	Hit
 	{
-		Type = DamagePool
-		Damage = 240
+		Type = SimpleHit
+		SourcePartCollisionDelay = 1.5/30
+
+		HitShield = &HitOperational
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 50000
+					Radius = 4
+					ExpandDuration = .8
+					ExpandStartRadius = 1
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false 
+						Friendlies = true 
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 15000
+					Radius = 8
+					ExpandDuration = .8
+					ExpandStartRadius = 1
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 5
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = true
+					}
+				}
+			]
+
+			MediaEffectsScale = 0.3
+			MediaEffects
+			[
+				&<./Data/shots/missile_he/particles/missile_he_hit.rules>
+				//&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				//&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
+				//&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/bullet_med/bullet_med_hit.wav"
+					Volume = .4
+					SpeedVariation = .4
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .05
+					Duration = .5
+				}
+			]
+		}
+		HitStructural = &HitOperational
+
+		HitFriendly
+		{
+			MediaEffects
+			[
+				&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				&<./Data/shots/missile_emp/particles/missile_emp_hit_bolts.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/missile_emp/missile_emp_hit.wav"
+					Volume = 1
+					SpeedVariation = .2
+				}
+			]
+		}
 	}
 
+/* Skipperwraith
 	Hit
 	{
 		Type = PenetratingHit
@@ -83,8 +165,6 @@ Components
 		CrewCollisions = {Enemies=true; Junk=true}
 		PenetratesCrew = true
 		HitCrew = &HitOperational
-
-
 
 		HitShield
 		{
@@ -218,6 +298,7 @@ Components
 		FinishedPenetratingOperational = &PenetratingOperational
 		FinishedPenetratingStructural = &PenetratingStructural
 	}
+*/
 
 	Sprite
 	{
