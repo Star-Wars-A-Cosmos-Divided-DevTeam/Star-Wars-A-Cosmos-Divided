@@ -112,7 +112,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 4000
+			MaxResources = 10000 // previously 4000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
@@ -467,14 +467,14 @@ BulletStats
 	NameKey = "StatCategories/ProtonRocket"
 	Stats
 	{
-		ShieldDamagePerShot = &~/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/TurretStats/Stats/ROF)
-		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot =  &~/BulletEmitterBase/Bullet/Components/DamagePool/Damage //Hit/HitOperational/HitEffects/0/Damage
+//		ShieldDamagePerShot = &~/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+//		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/TurretStats/Stats/ROF)
+//		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot =  &~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/TotalDamage
 		DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
-		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		MaxDamage = [&../DamagePerShot, &../DamagePerSecond]
 		DamageArea = &~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
-		Penetration = &~/BulletEmitterBase/Bullet/Components/Hit/Penetration
+//		Penetration = &~/BulletEmitterBase/Bullet/Components/Hit/Penetration
 		Acceleration = &~/BulletEmitterBase/Bullet/Components/Acceleration/Acceleration
 		ShotGuidance = deg(&~/BulletEmitterBase/Bullet/Components/Homing/TurnVelocity)
 		
@@ -497,7 +497,7 @@ BulletEmitterBase
 		OperationalToggle = IsOperational
 		FireDelay = 0.03
 		ResourceStorage = BatteryStorage
-		ResourcesUsed = 400
+		ResourcesUsed = 10000 // Previously 400
 		Bullet = &/COMMON_SHOTS/proton_rocket
 		TargetLeadPrediction = true
 		Recoil = 10
@@ -511,7 +511,7 @@ TurretBase
 	AutoFireToggle = AutoFireToggle
 	FireInterval = 0
 	FiringArc = 0d
-	ValidArc = 360d
+	ValidArc = 90d //Must be facing the direction
 	RotateSpeed = 0d
 	FireThresholdAngle = 180d
 	AIFirepowerRating = 2000
@@ -540,3 +540,5 @@ TurretBase
 		QuadCount = 64
 	}
 }
+
+
