@@ -84,13 +84,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleOffResources = 0
 			DrainOnFtlJump = true
 			DeliveryLocation = [2, 5.65]
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryStorageRight : BatteryStorageLeft
 		{
 			Toggle = BatteryStorageLeftAndPowerToggle
 			ToggleOnResources = 1
 			ToggleOffResources = 0
-			DeliveryLocation = [6, 5.65]
+			DeliveryLocation = [8-(&~/Part/Components/BatteryStorageLeft/DeliveryLocation/0), &~/Part/Components/BatteryStorageLeft/DeliveryLocation/1]
 		}
 
 		BatteryConsumerLeft
@@ -114,11 +115,29 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = All
 		}
 
-		BatteryStoragePrereq
+		ShieldToggle
 		{
-			Type = MultiToggle
-			Toggles = [BatteryStorageLeft, BatteryStorageRight]
-			Mode = All
+			Type = TriggeredToggle
+			OnTrigger = BatteryStorageIsToggleOnTrigger
+			OffTrigger = BatteryStorageIsToggleOffTrigger
+		}
+		BatteryStorageIsToggleOnTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = BatteryStorageValue
+			MinAmount = 50%
+		}
+		BatteryStorageIsToggleOffTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = BatteryStorageValue
+			MaxAmount = 0%
+		}
+		BatteryStorageValue
+		{
+			Type = MultiValue
+			Values = [BatteryStorageLeft, BatteryStorageRight]
+			Mode = Add
 		}
 
 		BatteryStorage
@@ -126,13 +145,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = MultiResourceStorage
 			ResourceType = battery
 			ResourceStorages = [BatteryStorageLeft, BatteryStorageRight]
-			//AddMode = PrioritizeLeastResources
-			//RemoveMode = PrioritizeMostResources
+			AddMode = PrioritizeMostResources
+			RemoveMode = PrioritizeLeastResources
 		}
 		BatteryStorageBar
 		{
 			Type = ProgressBar
-			OperationalToggle = IsOperational
+			OperationalToggle = ShieldToggle
 			ShowProgressFor = BatteryStorage
 			LowColor = [0, 0, 255]
 			HighColor = [0, 0, 255]
@@ -142,7 +161,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		LoadingStorageBar
 		{
 			Type = ProgressBar
-			OperationalToggle = BatteryStorage
+			OperationalToggle = ShieldToggle
 			InvertOperationalToggle = true
 			ShowProgressFor = BatteryStorage
 			LowColor = [255, 192, 0]
@@ -171,16 +190,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AlwaysAllowInBuildMode = true
 		}
 
-		BlueShieldColorToggle
+		CyanBlueShieldColorToggle
 		{
 			Type = ModeToggle
 			Mode = ShieldColorType
 			OnMode = 0
 		}
-		BlueShieldColorComponents
+		CyanBlueShieldColorComponents
 		{
 			Type = ToggledComponents
-			Toggle = BlueShieldColorToggle
+			Toggle = CyanBlueShieldColorToggle
 			IncludeInBlueprints = true
 			Components = &<shield8_cyanblue.rules>/Components
 		}
@@ -375,7 +394,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = PowerToggle
 			Location = [4, 4]
-			
+
 			AnimationSpeedFactor = BatteryStorage
 			AnimationSpeedFactorRenormalize = [0, 10.0]
 
@@ -985,7 +1004,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
+			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -1049,7 +1068,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 }
 ShieldStatBase
 {
-	OperationalToggle = BatteryStoragePrereq
+	OperationalToggle = ShieldToggle
 	BlockedByOperationalParts = false
 	Radius = 80
 	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
