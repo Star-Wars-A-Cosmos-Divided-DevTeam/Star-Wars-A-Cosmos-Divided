@@ -22,7 +22,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ContiguityOriginPriority = 1
 //	IsShipForward = true
 	SelectionTypeID = "control_room"
-	TypeCategories = [command, uses_power, is_crewed]
+	TypeCategories = [command, uses_power, is_crewed, fire_extinguisher, limit_2]
 	MaxDoors = 3
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	AllowedDoorLocations
@@ -92,8 +92,57 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CommandProvider
 			OperationalToggle = IsOperational
-			CommandPoints = 45  //Remember to update tooltip.
+			CommandPoints = 55 // Remember to update tooltip.
 		}
+
+	/* ******* COCKPIT - FIRE EXTINGUISHER ******* */
+
+	ExtinguisherStorage
+	{
+		Type = ResourceStorage
+		ResourceType = fire_extinguisher
+		MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+		StartingResources = &MaxResources
+		SuppliesResources = true
+	}
+
+	ExtinguisherProducer
+	{
+		Type = ResourceConverter
+		OperationalToggle = ExtinguisherStorage
+		InvertOperationalToggle = true
+		ToStorage = ExtinguisherStorage
+		ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+		Interval = 45
+	}
+
+	ProgressBar
+	{
+		Type = ProgressBar
+		OperationalToggle = ExtinguisherProducer
+		ShowProgressFor = ExtinguisherProducer
+	}
+
+	/* ******* COCKPIT - MANUVERING THRUSTERS (T/B/L/R) ******* */
+
+	Thruster0
+	{
+		Type = Thruster
+		Location = [0.5, 2] // Relative to upper-left corner of unrotated part.
+		Rotation = 0d // Relative to unrotated part.
+		OperationalToggle = IsOperational
+		Force = 42
+		MinActivation = 0
+		MaxActivation = 1
+		MinUncommandedActivation = 0
+		MaxUncommandedActivation = &MaxActivation
+		ActivationIncreaseTime = 0
+		ActivationRecoveryTime = 0
+	}
+
+	Thruster1 : Thruster0 {	Rotation = 90d	}
+	Thruster2 : Thruster0 {	Rotation = 180d }
+	Thruster3 : Thruster0 {	Rotation = 270d	}
 
 		Sensor
 		{
@@ -283,6 +332,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+
+	ExtinguisherSprite
+	{
+		Type = ResourceSprites
+		Location = [.5, 1.5]
+		ResourceStorage = ExtinguisherStorage
+		Layer = "doodads_high"
+		HasZeroResourceSprite = false
+		ResourceLevels
+		[
+			{
+				File = "../extinguisher.png"
+				Size = [1, 1]
+			}
+		]
+	}
 
 		RCSThruster
 		{
