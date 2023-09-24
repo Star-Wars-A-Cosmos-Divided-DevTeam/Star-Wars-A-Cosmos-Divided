@@ -64,6 +64,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
+		ShieldEmitterEffectToggle
+		{
+			Type = UIToggle
+			ToggleID = "SW.shield_emitter_effect_on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		ShieldEmitterEffectToggleAndIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [ShieldEmitterEffectToggle, IsOperational]
+			Mode = All
+		}
+
 		CommandConsumer
 		{
 			Type = CommandConsumer
@@ -133,18 +148,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AlwaysAllowInBuildMode = true
 		}
 
-		BlueShieldColorToggle
+		CyanBlueShieldColorToggle
 		{
 			Type = ModeToggle
 			Mode = ShieldColorType
 			OnMode = 0
 		}
-		BlueShieldColorComponents
+		CyanBlueShieldColorComponents
 		{
 			Type = ToggledComponents
-			Toggle = BlueShieldColorToggle
-			IncludeInBlueprints = true
+			Toggle = CyanBlueShieldColorToggle
 			Components = &<shield2_cyanblue.rules>/Components
+		}
+		IsOperationalAndCyanBlue
+		{
+			Type = MultiToggle
+			Toggles = [CyanBlueShieldColorToggle, IsOperational]
+			Mode = All
+		}
+		IsOperationalAndCyanBlueProxy
+		{
+			Type = ToggleProxy
+			ComponentID = IsOperationalAndCyanBlue
 		}
 
 		WhiteShieldColorToggle
@@ -157,8 +182,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = WhiteShieldColorToggle
-			IncludeInBlueprints = true
 			Components = &<shield2_white.rules>/Components
+		}
+		IsOperationalAndWhite
+		{
+			Type = MultiToggle
+			Toggles = [WhiteShieldColorToggle, IsOperational]
+			Mode = All
+		}
+		IsOperationalAndWhiteProxy
+		{
+			Type = ToggleProxy
+			ComponentID = IsOperationalAndWhite
 		}
 
 		InvisShieldColorToggle
@@ -171,8 +206,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = InvisShieldColorToggle
-			IncludeInBlueprints = true
 			Components = &<shield2_invis.rules>/Components
+		}
+		IsOperationalAndInvis
+		{
+			Type = MultiToggle
+			Toggles = [InvisShieldColorToggle, IsOperational]
+			Mode = All
+		}
+		IsOperationalAndInvisProxy
+		{
+			Type = ToggleProxy
+			ComponentID = IsOperationalAndInvis
 		}
 
 		ShieldEmitterLoop
