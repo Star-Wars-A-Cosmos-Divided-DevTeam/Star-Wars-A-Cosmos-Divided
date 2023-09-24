@@ -62,7 +62,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorageLeft]
+			Toggles = [PowerToggle, ShieldToggle]
 			Mode = All
 		}
 
@@ -72,6 +72,45 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 			RequiresCommand = false
+		}
+
+		ShieldEmitterEffectToggle
+		{
+			Type = UIToggle
+			ToggleID = "SW.shield_emitter_effect_on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+		ShieldEmitterEffectToggleAndIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [ShieldEmitterEffectToggle, IsOperational]
+			Mode = All
+		}
+
+		ShieldToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = BatteryStorageIsToggleOnTrigger
+			OffTrigger = BatteryStorageIsToggleOffTrigger
+		}
+		BatteryStorageIsToggleOnTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = BatteryStorageValue
+			MinAmount = 50%
+		}
+		BatteryStorageIsToggleOffTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = BatteryStorageValue
+			MaxAmount = 0%
+		}
+		BatteryStorageValue
+		{
+			Type = MultiValue
+			Values = [BatteryStorageLeft, BatteryStorageRight]
+			Mode = Add // Equals 200%
 		}
 
 		CommandConsumer
@@ -120,31 +159,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = MultiToggle
 			Toggles = [BatteryStorageLeft, PowerToggle]
 			Mode = All
-		}
-
-		ShieldToggle
-		{
-			Type = TriggeredToggle
-			OnTrigger = BatteryStorageIsToggleOnTrigger
-			OffTrigger = BatteryStorageIsToggleOffTrigger
-		}
-		BatteryStorageIsToggleOnTrigger
-		{
-			Type = ThresholdTrigger
-			AmountFrom = BatteryStorageValue
-			MinAmount = 50%
-		}
-		BatteryStorageIsToggleOffTrigger
-		{
-			Type = ThresholdTrigger
-			AmountFrom = BatteryStorageValue
-			MaxAmount = 0%
-		}
-		BatteryStorageValue
-		{
-			Type = MultiValue
-			Values = [BatteryStorageLeft, BatteryStorageRight]
-			Mode = Add
 		}
 
 		BatteryStorage
@@ -205,8 +219,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = CyanBlueShieldColorToggle
-			IncludeInBlueprints = true
 			Components = &<shield4_cyanblue.rules>/Components
+		}
+		IsOperationalAndCyanBlue
+		{
+			Type = MultiToggle
+			Toggles = [CyanBlueShieldColorToggle, IsOperational]
+			Mode = All
+		}
+		IsOperationalAndCyanBlueProxy
+		{
+			Type = ToggleProxy
+			ComponentID = IsOperationalAndCyanBlue
 		}
 
 		WhiteShieldColorToggle
@@ -219,8 +243,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = WhiteShieldColorToggle
-			IncludeInBlueprints = true
 			Components = &<shield4_white.rules>/Components
+		}
+		IsOperationalAndWhite
+		{
+			Type = MultiToggle
+			Toggles = [WhiteShieldColorToggle, IsOperational]
+			Mode = All
+		}
+		IsOperationalAndWhiteProxy
+		{
+			Type = ToggleProxy
+			ComponentID = IsOperationalAndWhite
 		}
 
 		InvisShieldColorToggle
@@ -233,8 +267,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = InvisShieldColorToggle
-			IncludeInBlueprints = true
 			Components = &<shield4_invis.rules>/Components
+		}
+		IsOperationalAndInvis
+		{
+			Type = MultiToggle
+			Toggles = [InvisShieldColorToggle, IsOperational]
+			Mode = All
+		}
+		IsOperationalAndInvisProxy
+		{
+			Type = ToggleProxy
+			ComponentID = IsOperationalAndInvis
 		}
 
 		ShieldEmitterLoop
@@ -1073,7 +1117,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 }
 ShieldStatBase
 {
-	OperationalToggle = ShieldToggle
+	OperationalToggle = IsOperational
 	BlockedByOperationalParts = false
 	Radius = 40
 	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted

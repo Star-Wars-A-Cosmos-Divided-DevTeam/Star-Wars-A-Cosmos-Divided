@@ -35,7 +35,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	{
 		Texture
 		{
-			File = "ShieldGenSmall/icon.png"
+			File = "Shield_Roasted_1x1/icon.png"
 			SampleMode = Linear
 		}
 		Size = [32, 32]
@@ -55,6 +55,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 			RequiresCommand = false
+		}
+
+		ShieldEmitterEffectToggle
+		{
+			Type = UIToggle
+			ToggleID = "SW.shield_emitter_effect_on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		ShieldEmitterEffectToggleAndIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [ShieldEmitterEffectToggle, IsOperational]
+			Mode = All
 		}
 
 		CommandConsumer
@@ -106,7 +121,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 192, 0]
 			Height = 10
 		}
-
+/*
 		PowerDrain
 		{
 			Type = ResourceConverter
@@ -116,7 +131,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MinFromQuantityForConversion = 1
 			Interval = (4/3)
 		}
-
+*/
 		ShieldColorType
 		{
 			Type = UIToggle
@@ -126,17 +141,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AlwaysAllowInBuildMode = true
 		}
 
-		BlueShieldColorToggle
+		CyanBlueShieldColorToggle
 		{
 			Type = ModeToggle
 			Mode = ShieldColorType
 			OnMode = 0
 		}
-		BlueShieldColorComponents
+		CyanBlueShieldColorComponents
 		{
 			Type = ToggledComponents
-			Toggle = BlueShieldColorToggle
+			Toggle = CyanBlueShieldColorToggle
 			Components = &<shield1_cyanblue.rules>/Components
+		}
+		IsOperationalAndCyanBlue
+		{
+			Type = MultiToggle
+			Toggles = [CyanBlueShieldColorToggle, IsOperational]
+			Mode = All
+		}
+		IsOperationalAndCyanBlueProxy
+		{
+			Type = ToggleProxy
+			ComponentID = IsOperationalAndCyanBlue
 		}
 
 		WhiteShieldColorToggle
@@ -151,6 +177,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Toggle = WhiteShieldColorToggle
 			Components = &<shield1_white.rules>/Components
 		}
+		IsOperationalAndWhite
+		{
+			Type = MultiToggle
+			Toggles = [WhiteShieldColorToggle, IsOperational]
+			Mode = All
+		}
+		IsOperationalAndWhiteProxy
+		{
+			Type = ToggleProxy
+			ComponentID = IsOperationalAndWhite
+		}
 
 		InvisShieldColorToggle
 		{
@@ -163,6 +200,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = InvisShieldColorToggle
 			Components = &<shield1_invis.rules>/Components
+		}
+		IsOperationalAndInvis
+		{
+			Type = MultiToggle
+			Toggles = [InvisShieldColorToggle, IsOperational]
+			Mode = All
+		}
+		IsOperationalAndInvisProxy
+		{
+			Type = ToggleProxy
+			ComponentID = IsOperationalAndInvis
 		}
 
 		ShieldEmitterLoop
@@ -223,15 +271,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "ShieldGenSmall/floor.png"
+						File = "Shield_Roasted_1x1/floor.png"
 						Size = [1, 1]
 					}
 					{
-						File = "ShieldGenSmall/floor_33.png"
+						File = "Shield_Roasted_1x1/floor_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "ShieldGenSmall/floor_66.png"
+						File = "Shield_Roasted_1x1/floor_66.png"
 						Size = [1, 1]
 					}
 				]
@@ -243,7 +291,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "ShieldGenSmall/lights.png"
+						File = "Shield_Roasted_1x1/lights.png"
 						Size = [1, 1]
 					}
 				]
@@ -267,15 +315,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "ShieldGenSmall/walls.png"
+						File = "Shield_Roasted_1x1/walls.png"
 						Size = [1, 1]
 					}
 					{
-						File = "ShieldGenSmall/walls_33.png"
+						File = "Shield_Roasted_1x1/walls_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "ShieldGenSmall/walls_66.png"
+						File = "Shield_Roasted_1x1/walls_66.png"
 						Size = [1, 1]
 					}
 				]
@@ -287,18 +335,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "ShieldGenSmall/roof.png"
-						NormalsFile = "ShieldGenSmall/roof_normals.png"
+						File = "Shield_Roasted_1x1/roof.png"
+						NormalsFile = "Shield_Roasted_1x1/roof_normals.png"
 						Size = [1, 1]
 					}
 					{
-						File = "ShieldGenSmall/roof_33.png"
-						NormalsFile = "ShieldGenSmall/roof_normals_33.png"
+						File = "Shield_Roasted_1x1/roof_33.png"
+						NormalsFile = "Shield_Roasted_1x1/roof_normals_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "ShieldGenSmall/roof_66.png"
-						NormalsFile = "ShieldGenSmall/roof_normals_66.png"
+						File = "Shield_Roasted_1x1/roof_66.png"
+						NormalsFile = "Shield_Roasted_1x1/roof_normals_66.png"
 						Size = [1, 1]
 					}
 				]
@@ -322,15 +370,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						AnimationFiles
 						[
-							"ShieldGenSmall/doodads_on1.png"
-							"ShieldGenSmall/doodads_on2.png"
-							"ShieldGenSmall/doodads_on3.png"
-							"ShieldGenSmall/doodads_on4.png"
-							"ShieldGenSmall/doodads_on5.png"
-							"ShieldGenSmall/doodads_on6.png"
-							"ShieldGenSmall/doodads_on7.png"
-							"ShieldGenSmall/doodads_on8.png"
-							"ShieldGenSmall/doodads_on9.png"
+							"Shield_Roasted_1x1/doodads_on1.png"
+							"Shield_Roasted_1x1/doodads_on2.png"
+							"Shield_Roasted_1x1/doodads_on3.png"
+							"Shield_Roasted_1x1/doodads_on4.png"
+							"Shield_Roasted_1x1/doodads_on5.png"
+							"Shield_Roasted_1x1/doodads_on6.png"
+							"Shield_Roasted_1x1/doodads_on7.png"
+							"Shield_Roasted_1x1/doodads_on8.png"
+							"Shield_Roasted_1x1/doodads_on9.png"
 						]
 						Size = [1, 1]
 						AnimationInterval = 0.3125
@@ -343,7 +391,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "ShieldGenSmall/doodads_off.png"
+						File = "Shield_Roasted_1x1/doodads_off.png"
 						Size = [1, 1]
 					}
 				]
@@ -360,19 +408,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceLevels
 			[
 				{
-					File = "ShieldGenSmall/batteries1.png"
+					File = "Shield_Roasted_1x1/batteries1.png"
 					Size = [1, 1]
 				}
 				{
-					File = "ShieldGenSmall/batteries2.png"
+					File = "Shield_Roasted_1x1/batteries2.png"
 					Size = [1, 1]
 				}
 				{
-					File = "ShieldGenSmall/batteries3.png"
+					File = "Shield_Roasted_1x1/batteries3.png"
 					Size = [1, 1]
 				}
 				{
-					File = "ShieldGenSmall/batteries4.png"
+					File = "Shield_Roasted_1x1/batteries4.png"
 					Size = [1, 1]
 				}
 			]
@@ -425,7 +473,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Blueprints
 		{
 			Type = BlueprintSprite
-			File = "ShieldGenSmall/blueprints.png"
+			File = "Shield_Roasted_1x1/blueprints.png"
 			Size = [1, 1]
 		}
 	}
@@ -436,11 +484,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
 		ShieldArc = deg(360d)
 		ShieldDist = (&~/ShieldStatBase/Radius)
-		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
+		//PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
-		RecCrew = (&RecPower)
+		RecPower = (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage) //(&PowerUsageContinuous) + 
+		RecCrew = (&RecPower)/2
 	}
 }
 ShieldStatBase
