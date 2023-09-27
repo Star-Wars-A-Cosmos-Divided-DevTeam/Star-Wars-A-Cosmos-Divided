@@ -57,7 +57,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [64, 106.66]
 	}
-	Components
+	Components : ^/0/Components
 	{
 		IsOperational
 		{
@@ -88,7 +88,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 8000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -120,7 +119,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
 					ResupplyThreshold = 1000
 					OperationalToggle = PowerToggle
-					ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 				}
 			}
 		}
@@ -131,6 +129,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = 1
 			AvailableChoices = [0, 1, 2, 3]
+			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
 
@@ -195,28 +194,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2]
+			AvailableChoices = [0, 1, 2, 3, 4]
+			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
+
 		GlowToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectAmountType
-			OnMode = 0
+			OnModes = [0, 1, 2]
 		}
 		SparksToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectAmountType
-			OnMode = 1
+			OnModes = [1, 3]
 		}
 		FullsetToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectAmountType
-			OnMode = 2
+			OnModes = [2, 4]
 		}
-		
+
 		GlowProxy
 		{
 			Type = ToggleProxy
@@ -244,7 +245,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ValueProxy
 			ComponentID = MainThruster
 		}
-		
+
 		ReverseThrusterLocationProxy
 		{
 			Type = ChainableProxy
