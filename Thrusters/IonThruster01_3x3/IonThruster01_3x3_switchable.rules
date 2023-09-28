@@ -246,18 +246,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ComponentID = MainThruster
 		}
 
-		ReverseThrusterLocationProxy
-		{
-			Type = ChainableProxy
-			ComponentID = ReverseThruster
-		}
-
-		ReverseThrusterValueProxy
-		{
-			Type = ValueProxy
-			ComponentID = ReverseThruster
-		}
-
 		FloorGrid
 		{
 			Type = SpriteGrid
@@ -518,13 +506,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		MainThruster
 		{
 			Type = Thruster
-			OperationalToggle = IsOperational
 			Location = [1.5, 4.44]
 			Rotation = 90d// Relative to unrotated part.
+			OperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
+			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
@@ -538,9 +526,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxActivation = 0.05
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			FuelUsagePerSecond = (&../../FuelUsage)/20
 			AllowAutoFire = false
 		}
+		/*
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
@@ -550,9 +538,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
+			FuelUsagePerSecond = (&../../FuelUsage)*1.25//Penalty for reverse Thrust
 		}
-
+		*/
 		ActivationBar
 		{
 			Type = ProgressBar
@@ -586,6 +574,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MinAmount = 0.5
 		}
 
+		BurstTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = BurstTrigger
+		}
+
 		BurstEffects
 		{
 			Type = TriggeredEffects
@@ -603,55 +597,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-/*
-		WhiteThruster
-		{
-			Type = Thruster
-			OperationalToggle = IsOperational
-			Location = [1.5, 4.44]
-			Rotation = 90d// Relative to unrotated part.
-			Force = &../../ThrusterForce
-			MinActivation = 0
-			MaxActivation = { BaseValue=0.64; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = 60
-			ActivationRecoveryTime = 60
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = (&../../FuelUsage)*0.64
-		}
-	
-		ThrustEffectsWhiteThruster
-		{
-			Type = ContinuousEffects
-			ChainedTo = WhiteThruster
-			FactorMediaEffectsIntensityWith = WhiteThruster
-			MediaEffects
-			[
-				&/COMMON_PARTICLES/IonThruster/Glow/Huge/White
-				&/COMMON_PARTICLES/Thruster/Fire/Huge/White
-				&/COMMON_PARTICLES/Thruster/PlumeLight/Huge/White
-				&/COMMON_PARTICLES/Thruster/Smoke/Huge
-				&/COMMON_PARTICLES/Thruster/Sparks/Spread/White
-			]
-		}
-*/
-		OperationEffects
-		{
-			Type = ToggleEffects
-			Toggle = IsOperational
-
-			Location = [1.5, 1.5]
-			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
-			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
-		}
-
-		DestroyedEffects
-		{
-			Type = DeathEffects
-			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
-			Location = [1.5, 1.5]
-		}
 
 		ThrusterHum
 		{
@@ -667,6 +612,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					MaxConcurrentVolume = 1
 				}
 			]
+		}
+		
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational
+			Location = [.5, .5]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+			Location = [1.5, 1.5]
 		}
 
 		Indicators
@@ -697,10 +658,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		
+
 		Blueprints
 		{
-			Type=BlueprintSprite
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [3, 5]
 		}
@@ -717,3 +678,4 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecCrew = (&RecPower) * 4
 	}
 }
+Size = Huge
