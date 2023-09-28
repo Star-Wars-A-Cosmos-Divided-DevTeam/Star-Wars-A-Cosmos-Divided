@@ -355,6 +355,17 @@ Actions
 		OverrideIn = "<./Data/buffs/buffs.rules>"
 		Overrides = &<buffs/buffs.rules>
 	}
+	{
+		Action = Add
+		AddTo = "<./Data/buffs/buffs.rules>"
+		Name = SWCockpitSpeed
+		OnlyIfNotExisting = true
+		CreateIfNotExisting = true
+		IgnoreIfNotExisting = true
+		ToAdd = &<buffs/buffs.rules>/SWCockpitSpeed
+	}
+
+
 	// add targetors
 /*	
 	{
@@ -405,20 +416,7 @@ Actions
 		ToAdd = "SW.Structure1x1_Triangle"
 	}
 
-	// ADDING TYPECATEGORY VALUES TO LIMIT QUANTIY PER SHIP 
-
-	//CategoryLimits
-	{
-        Action = AddMany
-        CreateIfNotExisting = true
-        AddTo = "<./Data/ships/terran/terran.rules>/Terran/CategoryLimits"
-        ManyToAdd 
-        [
-            {Category = XWingThruster; Max = 1}
-            {Category = XWingThrusterSmall; Max = 2}
-        ]
-    }
-
+	//CategoryLimits - Parts sharing the same categorytype will share the limit, create new categories as needed in section bleow
 	{
 		Action = Add
 		AddTo = "<ships/terran/terran.rules>/Terran"
@@ -431,20 +429,39 @@ Actions
 		Action = AddMany
 		AddTo = "<ships/terran/terran.rules>/Terran/CategoryLimits"
 
+//ADD NEW CATEGORIES HERE
+
 		ManyToAdd
 		[
 			{
-				Category = "limit_1"
+				Category = "limit_1" //Globally per Ship 
 				Max = 1
 			}
 			{
-				Category = "limit_2"
+				Category = "limit_1Cockpits" 
+				Max = 1
+			}
+			{
+				Category = "XWingThruster" 
+				Max = 1
+			}
+			{
+				Category = "limit_2" //Globally per Ship
 				Max = 2
 			}
 			{
-				Category = "limit_4"
+				Category = "XWingThrusterSmall" 
+				Max = 2
+			}
+			{
+				Category = "limit_2Cockpits"
+				Max = 2
+			}
+			{
+				Category = "limit_4" //Globally per Ship
 				Max = 4
 			}
+
 		]
 	}
 

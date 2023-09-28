@@ -22,7 +22,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ContiguityOriginPriority = 1
 //	IsShipForward = true
 	SelectionTypeID = "control_room"
-	TypeCategories = [command, uses_power, is_crewed, fire_extinguisher, limit_2]
+	TypeCategories = [command, uses_power, is_crewed, fire_extinguisher, limit_2Cockpits]
 	MaxDoors = 3
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	AllowedDoorLocations
@@ -43,6 +43,117 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 	Components : ^/0/Components
 	{
+		/* SPECIAL COCKPIT ITEMS */
+
+		// Airlock - Start
+		AirLock
+		{
+			Type = Airlock
+			EnterExitPoint = [.5, .3]
+			NuggetEjectVelocity = [1, 1]
+			NuggetEjectDirection = [-100d, -80d]
+			NuggetEjectDoorOpenDuration = 0.65
+			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
+
+			CrewEnterEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					RandomSounds = 
+					[
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_01.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_02.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_04.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_05.wav"
+					]
+					SpeedVariation = .1
+				}
+			]
+
+			CrewLeaveEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					RandomSounds = 
+					[
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_01.wav", 
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_02.wav", 
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_03.wav"
+					]
+					SpeedVariation = .1
+				}
+			]	
+		}
+		// Airlock - End
+
+		// Fire Extinguisher - Start
+		ExtinguisherStorage
+		{
+			Type = ResourceStorage
+			ResourceType = fire_extinguisher
+			MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			StartingResources = &MaxResources
+			SuppliesResources = true
+		}
+
+		ExtinguisherProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = ExtinguisherStorage
+			InvertOperationalToggle = true
+			ToStorage = ExtinguisherStorage
+			ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			Interval = 45
+		}
+
+		ProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ExtinguisherProducer
+			ShowProgressFor = ExtinguisherProducer
+		}
+		// Fire Extinguisher - End
+
+		// Maneuvering Thrusters - Start
+		Thruster0
+		{
+			Type = Thruster
+			Location = [0.5, 2] // Relative to upper-left corner of unrotated part.
+			Rotation = 0d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			Force = 100
+			MinActivation = 0
+			MaxActivation = 1
+			MinUncommandedActivation = 0
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = 0
+			ActivationRecoveryTime = 0
+		}
+
+		Thruster1 : Thruster0 {	Rotation = 90d	}
+		Thruster2 : Thruster0 {	Rotation = 180d }
+		Thruster3 : Thruster0 {	Rotation = 270d	}		
+		// Maneuvering Thrusters - End
+
+		// Command Room & Radar - Start
+		CommandProvider
+		{
+			Type = CommandProvider
+			OperationalToggle = IsOperational
+			CommandPoints = 50  //Remember to update tooltip.
+		}
+
+		Sensor
+		{
+			Type = Sensor				
+			SightRadius = 300
+			RadarRadius = 900 //ceil(300*4.5)
+		}
+		// Command Room & Radar - End
+
+		// Toggles - Start
 		IsOperational
 		{
 			Type = MultiToggle
@@ -57,7 +168,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
+		// Toggles - End
 
+		// Battery Storage and Use - Start
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -65,7 +178,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 2000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
 
 		BatteryConsumer
 		{
@@ -83,74 +195,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceConverter
 			OperationalToggle = IsOperational
 			FromStorage = BatteryStorage
-			FromQuantity = 1000				//uses less power
+			FromQuantity = 800				//uses less power
 			MinFromQuantityForConversion = 1
-			Interval = 80					// Drains 1.5 power every minute.
+			Interval = 80					// Drains 1 power every minute.
 		}
+		// Battery Storage and Use - End
 
-		CommandProvider
+		// Pilot & Crew - Start
+		CrewSource
 		{
-			Type = CommandProvider
-			OperationalToggle = IsOperational
-			CommandPoints = 55 // Remember to update tooltip.
+			Type = CrewSource
+			Crew = 1 //Pilots this Cockpit
+			ColorSRange = [0, 0.25]
+			ColorVRange = [0.5, 0.75]
 		}
-
-	/* ******* COCKPIT - FIRE EXTINGUISHER ******* */
-
-	ExtinguisherStorage
-	{
-		Type = ResourceStorage
-		ResourceType = fire_extinguisher
-		MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
-		StartingResources = &MaxResources
-		SuppliesResources = true
-	}
-
-	ExtinguisherProducer
-	{
-		Type = ResourceConverter
-		OperationalToggle = ExtinguisherStorage
-		InvertOperationalToggle = true
-		ToStorage = ExtinguisherStorage
-		ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
-		Interval = 45
-	}
-
-	ProgressBar
-	{
-		Type = ProgressBar
-		OperationalToggle = ExtinguisherProducer
-		ShowProgressFor = ExtinguisherProducer
-	}
-
-	/* ******* COCKPIT - MANUVERING THRUSTERS (T/B/L/R) ******* */
-
-	Thruster0
-	{
-		Type = Thruster
-		Location = [0.5, 2] // Relative to upper-left corner of unrotated part.
-		Rotation = 0d // Relative to unrotated part.
-		OperationalToggle = IsOperational
-		Force = 42
-		MinActivation = 0
-		MaxActivation = 1
-		MinUncommandedActivation = 0
-		MaxUncommandedActivation = &MaxActivation
-		ActivationIncreaseTime = 0
-		ActivationRecoveryTime = 0
-	}
-
-	Thruster1 : Thruster0 {	Rotation = 90d	}
-	Thruster2 : Thruster0 {	Rotation = 180d }
-	Thruster3 : Thruster0 {	Rotation = 270d	}
-
-		Sensor
-		{
-			Type = Sensor				//lower radius
-			SightRadius = 300
-			RadarRadius = ceil(300*4.5)
-		}
-
 		CrewLocation
 		{
 			Type = CrewLocation
@@ -173,12 +231,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				CrewLocation
 			]
 		}
-
+		// Pilot & Crew - End
+/*
+		// Buffs - Start
+		BuffProvider
+		{
+			//square, 3fore, 3sides, 3aft
+			Type = AreaBuffProvider
+			BuffType = SWCockpitSpeed
+			BuffAmount = 125%
+			BuffArea = [-3, -3, 7, 8]
+			OperationalToggle = IsOperational
+		}
+		// Buffs - End
+*/
 		Graphics
 		{
 			Type = Graphics
-			Location = [.5,1]
 			OperationalToggle = IsOperational
+			Location = [.5,1]
 			Floor
 			{
 				Layer = "floors"
@@ -257,7 +328,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "doodads_off_66.png"
 						Size = [1, 2]
-					}					
+					}
 				]
 			}
 			OperationalLighting
@@ -313,42 +384,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-
-		BatterySprites
-		{
-			Type = ResourceSprites
-			Location = [.5, 1]
-			ResourceStorage = BatteryStorage
-			Layer = "doodads_high"
-			ResourceLevels
-			[
-				{
-					File = "batteries1.png"
-					Size = [1, 2]
-				}
-				{
-					File = "batteries2.png"
-					Size = [1, 2]
-				}
-			]
-		}
-
-	ExtinguisherSprite
-	{
-		Type = ResourceSprites
-		Location = [.5, 1.5]
-		ResourceStorage = ExtinguisherStorage
-		Layer = "doodads_high"
-		HasZeroResourceSprite = false
-		ResourceLevels
-		[
-			{
-				File = "../extinguisher.png"
-				Size = [1, 1]
-			}
-		]
-	}
-
+/*
 		RCSThruster
 		{
 			Type = Thruster
@@ -366,14 +402,35 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelUsagePerSecond = 5
 			AllowAutoFire = false
 		}
+*/
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [.5, 1]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "batteries1.png"
+					Size = [1, 2]
+				}
+				{
+					File = "batteries2.png"
+					Size = [1, 2]
+				}
+			]
+		}
 
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [.5, 1]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+			Location = [.5, 1]
 		}
 
 		DestroyedEffects
@@ -401,6 +458,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
+		// Indicators - Start
 		Indicators
 		{
 			Type = IndicatorSprites
@@ -439,6 +497,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+		// Indicators - End
+
+		// Extinguisher Graphics - Start
+		ExtinguisherSprite
+		{
+			Type = ResourceSprites
+			Location = [.5, 1.2]
+			ResourceStorage = ExtinguisherStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../extinguisher.png"
+					Size = [1, 1]
+				}
+			]
+		}
+		// Extinguisher Graphics - End
 
 		Blueprints
 		{
@@ -451,10 +528,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
+
 		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		SightRange = &~/Part/Components/Sensor/SightRadius
+
 		RadarRange = &~/Part/Components/Sensor/RadarRadius
+		SightRange = &~/Part/Components/Sensor/SightRadius
 
 		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
