@@ -25,9 +25,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ThrustIncreaseTime = 0.96 //softer accel
 	ThrustRecoveryTime = 0.96 //softer deccel
 	FuelUsage = 19.2 //160%*40%*30 of vanilla
-
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
-
 	AllowedDoorLocations
 	[
 		[0, -1]
@@ -232,18 +230,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ComponentID = MainThruster
 		}
 
-		ReverseThrusterLocationProxy
-		{
-			Type = ChainableProxy
-			ComponentID = ReverseThruster
-		}
-
-		ReverseThrusterValueProxy
-		{
-			Type = ValueProxy
-			ComponentID = ReverseThruster
-		}
-
 		EngineFloorGraphics
 		{
 			Type = Sprite
@@ -427,7 +413,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-		
+
 		BatterySprites
 		{
 			Type = ResourceSprites
@@ -451,9 +437,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		MainThruster
 		{
 			Type = Thruster
-			OperationalToggle = IsOperational
 			Location = [0.5, 1.225]
 			Rotation = 90d// Relative to unrotated part.
+			OperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
@@ -471,22 +457,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxActivation = 0.05
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			FuelUsagePerSecond = (&../../FuelUsage)/20
 			AllowAutoFire = false
 		}
+		/*
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
 			MinActivation = 0
 			MaxActivation = { BaseValue=0.42; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
+			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
+			FuelUsagePerSecond = (&../../FuelUsage)*1.25//Penalty for reverse Thrust
 			AllowAutoFire = false
 		}
-		
+		*/
 		ActivationBar
 		{
 			Type = ProgressBar
@@ -496,30 +482,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			HighColor = [250, 250, 250]
 			FullColor = [255, 255, 255]
 		}
-/*
-		ActivationBarTrigger
-		{
-			Type = ThresholdTrigger
-			AmountFrom = MainThruster
-			MinAmount = 0.01
-		}
-		ActivationBarToggle
-		{
-			Type = TriggeredToggle
-			OnTrigger = ActivationBarTrigger
-			StartsOn = false
-		}
-		ActivationBar
-		{
-			Type = ProgressBar
-			OperationalToggle = ActivationBarToggle
-			ShowProgressFor = MainThruster
-			LowColor = [0, 0, 0]
-			HighColor = [250, 250, 250]
-			FullColor = [255, 255, 255]
-		}
-*/
-		ThrustEffectsSound
+
+		ThrustEffectsSounds
 		{
 			Type = ContinuousEffects
 			ChainedTo = MainThruster
@@ -534,12 +498,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		
+
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
 			AmountFrom = MainThruster
 			MinAmount = 0.5
+		}
+
+		BurstTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = BurstTrigger
 		}
 
 		BurstEffects
@@ -575,11 +545,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		
+
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
+			Toggle = IsOperational
 			Location = [.5, .5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
@@ -623,7 +593,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		Blueprints
 		{
-			Type=BlueprintSprite
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [1, 2]
 		}

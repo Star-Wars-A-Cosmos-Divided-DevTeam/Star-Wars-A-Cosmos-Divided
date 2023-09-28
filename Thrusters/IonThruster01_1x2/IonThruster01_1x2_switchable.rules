@@ -30,9 +30,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	AllowedDoorLocations
 	[
-		[-1, 0]
 		[0, -1]
 		[1, 0]
+		[-1, 0]
 	]
 	EditorIcon
 	{
@@ -51,6 +51,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Toggles = [PowerToggle, BatteryStorage]
 			Mode = All
 		}
+
 		PowerToggle
 		{
 			Type = UIToggle
@@ -58,6 +59,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
+
 		CommandConsumer
 		{
 			Type = CommandConsumer
@@ -228,18 +230,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ValueProxy
 			ComponentID = MainThruster
-		}
-		
-		ReverseThrusterLocationProxy
-		{
-			Type = ChainableProxy
-			ComponentID = ReverseThruster
-		}
-
-		ReverseThrusterValueProxy
-		{
-			Type = ValueProxy
-			ComponentID = ReverseThruster
 		}
 
 		FloorGrid
@@ -455,12 +445,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+
 		MainThruster
 		{
 			Type = Thruster
-			OperationalToggle = IsOperational
 			Location = [0.5, 2.56]
 			Rotation = 90d// Relative to unrotated part.
+			OperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
@@ -478,9 +469,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxActivation = 0.05
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			FuelUsagePerSecond = (&../../FuelUsage)/20
 			AllowAutoFire = false
 		}
+		/*
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
@@ -490,11 +481,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
+			FuelUsagePerSecond = (&../../FuelUsage)*1.25//Penalty for reverse Thrust
 			AllowAutoFire = false
 		}
-		
+		*/
 		ActivationBar
 		{
 			Type = ProgressBar
@@ -520,11 +510,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
 			AmountFrom = MainThruster
 			MinAmount = 0.5
+		}
+
+		BurstTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = BurstTrigger
 		}
 
 		BurstEffects
@@ -580,8 +577,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
 			Location = [.5, 1]
+			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
@@ -640,10 +637,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		Blueprints
 		{
-			Type=BlueprintSprite
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [1, 3]
-			//Offset = [0, 0]
 		}
 	}
 
@@ -658,3 +654,4 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecCrew = (&RecPower) * 4
 	}
 }
+Size = Med
