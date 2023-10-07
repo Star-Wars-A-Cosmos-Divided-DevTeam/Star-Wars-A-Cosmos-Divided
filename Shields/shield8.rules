@@ -75,6 +75,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
+
 		ShieldEmitterEffectToggleAndIsOperational
 		{
 			Type = MultiToggle
@@ -199,61 +200,140 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.shield_color_type"
-			Default = 0
-			AvailableChoices = [0, 1, 2, 3]
+			Default = 7
+			AvailableChoices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 			AlwaysAllowInBuildMode = true
-		}
-
-		BlueShieldColorToggle
-		{
-			Type = ModeToggle
-			Mode = ShieldColorType
-			OnMode = 0
-		}
-		BlueShieldColorComponents
-		{
-			Type = ToggledComponents
-			Toggle = BlueShieldColorToggle
-			Components = &<shield8_blue.rules>/Components
-		}
-
-		CyanBlueShieldColorToggle
-		{
-			Type = ModeToggle
-			Mode = ShieldColorType
-			OnMode = 1
-		}
-		CyanBlueShieldColorComponents
-		{
-			Type = ToggledComponents
-			Toggle = CyanBlueShieldColorToggle
-			Components = &<shield8_cyanblue.rules>/Components
 		}
 
 		WhiteShieldColorToggle
 		{
 			Type = ModeToggle
 			Mode = ShieldColorType
-			OnMode = 2
+			OnMode = 0
 		}
 		WhiteShieldColorComponents
 		{
 			Type = ToggledComponents
 			Toggle = WhiteShieldColorToggle
-			Components = &<shield8_white.rules>/Components
+			IncludeInBlueprints = true
+			Components = &<Shield8/shield8_white.rules>/Components
 		}
 
 		InvisShieldColorToggle
 		{
 			Type = ModeToggle
 			Mode = ShieldColorType
-			OnMode = 3
+			OnMode = 1
 		}
 		InvisShieldColorComponents
 		{
 			Type = ToggledComponents
 			Toggle = InvisShieldColorToggle
-			Components = &<shield8_invis.rules>/Components
+			Components = &<Shield8/shield8_invis.rules>/Components
+		}
+
+		RedShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 2
+		}
+		RedShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedShieldColorToggle
+			Components = &<Shield8/shield8_red.rules>/Components
+		}
+
+		OrangeShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 3
+		}
+		OrangeShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = OrangeShieldColorToggle
+			Components = &<Shield8/shield8_orange.rules>/Components
+		}
+
+		YellowShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 4
+		}
+		YellowShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = YellowShieldColorToggle
+			Components = &<Shield8/shield8_yellow.rules>/Components
+		}
+
+		GreenShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 5
+		}
+		GreenShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreenShieldColorToggle
+			Components = &<Shield8/shield8_green.rules>/Components
+		}
+
+		CyanShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 6
+		}
+		CyanShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = CyanShieldColorToggle
+			Components = &<Shield8/shield8_cyan.rules>/Components
+		}
+
+		BlueShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 7
+		}
+		BlueShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueShieldColorToggle
+			Components = &<Shield8/shield8_blue.rules>/Components
+		}
+
+		PurpleShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 8
+		}
+		PurpleShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = PurpleShieldColorToggle
+			Components = &<Shield8/shield8_purple.rules>/Components
+		}
+
+		PinkShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 9
+		}
+		PinkShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = PinkShieldColorToggle
+			Components = &<Shield8/shield8_pink.rules>/Components
 		}
 
 		ShieldEmitterLoop
@@ -1079,7 +1159,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		ShieldHP = (&~/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
+		ShieldHP = (((&~/Part/Components/BatteryStorageLeft/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)) + ((&~/Part/Components/BatteryStorageRight/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)))
 		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
 		ShieldArc = deg(360d)
 		ShieldDist = (&~/ShieldStatBase/Radius)
@@ -1133,5 +1213,5 @@ ShieldStatBase
 	}
 	CoverageArcSpriteSegments = 64
 }
-
+Size = Giga
 MaxResources = 128000
