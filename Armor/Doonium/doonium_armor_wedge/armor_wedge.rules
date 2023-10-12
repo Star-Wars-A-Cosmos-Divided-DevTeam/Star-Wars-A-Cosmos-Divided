@@ -23,11 +23,10 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	//Flammable = false
 	//UnderlyingPartPerTile = ""
 	UnderlyingPart = cosmoteer.structure_wedge
-	//TempConstructionPartPerTile = ""
 	//CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 4
 	//ContinuingPenetrationResistance = &InitialPenetrationResistance
-	CrewSpeedFactor = 0
+	//CrewSpeedFactor = 0
 	//Density = 4 //v:3?
 	//IsRotateable = true
 	//IsWalled = true
@@ -53,7 +52,7 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		}
 		Size = [32, 32]
 	}
-	Components : ^/0/Components
+	Components : ^/0/Components //, &<roof_toggles.rules>
 	{
 		Collider
 		{
@@ -65,41 +64,28 @@ Part : &<../base_part_terran_doonium.rules>/Part
 				[0, 1]
 			]
 		}
-		
+/*
 		ArmorRoofType
 		{
 			Type = UIToggle
 			ToggleID = "SW.armor_roof_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2]
-			AlwaysAllowInBuildMode = true
+			AvailableChoices = [0, 1, 2, 3]
 			RequiresCommand = false
-		}
-
-		OldArmorRoofToggle
-		{
-			Type = ModeToggle
-			Mode = ArmorRoofType
-			OnMode = 0
-		}
-		OldArmorRoofToggleComponents
-		{
-			Type = ToggledComponents
-			Toggle = OldArmorRoofToggle
-			Components = &<roof.rules>/Components
 		}
 
 		VanillaArmorRoofToggle
 		{
 			Type = ModeToggle
 			Mode = ArmorRoofType
-			OnMode = 1
+			OnMode = 0
 		}
-		VanillaArmorRoofToggleComponents
+
+		OldArmorRoofToggle
 		{
-			Type = ToggledComponents
-			Toggle = VanillaArmorRoofToggle
-			Components = &<roof2.rules>/Components
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 1
 		}
 
 		BlankArmorRoofToggle
@@ -108,11 +94,12 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			Mode = ArmorRoofType
 			OnMode = 2
 		}
-		BlankArmorRoofToggleComponents
+
+		BoxedArmorRoofToggle
 		{
-			Type = ToggledComponents
-			Toggle = BlankArmorRoofToggle
-			Components = &<roof3.rules>/Components
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 3
 		}
 
 		ArmorRoofNormalType
@@ -120,19 +107,18 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.armor_roof_normal_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2]
-			AlwaysAllowInBuildMode = true
+			AvailableChoices = [0, 1, 2, 3]
 			RequiresCommand = false
 		}
 
-		OldArmorRoofNormalToggle
+		VanillaArmorRoofNormalToggle
 		{
 			Type = ModeToggle
 			Mode = ArmorRoofNormalType
 			OnMode = 0
 		}
 
-		VanillaArmorRoofNormalToggle
+		OldArmorRoofNormalToggle
 		{
 			Type = ModeToggle
 			Mode = ArmorRoofNormalType
@@ -145,7 +131,14 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			Mode = ArmorRoofNormalType
 			OnMode = 2
 		}
-		
+
+		BoxedArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 3
+		}
+*/
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
@@ -153,7 +146,7 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			AbsorbsResourceDrain = 1000
 			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
-		
+
 		Graphics
 		{
 			Type = Graphics
@@ -164,17 +157,17 @@ Part : &<../base_part_terran_doonium.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "floor.png"
+						File = "armor.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
-						File = "floor_33.png"
+						File = "armor_33.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
-						File = "floor_66.png"
+						File = "armor_66.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
@@ -205,41 +198,31 @@ Part : &<../base_part_terran_doonium.rules>/Part
 					}
 				]
 			}
-			/*Roof
+			Roof
 			{
 				Layer = "roofs"
 				DamageLevels
 				[
 					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
+						File = "roof_0.png"
+						NormalsFile = "roof_0_normals.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
+						File = "roof_0_33.png"
+						NormalsFile = "roof_0_normals_33.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
+						File = "roof_0_66.png"
+						NormalsFile = "roof_0_normals_66.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 				]
-			}*/
-		}
-
-		ConstructionStructureSprite
-		{
-			Type = Sprite
-			IncludeWhenUnderConstruction = true
-			IncludeWhenNotUnderConstruction = false
-			Layer = "structure"
-			Location = [.5, .5]
-			AtlasSprite = &<./Data/ships/terran/structure_wedge/structure_wedge.rules>/Part/Components/Graphics/Floor/DamageLevels/0
+			}
 		}
 
 		DestroyedEffects
@@ -248,6 +231,7 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
 			Location = [.5, .5]
 		}
+
 		Blueprints
 		{
 			Type = BlueprintSprite
@@ -255,6 +239,7 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			Size = [1, 1]
 		}
 	}
+
 	Stats
 	{
 		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
