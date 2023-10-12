@@ -8,27 +8,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/Cockpit2Desc"
 	Resources
 	[
-		[steel, 20]
-		[coil2, 10]
+		[steel, 16]
+		[coil2, 20]
 		[processor, 1]
 	]
 	AIValueFactor = 5
 	Size = [1, 2]
 	SelectionPriority = 0
-	MaxHealth = 2500
-	InitialPenetrationResistance = 1.95
-	PenetrationRectType = Normal
-	IsContiguityOrigin = true
-	IsShipForward = true
+	MaxHealth = 3500
+	InitialPenetrationResistance = 4
+//	PenetrationRectType = Normal
+//	IsContiguityOrigin = true
+	ContiguityOriginPriority = 1
+//	IsShipForward = true
 	SelectionTypeID = "control_room"
-	TypeCategories = [command, uses_power, is_crewed]
+	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits]
+	
+	ReceivableBuffs : ^/0/ReceivableBuffs [] 
+
 	AllowedDoorLocations
 	[
 		[1,1]
 		[-1,1]
 		[0,2]
 	]
-	RequiresCategories = []
+//	RequiresCategories = []
 	EditorIcon
 	{
 		Texture
@@ -40,18 +44,122 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 	Components : ^/0/Components
 	{
-		Blueprints
+		/* SPECIAL COCKPIT ITEMS */
+
+		// Airlock - Start
+		AirLock
 		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [1, 2]
+			Type = Airlock
+			EnterExitPoint = [.5, .3]
+			NuggetEjectVelocity = [1, 1]
+			NuggetEjectDirection = [-100d, -80d]
+			NuggetEjectDoorOpenDuration = 0.65
+			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
+
+			CrewEnterEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					RandomSounds = 
+					[
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_01.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_02.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_04.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_05.wav"
+					]
+					SpeedVariation = .1
+				}
+			]
+
+			CrewLeaveEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					RandomSounds = 
+					[
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_01.wav", 
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_02.wav", 
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_03.wav"
+					]
+					SpeedVariation = .1
+				}
+			]	
+		}
+		// Airlock - End
+
+		// Fire Extinguisher - Start
+		ExtinguisherStorage
+		{
+			Type = ResourceStorage
+			ResourceType = fire_extinguisher
+			MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			StartingResources = &MaxResources
+			SuppliesResources = true
 		}
 
+		ExtinguisherProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = ExtinguisherStorage
+			InvertOperationalToggle = true
+			ToStorage = ExtinguisherStorage
+			ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			Interval = 45
+		}
+
+		ProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ExtinguisherProducer
+			ShowProgressFor = ExtinguisherProducer
+		}
+		// Fire Extinguisher - End
+
+		// Maneuvering Thrusters - Start
+		Thruster0
+		{
+			Type = Thruster
+			Location = [0.5, 2] // Relative to upper-left corner of unrotated part.
+			Rotation = 0d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			Force = 250
+			MinActivation = 0
+			MaxActivation = 1
+			MinUncommandedActivation = 0
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = 0
+			ActivationRecoveryTime = 0
+		}
+
+		Thruster1 : Thruster0 {	Rotation = 90d	}
+		Thruster2 : Thruster0 {	Rotation = 180d }
+		Thruster3 : Thruster0 {	Rotation = 270d	}		
+		// Maneuvering Thrusters - End
+
+		// Command Room & Radar - Start
 		CommandProvider
 		{
 			Type = CommandProvider
 			OperationalToggle = IsOperational
-			CommandPoints = 25  //Remember to update tooltip.
+			CommandPoints = 35  //Remember to update tooltip.
+		}
+
+		Sensor
+		{
+			Type = Sensor				
+			SightRadius = 300
+			RadarRadius = 900 //ceil(300*4.5)
+		}
+		// Command Room & Radar - End
+
+		// Toggles - Start
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
 		}
 
 		PowerToggle
@@ -61,26 +169,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
-		IsOperational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
-			Mode = All
-		}
+		// Toggles - End
 
-		Sensor
-		{
-			Type = Sensor				//lower radius
-			SightRadius = 300
-			RadarRadius = ceil(300*4.5)
-		}
-
+		// Battery Storage and Use - Start
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 2000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+
 		BatteryConsumer
 		{
 			Type = ResourceConsumer
@@ -89,16 +188,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
 			ResupplyThreshold = 1000
 			OperationalToggle = PowerToggle
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 			AllowNonContiguousCrewSearch = true
 		}
 
 		PowerDrain
 		{
 			Type = ResourceConverter
+			OperationalToggle = IsOperational
 			FromStorage = BatteryStorage
 			FromQuantity = 100				//uses less power
+			MinFromQuantityForConversion = 1
 			Interval = 8					// Drains 1,5 power every minute.
+		}
+		// Battery Storage and Use - End
+
+		// Pilot & Crew - Start
+		CrewSource
+		{
+			Type = CrewSource
+			Crew = 1 //Pilots this TIE fighter
+			ColorSRange = [0, 0.25]
+			ColorVRange = [0.5, 0.75]
 		}
 
 		CrewLocation
@@ -123,11 +233,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				CrewLocation
 			]
 		}
+		// Pilot & Crew - End
+/*
+		// Buffs - Start
+		BuffProvider
+		{
+			//square, 3fore, 3sides, 3aft
+			Type = AreaBuffProvider
+			BuffType = SWCockpitSpeed
+			BuffAmount = 300%
+			BuffArea = [-3, -3, 7, 8]
+			OperationalToggle = IsOperational
+		}
+		// Buffs - End
+*/
 
 		Graphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational,
+			OperationalToggle = IsOperational
 			Location = [.5,1]
 			Floor
 			{
@@ -267,7 +391,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-
+/*
 		RCSThruster
 		{
 			Type = Thruster
@@ -285,6 +409,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelUsagePerSecond = 5
 			AllowAutoFire = false
 		}
+*/
 
 		BatterySprites
 		{
@@ -309,10 +434,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
-			Location = [1, 1]
+			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+			Location = [1, 1]
 		}
 
 		DestroyedEffects
@@ -339,7 +464,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-
+		// Indicators - Start
 		Indicators
 		{
 			Type = IndicatorSprites
@@ -377,13 +502,41 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+		// Indicators - End
+
+		// Extinguisher Graphics - Start
+		ExtinguisherSprite
+		{
+			Type = ResourceSprites
+			Location = [.5, 1]
+			ResourceStorage = ExtinguisherStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../extinguisher.png"
+					Size = [1, 1]
+				}
+			]
+		}
+		// Extinguisher Graphics - End
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
+		}
 	}
 
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
+
 		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
 		SightRange = &~/Part/Components/Sensor/SightRadius
 		RadarRange = &~/Part/Components/Sensor/RadarRadius
 

@@ -25,20 +25,15 @@
 ID = SW.0.StarWars
 Name = "Star Wars: A Cosmos Divided"
 Version = 1.0.0_rc1
-CompatibleGameVersions = ["0.24.0_rc2"]
+CompatibleGameVersions = ["0.24.0_rc4"]
 Author = "ClassicJam, Lafiel, Skipper_Wraith, Roasted(Art), Rojamahorse(Art)"
 Logo = "ModLogo.png"
 Description = "Star Wars: A Cosmos Divided is the definitive Star Wars experience for Cosmoteer." //It introduces new weapons from the Star Wars universe into the game, new technology tiers and superweapons.It includes new types of parts, such as droids, new armor classes, and now all types of shapes from Kroom's New Armor Expanded. You can also download the Ships Pack add-on, which will add dozens of ships from the Star Wars universe into your game."
 StringsFolder = "Strings"
+ModifiesGameplay = true
 
 Actions
 [
-	//GUI GROUPS
-	/*{	
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		ToAdd = <gui/editor_groups.rules>
-    }*/
 	{	
 		Action = Add
 		AddTo = "<gui/game/designer/editor_groups.rules>"
@@ -257,15 +252,30 @@ Actions
 		AddTo = "<gui/game/parts/part_toggles.rules>/PartToggles"
 		ManyToAdd = &<gui/SW_toggles.rules>/PartToggles
 	}
-	// GUI STATS 
+	// GUI STATS
+	/*
+	{
+		Action = AddBase
+		AddBaseTo = <gui/game/parts/part_stats.rules>/PartStats
+		BaseToAdd = &<gui/part_stats.rules>/PartStats
+	}*/
+	/*{
+		Action = AddMany
+		AddTo = &<gui/SW_stats.rules>/PartStats
+		CreateIfNotExisting = true
+		ManyToAdd = <gui/game/parts/part_stats.rules>/PartStats
+	}*/
+	/*
 	{
 		Action = AddMany
-		AddTo = "<gui/game/parts/part_stats.rules>/PartStats"
+		AddTo = <gui/game/parts/part_stats.rules>/PartStats
+		CreateIfNotExisting = true
 		ManyToAdd = &<gui/SW_stats.rules>/PartStats
 	}
+	*/
 	{
 		Action = Replace
-		Replace = "<gui/game/parts/part_stats.rules>/PartStats"
+		Replace = <gui/game/parts/part_stats.rules>/PartStats
 		CreateIfNotExisting = true
 		With = &<gui/part_stats.rules>/PartStats
 	}
@@ -355,6 +365,17 @@ Actions
 		OverrideIn = "<./Data/buffs/buffs.rules>"
 		Overrides = &<buffs/buffs.rules>
 	}
+	{
+		Action = Add
+		AddTo = "<./Data/buffs/buffs.rules>"
+		Name = SWCockpitSpeed
+		OnlyIfNotExisting = true
+		CreateIfNotExisting = true
+		IgnoreIfNotExisting = true
+		ToAdd = &<buffs/buffs.rules>/SWCockpitSpeed
+	}
+
+
 	// add targetors
 /*	
 	{
@@ -405,20 +426,7 @@ Actions
 		ToAdd = "SW.Structure1x1_Triangle"
 	}
 
-	// ADDING TYPECATEGORY VALUES TO LIMIT QUANTIY PER SHIP 
-
-	//CategoryLimits
-	{
-        Action = AddMany
-        CreateIfNotExisting = true
-        AddTo = "<./Data/ships/terran/terran.rules>/Terran/CategoryLimits"
-        ManyToAdd 
-        [
-            {Category = XWingThruster; Max = 1}
-            {Category = XWingThrusterSmall; Max = 2}
-        ]
-    }
-
+	//CategoryLimits - Parts sharing the same categorytype will share the limit, create new categories as needed in section bleow
 	{
 		Action = Add
 		AddTo = "<ships/terran/terran.rules>/Terran"
@@ -431,20 +439,39 @@ Actions
 		Action = AddMany
 		AddTo = "<ships/terran/terran.rules>/Terran/CategoryLimits"
 
+//ADD NEW CATEGORIES HERE
+
 		ManyToAdd
 		[
 			{
-				Category = "limit_1"
+				Category = "limit_1" //Globally per Ship 
 				Max = 1
 			}
 			{
-				Category = "limit_2"
+				Category = "limit_1Cockpits" 
+				Max = 1
+			}
+			{
+				Category = "XWingThruster" 
+				Max = 1
+			}
+			{
+				Category = "limit_2" //Globally per Ship
 				Max = 2
 			}
 			{
-				Category = "limit_4"
+				Category = "XWingThrusterSmall" 
+				Max = 2
+			}
+			{
+				Category = "limit_2Cockpits"
+				Max = 2
+			}
+			{
+				Category = "limit_4" //Globally per Ship
 				Max = 4
 			}
+
 		]
 	}
 
