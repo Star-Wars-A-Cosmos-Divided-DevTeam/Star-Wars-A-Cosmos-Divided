@@ -8,8 +8,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/Eta2Desc"
 	Resources
 	[
-		[steel, 16]
-		[coil2, 7]
+		[steel, 46]
+		[coil2, 20]
 		[processor, 1]
 	]
 	AIValueFactor = 5
@@ -22,7 +22,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ProhibitAbove = 3
 	IsContiguityOrigin = true
 	IsShipForward = true
-	TypeCategories = [command, weapon, uses_power,uses_laser_parts, is_crewed]
+	TypeCategories = [command, weapon, uses_power,uses_laser_parts, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 //doors only in the back
 	AllowedDoorLocations
@@ -43,6 +43,101 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 	Components : ^/0/Components
 	{
+
+		/* SPECIAL COCKPIT ITEMS */
+
+		// Airlock - Start
+		AirLock
+		{
+			Type = Airlock
+			EnterExitPoint = [.5, .3]
+			NuggetEjectVelocity = [1, 1]
+			NuggetEjectDirection = [-100d, -80d]
+			NuggetEjectDoorOpenDuration = 0.65
+			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
+
+			CrewEnterEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					RandomSounds = 
+					[
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_01.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_02.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_04.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_05.wav"
+					]
+					SpeedVariation = .1
+				}
+			]
+
+			CrewLeaveEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					RandomSounds = 
+					[
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_01.wav", 
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_02.wav", 
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_03.wav"
+					]
+					SpeedVariation = .1
+				}
+			]	
+		}
+		// Airlock - End
+
+		// Fire Extinguisher - Start
+		ExtinguisherStorage
+		{
+			Type = ResourceStorage
+			ResourceType = fire_extinguisher
+			MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			StartingResources = &MaxResources
+			SuppliesResources = true
+		}
+
+		ExtinguisherProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = ExtinguisherStorage
+			InvertOperationalToggle = true
+			ToStorage = ExtinguisherStorage
+			ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			Interval = 45
+		}
+
+		ProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ExtinguisherProducer
+			ShowProgressFor = ExtinguisherProducer
+		}
+		// Fire Extinguisher - End
+
+		// Maneuvering Thrusters - Start
+		Thruster0
+		{
+			Type = Thruster
+			Location = [0.5, 2] // Relative to upper-left corner of unrotated part.
+			Rotation = 0d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			Force = 250
+			MinActivation = 0
+			MaxActivation = 1
+			MinUncommandedActivation = 0
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = 0
+			ActivationRecoveryTime = 0
+		}
+
+		Thruster1 : Thruster0 {	Rotation = 90d	}
+		Thruster2 : Thruster0 {	Rotation = 180d }
+		Thruster3 : Thruster0 {	Rotation = 270d	}		
+		// Maneuvering Thrusters - End
+
 		IsOperational
 		{
 			Type = MultiToggle
@@ -87,7 +182,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CommandProvider
 			OperationalToggle = IsOperational
-			CommandPoints = 10//Just so it works
+			CommandPoints = 30//Just so it works
 		}
 
 		Sensor
@@ -98,13 +193,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RadarRadius = ceil(300*4.5)
 		}
 
+		// Pilot & Crew - Start
+		CrewSource
+		{
+			Type = CrewSource
+			Crew = 2 //Pilots this ETA fighter plus 1
+			ColorSRange = [0, 0.25]
+			ColorVRange = [0.5, 0.75]
+		}
+
 		CrewLocation
 		{
 			Type = CrewLocation
-			Location = [.5, 1.30]
-			Rotation = 180d
+			Location = [0.5, 1.30]
 		}
-
 		PartCrew
 		{
 			Type = PartCrew
@@ -122,6 +224,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				CrewLocation
 			]
 		}
+		// Pilot & Crew - End
 
 		FireModeToggle
 		{
@@ -289,6 +392,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					"barrel.png"
 				]
+				NormalsAnimationFiles
+				[
+					"barrel_normals.png"
+				]
 				Size = [1, 3]
 				AnimationInterval = 0.01
 				AnimationStartTime = MinValue
@@ -329,7 +436,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						[
 							"on.png"
                         	"on10.png"
-]
+						]
 						Size = [1, 2]
 						AnimationInterval = 0.100
 					}
@@ -372,14 +479,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [1, 2]
 					}
 					{
-						File = "roof.png"
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [1, 2]
 					}
 					{
-						File = "roof.png"
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [1, 2]
 					}
 				]
@@ -391,14 +501,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "Windows.png"
+						NormalsFile = "Windows_normals.png"
 						Size = [1, 2]
 					}
 				    {
 						File = "Windows.png"
+						NormalsFile = "Windows_normals_33.png"
 						Size = [1, 2]
 					}
 				    {
 						File = "Windows.png"
+						NormalsFile = "Windows_normals_66.png"
 						Size = [1, 2]
 					}
 				]
@@ -410,6 +523,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "Windows.png"
+						NormalsFile = "Windows_normals.png"
 						Size = [1, 2]
 					}
 				]
@@ -452,6 +566,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+
+		// Extinguisher Graphics - Start
+		ExtinguisherSprite
+		{
+			Type = ResourceSprites
+			Location = [.5, 1]
+			ResourceStorage = ExtinguisherStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../../Control_Rooms/extinguisher.png"
+					Size = [1, 1]
+				}
+			]
+		}
+		// Extinguisher Graphics - End
 
 		Blueprints
 		{
