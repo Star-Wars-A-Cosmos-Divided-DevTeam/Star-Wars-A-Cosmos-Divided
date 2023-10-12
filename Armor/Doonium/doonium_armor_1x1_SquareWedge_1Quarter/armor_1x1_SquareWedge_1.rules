@@ -24,7 +24,6 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	//UnderlyingPartPerTile = ""
 	//UnderlyingPart = ""
 	//CreatePartPerTileWhenGrabbed = ""
-	//CreatePartWhenDestroyed = ""
 	InitialPenetrationResistance = 1
 	//ContinuingPenetrationResistance = &InitialPenetrationResistance
 	//CrewSpeedFactor = 0
@@ -53,7 +52,7 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		}
 		Size = [32, 32]
 	}
-	Components : ^/0/Components
+	Components : ^/0/Components //, &<roof_toggles.rules>
 	{
 		DummyCollider
 		{
@@ -78,41 +77,29 @@ Part : &<../base_part_terran_doonium.rules>/Part
 				[0.75, 0.75]
 			]
 		}
-		
+/*
 		ArmorRoofType
 		{
 			Type = UIToggle
 			ToggleID = "SW.armor_roof_type"
 			Default = 0
-			AvailableChoices = [0, 2]
+			AvailableChoices = [0, 1, 2, 3]
 			RequiresCommand = false
+		}
+
+		VanillaArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 0
 		}
 
 		OldArmorRoofToggle
 		{
 			Type = ModeToggle
 			Mode = ArmorRoofType
-			OnMode = 0
-		}
-		OldArmorRoofToggleComponents
-		{
-			Type = ToggledComponents
-			Toggle = OldArmorRoofToggle
-			Components = &<roof.rules>/Components
-		}
-
-		/*VanillaArmorRoofToggle
-		{
-			Type = ModeToggle
-			Mode = ArmorRoofType
 			OnMode = 1
 		}
-		VanillaArmorRoofToggleComponents
-		{
-			Type = ToggledComponents
-			Toggle = VanillaArmorRoofToggle
-			Components = &<roof2.rules>/Components
-		}*/
 
 		BlankArmorRoofToggle
 		{
@@ -120,11 +107,12 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			Mode = ArmorRoofType
 			OnMode = 2
 		}
-		BlankArmorRoofToggleComponents
+
+		BoxedArmorRoofToggle
 		{
-			Type = ToggledComponents
-			Toggle = BlankArmorRoofToggle
-			Components = &<roof3.rules>/Components
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 3
 		}
 
 		ArmorRoofNormalType
@@ -132,23 +120,23 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.armor_roof_normal_type"
 			Default = 0
-			AvailableChoices = [0, 2]
+			AvailableChoices = [0, 1, 2, 3]
 			RequiresCommand = false
 		}
 
-		OldArmorRoofNormalToggle
+		VanillaArmorRoofNormalToggle
 		{
 			Type = ModeToggle
 			Mode = ArmorRoofNormalType
 			OnMode = 0
 		}
 
-		/*VanillaArmorRoofNormalToggle
+		OldArmorRoofNormalToggle
 		{
 			Type = ModeToggle
 			Mode = ArmorRoofNormalType
 			OnMode = 1
-		}*/
+		}
 
 		BlankArmorRoofNormalToggle
 		{
@@ -157,6 +145,13 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			OnMode = 2
 		}
 
+		BoxedArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 3
+		}
+*/
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
@@ -164,7 +159,7 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			AbsorbsResourceDrain = 125
 			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
 		}
-		
+
 		Graphics
 		{
 			Type = Graphics
@@ -205,25 +200,25 @@ Part : &<../base_part_terran_doonium.rules>/Part
 					}
 				]
 			}
-			/*Roof
+			Roof
 			{
 				Layer = "roofs"
 				DamageLevels
 				[
 					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
+						File = "roof_0.png"
+						NormalsFile = "roof_0_normals.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 					{
-						File = "roof_50.png"
-						NormalsFile = "roof_normals_50.png"
+						File = "roof_0_50.png"
+						NormalsFile = "roof_0_normals_50.png"
 						Size = [1, 1]
 						UVRotation = 0
 					}
 				]
-			}*/
+			}
 		}
 
 		DestroyedEffects
