@@ -1,35 +1,38 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rules>
+Part : &<../base_part_terran_doonium.rules>/Part
 {
-	NameKey = "Parts/DooniumArmor2WedgeL"
-	IconNameKey = "Parts/DooniumArmor2WedgeLIcon"
+	NameKey = "Parts/DooniumArmor4WedgeL"
+	IconNameKey = "Parts/DooniumArmor4WedgeLIcon"
 	ID = SW.doonium_armor4_wedge_L
-	EditorGroup = "Defenses"
-	DescriptionKey = "Parts/DooniumArmorDesc"
-	EditorReplacementPartID = ""
+	//OtherIDs = []
+	//FlipWhenLoadingIDs = []
+	//EditorGroup = "Defenses"
+	//DescriptionKey = "Parts/DooniumArmorDesc"
+	//EditorReplacementPartID = ""
 	Resources
 	[
 		[SW.doonium_ingot, 24]
 	]
 	//AIValueFactor = 0
 	Size = [1, 4]
+	//IsRotateable = true
 	IsFlippable = true
 	AllowedContiguity = [Right, Bottom]
-	SelectionTypeID = "armor"
-	MaxHealth = 16000 //16000/2*2
+	//SelectionTypeID = "armor"
+	//MaxHealth = 16000 //8000/2*4
 	//ExplosiveDamageAbsorption = 100%
 	//ExplosiveDamageResistance = 50%
-	TypeCategories = [armor]
-	ReceivableBuffs : ^/0/ReceivableBuffs []
-	Flammable = false
-	CreatePartPerTileWhenDestroyed = ""
-	CreatePartPerTileWhenGrabbed = ""
+	//TypeCategories = [armor]
+	//ReceivableBuffs : ^/0/ReceivableBuffs []
+	//Flammable = false
+	//UnderlyingPartPerTile = ""
+	UnderlyingPart = "" //SW.structure_1x4_wedge_doonium
+	//CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 12
-	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	//ContinuingPenetrationResistance = &InitialPenetrationResistance
 	CrewSpeedFactor = 0
 	//Density = 4 //v:3?
-	IsRotateable = true
-	IsWalled = true
-	IsSelfDestructible = false
+	//IsWalled = true
+	//IsSelfDestructible = false
 	ExternalWallsByCell
 	[
 		{
@@ -51,33 +54,34 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 	]
 	InternalWallsByCell
 	[
-	 	{
-	 		Key = [0, 0]
-	 		Value = [BottomLeft, Left, TopLeft, Top]
-	 	}
-	 	{
-	 		Key = [0, 1]
-	 		Value = [TopLeft, Left, BottomLeft]
-	 	}
-	 	{
-	 		Key = [0, 2]
-	 		Value = [TopLeft, Left, BottomLeft]
-	 	}
-	 	{
-	 		Key = [0, 3]
-	 		Value = [Left, TopLeft]
-	 	}
+		{
+			Key = [0, 0]
+			Value = [BottomLeft, Left, TopLeft, Top]
+		}
+		{
+			Key = [0, 1]
+			Value = [TopLeft, Left, BottomLeft]
+		}
+		{
+			Key = [0, 2]
+			Value = [TopLeft, Left, BottomLeft]
+		}
+		{
+			Key = [0, 3]
+			Value = [Left, TopLeft]
+		}
 	]
 	VirtualInternalCells
 	[
 		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
 		{ExternalCell=[-1, 3]; InternalCell=[0, 4]}
 	]
-	AllowedDoorLocations = []
-	GeneratorRequiresDoor = false
+	//AllowedDoorLocations = []
+	//GeneratorRequiresDoor = false
+	//IgnoreRotationForMirroredSelection = true
 	FlipHRotate = [0, 3, 2, 1]
 	FlipVRotate = [2, 1, 0, 3]
-	GenerateRectCollider = false
+	//GenerateRectCollider = false
 	EditorIcon
 	{
 		Texture
@@ -87,7 +91,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 		}
 		Size = [32, 64]
 	}
-	Components : ^/0/Components
+	Components : ^/0/Components //, &<roof_toggles.rules>
 	{
 		Collider
 		{
@@ -99,7 +103,81 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 				[0, 4]
 			]
 		}
+/*
+		ArmorRoofType
+		{
+			Type = UIToggle
+			ToggleID = "SW.armor_roof_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2, 3]
+			RequiresCommand = false
+		}
 
+		VanillaArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 0
+		}
+
+		OldArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 1
+		}
+
+		BlankArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 2
+		}
+
+		BoxedArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 3
+		}
+
+		ArmorRoofNormalType
+		{
+			Type = UIToggle
+			ToggleID = "SW.armor_roof_normal_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2, 3]
+			RequiresCommand = false
+		}
+
+		VanillaArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 0
+		}
+
+		OldArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 1
+		}
+
+		BlankArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 2
+		}
+
+		BoxedArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 3
+		}
+*/
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
@@ -120,14 +198,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 					{
 						File = "floor.png"
 						Size = [1, 4]
+						UVRotation = 0
 					}
 					{
 						File = "floor_33.png"
 						Size = [1, 4]
+						UVRotation = 0
 					}
 					{
 						File = "floor_66.png"
 						Size = [1, 4]
+						UVRotation = 0
 					}
 				]
 			}
@@ -140,16 +221,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 						File = "armor.png"
 						NormalsFile = "external_wall_normals.png"
 						Size = [1, 4]
+						UVRotation = 0
 					}
 					{
 						File = "armor_33.png"
 						NormalsFile = "external_wall_normals_33.png"
 						Size = [1, 4]
+						UVRotation = 0
 					}
 					{
 						File = "armor_66.png"
 						NormalsFile = "external_wall_normals_66.png"
 						Size = [1, 4]
+						UVRotation = 0
 					}
 				]
 			}
@@ -159,19 +243,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 				DamageLevels
 				[
 					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
+						File = "roof_0.png"
+						NormalsFile = "roof_0_normals.png"
 						Size = [1, 4]
+						UVRotation = 0
 					}
 					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
+						File = "roof_0_33.png"
+						NormalsFile = "roof_0_normals_33.png"
 						Size = [1, 4]
+						UVRotation = 0
 					}
 					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
+						File = "roof_0_66.png"
+						NormalsFile = "roof_0_normals_66.png"
 						Size = [1, 4]
+						UVRotation = 0
 					}
 				]
 			}
@@ -197,4 +284,4 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<../common_stats.rul
 		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
 	}
 }
-Scale = (1)
+Scale = (1*4/2)
