@@ -4,6 +4,7 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	IconNameKey = "Parts/DooniumArmorIcon"
 	ID = SW.doonium_armor
 	OtherIDs = [doonium_armor]
+	//FlipWhenLoadingIDs = []
 	//EditorGroup = "Defenses"
 	//DescriptionKey = "Parts/DooniumArmorDesc"
 	EditorReplacementPartID = corridor //""
@@ -15,8 +16,9 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	Size = [1, 1]
 	IsRotateable = false //
 	IsFlippable = false	//
+	//AllowedContiguity = []
 	//SelectionTypeID = "armor"
-	MaxHealth = 8000
+	MaxHealth = 8000 //8000*1
 	//ExplosiveDamageAbsorption = 100%
 	//ExplosiveDamageResistance = 50%
 	//TypeCategories = [armor]
@@ -24,7 +26,8 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	//Flammable = false
 	//UnderlyingPartPerTile = ""
 	UnderlyingPart = cosmoteer.structure
-	//InitialPenetrationResistance = 8
+	//CreatePartPerTileWhenGrabbed = ""
+	InitialPenetrationResistance = 8
 	//ContinuingPenetrationResistance = &InitialPenetrationResistance
 	//CrewSpeedFactor = 0
 	//Density = 4 //v:3?
@@ -33,6 +36,8 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	//AllowedDoorLocations = []
 	//GeneratorRequiresDoor = false
 	IgnoreRotationForMirroredSelection = true
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
 	GenerateRectCollider = true
 
 	EditorIcon
@@ -126,8 +131,8 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = 2000
-			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
+			AbsorbsResourceDrain = ceil((&~/Part/MaxHealth)/4) // 2000
+			RecoveryRate = ceil(&AbsorbsResourceDrain) * 0.1
 		}
 
 		Graphics
@@ -225,3 +230,4 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
 	}
 }
+Scale = (1/1)
