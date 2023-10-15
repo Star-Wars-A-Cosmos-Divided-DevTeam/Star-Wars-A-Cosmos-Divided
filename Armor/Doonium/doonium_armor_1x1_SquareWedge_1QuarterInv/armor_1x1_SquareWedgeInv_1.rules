@@ -8,7 +8,7 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	//EditorReplacementPartID = ""
 	Resources
 	[
-		[SW.doonium_ingot, 4]
+		[SW.doonium_ingot, 1]
 	]
 	FractionalCostToRepair = 100%
 	//AIValueFactor = 0
@@ -21,8 +21,8 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	//TypeCategories = [armor]
 	//ReceivableBuffs : ^/0/ReceivableBuffs []
 	//Flammable = false
-	//UnderlyingPartPerTile = ""
-	//UnderlyingPart = ""
+	UnderlyingPartPerTile = ""
+	UnderlyingPart = ""
 	//CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 4
 	//ContinuingPenetrationResistance = &InitialPenetrationResistance
@@ -169,8 +169,8 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = 125
-			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
+			AbsorbsResourceDrain = ceil((&~/Part/MaxHealth)/4) // 125
+			RecoveryRate = ceil(&AbsorbsResourceDrain) * 0.1
 		}
 
 		Graphics
@@ -254,3 +254,4 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
 	}
 }
+Scale = (1*5/16)

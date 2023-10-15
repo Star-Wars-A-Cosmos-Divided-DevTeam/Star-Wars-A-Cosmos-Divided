@@ -25,7 +25,6 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	//Flammable = false
 	//UnderlyingPartPerTile = ""
 	UnderlyingPart = SW.structure_1x2_wedge_doonium
-	//TempConstructionPartPerTile = ""
 	//CreatePartPerTileWhenGrabbed = ""
 	InitialPenetrationResistance = 8
 	//ContinuingPenetrationResistance = &InitialPenetrationResistance
@@ -170,8 +169,8 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = 2000
-			RecoveryRate = (&AbsorbsResourceDrain) * 0.1
+			AbsorbsResourceDrain = ceil((&~/Part/MaxHealth)/4) // 2000
+			RecoveryRate = ceil(&AbsorbsResourceDrain) * 0.1
 		}
 
 		Graphics
@@ -263,3 +262,4 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
 	}
 }
+Scale = (1)
