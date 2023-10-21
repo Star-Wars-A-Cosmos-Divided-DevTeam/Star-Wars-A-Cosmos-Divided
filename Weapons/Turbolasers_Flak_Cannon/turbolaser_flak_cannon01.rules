@@ -22,12 +22,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	IconNameKey = "Parts/TurbolaserFlakCannon01Icon"
 	ID = SW.turbolaser_flak_cannon01
 	DescriptionKey = "Parts/TurbolaserFlakCannon01Desc"
-	EditorGroups = ["WeaponsEnergy", "TechIII"]
+	EditorGroups = ["WeaponsEnergy", "TechIII", "Defenses"]
 	Resources
 	[
-		[steel, 8] //
+		[steel, 100]
+		[durasteel, 100]
+		[coil2, 30] //
 	]  //Cost = 24000
-	AIValueFactor = 1
+//	AIValueFactor = 1
 
 	TypeCategories = [weapon, uses_power,is_crewed]
 	Size = [4, 6]
@@ -38,11 +40,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	InitialPenetrationResistance = 5
 	PenetrationRectType = Normal
 
-	ProhibitRects
-	[
-		[0, -4, 4, 2]
-		[1, -2, 2, 1]
-	]
 	AllowedDoorLocations
 	[
 		[-1, 2]
@@ -73,21 +70,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles
-			[
-				PowerToggle
-				//BatteryStorage
-				PartCrew
-			]
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
+
 		PowerToggle
 		{
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
+			RequiresCommand = false
 		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 4
+		}
+
 		FireModeToggle
 		{
 			Type = UIToggle
@@ -107,13 +108,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = FireModeToggle
 			OnMode = 2
 		}
+/*
 		WeaponTimerBuffProvider
 		{
 			Type = SelfBuffProvider
 			BuffType = SWWeaponTimerBuff
 			BuffAmount = 60%
 		}
-/*
+*/
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -122,7 +125,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		BatteryConsumer
 		{
-			Type = TypedResourceGridConsumer
+			Type = ResourceConsumer
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
@@ -130,7 +133,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperatinalToggle = PowerToggle
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-*/
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}		
+
+/*
 		LoadedAmmo
 		{
 			Type = ResourceStorage
@@ -181,32 +194,33 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Trigger = AmmoLoader
 			MediaEffects = &/COMMON_EFFECTS/AmmoLoad
 		}
-
-		FloorGraphics1
+*/
+		Graphics
 		{
 			Type = Graphics
-			Location = [2, 3]
-			OperationalToggle = IsOperational,
+			Location = [0,0]// [2, 3]
+			OperationalToggle = IsOperational
 			Floor
 			{
 				Layer = "floors"
-				Offset = [-1, -2]
+//				Offset = [-1, -2]
 				DamageLevels
 				[
 					{
-						File = "../floor06[2,2]01.png"
-						Size = [2, 2]
+						File = "floor.png"
+						Size = [4, 6]
 					}
 					{
-						File = "../floor06[2,2]01_33.png"
-						Size = [2, 2]
+						File = "floor_33.png"
+						Size = [4, 6]
 					}
 					{
-						File = "../floor06[2,2]01_66.png"
-						Size = [2, 2]
+						File = "floor_66.png"
+						Size = [4, 6]
 					}
 				]
 			}
+/*
 			Walls : &Floor
 			{
 				Offset = [1, -2]
@@ -242,8 +256,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-
-		Graphics
+*/
+		InternalGraphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational,
