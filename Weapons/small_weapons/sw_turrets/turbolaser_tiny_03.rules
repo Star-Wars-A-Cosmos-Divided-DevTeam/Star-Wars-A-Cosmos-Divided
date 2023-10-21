@@ -1,0 +1,550 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+
+Description:
+Currently prototyping. Everything is temporary.
+
+This is based on the hybrid PD turret with light laser and medium laser
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.14
+
+---------------------------------------------------------------------------- */ 
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{	
+	ID = SW.turbolaser_tiny_03
+	NameKey = "Parts/TurbolaserTiny03"
+	IconNameKey = "Parts/TurbolaserTiny03Icon"
+	DescriptionKey = "Parts/TurbolaserTiny03Desc"
+	EditorGroups = ["WeaponsEnergy", "Defenses", "TechIII"]
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 5000
+	AIValueFactor = 1
+
+	TypeCategories = [defense, uses_power, uses_laser_parts, is_crewed]
+	Size = [1, 2]
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "cannons"
+	MaxHealth = 8000
+	InitialPenetrationResistance = 5
+	PenetrationRectType = Normal
+
+	AllowedDoorLocations
+	[
+		[-1, 1]
+		[1, 1]
+		[0, 2]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "turret03.png"
+			SampleMode = Linear
+		}
+		Size = [32, 64]
+	}
+	
+	Components : ^/0/Components, &<turbolaser03_green.rules>/Components, &<turret03_graphics.rules>
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+
+/*
+		LightTurbolaserType
+		{
+			Type = UIToggle
+			ToggleID = "SW.lightturbolaser_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
+			ToggledOnChoices = [0, 1, 2]
+		}
+
+		LightTurbolaserRedToggle
+		{
+			Type = ModeToggle
+			Mode = LightTurbolaserType
+			OnMode = 0
+		}
+
+		LightTurbolaserRedComponents
+		{
+			Type = ToggledComponents
+			Toggle = LightTurbolaserRedToggle
+			IncludeInBlueprints = true
+			Components = &<light_turbolaser_red.rules>/Components
+		}
+
+		LightTurbolaserBlueToggle
+		{
+			Type = ModeToggle
+			Mode = LightTurbolaserType
+			OnMode = 1
+		}
+
+		LightTurbolaserBlueComponents
+		{
+			Type = ToggledComponents
+			Toggle = LightTurbolaserBlueToggle
+			IncludeInBlueprints = true
+			Components = &<light_turbolaser_blue.rules>/Components
+		}
+
+		LightTurbolaserGreenToggle
+		{
+			Type = ModeToggle
+			Mode = LightTurbolaserType
+			OnMode = 2
+		}
+
+		LightTurbolaserGreenComponents
+		{
+			Type = ToggledComponents
+			Toggle = LightTurbolaserGreenToggle
+			IncludeInBlueprints = true
+			Components = &<light_turbolaser_green.rules>/Components
+		}
+*/
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			Location = [0.5, 1]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/laser_blaster_small/floor.png"
+						Size = [1, 2]
+					}
+					{
+						File = "./Data/ships/terran/laser_blaster_small/floor.png"
+						Size = [1, 2]
+					}
+					{
+						File = "./Data/ships/terran/laser_blaster_small/floor.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/laser_blaster_small/lights.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, 0.5]
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../FixedLightLaserCannon/doodads on1.png"
+							"../FixedLightLaserCannon/doodads on2.png"
+							"../FixedLightLaserCannon/doodads on3.png"
+							"../FixedLightLaserCannon/doodads on4.png"
+							"../FixedLightLaserCannon/doodads on5.png"
+							"../FixedLightLaserCannon/doodads on6.png"
+							"../FixedLightLaserCannon/doodads on7.png"
+							"../FixedLightLaserCannon/doodads on8.png"
+						]
+						Size = [1, 1]
+						AnimationInterval = 0.1
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, 0.5]
+				DamageLevels
+				[
+					{
+						File = "../FixedLightLaserCannon/doodads off.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/laser_blaster_small/walls.png"
+						Size = [1, 2]
+					}
+					{
+						File = "./Data/ships/terran/laser_blaster_small/walls_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "./Data/ships/terran/laser_blaster_small/walls_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "../roof03[1,2]04.png"
+						Size = [1, 2]
+					}
+					{
+						File = "../roof03[1,2]04_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "../roof03[1,2]04_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+/*
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				Offset = [0, -1]
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"roof_doodads_on1.png"
+							"roof_doodads_on2.png"
+							"roof_doodads_on3.png"
+							"roof_doodads_on4.png"
+							"roof_doodads_on5.png"
+							"roof_doodads_on6.png"
+							"roof_doodads_on7.png"
+							"roof_doodads_on8.png"
+						]
+						Size = [1, 2]
+						AnimationInterval = 0.1
+					}
+				]
+			}
+			NonOperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				Offset = [0, -1]
+				DamageLevels
+				[
+					{
+						File = "roof_doodads_off.png"
+						Size = [1, 2]
+						AnimationInterval = 0.1
+					}
+				]
+			}
+*/
+			OperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/laser_blaster_small/roof_windows_on.png"
+						Size = [1, 2]
+					}
+					{
+						File = "./Data/ships/terran/laser_blaster_small/roof_windows_on_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "./Data/ships/terran/laser_blaster_small/roof_windows_on_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			NonOperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/laser_blaster_small/roof_windows_off.png"
+						Size = [1, 2]
+					}
+					{
+						File = "./Data/ships/terran/laser_blaster_small/roof_windows_off_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "./Data/ships/terran/laser_blaster_small/roof_windows_off_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+		
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 4000
+		}
+
+		BatteryConsumer
+		{
+			Type = TypedResourceGridConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 1000
+			OperationalToggle = PowerToggle
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		CrewLocation
+		{
+			Type = CrewLocation
+			Location = [.5, 1.725]
+			Rotation = 180d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 1
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				&../../CrewLocation/Location
+			]
+			CrewLocations
+			[
+				CrewLocation
+			]
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [0.5, 1.5]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../FixedLightLaserCannon/batteries1.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../FixedLightLaserCannon/batteries2.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../FixedLightLaserCannon/batteries3.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../FixedLightLaserCannon/batteries4.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../FixedLightLaserCannon/batteries5.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../FixedLightLaserCannon/batteries6.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../FixedLightLaserCannon/batteries7.png"
+					Size = [1, 1]
+				}
+				{
+					File = "../FixedLightLaserCannon/batteries8.png"
+					Size = [1, 1]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Location = [0.5, 1]
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [0.5, 1]
+			
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [0.5, 1]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [0.8, 0.8]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [0.8, 0.8]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [0.8, 0.8]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
+		}
+
+/*
+		BlueprintsRed
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.lightturbolaser_type
+				Mode = 0
+			}
+		}
+
+		BlueprintsBlue
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.lightturbolaser_type
+				Mode = 1
+			}
+		}
+		
+		BlueprintsGreen
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 2]
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.lightturbolaser_type
+				Mode = 2
+			}
+		}
+*/
+
+	}
+
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = &PowerPerSecond
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		Range = &<turbolaser03_green.rules>/Components/BulletEmitter/Bullet/Range
+		Arc = deg(&<turbolaser03_green.rules>/Components/Turret/FiringArc)
+		TurretSpeed = deg(&<turbolaser03_green.rules>/Components/Turret/RotateSpeed)
+		PowerPerShot = (&<turbolaser03_green.rules>/LaserStats/Stats/PowerPerShot) + 2 * (&<turbolaser03_green.rules>/LaserStats2/Stats/PowerPerShot)
+		PowerPerSecond = (&<turbolaser03_green.rules>/LaserStats/Stats/PowerPerSecond) + (&<turbolaser03_green.rules>/LaserStats2/Stats/PowerPerSecond)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+
+		ShieldDamagePerShot = (&<turbolaser03_green.rules>/LaserStats/Stats/ShieldDamagePerShot) + (&<turbolaser03_green.rules>/LaserStats2/Stats/ShieldDamagePerShot)
+		ShieldDamagePerSecond = (&<turbolaser03_green.rules>/LaserStats/Stats/ShieldDamagePerSecond) + (&<turbolaser03_green.rules>/LaserStats2/Stats/ShieldDamagePerSecond)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = (&<turbolaser03_green.rules>/LaserStats/Stats/DamagePerShot) + (&<turbolaser03_green.rules>/LaserStats2/Stats/DamagePerShot)
+		DamagePerSecond = (&<turbolaser03_green.rules>/LaserStats/Stats/DamagePerSecond) + (&<turbolaser03_green.rules>/LaserStats2/Stats/DamagePerSecond)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+	StatsByCategory
+	[
+//		&<light_turbolaser_red.rules>/LaserStats
+//		&<light_turbolaser_blue.rules>/LaserStats
+
+		&<turbolaser03_green.rules>/LaserStats
+		&<turbolaser03_green.rules>/LaserStats2
+	]
+}
