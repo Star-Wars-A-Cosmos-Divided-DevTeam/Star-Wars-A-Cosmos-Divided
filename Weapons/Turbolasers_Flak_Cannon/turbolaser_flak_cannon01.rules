@@ -26,7 +26,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Resources
 	[
 		[steel, 100]
-		[durasteel, 100]
+		[SW.durasteel, 100]
 		[coil2, 30] //
 	]  //Cost = 24000
 //	AIValueFactor = 1
@@ -108,14 +108,44 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-/*
+		FirePrefToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_pref"
+			Default = 2
+		}
+		FirePrefAttack
+		{
+			Type = ModeToggle
+			Mode = FirePrefToggle
+			OnModes = [0, 2]
+		}
+		FirePrefDefend
+		{
+			Type = ModeToggle
+			Mode = FirePrefToggle
+			OnModes = [1, 2]
+		}
+		AttackToggle
+		{
+			Type = MultiToggle
+			Toggles = [AutoTargetToggle, FirePrefAttack]
+			Mode = All
+		}
+		DefendToggle
+		{
+			Type = MultiToggle
+			Toggles = [AutoTargetToggle, FirePrefDefend]
+			Mode = All
+		}
+		/*
 		WeaponTimerBuffProvider
 		{
 			Type = SelfBuffProvider
 			BuffType = SWWeaponTimerBuff
 			BuffAmount = 60%
 		}
-*/
+		*/
 
 		BatteryStorage
 		{
@@ -143,7 +173,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 255, 0]
 		}		
 
-/*
+		/*
 		LoadedAmmo
 		{
 			Type = ResourceStorage
@@ -194,16 +224,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Trigger = AmmoLoader
 			MediaEffects = &/COMMON_EFFECTS/AmmoLoad
 		}
-*/
+		*/
 		Graphics
 		{
 			Type = Graphics
-			Location = [0,0]// [2, 3]
+			Location = [2, 3]
 			OperationalToggle = IsOperational
 			Floor
 			{
 				Layer = "floors"
-//				Offset = [-1, -2]
+				//Offset = [-1, -2]
 				DamageLevels
 				[
 					{
@@ -211,16 +241,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [4, 6]
 					}
 					{
-						File = "floor_33.png"
+						File = "floor.png"
 						Size = [4, 6]
 					}
 					{
-						File = "floor_66.png"
+						File = "floor.png"
 						Size = [4, 6]
 					}
 				]
 			}
-/*
+			/*
 			Walls : &Floor
 			{
 				Offset = [1, -2]
@@ -255,8 +285,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+			*/
 		}
-*/
+
 		InternalGraphics
 		{
 			Type = Graphics
@@ -299,19 +330,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "../walls01[4,6].png"
-						Size = [4, 6]
-					}
-/*
-					{
-						File = "../walls01[4,6]_33.png"
+						File = "walls.png"
 						Size = [4, 6]
 					}
 					{
-						File = "../walls01[4,6]_66.png"
+						File = "walls_33.png"
 						Size = [4, 6]
 					}
-*/
+					{
+						File = "walls_66.png"
+						Size = [4, 6]
+					}
+
 				]
 			}
 			Roof
@@ -323,18 +353,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = "roof.png"
 						Size = [4, 6]
 					}
-/*
 					{
 						File = "roof_33.png"
-						Size = [2, 3]
+						Size = [4, 6]
 					}
 					{
 						File = "roof_66.png"
-						Size = [2, 3]
+						Size = [4, 6]
 					}
-*/
 				]
 			}
+			/*
 			RoofWindows
 			{
 				Layer = "roof_windows"
@@ -355,6 +384,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+			*/
 		}
 
 		Turret
@@ -364,21 +394,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AutoFireToggle = AutoFireToggle
 			Location = [2, 1]
 			Rotation = -90d
-			FireInterval = .6
-			FiringArc = 40d
-			RotateSpeed = 90d
-			FireThresholdAngle = 1d
+			FireInterval = .25
+			FiringArc = 50d
+			RotateSpeed = 120d
+			FireThresholdAngle = 30d
 			AIFirepowerRating = 1600
 			IgnoreSourceShipLOSChecks = true
 			//AllowFireWithBlockedLOS = true
+			TargetSearchesPerSecond = 8 // Default is 2.
 			FirePermissionToggle = FireModeToggle
 			Emitter = BulletEmitter
 
 			AutoTargets
 			[
 				{
+					TargetType = Bullets
+					BulletTargetCategories = [missile, laser, bullet, mine]
+					Toggle = DefendToggle
+				}
+				{
 					TargetType = ShipParts
-					Toggle = AutoTargetToggle
+					Toggle = AttackToggle
+					Overridable = true
 				}
 			]
 
@@ -406,17 +443,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ShowProgressFor = Turret
 		}
 
-		BulletEmitter
+		BulletEmitter : &<./Data/shots/flak_large/flak_large.rules>
 		{
-			Type = BulletEmitter
+			Type = BeamEmitter
 			ChainedTo = Turret
 			FireTrigger = Turret
 			GetTargetFrom = Turret
 			Location = [155/64, 0]  //0,-151
 			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/greenheavylasershot  //temporary
-			ResourceStorage = LoadedAmmo //BatteryStorage
-			ResourcesUsed = 1
+			Bullet = &/COMMON_SHOTS/sw_flak_large  //temporary
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 50
+			Recoil = 10
+			Burst = 2
 		}
 
 		FireEffect
@@ -425,22 +464,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ChainedTo = Turret
 			Trigger = BulletEmitter
 			Location = [155/64, 0]  //0,-151
-
+		
 			MediaEffects
 			[
-				: /PARTICLES/GreenLaserShoot
+				&<./Data/ships/terran/point_defense/particles/point_defense_shoot.rules>
+				&/COMMON_PARTICLES/SWFlakLargeFlash // &<./Data/ships/terran/point_defense/particles/flak_cannon_shoot_flash_large.rules>
+				&/COMMON_PARTICLES/SWFlakLargeSmoke // &<./Data/ships/terran/point_defense/particles/flak_cannon_smoke_large.rules>
+
+				: /BASE_SOUNDS/AudioExterior
 				{
-					Delay = 0
+					Sound = "./Data/ships/terran/cannon_med/shoot.wav"
+					Speed = 2
+					SpeedVariation = .5
+					Volume = .5
 				}
 
-				:/BASE_SOUNDS/AudioExterior
-				{
-					Sound = "../Turbolaser SFX.wav"
-					Volume = .75
-					SpeedVariation = .25
-				}
-
-				:/BASE_SHAKE
+				: /BASE_SHAKE
 				{
 					ShakeAmount = .025
 					Duration = .25
@@ -452,13 +491,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CrewLocation
 			Location = [1.55, 4.6]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
 			Location = [2.45, 4.6]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		PartCrew
 		{
@@ -466,7 +505,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Crew = 2
 			DefaultPriority = &/PRIORITIES/Weapon_Crew
 			PrerequisitesBeforeCrewing = [PowerToggle]
-			HighPriorityPrerequisites = [AmmoPrereq] //[BatteryStorage]
+			HighPriorityPrerequisites = [BatteryStorage]  // [AmmoPrereq]
 			CrewDestinations
 			[
 				&../../CrewLocation1/Location
@@ -483,7 +522,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Sprite
 			ChainedTo = Turret
-			//Location = [0.5, 0]
+			Location = [0.5, 0]
 			Rotation = 90d
 			Layer = "weapons"
 			ResetAnimationTrigger = BulletEmitter
@@ -499,7 +538,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				ClampAnimation = true
 			}
 		}
-/*
+
 		BatterySprites
 		{
 			Type = ResourceSprites
@@ -531,7 +570,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-*/
+
+		/*
 		AmmoSprites_1
 		{
 			Type = ResourceSprites
@@ -661,7 +701,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RangeLow = 30
 			RangeHigh = 40
 		}
-
+		*/
 		OperationEffects
 		{
 			Type = ToggleEffects
@@ -676,7 +716,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 			Location = [2, 3]
-
+			/*
 			FactorHitEffectsWith = AmmoStorage
 			HitEffects
 			[
@@ -716,6 +756,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				}
 			]
+			*/
 		}
 
 		Indicators
@@ -734,7 +775,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [1, 1]
 					}
 				}
-/*
+
 				// Out of power.
 				{
 					Toggle = BatteryStorage
@@ -744,8 +785,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [1, 1]
 					}
 				}
-*/
-				// Out of ammo.
+
+/*				// Out of ammo.
 				{
 					Toggle = AmmoPrereq
 					Delay = &~/Part/Components/Turret/FireInterval
@@ -755,6 +796,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [1.5, 1.5]
 					}
 				}
+
+*/
 				// No crew.
 				{
 					Toggle = PartCrew
@@ -772,6 +815,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "blueprints01.png"
 			Size = [4, 6]
 		}
+		/*
 		BlueprintSpriteBarrel
 		{
 			Type=BlueprintSprite
@@ -779,16 +823,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Size = [1, 6]
 			Offset = [0, -2]
 		}
+		*/
 	}
 
 	Stats
 	{
-		CrewRequired = &~/Part/Components/PartCrew/Crew
-		//PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		AmmoCapacity = (&~/Part/Components/AmmoStorage/MaxResources) + (&~/Part/Components/LoadedAmmo/MaxResources)
+	/*	CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		//AmmoCapacity = (&~/Part/Components/AmmoStorage/MaxResources) + (&~/Part/Components/LoadedAmmo/MaxResources)
 
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	*/
 	}
 
 	StatsByCategory
@@ -797,7 +843,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			NameKey = "StatCategories/HeavyGreenLasershot"
 			Stats
 			{
-				ShieldDamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+/*				ShieldDamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
 				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
 				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
@@ -812,6 +858,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				PowerPerShot = (&~/Part/Components/BulletEmitter/ResourcesUsed) / 1000
 				PowerPerSecond = (&PowerPerShot) * (&ROF)
 				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+				*/
 			}
 		}
 	]
