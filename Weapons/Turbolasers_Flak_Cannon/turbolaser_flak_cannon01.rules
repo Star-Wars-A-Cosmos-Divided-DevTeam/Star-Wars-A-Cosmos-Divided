@@ -394,13 +394,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AutoFireToggle = AutoFireToggle
 			Location = [2, 1]
 			Rotation = -90d
-			FireInterval = .6
-			FiringArc = 40d
-			RotateSpeed = 90d
-			FireThresholdAngle = 1d
+			FireInterval = .25
+			FiringArc = 50d
+			RotateSpeed = 120d
+			FireThresholdAngle = 30d
 			AIFirepowerRating = 1600
 			IgnoreSourceShipLOSChecks = true
 			//AllowFireWithBlockedLOS = true
+			TargetSearchesPerSecond = 8 // Default is 2.
 			FirePermissionToggle = FireModeToggle
 			Emitter = BulletEmitter
 
@@ -444,15 +445,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		BulletEmitter : &<./Data/shots/flak_large/flak_large.rules>
 		{
-			Type = BulletEmitter
+			Type = BeamEmitter
 			ChainedTo = Turret
 			FireTrigger = Turret
 			GetTargetFrom = Turret
 			Location = [155/64, 0]  //0,-151
 			OperationalToggle = IsOperational
-			Bullet = &/COMMON_SHOTS/greenheavylasershot  //temporary
+			Bullet = &/COMMON_SHOTS/sw_flak_large  //temporary
 			ResourceStorage = BatteryStorage
-			ResourcesUsed = 1
+			ResourcesUsed = 50
+			Recoil = 10
+			Burst = 2
 		}
 
 		FireEffect
@@ -465,8 +468,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MediaEffects
 			[
 				&<./Data/ships/terran/point_defense/particles/point_defense_shoot.rules>
-				// &<./Data/ships/terran/point_defense/particles/flak_cannon_shoot_flash_large.rules>
-				// &<./Data/ships/terran/point_defense/particles/flak_cannon_smoke_large.rules>
+				&/COMMON_PARTICLES/SWFlakLargeFlash // &<./Data/ships/terran/point_defense/particles/flak_cannon_shoot_flash_large.rules>
+				&/COMMON_PARTICLES/SWFlakLargeSmoke // &<./Data/ships/terran/point_defense/particles/flak_cannon_smoke_large.rules>
 
 				: /BASE_SOUNDS/AudioExterior
 				{
@@ -482,28 +485,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					Duration = .25
 				}
 			]
-			/*
-			MediaEffects
-			[
-				: /PARTICLES/GreenLaserShoot
-				{
-					Delay = 0
-				}
-
-				:/BASE_SOUNDS/AudioExterior
-				{
-					Sound = "../Turbolaser SFX.wav"
-					Volume = .75
-					SpeedVariation = .25
-				}
-
-				:/BASE_SHAKE
-				{
-					ShakeAmount = .025
-					Duration = .25
-				}
-			]
-			*/
 		}
 
 		CrewLocation1
@@ -541,7 +522,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Sprite
 			ChainedTo = Turret
-			//Location = [0.5, 0]
+			Location = [0.5, 0]
 			Rotation = 90d
 			Layer = "weapons"
 			ResetAnimationTrigger = BulletEmitter
@@ -557,7 +538,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				ClampAnimation = true
 			}
 		}
-/*
+
 		BatterySprites
 		{
 			Type = ResourceSprites
@@ -589,7 +570,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-*/
+
 		/*
 		AmmoSprites_1
 		{
