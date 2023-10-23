@@ -1,23 +1,24 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/MedHyperdrive"
-	IconNameKey = "Parts/MedHyperdrive"
-	ID = SW.HyperdriveMed
-	OtherIDs = ["HyperdriveMed"]
+	NameKey = "Parts/HyperdriveNodeMed"
+	IconNameKey = "Parts/HyperdriveNodeMedIcon"
+	ID = SW.HyperdriveNodeMed
+	OtherIDs = ["HyperdriveNodeMed"]
 	EditorGroups = ["Flight", "TechII"]
-	DescriptionKey = "Parts/MedHyperdriveDesc"
+	DescriptionKey = "Parts/HyperdriveNodeMedDesc"
 	Resources
 	[
-		[steel, 40]
-		[coil, 20]
-		[coil2, 5]
+		[steel, 21]
+		[coil2, 16]
 	]
-	Size = [2, 2]
+	Size = [1, 1]
 	SelectionPriority = 0
-	MaxHealth = 4000
+	MaxHealth = 1000
+	InitialPenetrationResistance = 1
+	PenetrationRectType = Normal
 	AutoDoorMaxPathLength = 5
-	RequiresCategories = [navicomputer]
-    TypeCategories = [ftl, uses_power, MediumHyperdrive]
+	RequiresCategories = [MediumHyperdrive]
+    TypeCategories = [ftl, uses_power]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
 	EditorIcon
@@ -27,11 +28,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [48, 48]
+		Size = [32, 32]
 	}
-
 	Components : ^/0/Components
 	{
+
 		PowerToggle
 		{
 			Type = UIToggle
@@ -44,7 +45,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
-			CommandPoints = 4
+			CommandPoints = 1
 		}
 */
 		BatteryStorage
@@ -53,6 +54,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			MaxResources = 16000
 			InitToMaxResources = 0
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -62,7 +64,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			DefaultPriority = &/PRIORITIES/Ftl_Supply
 			OperationalToggle = FtlDrive
 			AllowNonOperationalMinPriorityDelivery = false
-			OverrideExclusiveCrewAssignment = true
 		}
 
 		ReloadProgressBar
@@ -71,12 +72,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = FtlDrive
 			ShowProgressFor = BatteryStorage
 		}
+		
 		//Keep or replace later with diff resource?
 		HyperiumStorage
 		{
 			Type = ResourceStorage
 			ResourceType = hyperium
-			MaxResources = 20
+			MaxResources = 10
 			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
@@ -99,7 +101,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelStorage = HyperiumStorage
 			SpinDownDuration = 5
 			JumpEfficiency = 50%
-			JumpEfficiencyDistanceRange = [5, 30]//u tune that
+			JumpEfficiencyDistanceRange = [5, 10]
 
 			JumpOutMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
 			//[
@@ -151,29 +153,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				*/
 			//]
 		}
-		//used in base Hyperdrive for Doodad Control
-/*
-		BatteryStorageCharging
-		{
-			Type = MultiResourceStorage
-			ResourceType = battery
-			ResourceStorages = [BatteryStorage]
-			ToggleOnResources = 1
-			ToggleOffResources = 0
-		}
-		BatteryStorageFull
-		{
-			Type = MultiResourceStorage
-			ResourceType = battery
-			ResourceStorages = [BatteryStorage]
-			ToggleOnResources = 16000
-			ToggleOffResource = 15999
-		}
-*/
+
 		Graphics
 		{
 			Type = Graphics
-			Location = [1, 1]
+			Location = [0.5, 0.5]
 			OperationalToggle = PowerToggle
 			AnimationSpeedFactor = FtlDrive
 			Floor
@@ -183,15 +167,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "floor.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "floor_33.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "floor_66.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				]
 			}
@@ -202,7 +186,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "doodads_on1.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				]
 			}
@@ -213,7 +197,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "doodads_off.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				]
 			}
@@ -235,7 +219,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"lights7.png"
 							"lights8.png"
 						]
-						Size = [2, 2]
+						Size = [1, 1]
 						AnimationInterval = 0.035
 					}
 				]
@@ -247,15 +231,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "walls.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "walls_33.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "walls_66.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				]
 			}
@@ -267,17 +251,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "roof.png"
 						NormalsFile = "roof_normals.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "roof_33.png"
 						NormalsFile = "roof_normals_33.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "roof_66.png"
 						NormalsFile = "roof_normals_66.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				]
 			}
@@ -288,7 +272,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "./Data/ships/common/light_blob.png"
-						Size = [1.5, 1.5]
+						Size = [0.75, 0.75]
 						Z = 1.5 // Controls the "height" of the light for the purposes of normal mapping.
 						VertexColor = [0*2.0,255*2.0, 255*2.0]
 					}
@@ -299,7 +283,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		FtlSpin
 		{
 			Type = ContinuousEffects
-			Location = [1, 1]
+			Location = [0.5, 0.5]
 			FactorMediaEffectsIntensityWith = FtlDrive
 			OperationalToggle = PowerToggle
 			MediaEffects
@@ -307,7 +291,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				: /BASE_SOUNDS/AudioExterior
 				{
 					Sound = "./Data/ships/terran/hyperdrive_small/spin.wav"
-					Volume = 0.75
+					Volume = 0.64
 					Speed = 3.5
 					MaxConcurrent = 0
 					VolumeOverIntensity = 1
@@ -319,38 +303,38 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [1, 1]
+			Location = [0.5, 0.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_low"
 			ResourceLevels
 			[
 				{
 					File = "power1.png"
-					Size = [2, 2]
+					Size = [1, 1]
 				}
 				{
 					File = "power2.png"
-					Size = [2, 2]
+					Size = [1, 1]
 				}
 				{
 					File = "power3.png"
-					Size = [2, 2]
+					Size = [1, 1]
 				}
 				{
 					File = "power4.png"
-					Size = [2, 2]
+					Size = [1, 1]
 				}
 				{
 					File = "power5.png"
-					Size = [2, 2]
+					Size = [1, 1]
 				}
 				{
 					File = "power6.png"
-					Size = [2, 2]
+					Size = [1, 1]
 				}
 				{
 					File = "power7.png"
-					Size = [2, 2]
+					Size = [1, 1]
 				}
 			]
 		}
@@ -358,7 +342,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [1, 1]
+			Location = [0.5, 0.5]
+
 			Toggle = PowerToggle
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
@@ -368,13 +353,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [1, 1]
+			Location = [0.5, 0.5]
 		}
 
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [1, 1]
+			Location = [0.5, 0.5]
 			Layer = "indicators"
 			Indicators
 			[
@@ -384,17 +369,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [0.5, 0.5]
 					}
 				}
 			]
 		}
-		
+
 		Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [2, 2]
+			Size = [1, 1]
 		}
 	}
 
@@ -406,5 +391,5 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	}
 
-	StatsNotesKey = "Stats/MediumHyperdriver_Notes"
+	StatsNotesKey = "Stats/HyperNodeMed_Notes"
 }
