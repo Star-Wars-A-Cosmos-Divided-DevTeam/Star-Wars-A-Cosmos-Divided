@@ -22,7 +22,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ProhibitAbove = 3
 	IsContiguityOrigin = true
 	IsShipForward = true
-	TypeCategories = [command, weapon, uses_power,uses_laser_parts, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits]
+	TypeCategories = [command, weapon, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 //doors only in the back
 	AllowedDoorLocations
@@ -248,6 +248,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnMode = 2
 		}
 
+		TurretLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
+		}
+
+
+
 		Turret
 		{
 			Type = TurretWeapon
@@ -370,12 +378,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Trigger = BulletEmitterRight
 		}
 
-		TurretCollider
+
+
+		TurretCollider : &~/TurretColliderBase
 		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .1
-			Density = .75
+
 		}
 		
 		WeaponSprite
@@ -630,4 +637,11 @@ LaserStats
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 	}
 }
+}
+TurretColliderBase
+{
+	Type = CircleCollider
+	Location = &~/Part/Components/Turret/Location
+	Radius = .5
+	Density = .75
 }
