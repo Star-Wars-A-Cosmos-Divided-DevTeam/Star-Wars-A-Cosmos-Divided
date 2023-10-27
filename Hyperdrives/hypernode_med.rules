@@ -1,0 +1,395 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	NameKey = "Parts/HyperdriveNodeMed"
+	IconNameKey = "Parts/HyperdriveNodeMedIcon"
+	ID = SW.HyperdriveNodeMed
+	OtherIDs = ["HyperdriveNodeMed"]
+	EditorGroups = ["Flight", "TechII"]
+	DescriptionKey = "Parts/HyperdriveNodeMedDesc"
+	Resources
+	[
+		[steel, 21]
+		[coil2, 16]
+	]
+	Size = [1, 1]
+	SelectionPriority = 0
+	MaxHealth = 1000
+	InitialPenetrationResistance = 1
+	PenetrationRectType = Normal
+	AutoDoorMaxPathLength = 5
+	RequiresCategories = [MediumHyperdrive]
+    TypeCategories = [ftl, uses_power]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+	Components : ^/0/Components
+	{
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+/*
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 1
+		}
+*/
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 16000
+			InitToMaxResources = 0
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Ftl_Supply
+			OperationalToggle = FtlDrive
+			AllowNonOperationalMinPriorityDelivery = false
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = FtlDrive
+			ShowProgressFor = BatteryStorage
+		}
+		
+		//Keep or replace later with diff resource?
+		HyperiumStorage
+		{
+			Type = ResourceStorage
+			ResourceType = hyperium
+			MaxResources = 10
+			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
+			DropResourcesWhenDestroyed = true
+		}
+		HyperiumConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = hyperium
+			Storage = HyperiumStorage
+			DefaultPriority = &/PRIORITIES/Utility_Supply
+			OperationalToggle = PowerToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+		
+		FtlDrive
+		{
+			Type = FtlDrive
+			OperationalToggle = PowerToggle
+			PowerStorage = BatteryStorage
+			FuelStorage = HyperiumStorage
+			SpinDownDuration = 5
+			JumpEfficiency = 100%
+			JumpEfficiencyDistanceRange = [5, 10]
+
+			JumpOutMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
+			//[
+				/*
+				&<./Data/ships/common/particles/ftl_lightning.rules>
+				*/
+			//]
+			JumpOutGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			//[
+				/*
+				&<../../common/particles/ftl_gate_lightning_out.rules>
+
+				: /BASE_SOUNDS/AudioExteriorZoomless
+				{
+					Sound = "../../common/ftl_zap_out.wav"
+					Volume = 1
+					MaxConcurrentVolume = 1
+					Speed = 1
+					MaxConcurrent = 3
+				}
+				*/
+			//]
+			JumpInMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInMediaEffects
+			//[
+				/*
+				: <../../common/particles/ftl_lightning.rules>
+				{
+					Delay = (&<./Data/ships/base_ship.rules>/FtlEffects/TotalDuration) - (&<./Data/ships/base_ship.rules>/FtlEffects/CropTime/1) - .4
+				}
+				*/
+			//]
+			JumpInGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
+			//[
+				/*
+				: <../../common/particles/ftl_gate_lightning_in.rules>
+				{
+					Delay = (&<./Data/ships/base_ship.rules>/FtlEffects/TotalDuration) - (&<./Data/ships/base_ship.rules>/FtlEffects/CropTime/1) - .4
+				}
+
+				: /BASE_SOUNDS/AudioExteriorZoomless
+				{
+					Delay = (&<./Data/ships/base_ship.rules>/FtlEffects/TotalDuration) - (&<./Data/ships/base_ship.rules>/FtlEffects/CropTime/1) - .8
+					Sound = "../../common/ftl_zap_in.wav"
+					Volume = 1
+					MaxConcurrentVolume = 1
+					Speed = 1
+					MaxConcurrent = 3
+				}
+				*/
+			//]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			OperationalToggle = PowerToggle
+			AnimationSpeedFactor = FtlDrive
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "doodads_on1.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "doodads_off.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"lights0.png"
+							"lights1.png"
+							"lights2.png"
+							"lights3.png"
+							"lights4.png"
+							"lights5.png"
+							"lights6.png"
+							"lights7.png"
+							"lights8.png"
+						]
+						Size = [1, 1]
+						AnimationInterval = 0.035
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [1, 1]
+					}
+					{
+						File = "walls_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "walls_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [0.75, 0.75]
+						Z = 1.5 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [0*2.0,255*2.0, 255*2.0]
+					}
+				]
+			}
+		}
+
+		FtlSpin
+		{
+			Type = ContinuousEffects
+			Location = [0.5, 0.5]
+			FactorMediaEffectsIntensityWith = FtlDrive
+			OperationalToggle = PowerToggle
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/ships/terran/hyperdrive_small/spin.wav"
+					Volume = 0.64
+					Speed = 3.5
+					MaxConcurrent = 0
+					VolumeOverIntensity = 1
+					SpeedOverIntensity = [0, 1]
+				}
+			]
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [0.5, 0.5]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_low"
+			ResourceLevels
+			[
+				{
+					File = "power1.png"
+					Size = [1, 1]
+				}
+				{
+					File = "power2.png"
+					Size = [1, 1]
+				}
+				{
+					File = "power3.png"
+					Size = [1, 1]
+				}
+				{
+					File = "power4.png"
+					Size = [1, 1]
+				}
+				{
+					File = "power5.png"
+					Size = [1, 1]
+				}
+				{
+					File = "power6.png"
+					Size = [1, 1]
+				}
+				{
+					File = "power7.png"
+					Size = [1, 1]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Location = [0.5, 0.5]
+
+			Toggle = PowerToggle
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [0.5, 0.5]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [0.5, 0.5]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [0.5, 0.5]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+	}
+
+	Stats
+	{
+		FtlMaxEfficiencyRange = &~/Part/Components/FtlDrive/JumpEfficiencyDistanceRange/0
+		FtlMinEfficiencyRange = &~/Part/Components/FtlDrive/JumpEfficiencyDistanceRange/1
+		HyperiumCapacity = &~/Part/Components/HyperiumStorage/MaxResources
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+	}
+
+	StatsNotesKey = "Stats/HyperNodeMed_Notes"
+}
