@@ -1,5 +1,87 @@
 Components
 	{
+		ReloadProgressBar : &<turbolaser_carronade.rules>/ReloadProgressBarBase
+		{
+			LowColor = [0, 0, 64]
+			HighColor = [0, 0, 255]
+		}
+
+		BulletEmitterLeft : &<turbolaser_carronade.rules>/BulletEmitterBase
+		{
+			Type = BulletEmitter
+			Location = [1.5125, -0.40625]
+			Bullet = &/COMMON_SHOTS/blueheavylasershot
+		}
+
+		BulletEmitterRight : BulletEmitterLeft
+		{
+			Type = BulletEmitter
+			Location = [1.5125, 0.40625]
+		}
+
+		FireEffectLeft
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/LargeBlueLaserShoot
+			]
+		}
+
+		FireEffectRight : FireEffectLeft
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = BulletEmitterRight
+		}
+
+		LightGraphics
+		{
+			Type = Graphics
+			OperationalToggle = CommonOnShootEffectTimer
+			InvertOperationalToggle = true
+			ChainedTo = TurretLocationProxy
+			Location = [1.525, 0]
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = &<turbolaser_carronade.rules>/OperationalRoofLightingBase/Size
+						Z = &<turbolaser_carronade.rules>/OperationalRoofLightingBase/Z
+						VertexColor = [16, 16, 255]
+					}
+				]
+			}
+		}
+	}
+LaserStats
+{
+	NameKey = "StatCategories/HeavyBlueLasershot"
+	Stats
+	{
+
+		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<turbolaser_carronade.rules>/TurretStats/Stats/ROF)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&<turbolaser_carronade.rules>/TurretStats/Stats/ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		//ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
+		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
+
+	}
+}
+
+/*
+Components
+	{
 		SwitchTimerTrigger
 		{
 			Type = Timer
@@ -179,3 +261,4 @@ LaserStats
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 	}
 }
+*/

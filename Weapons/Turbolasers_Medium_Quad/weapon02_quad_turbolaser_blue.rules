@@ -1,0 +1,146 @@
+Components
+{
+
+		/* TurretGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [0, 0]
+			//Offset = [0, 0.5]
+			Rotation = 90d
+			//OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "roof_doodads"
+				//Offset = [0, 0.25]
+				DamageLevels
+				[
+					{
+						File = "turret02.png"
+						Size = [3, 3]
+					}
+				]
+			}
+		} */
+		BarrelSpriteL
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [36/64, -48/64]
+			Rotation = 90d
+			Layer = "roof_turrets"
+			ResetAnimationTrigger = BulletEmitterLeft
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"barrel[1,3]04_02.png"
+					"barrel[1,3]04_03.png"
+					"barrel[1,3]04_01.png"
+				]
+				Size = [1, 3]
+				MirrorU = true
+				AnimationInterval = 0.0625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}	
+		BarrelSpriteR
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [36/64, 48/64]
+			Rotation = 90d
+			Layer = "roof_turrets"
+			ResetAnimationTrigger = BulletEmitterRight
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"barrel[1,3]04_02.png"
+					"barrel[1,3]04_03.png"
+					"barrel[1,3]04_01.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = 0.0625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+			
+		ReloadProgressBar : &<medium_turbolaser_quad_switchable.rules>/ReloadProgressBarBase
+		{
+			LowColor = [0, 0, 64]
+			HighColor = [0, 0, 255]
+		}
+
+		BulletEmitterLeft : &<medium_turbolaser_quad_switchable.rules>/BulletEmitterBase
+		{
+			Type = BulletEmitter
+			Location = [2.125, 0.78125]
+			Bullet = &/COMMON_SHOTS/blueheavylasershot
+		}
+
+		BulletEmitterRight : BulletEmitterLeft
+		{
+			Type = BulletEmitter
+			Location = [2.125, -0.78125]
+		}
+
+		FireEffectLeft
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/LargeBlueLaserShoot
+			]
+		}
+
+		FireEffectRight : FireEffectLeft
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = BulletEmitterRight
+		}
+
+		LightGraphics
+		{
+			Type = Graphics
+			OperationalToggle = CommonOnShootEffectTimer
+			InvertOperationalToggle = true
+			ChainedTo = TurretLocationProxy
+			Location = [3.425, 0]
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = &<medium_turbolaser_quad_switchable.rules>/OperationalRoofLightingBase/Size
+						Z = &<medium_turbolaser_quad_switchable.rules>/OperationalRoofLightingBase/Z
+						VertexColor = [16, 16, 255]
+					}
+				]
+			}
+		}
+	}
+LaserStats
+{
+	NameKey = "StatCategories/HeavyBlueLasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<medium_turbolaser_quad_switchable.rules>/TurretStats/Stats/ROF)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&<medium_turbolaser_quad_switchable.rules>/TurretStats/Stats/ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		//ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
+		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
+	}
+}
