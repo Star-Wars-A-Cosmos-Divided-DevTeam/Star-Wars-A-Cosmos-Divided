@@ -1,0 +1,217 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Convert location to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = scale
+			ScaleOut = scale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.4
+			ToValue = 0.6
+			Name = "random lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rot
+			RotationOut = rot
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 0.5
+			Name = Lifetime
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvAnimation
+			TimeIn = life
+			UvRectOut = uv_rect
+			Framerate = 32
+			TextureSize
+			{
+				X = 1024
+				Y = 2048
+			}
+			FrameSize
+			{
+				X = 256
+				Y = 256
+			}
+			FrameCount = 32
+			FramesPerRow = 4
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = false
+			Name = Animation
+			Enabled = true
+			UpdateAfterInit = true
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In
+		RotationIn = rot
+		ColorIn
+		UvRectIn = uv_rect
+		BaseSize
+		{
+			X = 6.5
+			Y = 6.5
+		}
+		Offset
+		{
+			X = -0.45
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Texture
+		{
+			File = "c_laser_hit_large_blue.png" // ./Data/shots/bullet_large/particles/bullet_hit_large.png
+			MipLevels = 8
+			SampleMode = Linear
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 0
+	EmitPerOneShot
+	{
+		Min = 4
+		Max = 8
+	}
+	PreInitializers
+	[
+		{
+			Type = SetRandom
+			DataOut = rot
+			ValueType = Angle
+			FromValue = -90d
+			ToValue = 90d
+			Name = "Random rotation"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = scale
+			ValueType = Float
+			FromValue = 0.8
+			ToValue = 1.2
+			Name = "Random scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = FlakHitSmoke
+UseRealTime = false
+PenetratingBucket = Middle2
+MinIntensity = 0
+IsFancy = false
+IsFancyLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 1
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.4028235E+38
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Junk = true
+	TargetedJunk
+}
+Delay = 0
+IgnoreIntensity = false
