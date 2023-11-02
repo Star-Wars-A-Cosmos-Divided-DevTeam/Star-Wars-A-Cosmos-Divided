@@ -828,37 +828,35 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-	/*	CrewRequired = &~/Part/Components/PartCrew/Crew
+		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 		//AmmoCapacity = (&~/Part/Components/AmmoStorage/MaxResources) + (&~/Part/Components/LoadedAmmo/MaxResources)
 
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
-	*/
+	
 	}
 
 	StatsByCategory
 	[
 		{
-			NameKey = "StatCategories/HeavyGreenLasershot"
+			NameKey = "StatCategories/Flak"
 			Stats
 			{
-/*				ShieldDamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
-				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				DamagePerShot = &~/Part/Components/BulletEmitter/HitNothing/HitEffects/0/TotalDamage    // Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
 				DamagePerSecond = (&DamagePerShot) * (&ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
-				ROF = 1 / ((&~/Part/Components/Turret/FireInterval) + (&~/Part/Components/LoadedAmmo/DelayBeforeReadyToUse))
-				Range = &~/Part/Components/BulletEmitter/Bullet/Range
+				// Salvo = [(&~/Part/Components/BaseEmitter/Burst), (&~/Part/Components/Turret/FireInterval)]
+				ROF = (&~/Part/Components/BulletEmitter/Burst) / (&~/Part/Components/Turret/FireInterval) // 1 / (&~/Part/Components/Turret/FireInterval)
+				Range = &~/Part/Components/BulletEmitter/Range // Bullet/Range
 				Arc = deg(&~/Part/Components/Turret/FiringArc)
+				// Spread = deg(&~/Part/Components/BaseEmitter/Spread/1)
 				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-				ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Speed
-				ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Targetable/Health
+				ShotSpeed = Infinity // &~/Part/Components/BaseEmitter/Bullet/Speed
+//				ShotHP = &~/Part/Components/BaseEmitter/Bullet/Components/Targetable/Health
 				PowerPerShot = (&~/Part/Components/BulletEmitter/ResourcesUsed) / 1000
 				PowerPerSecond = (&PowerPerShot) * (&ROF)
 				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
-				*/
 			}
 		}
 	]
