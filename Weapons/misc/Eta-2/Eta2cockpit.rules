@@ -43,6 +43,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 	Components : ^/0/Components
 	{
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
 
 		/* SPECIAL COCKPIT ITEMS */
 
@@ -56,9 +70,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			NuggetEjectDoorOpenDuration = 0.65
 			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
 
-			CrewEnterEffects
-			[
-				: /BASE_SOUNDS/AudioInterior
+			CrewEnterEffects = &<./Data/ships/terran/airlock/airlock.rules>/Part/Components/Airlock/CrewEnterEffects
+			//[
+			/*	: /BASE_SOUNDS/AudioInterior
 				{
 					RandomSounds = 
 					[
@@ -70,12 +84,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						"./Data/ships/terran/airlock/crew_enter/crew_enter_05.wav"
 					]
 					SpeedVariation = .1
-				}
-			]
+				}*/
+			//]
 
-			CrewLeaveEffects
-			[
-				: /BASE_SOUNDS/AudioInterior
+			CrewLeaveEffects = &<./Data/ships/terran/airlock/airlock.rules>/Part/Components/Airlock/CrewLeaveEffects
+			//[
+			/*	: /BASE_SOUNDS/AudioInterior
 				{
 					RandomSounds = 
 					[
@@ -84,8 +98,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						"./Data/ships/terran/airlock/crew_leave/crew_leave_03.wav"
 					]
 					SpeedVariation = .1
-				}
-			]	
+				}*/
+			//]	
 		}
 		// Airlock - End
 
@@ -137,21 +151,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Thruster2 : Thruster0 {	Rotation = 180d }
 		Thruster3 : Thruster0 {	Rotation = 270d	}		
 		// Maneuvering Thrusters - End
-
-		IsOperational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
-			Mode = All
-		}
-
-		PowerToggle
-		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-			RequiresCommand = false
-		}
 
 		BatteryStorage
 		{
@@ -253,8 +252,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ChainableProxy
 			ComponentID = Turret
 		}
-
-
 
 		Turret
 		{
@@ -378,8 +375,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Trigger = BulletEmitterRight
 		}
 
-
-
 		TurretCollider : &~/TurretColliderBase
 		{
 
@@ -442,7 +437,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						AnimationFiles
 						[
 							"on.png"
-                        	"on10.png"
+							"on10.png"
 						]
 						Size = [1, 2]
 						AnimationInterval = 0.100
@@ -469,11 +464,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = "walls.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "walls_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "walls_66.png"
 						Size = [1, 2]
 					}
@@ -501,6 +496,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+			/*
 			OperationalRoofWindows
 			{
 				Layer = "roof_windows"
@@ -511,12 +507,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						NormalsFile = "Windows_normals.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Windows.png"
 						NormalsFile = "Windows_normals_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Windows.png"
 						NormalsFile = "Windows_normals_66.png"
 						Size = [1, 2]
@@ -535,6 +531,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+			*/
 		}
 		Indicators
 		{
@@ -585,7 +582,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceLevels
 			[
 				{
-					File = "../../Control_Rooms/extinguisher.png"
+					File = "../../../Control_Rooms/extinguisher.png"
 					Size = [1, 1]
 				}
 			]
