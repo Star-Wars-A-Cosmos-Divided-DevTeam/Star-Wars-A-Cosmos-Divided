@@ -1,0 +1,76 @@
+Components
+	{
+		BulletEmitterRed
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger
+			GetTargetFrom = Turret
+			Location = [2.5, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/redtriplelasershot
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 130
+		}
+
+		BulletEmitterLeft : BulletEmitterRed
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [2.53, -0.45]//[1.05, -0.2]
+		}
+
+		BulletEmitterMid : BulletEmitterRed
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [2.53, 0]//[1.05, 0]
+		}
+
+		BulletEmitterRight : BulletEmitterRed
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [2.53, 0.45]//[1.05, 0.2]
+		}
+
+		FireEffectMid
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterMid
+			Trigger = BulletEmitterMid
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/RedLaserShoot
+			]
+		}
+
+		FireEffectLeft : FireEffectMid
+		{
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+		}
+
+
+		FireEffectRight : FireEffectMid
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = BulletEmitterRight
+		}
+
+	}
+LaserStats
+{
+	NameKey = "StatCategories/TripleRedLasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitterRed/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<medium_triple_turbolaser.rules>/Part/Stats/ROF)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitterRed/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&<medium_triple_turbolaser.rules>/Part/Stats/ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}
