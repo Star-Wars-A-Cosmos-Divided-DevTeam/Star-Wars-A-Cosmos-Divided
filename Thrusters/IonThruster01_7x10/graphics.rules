@@ -1,0 +1,292 @@
+		FloorGrid
+		{
+			Type = SpriteGrid
+			Location = [0.5, 0.5]
+			GridSize = [7, 10]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../floor01.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../floor01_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../floor01_66.png"
+						Size = [1, 1]
+					}
+				]
+			]
+			RandomUVRotation = true
+			Layer = "floors"
+		}
+
+		WallsEdgeGraphics
+		{
+			Type = Graphics
+			Location = [3.5, 5]
+			WallsTopLeft
+			{
+				Layer = "walls"
+				Offset = [-3, -4.5]
+				DamageLevels
+				[
+					{
+						File = "../Walls/walls1.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			WallsTopRight
+			{
+				Offset = [3, -4.5]
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "../Walls/walls3.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			WallBottomLeft
+			{
+				Offset = [-3, 4.5]
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "../Walls/walls6.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			WallBottomRight
+			{
+				Layer = "walls"
+				Offset = [3, 4.5]
+				DamageLevels
+				[
+					{
+						File = "../Walls/walls8.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+
+		TopWall // Note: Not using UV Rotation in case you want to make a different sprite for Walls.
+		{
+			Type = SpriteGrid
+			Location = [1.5, 0.5]
+			GridSize = [5, 1]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Walls/walls2.png"
+						Size = [1, 1]
+					}
+				]
+			]
+			RandomUVRotation = false
+			Layer = "walls"
+		}
+
+		LeftWall : &TopWall
+		{
+			Location = [0.5, 1.5]
+			GridSize = [1, 8]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Walls/walls4.png"
+						Size = [1, 1]
+					}
+				]
+			]
+		}
+
+		RightWall : &TopWall
+		{
+			Location = [6.5, 1.5]
+			GridSize = [1, 8]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Walls/walls5.png"
+						Size = [1, 1]
+					}
+				]
+			]
+		}
+
+		BottomWall : &TopWall
+		{
+			Location = [1.5, 9.5]
+			GridSize = [5, 1]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Walls/walls7.png"
+						Size = [1, 1]
+					}
+				]
+			]
+		}
+		
+		RoofGrid
+		{
+			Type = SpriteGrid
+			Location = [0.5, 0.5]
+			GridSize = [7, 10]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../roof.png"
+						NormalsFile = "../roof_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../roof_33.png"
+						NormalsFile = "../roof_normals_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../roof_66.png"
+						NormalsFile = "../roof_normals_66.png"
+						Size = [1, 1]
+					}
+				]
+			]
+			RandomUVRotation = true
+			Layer = "roofs"
+		}
+
+		OperationalLightingGraphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [3.5, 5]
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "../IonThruster_lights.png"
+						Size = [7, 10]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [11.5, 15]
+						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [16*1.0, 120*1.0, 255*1.0]
+					}
+				]
+			}
+		}		
+		DoodadGraphicsBase
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+
+			AnimationSpeedFactor = MainThruster
+			AnimationSpeedFactorRenormalize = [0.64, 2.1]
+
+			Location = [3.5, 5]
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, 0.34375] //0,86
+				DamageLevels
+				[
+					{
+						File = "../IonThruster_doodads05.png"
+						Size = [7, 9.33333]
+					}
+				]
+			}
+		}
+		DoodadGraphicsAnimation03
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+	
+			AnimationSpeedFactor = MainThruster
+			AnimationSpeedFactorRenormalize = [0.64, 2.1]
+	
+			Location = [3.5, 5]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				Offset = [0, -0.78125] //0,-50
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../IonThruster_doodads03_on1.png"
+							"../IonThruster_doodads03_on2.png"
+							"../IonThruster_doodads03_on3.png"
+							"../IonThruster_doodads03_on4.png"
+							"../IonThruster_doodads03_on5.png"
+							"../IonThruster_doodads03_on6.png"
+							"../IonThruster_doodads03_on7.png"
+							"../IonThruster_doodads03_on8.png"
+						]
+						Size = [2.3333, 2.3333]
+						AnimationInterval = 0.075
+					}
+				]
+			}
+		}
+		DoodadGraphicsAnimation05
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+		
+			AnimationSpeedFactor = MainThruster
+			AnimationSpeedFactorRenormalize = [0.64, 2.1]
+		
+			Location = [3.5, 5]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				Offset = [0, 3.34375] //0,214
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../IonThruster_doodads05_on1.png"
+							"../IonThruster_doodads05_on2.png"
+							"../IonThruster_doodads05_on3.png"
+							"../IonThruster_doodads05_on4.png"
+							"../IonThruster_doodads05_on5.png"
+							"../IonThruster_doodads05_on6.png"
+							"../IonThruster_doodads05_on7.png"
+							"../IonThruster_doodads05_on8.png"
+						]
+						Size = [4.6666, 2.3333]
+						AnimationInterval = 0.075
+					}
+				]
+			}
+		}
