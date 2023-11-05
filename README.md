@@ -12,6 +12,8 @@ Web site: <https://www.cosmoteer.net/>
 
 Forum: <https://forum.cosmoteer.net/>
 
+Steam Workshop: <https://to.add/>
+
 ## STAR WARS
 
 Web site: <https://www.starwars.com/>
@@ -21,15 +23,15 @@ Web site: <https://www.starwars.com/>
 ===========
 
 Star Wars: A Cosmos Divided is the definitive Star Wars experience for Cosmoteer.  
-It introduces new weapons, reactors, shields, thrusters & utility parts from the Star Wars universe into the game including 2 new technology tiers /*and superweapons*/.  
-It also includes new types of parts, such as droids, 2 new armor classes with all types of shapes from the old Kroom's New Armor Expanded Mod and even more.  
+It introduces new weapons, reactors, shields, thrusters & utility parts from the Star Wars universe into the game including 3 new technology tiers /*and superweapons*/.  
+It also includes new types of parts, such as droids, 2 new armor classes with all types of shapes like Kroom's New Armor Expanded Mod and even more.  
 You can also Download the Star Wars: A Cosmos Divided Factions mod (requires this Mod here) and the Star Wars: A Cosmos Divided Music Add-On Mod (Standalone)  
 
 ## System Requirements & Limitations
 
 =================================
 
-* This version of the mod works with Cosmoteer version 0.15.13 through 0.15.14 It is not compatible with pre-Cosmoteer 0.15.13 versions.  
+* This version of the mod works with Cosmoteer version 0.24.0 through 0.24.1+ It is not compatible with pre-Cosmoteer 0.24.0 versions.  
 * If you are using on an older computer the mod may overwhelm your processor or memory.  
 * Minium System Requirements  
  o CPU: Intel® Core 2 Duo e4600 Dual-Core Processor or AMD Equivalent (Dual Core Intel i5/AMD FX-4100 or equivalent/better recommended)  
@@ -43,6 +45,7 @@ You can also Download the Star Wars: A Cosmos Divided Factions mod (requires thi
 The mod doesn't require any installation process or additional files.  
 In order to start using it, unpack it inside the game installation
 folder. Or have the game do it for you.
+First Startup with the mod might take a while, but after the first it should load fast.  
 
 ## License
 
@@ -97,7 +100,7 @@ Special Thanks
 
 Vision Director, Consultant - ClassicJam (2022- )  
 Lead Programmer - SkipperWraith (2022-)  
-Lead Programmer - Lafiel  
+Programmer - Lafiel (-2022)  
 Programmer - JaniTNT (2023-)  
 Programmer - Rojamahorse (2023-)  
 Artist - Roasted (2022-)
