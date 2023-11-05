@@ -22,7 +22,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeByRotation = true
 	MaxHealth = 64000
 	TypeCategories = [defense, uses_power]
-	PenetrationRectType = Normal
 	MaxDoors = 12
 	ForceManhattanPathInPart = true
 	AllowedDoorLocations
@@ -124,7 +123,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleOnResources = (&~/MaxResources)/4
 			ToggleOffResources = 0
 			DrainOnFtlJump = true
-			DeliveryLocation = [2, 5.65]
+			DeliveryLocation = [2, 5.5]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryStorageRight : BatteryStorageLeft
@@ -161,8 +160,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = MultiResourceStorage
 			ResourceType = battery
 			ResourceStorages = [BatteryStorageLeft, BatteryStorageRight]
-			AddMode = PrioritizeMostResources
-			RemoveMode = PrioritizeLeastResources
+			AddMode = PrioritizeLeastResources
+			RemoveMode = PrioritizeMostResources
 		}
 		BatteryStorageBar
 		{
@@ -186,11 +185,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			LerpRange = [0, 32000]
 			Height = 10
 		}
-		PowerDrain
+		PowerDrainRight
 		{
 			Type = ResourceConverter
-			FromStorage = BatteryStorage
-			OperationalToggle = IsOperational
+			FromStorage = BatteryStorageRight
+			OperationalToggle = BatteryStorageRight
+			FromQuantity = 400
+			MinFromQuantityForConversion = 1
+			Interval = 1
+		}
+		PowerDrainLeft
+		{
+			Type = ResourceConverter
+			FromStorage = BatteryStorageLeft
+			OperationalToggle = BatteryStorageRight
+			InvertOperationalToggle = true
 			FromQuantity = 400
 			MinFromQuantityForConversion = 1
 			Interval = 1
@@ -580,6 +589,94 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
+		
+		BatterySpritesLeft
+		{
+			Type = ResourceSprites
+			Location = [2, 4]
+			ResourceStorage = BatteryStorageLeft
+			Layer = "doodads_low"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "Shield_Roasted_4x4/batteries_big_1.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_2.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_3.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_4.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_5.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_6.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_7.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_8.png"
+					Size = [4, 4]
+				}
+			]
+		}
+		
+		BatterySpritesRight
+		{
+			Type = ResourceSprites
+			Location = [6, 4]
+			ResourceStorage = BatteryStorageRight
+			Layer = "doodads_low"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "Shield_Roasted_4x4/batteries_big_1.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_2.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_3.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_4.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_5.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_6.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_7.png"
+					Size = [4, 4]
+				}
+				{
+					File = "Shield_Roasted_4x4/batteries_big_8.png"
+					Size = [4, 4]
+				}
+			]
+		}
 
 		BatterySprites
 		{
@@ -591,515 +688,515 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceLevels
 			[
 				{
-					File = "Shield_Roasted_4x4/Batteries1.png"
+					File = "Shield_Roasted_4x4/batteries_console_1.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries2.png"
+					File = "Shield_Roasted_4x4/batteries_console_2.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries3.png"
+					File = "Shield_Roasted_4x4/batteries_console_3.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries4.png"
+					File = "Shield_Roasted_4x4/batteries_console_4.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries5.png"
+					File = "Shield_Roasted_4x4/batteries_console_5.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries6.png"
+					File = "Shield_Roasted_4x4/batteries_console_6.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries7.png"
+					File = "Shield_Roasted_4x4/batteries_console_7.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries8.png"
+					File = "Shield_Roasted_4x4/batteries_console_8.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries9.png"
+					File = "Shield_Roasted_4x4/batteries_console_9.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries10.png"
+					File = "Shield_Roasted_4x4/batteries_console_10.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries11.png"
+					File = "Shield_Roasted_4x4/batteries_console_11.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries12.png"
+					File = "Shield_Roasted_4x4/batteries_console_12.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries13.png"
+					File = "Shield_Roasted_4x4/batteries_console_13.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries14.png"
+					File = "Shield_Roasted_4x4/batteries_console_14.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries15.png"
+					File = "Shield_Roasted_4x4/batteries_console_15.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries16.png"
+					File = "Shield_Roasted_4x4/batteries_console_16.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries17.png"
+					File = "Shield_Roasted_4x4/batteries_console_17.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries18.png"
+					File = "Shield_Roasted_4x4/batteries_console_18.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries19.png"
+					File = "Shield_Roasted_4x4/batteries_console_19.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries20.png"
+					File = "Shield_Roasted_4x4/batteries_console_20.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries21.png"
+					File = "Shield_Roasted_4x4/batteries_console_21.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries22.png"
+					File = "Shield_Roasted_4x4/batteries_console_22.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries23.png"
+					File = "Shield_Roasted_4x4/batteries_console_23.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries24.png"
+					File = "Shield_Roasted_4x4/batteries_console_24.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries25.png"
+					File = "Shield_Roasted_4x4/batteries_console_25.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries26.png"
+					File = "Shield_Roasted_4x4/batteries_console_26.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries27.png"
+					File = "Shield_Roasted_4x4/batteries_console_27.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries28.png"
+					File = "Shield_Roasted_4x4/batteries_console_28.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries29.png"
+					File = "Shield_Roasted_4x4/batteries_console_29.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries30.png"
+					File = "Shield_Roasted_4x4/batteries_console_30.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries31.png"
+					File = "Shield_Roasted_4x4/batteries_console_31.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries32.png"
+					File = "Shield_Roasted_4x4/batteries_console_32.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries33.png"
+					File = "Shield_Roasted_4x4/batteries_console_33.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries34.png"
+					File = "Shield_Roasted_4x4/batteries_console_34.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries35.png"
+					File = "Shield_Roasted_4x4/batteries_console_35.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries36.png"
+					File = "Shield_Roasted_4x4/batteries_console_36.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries37.png"
+					File = "Shield_Roasted_4x4/batteries_console_37.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries38.png"
+					File = "Shield_Roasted_4x4/batteries_console_38.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries39.png"
+					File = "Shield_Roasted_4x4/batteries_console_39.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries40.png"
+					File = "Shield_Roasted_4x4/batteries_console_40.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries41.png"
+					File = "Shield_Roasted_4x4/batteries_console_41.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries42.png"
+					File = "Shield_Roasted_4x4/batteries_console_42.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries43.png"
+					File = "Shield_Roasted_4x4/batteries_console_43.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries44.png"
+					File = "Shield_Roasted_4x4/batteries_console_44.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries45.png"
+					File = "Shield_Roasted_4x4/batteries_console_45.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries46.png"
+					File = "Shield_Roasted_4x4/batteries_console_46.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries47.png"
+					File = "Shield_Roasted_4x4/batteries_console_47.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries48.png"
+					File = "Shield_Roasted_4x4/batteries_console_48.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries49.png"
+					File = "Shield_Roasted_4x4/batteries_console_49.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries50.png"
+					File = "Shield_Roasted_4x4/batteries_console_50.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries51.png"
+					File = "Shield_Roasted_4x4/batteries_console_51.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries52.png"
+					File = "Shield_Roasted_4x4/batteries_console_52.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries53.png"
+					File = "Shield_Roasted_4x4/batteries_console_53.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries54.png"
+					File = "Shield_Roasted_4x4/batteries_console_54.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries55.png"
+					File = "Shield_Roasted_4x4/batteries_console_55.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries56.png"
+					File = "Shield_Roasted_4x4/batteries_console_56.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries57.png"
+					File = "Shield_Roasted_4x4/batteries_console_57.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries58.png"
+					File = "Shield_Roasted_4x4/batteries_console_58.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries59.png"
+					File = "Shield_Roasted_4x4/batteries_console_59.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries60.png"
+					File = "Shield_Roasted_4x4/batteries_console_60.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries61.png"
+					File = "Shield_Roasted_4x4/batteries_console_61.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries62.png"
+					File = "Shield_Roasted_4x4/batteries_console_62.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries63.png"
+					File = "Shield_Roasted_4x4/batteries_console_63.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries64.png"
+					File = "Shield_Roasted_4x4/batteries_console_64.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries65.png"
+					File = "Shield_Roasted_4x4/batteries_console_65.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries66.png"
+					File = "Shield_Roasted_4x4/batteries_console_66.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries67.png"
+					File = "Shield_Roasted_4x4/batteries_console_67.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries68.png"
+					File = "Shield_Roasted_4x4/batteries_console_68.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries69.png"
+					File = "Shield_Roasted_4x4/batteries_console_69.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries70.png"
+					File = "Shield_Roasted_4x4/batteries_console_70.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries71.png"
+					File = "Shield_Roasted_4x4/batteries_console_71.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries72.png"
+					File = "Shield_Roasted_4x4/batteries_console_72.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries73.png"
+					File = "Shield_Roasted_4x4/batteries_console_73.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries74.png"
+					File = "Shield_Roasted_4x4/batteries_console_74.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries75.png"
+					File = "Shield_Roasted_4x4/batteries_console_75.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries76.png"
+					File = "Shield_Roasted_4x4/batteries_console_76.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries77.png"
+					File = "Shield_Roasted_4x4/batteries_console_77.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries78.png"
+					File = "Shield_Roasted_4x4/batteries_console_78.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries79.png"
+					File = "Shield_Roasted_4x4/batteries_console_79.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries80.png"
+					File = "Shield_Roasted_4x4/batteries_console_80.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries81.png"
+					File = "Shield_Roasted_4x4/batteries_console_81.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries82.png"
+					File = "Shield_Roasted_4x4/batteries_console_82.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries83.png"
+					File = "Shield_Roasted_4x4/batteries_console_83.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries84.png"
+					File = "Shield_Roasted_4x4/batteries_console_84.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries85.png"
+					File = "Shield_Roasted_4x4/batteries_console_85.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries86.png"
+					File = "Shield_Roasted_4x4/batteries_console_86.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries87.png"
+					File = "Shield_Roasted_4x4/batteries_console_87.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries88.png"
+					File = "Shield_Roasted_4x4/batteries_console_88.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries89.png"
+					File = "Shield_Roasted_4x4/batteries_console_89.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries90.png"
+					File = "Shield_Roasted_4x4/batteries_console_90.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries91.png"
+					File = "Shield_Roasted_4x4/batteries_console_91.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries92.png"
+					File = "Shield_Roasted_4x4/batteries_console_92.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries93.png"
+					File = "Shield_Roasted_4x4/batteries_console_93.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries94.png"
+					File = "Shield_Roasted_4x4/batteries_console_94.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries95.png"
+					File = "Shield_Roasted_4x4/batteries_console_95.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries96.png"
+					File = "Shield_Roasted_4x4/batteries_console_96.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries97.png"
+					File = "Shield_Roasted_4x4/batteries_console_97.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries98.png"
+					File = "Shield_Roasted_4x4/batteries_console_98.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries99.png"
+					File = "Shield_Roasted_4x4/batteries_console_99.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries100.png"
+					File = "Shield_Roasted_4x4/batteries_console_100.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries101.png"
+					File = "Shield_Roasted_4x4/batteries_console_101.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries102.png"
+					File = "Shield_Roasted_4x4/batteries_console_102.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries103.png"
+					File = "Shield_Roasted_4x4/batteries_console_103.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries104.png"
+					File = "Shield_Roasted_4x4/batteries_console_104.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries105.png"
+					File = "Shield_Roasted_4x4/batteries_console_105.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries106.png"
+					File = "Shield_Roasted_4x4/batteries_console_106.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries107.png"
+					File = "Shield_Roasted_4x4/batteries_console_107.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries108.png"
+					File = "Shield_Roasted_4x4/batteries_console_108.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries109.png"
+					File = "Shield_Roasted_4x4/batteries_console_109.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries110.png"
+					File = "Shield_Roasted_4x4/batteries_console_110.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries111.png"
+					File = "Shield_Roasted_4x4/batteries_console_111.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries112.png"
+					File = "Shield_Roasted_4x4/batteries_console_112.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries113.png"
+					File = "Shield_Roasted_4x4/batteries_console_113.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries114.png"
+					File = "Shield_Roasted_4x4/batteries_console_114.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries115.png"
+					File = "Shield_Roasted_4x4/batteries_console_115.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries116.png"
+					File = "Shield_Roasted_4x4/batteries_console_116.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries117.png"
+					File = "Shield_Roasted_4x4/batteries_console_117.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries118.png"
+					File = "Shield_Roasted_4x4/batteries_console_118.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries119.png"
+					File = "Shield_Roasted_4x4/batteries_console_119.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries120.png"
+					File = "Shield_Roasted_4x4/batteries_console_120.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries121.png"
+					File = "Shield_Roasted_4x4/batteries_console_121.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries122.png"
+					File = "Shield_Roasted_4x4/batteries_console_122.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries123.png"
+					File = "Shield_Roasted_4x4/batteries_console_123.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries124.png"
+					File = "Shield_Roasted_4x4/batteries_console_124.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries125.png"
+					File = "Shield_Roasted_4x4/batteries_console_125.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries126.png"
+					File = "Shield_Roasted_4x4/batteries_console_126.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries127.png"
+					File = "Shield_Roasted_4x4/batteries_console_127.png"
 					Size = [8, 8]
 				}
 				{
-					File = "Shield_Roasted_4x4/Batteries128.png"
+					File = "Shield_Roasted_4x4/batteries_console_128.png"
 					Size = [8, 8]
 				}
 			]
@@ -1163,7 +1260,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
 		ShieldArc = deg(360d)
 		ShieldDist = (&~/ShieldStatBase/Radius)
-		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
+		PowerUsageContinuous = (&~/Part/Components/PowerDrainLeft/FromQuantity) / (&~/Part/Components/PowerDrainLeft/Interval) / 1000
 		PowerCapacity = (&~/MaxResources) / 1000
 
 		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
