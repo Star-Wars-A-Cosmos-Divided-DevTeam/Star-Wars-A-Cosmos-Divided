@@ -1,0 +1,174 @@
+Components
+	{
+		ReloadProgressBar : &<dual_laser_cannon_switchable.rules>/ReloadProgressBarBase
+		{
+			LowColor = [0, 0, 64]
+			HighColor = [0, 0, 255]
+		}		
+		/*
+		SwitchTimerTrigger
+		{
+			Type = Timer
+			Duration = 4
+			AutoStart = true
+			Repeats = false
+		}
+		SwitchTimerProgressBar
+		{
+			Type = ProgressBar
+			ShowProgressFor = SwitchTimerTrigger
+			Invert = true
+			OperationalToggle = SwitchCooldownToggle
+			InvertOperationalToggle = true
+		}
+		SwitchCooldownToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = SwitchTimerTrigger
+			StartsOn = false
+		}
+		WeaponIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, SwitchCooldownToggle]
+			Mode = All
+		}
+
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [1, 1]
+			Rotation = -90d// Relative to unrotated part.
+			OperationalToggle = WeaponIsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = .4
+			FiringArc = 180d
+			RotateSpeed = 90d
+			FireThresholdAngle = 1d
+			TargetSearchTriesPerFrame = 1
+			AIFirepowerRating = 1600
+			FirePermissionToggle = FireModeToggle
+			Emitter = BulletEmitterBase
+			IgnoreSourceShipLOSChecks = false
+			IgnoreSourceShipLowLOSChecks = true
+			AllowFireWithBlockedLOS = false
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = SwitchWeaponCooldownTimer
+			ShowProgressFor = CommonReloadTimer
+			Invert = true
+		}
+
+		BulletEmitterBase
+		{
+			Type = BulletEmitter
+			ChainedTo = TurretLocationProxy
+			FireTrigger = CommanReloadTriggerProxy
+			GetTargetFrom = Turret
+			Location = [1.75, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/COMMON_SHOTS/bluemedlasercannonshot
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 50
+		}
+*/
+
+		BulletEmitterLeft : &<dual_laser_cannon_switchable.rules>/BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.5, 0.312]
+			Bullet = &/COMMON_SHOTS/bluemedlasercannonshot
+		}
+
+		BulletEmitterRight : BulletEmitterLeft
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.5, -0.312]
+		}
+
+		FireEffectLeft
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/SmallBlueLaserShoot
+			]
+		}
+
+		FireEffectRight : FireEffectLeft
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = BulletEmitterRight
+		}
+		LightGraphics
+		{
+			Type = Graphics
+			OperationalToggle = CommonOnShootEffectTimer
+			InvertOperationalToggle = true
+			ChainedTo = TurretLocationProxy
+			Location = [1.9, 0]
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = &<dual_laser_cannon_switchable.rules>/OperationalRoofLightingBase/Size
+						Z = &<dual_laser_cannon_switchable.rules>/OperationalRoofLightingBase/Z
+						VertexColor = [16, 16, 255] // [16, 120, 255]
+					}
+				]
+			}
+		}
+	}
+
+LaserStats
+{
+	NameKey = "StatCategories/DualBlueLaserCannonshot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<dual_laser_cannon_switchable.rules>/TurretStats/Stats/ROF)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&<dual_laser_cannon_switchable.rules>/TurretStats/Stats/ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		//ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
+		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
+	}
+}
