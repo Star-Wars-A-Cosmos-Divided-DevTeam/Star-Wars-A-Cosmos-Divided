@@ -1,11 +1,13 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/IonThruster01_3x3"
-	IconNameKey = "Parts/IonThruster01_3x3_Icon"
 	ID = SW.IonThruster01_3x3_switchable
 	OtherIDs = [IonThruster01_3x3,SW.IonThruster01_3x3]
-	EditorGroups = ["Flight", "TechII", "TechIII"]
+	NameKey = "Parts/IonThruster01_3x3"
+	IconNameKey = "Parts/IonThruster01_3x3_Icon"
 	DescriptionKey = "Parts/IonThruster01_3x3_Desc"
+	EditorGroups = ["Flight", "TechII", "TechIII"]
+	TypeCategories = [thruster, ion_thruster, uses_power]
+	//RequiresCategories = []
 	Resources
 	[
 		[steel, 100]//125%*80 of vanilla
@@ -13,7 +15,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[coil2, 24]//120%*20 of vanilla
 		//[tristeel, 12]//120%*10 of vanilla
 	]
-	TypeCategories = [thruster, ion_thruster, uses_power]
+
 	Size = [3, 5]
 	PhysicalRect = [0, 0, 3, 3]
 	SaveRect = &PhysicalRect
@@ -22,11 +24,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
 	MaxHealth = 7200 //80%*9000 of vanilla
-	ProhibitBelow = 7
+
 	ThrusterForce = 12800 //160%*8000 of vanilla
 	ThrustIncreaseTime = 6.4 //custom
 	ThrustRecoveryTime = 3.5 //custom
 	FuelUsage = 256 //160%*40%*400 of vanilla
+
+	ProhibitBelow = 7
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
 	BlockedTravelCells
 	[
@@ -131,6 +135,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
+
 		RedToggle
 		{
 			Type = ModeToggle
@@ -154,6 +159,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 3
+		}
+
+		RedToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = RedToggle
+		}
+		BlueToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = BlueToggle
+		}
+		YellowToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = YellowToggle
+		}
+		PurpleToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = PurpleToggle
 		}
 
 		ThrusterEffectAmountType
@@ -185,17 +211,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnModes = [2, 4]
 		}
 
-		GlowProxy
+		GlowToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = GlowToggle
 		}
-		SparksProxy
+
+		SparksToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = SparksToggle
 		}
-		FullsetProxy
+
+		FullsetToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = FullsetToggle

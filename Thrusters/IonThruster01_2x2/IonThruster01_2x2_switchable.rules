@@ -1,17 +1,19 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/IonThruster01_2x2"
-	IconNameKey = "Parts/IonThruster01_2x2_Icon"
 	ID = SW.IonThruster01_2x2_switchable
 	OtherIDs = ["IonThruster01_2x2","SW.IonThruster01_2x2"]
-	EditorGroups = ["Flight", "TechII"]
+	NameKey = "Parts/IonThruster01_2x2"
+	IconNameKey = "Parts/IonThruster01_2x2_Icon"
 	DescriptionKey = "Parts/IonThruster01_2x2_Desc"
+	EditorGroups = ["Flight", "TechII"]
+	TypeCategories = [thruster, ion_thruster, uses_power]
+	//RequiresCategories = []
 	Resources
 	[
 		[steel, 50]//125%*40 of vanilla
 		[coil2, 14]//140%*10 of vanilla
 	]
-	TypeCategories = [thruster, ion_thruster, uses_power]
+
 	Size = [2, 3]
 	PhysicalRect = [0, 0, 2, 2]
 	SaveRect = &PhysicalRect
@@ -20,11 +22,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
 	MaxHealth = 3200 //80%*4000 of vanilla
-	ProhibitBelow = 5
+
 	ThrusterForce = 5120 //160%*3200 of vanilla
 	ThrustIncreaseTime = 4.8 //custom
 	ThrustRecoveryTime = 2.1 //custom
 	FuelUsage = 128 //160%*40%*200 of vanilla
+
+	ProhibitBelow = 5
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
 	AllowedDoorLocations
 	[
@@ -117,6 +121,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
+
 		RedToggle
 		{
 			Type = ModeToggle
@@ -140,6 +145,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 3
+		}
+
+		RedToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = RedToggle
+		}
+		BlueToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = BlueToggle
+		}
+		YellowToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = YellowToggle
+		}
+		PurpleToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = PurpleToggle
 		}
 
 		ThrusterEffectAmountType
@@ -171,17 +197,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnModes = [2, 4]
 		}
 
-		GlowProxy
+		GlowToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = GlowToggle
 		}
-		SparksProxy
+
+		SparksToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = SparksToggle
 		}
-		FullsetProxy
+
+		FullsetToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = FullsetToggle
