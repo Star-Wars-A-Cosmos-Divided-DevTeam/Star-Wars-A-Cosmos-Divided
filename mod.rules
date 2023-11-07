@@ -19,32 +19,21 @@
  * StringsFolder specifies the folder containing language strings.
  *
  * The Actions section adds editor groups for mod parts to the GUI.
+
+ * Add category limits to mod
 */
 ID = SW.0.StarWars
-Name = "Star Wars: A Cosmos Divided Lite"
-Version = 1.0.0_rc1
-CompatibleGameVersions = ["0.24.0_rc2"]
+Name = "Star Wars: A Cosmos Divided"
+Version = 1.0.rc1
+CompatibleGameVersions = ["0.24.1"]
 Author = "ClassicJam, Lafiel, Skipper_Wraith, Roasted(Art), Rojamahorse(Art)"
 Logo = "ModLogo.png"
 Description = "Star Wars: A Cosmos Divided is the definitive Star Wars experience for Cosmoteer." //It introduces new weapons from the Star Wars universe into the game, new technology tiers and superweapons.It includes new types of parts, such as droids, new armor classes, and now all types of shapes from Kroom's New Armor Expanded. You can also download the Ships Pack add-on, which will add dozens of ships from the Star Wars universe into your game."
 StringsFolder = "Strings"
+ModifiesGameplay = true
 
 Actions
 [
-	//*************** vanilla buff expansion only add if ReceivableBuffs doesn't exist yet does not add any buffs
-	{
-		Action = Add
-		OnlyIfNotExisting = true
-		AddTo = "<./Data/ships/base_part.rules>"
-		Name = ReceivableBuffs
-		ToAdd = []
-	}
-	//*************** GUI GROUPS **************
-	/*{	
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		ToAdd = <gui/editor_groups.rules>
-    }*/
 	{	
 		Action = Add
 		AddTo = "<gui/game/designer/editor_groups.rules>"
@@ -224,7 +213,7 @@ Actions
 			}
 		}
     }
-	//*************** CUSTOM EFFECTS / MAGIC / STUFF I NEED TO GET MY STUFF TO WORK **************
+	//CUSTOM EFFECTS / MAGIC / STUFF I NEED TO GET MY STUFF TO WORK
 	{
 		Action = Add
 		AddTo = <cosmoteer.rules>
@@ -253,59 +242,118 @@ Actions
 		Overrides = &<SW_effects/mod_sounds.rules>
 	}
 	{
+		Action = Add
+		AddTo = <cosmoteer.rules>
+		Name = "SW_PARTICLES"
+		ToAdd = &<SW_effects/mod_fix.rules>
+	}
+	{
+		Action = Add
+		AddTo = <cosmoteer.rules>
+		Name = "SW_SHOTS"
+		ToAdd = &<SW_effects/mod_fix.rules>
+	}
+	{
+		Action = Add
+		AddTo = <cosmoteer.rules>
+		Name = "SW_SOUNDS"
+		ToAdd = &<SW_effects/mod_fix.rules>
+	}
+	{
+		Action = Add
+		AddTo = <cosmoteer.rules>
+		Name = "SW_WEAPON_BASES"
+		ToAdd = &<SW_effects/mod_fix.rules>
+	}
+	{
+		Action = Overrides
+		OverrideIn = <cosmoteer.rules>/SW_PARTICLES
+		Overrides = &<SW_effects/mod_particles.rules>
+	}
+	{
+		Action = Overrides
+		OverrideIn = <cosmoteer.rules>/SW_SHOTS
+		Overrides = &<SW_effects/mod_shots.rules>
+	}
+	{
+		Action = Overrides
+		OverrideIn = <cosmoteer.rules>/SW_SOUNDS
+		Overrides = &<SW_effects/mod_sounds.rules>
+	}
+	{
+		Action = Overrides
+		OverrideIn = <cosmoteer.rules>/SW_WEAPON_BASES
+		Overrides = &<Weapons/bases/weapon_bases.rules>
+	}
+	{
 		Action = AddMany
 		AddTo = "<./Data/ships/terran/terran.rules>/Terran/RenderLayers"
 		ManyToAdd = &<ships/terran.rules>/Terran/RenderLayers
 	}
-	//*************** GUI TOGGLES **************
+	// GUI TOGGLES 
 	{
 		Action = AddMany
 		AddTo = "<gui/game/parts/part_toggles.rules>/PartToggles"
 		ManyToAdd = &<gui/SW_toggles.rules>/PartToggles
 	}
-	//*************** GUI STATS **************
+	// GUI STATS
+	/*
+	{
+		Action = AddBase
+		AddBaseTo = <gui/game/parts/part_stats.rules>/PartStats
+		BaseToAdd = &<gui/part_stats.rules>/PartStats
+	}*/
+	/*{
+		Action = AddMany
+		AddTo = &<gui/SW_stats.rules>/PartStats
+		CreateIfNotExisting = true
+		ManyToAdd = <./Data/gui/game/parts/part_stats.rules>/PartStats
+	}*/
+	/*
 	{
 		Action = AddMany
-		AddTo = "<gui/game/parts/part_stats.rules>/PartStats"
+		AddTo = <gui/game/parts/part_stats.rules>/PartStats
+		CreateIfNotExisting = true
 		ManyToAdd = &<gui/SW_stats.rules>/PartStats
 	}
+	*/
 	{
 		Action = Replace
-		Replace = "<gui/game/parts/part_stats.rules>/PartStats"
+		Replace = <gui/game/parts/part_stats.rules>/PartStats
 		CreateIfNotExisting = true
 		With = &<gui/part_stats.rules>/PartStats
 	}
-	//*************** ADDING ROOF DECALS ******************
+	// ADDING ROOF DECALS 
 	{
 		Action = Add
 		AddTo = "<roof_decals/roof_decals.rules>/Groups/0/Folders"
 		ToAdd = "Roof Decals"
 	}
-	//*************** ADDING RESOURCES *******************
+	// ADDING RESOURCES 
 	{ 
 		Action = AddMany
 		AddTo = "<resources/resources.rules>/Resources"
 		ManyToAdd = &<Resources/resources.rules>/Resources
 	}
-	//*************** ADDING RESOURCES DOODAD *******************
+	// ADDING RESOURCES DOODAD 
 	{	
 		Action = AddMany
 		AddTo = "<doodads/doodads.rules>/Doodads"
 		ManyToAdd = &<Doodads/doodads.rules>/Doodads
 	}
-	//*************** ADDING Hard_Conversion of Asteriod RESOURCES *******************
+	// ADDING Hard_Conversion of Asteriod RESOURCES 
 	{	
 		Action = AddMany
 		AddTo = "<doodads/asteroids/hard_conversions.rules>/Conversions"
 		ManyToAdd = &<Doodads/asteroids/hard_conversions.rules>/Conversions
 	}
-	//**************** ADDING ASTEROIDS PARTS ******************
+	// ADDING ASTEROIDS PARTS 
 	{ 
 		Action = AddMany
 		AddTo = "<ships/asteroid/asteroid.rules>/asteroid/parts"
 		ManyToAdd = &<Asteroids.rules>/Parts
 	}
-	//**************** ADDING ZERSIUM & DOONIUM (ASTEROIDS) TO CAREER ******************
+	// ADDING ZERSIUM & DOONIUM (ASTEROIDS) TO CAREER 
 	{
 		Action = AddMany
 		AddTo = "<./Data/modes/career/sysgen_asteroids.rules>/CommonAsteroidTypes"
@@ -321,7 +369,7 @@ Actions
 		AddTo = "<./Data/modes/career/sysgen_asteroids.rules>/SunAsteroidTypes"
 		ManyToAdd = &<career/sysgen_asteroids.rules>/SunAsteroidTypes
 	}
-	//**************** ADDING ZERSIUM & DOONIUM & DOONIUM_INGOTS & DURASTEEL (Resource as Tradeable) TO CAREER ******************
+	// ADDING ZERSIUM & DOONIUM & DOONIUM_INGOTS & DURASTEEL (Resource as Tradeable) TO CAREER 
 	{
 		Action = AddMany
 		AddTo = "<./Data/modes/career/career.rules>/ResourceDeliveryMissions/DeliveryTypes"
@@ -337,19 +385,19 @@ Actions
 		AddTo = "<./Data/modes/career/career.rules>/BaseTradeShip/ResourcesCarried"
 		ManyToAdd = &<career/career.rules>/BaseTradeShip/ResourcesCarried
 	}
-	//**************** ADDING ETC & DOONIUM & DURASTEEL TECHS TO CAREER ******************
+	// ADDING ETC & DOONIUM & DURASTEEL TECHS TO CAREER 
 	{
 		Action = AddMany
 		AddTo = "<./Data/modes/career/techs.rules>/Techs"
 		ManyToAdd = &<career/techs.rules>/Techs
 	}
-	//**************** ADDING SHIP PARTS ******************
+	// ADDING SHIP PARTS 
 	{ 
 		Action = AddMany
 		AddTo = "<ships/terran/terran.rules>/terran/parts"
 		ManyToAdd = &<Parts.rules>/Parts
 	}
-	//**************** ADDING LOGO SCREEN SHIP *************
+	// ADDING LOGO SCREEN SHIP 
 	{
 		Action = Replace
 		Replace = "<Gui/menus.rules>/LogoShip"
@@ -361,6 +409,17 @@ Actions
 		OverrideIn = "<./Data/buffs/buffs.rules>"
 		Overrides = &<buffs/buffs.rules>
 	}
+	{
+		Action = Add
+		AddTo = "<./Data/buffs/buffs.rules>"
+		Name = SWCockpitSpeed
+		OnlyIfNotExisting = true
+		CreateIfNotExisting = true
+		IgnoreIfNotExisting = true
+		ToAdd = &<buffs/buffs.rules>/SWCockpitSpeed
+	}
+
+
 	// add targetors
 /*	
 	{
@@ -375,17 +434,6 @@ Actions
 		OverrideIn = "<./Data/gui/game/indicators/indicators.rules>"
 		Overrides = &<gui/indicators.rules>
 	}
-	//CategoryLimits
-	{
-        Action = AddMany
-        CreateIfNotExisting = true
-        AddTo = "<./Data/ships/terran/terran.rules>/Terran/CategoryLimits"
-        ManyToAdd 
-        [
-            {Category = XWingThruster; Max = 1}
-            {Category = XWingThrusterSmall; Max = 2}
-        ]
-    }
 
 	// Compatiblity Fix/Add
 	{
@@ -406,7 +454,7 @@ Actions
 		CreateIfNotExisting = true
 		ToAdd = "SW.structure1x3_wedge_R"
 	}
-	//**** ADDING A STRUCTURE TRIANGLE TO THE VANILLA ARMOR TRIANGLE WHEN DESTROYED *****
+	// ADDING A STRUCTURE TRIANGLE TO THE VANILLA ARMOR TRIANGLE WHEN DESTROYED 
 	{
 		Action = Overrides
 		OverrideIn = "<ships/terran/armor_tri/armor_tri.rules>/Part"
@@ -421,6 +469,57 @@ Actions
 		CreateIfNotExisting = true
 		ToAdd = "SW.Structure1x1_Triangle"
 	}
+
+	//CategoryLimits - Parts sharing the same categorytype will share the limit, create new categories as needed in section bleow
+	{
+		Action = Add
+		AddTo = "<ships/terran/terran.rules>/Terran"
+		Name = CategoryLimits
+		OnlyIfNotExisting = true
+		ToAdd = []
+	}
+
+	{
+		Action = AddMany
+		AddTo = "<ships/terran/terran.rules>/Terran/CategoryLimits"
+
+//ADD NEW CATEGORIES HERE
+
+		ManyToAdd
+		[
+			{
+				Category = "limit_1" //Globally per Ship 
+				Max = 1
+			}
+			{
+				Category = "limit_1Cockpits" 
+				Max = 1
+			}
+			{
+				Category = "XWingThruster" 
+				Max = 1
+			}
+			{
+				Category = "limit_2" //Globally per Ship
+				Max = 2
+			}
+			{
+				Category = "XWingThrusterSmall" 
+				Max = 2
+			}
+			{
+				Category = "limit_2Cockpits"
+				Max = 2
+			}
+			{
+				Category = "limit_4" //Globally per Ship
+				Max = 4
+			}
+
+		]
+	}
+
+
 	//stillworksjustnotneededtoload
 	/*{
 		Action = Add

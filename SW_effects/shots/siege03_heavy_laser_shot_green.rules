@@ -28,15 +28,24 @@ Components
 
 	Hit
 	{
-		Type = SimpleHit
-		SourceShipCollisionDelay = 10
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		//Penetration = 200.0
+		//PenetrationSpeed = 15
+		PenetratesShields = false
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		FriendlyShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
 		HitShield
 		{
 			HitEffects
 			[
 				{
 					Type = Damage
-					Damage = 25000  // bad vs shield 1/5 of total part damage
+					Damage = 7000  // bad vs shield 1/5 of total part damage
 				}
 				{
 					Type = Impulse
@@ -46,7 +55,7 @@ Components
 
 			MediaEffects
 			[
-				&/COMMON_PARTICLES/GreenLaserHit
+				&/COMMON_PARTICLES/SWConcussionLaserHitGreen
 				&/COMMON_PARTICLES/GreenLaserFlash
 				&/COMMON_PARTICLES/GreenLaserSparks
 	
@@ -64,87 +73,141 @@ Components
 			HitEffects
 			[
 				{
-					Type = Damage
-					Damage = 6250
-				}
-				{
 					Type = ExplosiveDamage
-					TotalDamage = 150000
-					Radius = 8
-					ExpandDuration = .8
-					ExpandStartRadius = 2
+					TotalDamage = 25000
+					Radius = 9
+					ExpandDuration = 0.2
+					ExpandStartRadius = 1
 					ExpandLoss = 100%
 					ImpulsePerNDamage = 10
-					NDamage = 1000
-					Filter
-					{
-						OperationalHealth = true
-						StructuralHealth = false
-						Friendlies = true
-					}
+					NDamage = 10000
+					// Filter
+					// {
+					// 	Friendlies = true
+					// }
 				}
 				{
-					Type = ExplosiveDamage
-					TotalDamage = 45000
-					Radius = 6
-					ExpandDuration = .8
-					ExpandStartRadius = 2
-					ExpandLoss = 100%
-					ImpulsePerNDamage = 5
-					NDamage = 1000
-					Filter
-					{
-						OperationalHealth = false
-						StructuralHealth = true
-						Friendlies = true
-					}
+					Type = Damage
+					Damage = 200
 				}
 				{
-					Type = Impulse;
-					Impulse = 300
+					Type = Impulse
+					Impulse = 100
 				}
 			]
 
 			MediaEffects
 			[
-				&/COMMON_PARTICLES/GreenLaserHit
+				&/COMMON_PARTICLES/SWConcussionLaserHitGreen
 				&/COMMON_PARTICLES/GreenLaserFlash
 				&/COMMON_PARTICLES/GreenLaserSparks
+				// &/COMMON_PARTICLES/SWFlakLargeFlash
+				// &/COMMON_PARTICLES/SWFlakLargeSmoke
 	
-				&/COMMON_SOUNDS/SmallLaserHit
+				&/COMMON_SOUNDS/SWConcussionLaserHit
 
 				: /BASE_SHAKE
 				{
-					ShakeAmount = .03
-					Duration = .3
+					ShakeAmount = .2
+					Duration = .75
 				}
 			]
 		}
 		HitStructural = &HitOperational
 	}
-
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "lasershotgreen.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [2.1, 1.05]//2.4 1.2
+			}
+			FrameCount = 2
+			FrameSize = [64, 32]
+			FramesPerRow = 1
+			FramesPerSecond = 60
+		}
+		//NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
+	}
+/*
 	Sprite
 	{
 		Type = Sprite
-		RenderBucket = Lower
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
 		Sprite
 		{
-			Texture = "shot_green.png"
-			Size = [32, 6]
+			Texture
+			{
+				File = "shot_green.png"
+				SampleMode = Linear
+				MipLevels = max
+			}
+			Size = [1.2, 1.2]
 		}
 	}
-
-	MediaEffects
+*/
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Offset = [-1.5, 0]
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [18, 9]
+			VertexColor = [0, 255, 0] // VertexColor = [255, 100, 0]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.125
+		}
+	}
+	MediaEffects3
 	{
 		Type = MediaEffects
-		Offset = [10.5, 0]
-
+		Offset = [45/64, 0]
 		MediaEffects
 		[
 			&/COMMON_PARTICLES/GreenLaserShotGlow
+			&/COMMON_PARTICLES/CyanIonShotTrailLightning
 		]
-	}
+	}	
+	/*
+		MediaEffects
+		{
+			Type = MediaEffects
+			// Offset = [10.5, 0]
 
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/GreenLaserShotGlow
+				&/COMMON_PARTICLES/SWConcussionLaserTrail
+			]
+		}
+	*/
 
 }
 

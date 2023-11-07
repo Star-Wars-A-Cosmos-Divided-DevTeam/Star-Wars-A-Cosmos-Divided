@@ -1,0 +1,475 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+
+Description:
+Currently prototyping. Everything is temporary.
+
+This is based on the 1st Order tower with 3 guns.
+
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.14
+
+---------------------------------------------------------------------------- */ 
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{	
+	ID = SW.turbolaser_tower_triple01
+	NameKey = "Parts/TurbolaserTowerTriple01"
+	IconNameKey = "Parts/TurbolaserTowerTriple01Icon"
+	DescriptionKey = "Parts/TurbolaserTowerTriple01Desc"
+	EditorGroups = ["WeaponsEnergy", "TechIII"]
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 30000
+	AIValueFactor = 1
+
+	TypeCategories = [weapon, uses_power, uses_laser_parts, is_crewed]
+	Size = [4, 4]
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "cannons"
+	MaxHealth = 16000
+	InitialPenetrationResistance = 5
+
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon01.png"
+			SampleMode = Linear
+		}
+		Size = [64, 68]
+	}
+	
+	Components : ^/0/Components, &<triple01_graphics.rules>
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+
+		TurretProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
+			//Location = [0, 0]
+		}
+
+		MunitionType
+		{
+			Type = UIToggle
+			ToggleID = "SW.munition_type"
+			Default = 0
+			AvailableChoices = [0,2]
+			ToggledOnChoices = [0,2]
+			AlwaysAllowInBuildMode = true
+		}
+		RedMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 0
+		}
+		RedMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedMunitionToggle
+			IncludeInBlueprints = true
+			Components = &<turbolaser01_red.rules>/Components
+		}
+/*
+		BlueMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 1
+		}
+		BlueMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueMunitionToggle
+			IncludeInBlueprints = true
+			Components = &<tower/xx9_turbolaser_red.rules>/Components
+		}
+*/
+		GreenMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 2
+		}
+		GreenMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreenMunitionToggle
+			IncludeInBlueprints = true
+			Components = &<turbolaser01_green.rules>/Components
+		}
+
+
+		FloorGraphics1
+		{
+			Type = Graphics
+			Location = [2, 2]
+			Floor
+			{
+				Layer = "floors"
+				Offset = [-1, -1]
+				DamageLevels
+				[
+					{
+						File = "../floor06[2,2]01.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../floor06[2,2]01_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../floor06[2,2]01_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+			Walls : &Floor
+			{
+				Offset = [1, -1]
+			}
+			Roof : &Floor
+			{
+				Offset = [-1, 1]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad : &Floor
+			{
+				Offset = [1, 1]
+			}
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational,
+			Location = [2, 2]
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "../Turbolasers_Light/lights.png"
+						Size = [4, 4]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../Turbolasers_Light/console on1.png"
+							"../Turbolasers_Light/console on2.png"
+							"../Turbolasers_Light/console on3.png"
+						]
+						Size = [2, 2]
+						//Offset = [0, 0]//-0.67]
+						AnimationInterval = 0.50
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "../Turbolasers_Light/console off.png"
+						Size = [2, 2]
+						//Offset = [0, 0]//-0.67]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "../walls01[4,4].png"
+						Size = [4, 4]
+					}
+/*
+					{
+						File = "../walls01[4,4]_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "../walls01[4,4]_66.png"
+						Size = [4, 4]
+					}
+*/
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "../roof_turret_base00[8,8]01.png"
+						Size = [4, 4]
+					}
+/*
+					{
+						File = "../roof_turret_base02[2,2]01_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../roof_turret_base02[2,2]01_66.png"
+						Size = [2, 2]
+					}
+*/
+				]
+			}
+		}
+
+		
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 4000
+		}
+
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 1000
+			OperationalToggle = PowerToggle
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [1.55, 1.6]
+			Rotation = 180d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [2.45, 1.6]
+			Rotation = 180d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 2
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				&../../CrewLocation1/Location
+				&../../CrewLocation2/Location
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+			]
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [2, 2]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../Turbolasers_Light/batteries1.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../Turbolasers_Light/batteries2.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../Turbolasers_Light/batteries3.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../Turbolasers_Light/batteries4.png"
+					Size = [2, 2]
+				}
+				{
+					File = "../Turbolasers_Light/batteries5.png"
+					Size = [2, 2]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Location = [2, 2]
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [2, 2]
+			
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [2, 2]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [2, 2]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [2, 2]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [2, 2]
+					}
+				}
+			]
+		}
+
+		BlueprintsRed
+		{
+			Type = BlueprintSprite
+			File = "../Turbolasers_Light/blueprints.png"
+			Size = [4, 4]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.munition_type
+				Mode = 0
+			}
+		}
+/*
+		BlueprintsBlue
+		{
+			Type = BlueprintSprite
+			File = "../Turbolasers_Light/blueprints.png"
+			Size = [4, 4]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.munition_type
+				Mode = 1
+			}
+		}
+*/
+		BlueprintsGreen
+		{
+			Type = BlueprintSprite
+			File = "../Turbolasers_Light/blueprints.png"
+			Size = [4, 4]
+
+			ShowOnlyInToggleMode
+			{
+				ToggleID = SW.munition_type
+				Mode = 2
+			}
+		}
+
+
+	}
+
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = (&PowerPerSecond) * 1
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 3 / (&<turbolaser01_red.rules>/Components/Turret/FireInterval)
+		Range = &<turbolaser01_red.rules>/Components/BulletEmitter/Bullet/Range
+		Arc = deg(&<turbolaser01_red.rules>/Components/Turret/FiringArc)
+		TurretSpeed = deg(&<turbolaser01_red.rules>/Components/Turret/RotateSpeed)
+		ShotSpeed = &<turbolaser01_red.rules>/Components/BulletEmitter/Bullet/Speed
+		ShotHP = &<turbolaser01_red.rules>/Components/BulletEmitter/Bullet/Components/Targetable/Health
+		PowerPerShot = (&<turbolaser01_red.rules>/Components/BulletEmitter/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+	}
+	StatsByCategory
+	[
+		&<turbolaser01_red.rules>/LaserStats
+		&<turbolaser01_green.rules>/LaserStats
+	]
+}

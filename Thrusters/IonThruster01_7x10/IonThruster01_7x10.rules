@@ -1,28 +1,10 @@
-/* ----------------------------------------------------------------------------
-
-Introduction: SW:ACD 0.3.7
-
-Author : Lafiel
-Description:
-Currently prototyping
-
-Simple scaled up version of Ion Thruster with progressive power increase.
-Uses the same system as Abh to give thruster roof cover choices to match desired
-building form or totally cover the nozzles and prohibitive areas.
-Buttons might need to be changed later with community mod.
-
-Versions:
-
- o 1.0 Cosmoteer 0.15.14
-
----------------------------------------------------------------------------- */ 
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	ID = SW.IonThruster01_7x10
+	ID = SW.IonThruster01_7x10_switchable
+	OtherIDs = ["IonThruster01_7x10","SW.IonThruster01_7x10"]
 	NameKey = "Parts/IonThruster01_7x10"
 	IconNameKey = "Parts/IonThruster01_7x10_Icon"
 	DescriptionKey = "Parts/IonThrusterBigDesc"
-
 	EditorGroups = ["Flight", "TechIII"]
 	TypeCategories = [thruster, uses_power]
 	RequiresCategories = [bridge1]
@@ -43,15 +25,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeID = "thrusters"
 	MaxHealth = 56000 //56700 //81% of vanilla 1000 per tile //70000
 	InitialPenetrationResistance = 1
-	PenetrationRectType = Normal
 
 	ThrusterForce = 54000 //70%sizedegrade*[normalized] 122,5% of vanilla 1000*8/9 per tile // 53355
 	ThrustIncreaseTime = 7.2
 	ThrustRecoveryTime = 2.4
 	FuelUsage = 1600 //3200 //3111,11 //50%sizedegrade*[normalized] 133% of vanilla 50*8/9 per tile //870 //6.6_*250*(3/4)^5 = ~ 1666.6_*(0.85)^4=870.0
 
-	ProhibitBelow = 17 //11
-	ReceivableBuffs : ^/0/ReceivableBuffs [Engine,PowerCellBuff]
+	ProhibitBelow = 8 // 11 //17
+	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
 	AllowedDoorLocations
 	[
 		[-1, 3]
@@ -77,9 +58,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [55, 92]
+		Size = [64, 106.66]
 	}
-	Components : ^/0/Components, &<graphics7x10_toggles.rules>, &<graphics7x10_walls.rules>, &<graphics7x10_floor.rules>, &<graphics7x10_roof.rules>, &<graphics7x10_doodads.rules>
+	Components : ^/0/Components, &<toggles.rules>, &<toggles2.rules>, &<graphics.rules>
 	{
 		IsOperational
 		{
@@ -110,7 +91,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 25000 //MaxUsage 1600
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -147,6 +127,129 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
+		ThrusterEffectColorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.thruster_effect_color_type"
+			Default = 1
+			AvailableChoices = [0, 1, 2, 3]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		RedToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 0
+		}
+		BlueToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 1
+		}
+		YellowToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 2
+		}
+		PurpleToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 3
+		}
+
+		RedToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = RedToggle
+		}
+		BlueToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = BlueToggle
+		}
+		YellowToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = YellowToggle
+		}
+		PurpleToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = PurpleToggle
+		}
+
+		ThrusterEffectAmountType
+		{
+			Type = UIToggle
+			ToggleID = "SW.thruster_effect_amount_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2]//, 3, 4
+			RequiresCommand = false
+		}
+
+		GlowToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectAmountType
+			OnModes = [0, 1, 2]
+		}
+		SparksToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectAmountType
+			OnModes = [1, 3]
+		}
+
+		FullsetToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectAmountType
+			OnModes = [2, 4]
+		}
+
+		GlowToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = GlowToggle
+		}
+
+		SparksToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = SparksToggle
+		}
+
+		FullsetToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = FullsetToggle
+		}
+
+		NozzleArtOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "nozzle_art_option_switch03"
+			Default = 0
+			AvailableChoices = [0, 1, 2]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		NozzleRoofCoverOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "nozzle_roof_option_switch19"
+			Default = 0
+			AvailableChoices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
 		MainThrusterLocationProxy
 		{
 			Type = ChainableProxy
@@ -158,17 +261,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ValueProxy
 			ComponentID = MainThruster
 		}
-		
-		ReverseThrusterLocationProxy
+
+		NozzleLocationProxy
 		{
 			Type = ChainableProxy
-			ComponentID = ReverseThruster
-		}
-
-		ReverseThrusterValueProxy
-		{
-			Type = ValueProxy
-			ComponentID = ReverseThruster
+			ComponentID = NozzlePosition
 		}
 
 		MainThruster
@@ -197,8 +294,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxUncommandedActivation = &MaxActivation
 			AllowAutoFire = false
 		}
-
-		ReverseThruster
+		/*
+		ReverseThruster : MainThruster
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
@@ -215,6 +312,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelUsagePerSecond = &../../FuelUsage
 			AllowAutoFire = false
 		}
+		*/
+		ActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = MainThrusterValueProxy
+			LowColor = [0, 0, 0]
+			HighColor = [250, 250, 250]
+			FullColor = [255, 255, 255]
+		}
 
 		ThrustEffectsSounds
 		{
@@ -228,6 +335,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					Volume = .125
 					Speed = 1.5
 					MaxConcurrentVolume = .25
+				}
+			]
+		}
+
+		ThrusterHum
+		{
+			Type = ContinuousEffects
+			Location = [3.5, 5]
+			OperationalToggle = IsOperational
+			MediaEffects
+			[
+				: /COMMON_SOUNDS/ThrusterHum
+				{
+					Volume = .1
+					Speed = 1.25
+					MaxConcurrentVolume = 1
 				}
 			]
 		}
@@ -271,22 +394,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 			Location = [3.5, 5]
-		}
-
-		ThrusterHum
-		{
-			Type = ContinuousEffects
-			Location = [3.5, 5]
-			OperationalToggle = IsOperational
-			MediaEffects
-			[
-				: /COMMON_SOUNDS/ThrusterHum
-				{
-					Volume = .1
-					Speed = 1.25
-					MaxConcurrentVolume = 1
-				}
-			]
 		}
 
 		Indicators

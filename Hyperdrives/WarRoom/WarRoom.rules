@@ -8,17 +8,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/WarRoomDesc"
 	Resources
 	[
-		[steel, 360]
-		[coil2, 80]
-		[processor, 16]
+		[steel, 720]//[steel, 360]
+		[SW.durasteel, 480] 
+		[SW.doonium_ingot, 360]
+		[coil2, 160]//[coil2, 80]
+		[processor, 48]//[processor, 16]
 	]
 	//reduce cost by adding durasteel as an part cost? durasteel factory is 35k rn...
+	AIValueFactor = 5
 	Size = [6, 7]
 	SelectionPriority = 0
 	MaxHealth = 20000
 	AutoDoorMaxPathLength = 5
 	RequiresCategories = []
-	TypeCategories = [WarRoom]
+	TypeCategories = [command, WarRoom]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
 	AllowedDoorLocations
@@ -144,12 +147,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
+		CommandProvider
+		{
+			Type = CommandProvider
+			OperationalToggle = IsOperational
+			CommandPoints = 3600 // Remember to update tooltip.
+		}
+
+/*
 		CommandConsumer
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
 			CommandPoints = 42
 		}
+*/
 
 		Sensor
 		{

@@ -1,0 +1,102 @@
+Components
+	{
+		ReloadProgressBar : &<swturret_C.rules>/ReloadProgressBarBase
+		{
+			LowColor = [0, 64, 0]
+			HighColor = [0, 255, 0]
+		}
+
+		BulletEmitterLeft : &<swturret_C.rules>/BulletEmitterBase
+		{
+			Type = BulletEmitter
+			Location = [1, 0.3]
+			Bullet = &/COMMON_SHOTS/greenmedlasercannonshot
+		}
+
+		BulletEmitterRight : BulletEmitterLeft
+		{
+			Type = BulletEmitter
+			Location = [1.25, -0.3]
+		}
+
+		FireEffectLeft
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/COMMON_PARTICLES/SmallGreenLaserShoot
+				&/COMMON_SOUNDS/TinyG400Blaster
+			]	
+		}
+
+		FireEffectRight : FireEffectLeft
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = BulletEmitterRight
+		}
+
+		LightGraphicsL
+		{
+			Type = Graphics
+			OperationalToggle = CommonOnShootEffectTimer
+			InvertOperationalToggle = true
+			ChainedTo = TurretLocationProxy
+			Location = [1, 0.3]
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = &<swturret_C.rules>/OperationalRoofLightingBase/Size
+						Z = &<swturret_C.rules>/OperationalRoofLightingBase/Z
+						VertexColor = [16, 255, 16]
+					}
+				]
+			}
+		}
+
+		LightGraphicsR
+		{
+			Type = Graphics
+			OperationalToggle = CommonOnShootEffectTimer
+			InvertOperationalToggle = true
+			ChainedTo = TurretLocationProxy
+			Location = [1.25, -0.3]
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = &<swturret_C.rules>/OperationalRoofLightingBase/Size
+						Z = &<swturret_C.rules>/OperationalRoofLightingBase/Z
+						VertexColor = [16, 255, 16]
+					}
+				]
+			}
+		}
+	}
+LaserStats
+{
+	NameKey = "StatCategories/DualGreenLaserCannonshot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<swturret_C.rules>/TurretStats/Stats/ROF)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&<swturret_C.rules>/TurretStats/Stats/ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
+		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
+	}
+}

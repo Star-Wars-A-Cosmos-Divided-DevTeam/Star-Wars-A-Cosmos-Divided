@@ -1,0 +1,215 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+Description:
+Currently prototyping
+
+Uses a base file. This file is just the weapon and whatever function it requires.
+In order to implement different colored shot you can just link them to sub files with those shots.
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.12
+
+---------------------------------------------------------------------------- */ 
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	NameKey = "Parts/TurbolaserMedium01"
+	IconNameKey = "Parts/TurbolaserMedium01Icon"
+	ID = SW.turbolaser_medium_01
+	DescriptionKey = "Parts/TurbolaserMedium01Desc"
+	EditorGroups = ["WeaponsEnergy", "TechIII"]
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 36000
+	AIValueFactor = 1
+
+	TypeCategories = [weapon, uses_power, is_crewed]
+	RequiresCategories = [bridge1]
+	Size = [6, 6]
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "cannons" 
+	MaxHealth = 36000
+	Density = 1 + (&~/Part/TurretDensity)
+	InitialPenetrationResistance = 5
+	ReceivableBuffs : ^/0/ReceivableBuffs [SWWeaponTimerBuff]
+
+	TurretDensity = 2.0
+
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon_medium01.png"
+			SampleMode = Linear
+		}
+		Size = [48, 57]
+	}
+	Components : ^/0/Components, &<medium01green.rules>, &<../SW_weapon_fire_alternate_2.rules>
+	{
+		//for alternate fire 70% * 1 s = 0.70 s
+		WeaponTimerBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SWWeaponTimerBuff
+			BuffAmount = 70%
+		}
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [3, 3] // Relative to upper-left corner of unrotated part.
+			Rotation = -90d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 0 // Uses separate fire timer.
+			FiringArc = 160d
+			RotateSpeed = 45d
+			FireThresholdAngle = 1d
+			IgnoreSourceShipLOSChecks = true
+			HoldTargetAfterCancel = 0.5
+			AIFirepowerRating = 6400
+			FirePermissionToggle = FirePermissionToggle //FireModeToggle //FirePermissionToggle
+
+			Emitter = WeaponEmitterBase
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		WeaponEmitterBase // Doesn't actually fire; only used for targeting and as a base for the left and right emitters.
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger // none, but field is required
+			GetTargetFrom = Turret
+			Location = [0, 0]
+			OperationalToggle = IsOperational
+			FireDelay = .6
+			Bullet = &/COMMON_SHOTS/greenmedlasershot
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 500
+		}
+		TurretGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [0, 0]
+			Rotation = 90d
+			//OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "roof_turrets"
+				DamageLevels
+				[
+					{
+						File = "turret[6,6].png"
+						Size = [6, 6]
+					}
+				]
+			}
+		}
+		BarrelGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [0, 0]
+			Rotation = 90d
+			//OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "roof_turrets"
+				Offset = [0, -3.140625] //-201
+				DamageLevels
+				[
+					{
+						File = "../barrel[1,2]01.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Walls : &Floor
+			{
+				Offset = [0.8125, -3.140625] //-201,-52
+			}
+			Roof : &Floor
+			{
+				Offset = [-0.8125, -3.140625]
+			}
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints01.png"
+			Size = [6, 6]
+		}
+	}
+/*
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+
+		ROF = 1.5 / (&~/Part/Components/WeaponTimerBuffProvider/BuffAmount)
+		Range = &~/Part/Components/WeaponEmitter/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+	}
+
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/MedGreenLasershot"
+			Stats
+			{
+				ShieldDamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
+				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+				DamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
+				Damage = [&../DamagePerShot, &../DamagePerSecond]
+				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
+				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
+				PowerPerShot = (&~/Part/Components/WeaponEmitter/ResourcesUsed) / 1000
+				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
+				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+			}
+		}
+	]
+*/
+}

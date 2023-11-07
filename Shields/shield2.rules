@@ -1,18 +1,21 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/Bubble1"
-	IconNameKey = "Parts/Bubble1"
+	NameKey = "Parts/BubbleGeneratorMed"
+	IconNameKey = "Parts/BubbleGeneratorMedIcon"
 	ID = SW.bubble_generator_med_switchable
 	OtherIDs = ["bubble_generator1", "SW.bubble_generator1"]
 	EditorGroups = ["Defenses", "TechII"]
-	DescriptionKey = "Parts/Bubble1Desc"
+	DescriptionKey = "Parts/BubbleGeneratorMedDesc"
 	Resources
 	[
-		[steel, 120]
-		[coil2, 12]
-		[diamond, 1] //
-	]  //Cost = 10000
-	AIValueFactor = 5
+		[steel, 64]
+		[coil, 69]
+		[coil2, 16]
+		[carbon, 45]
+		[diamond, 2]
+		[processor, 3]
+	]	//Cost = 36000
+	AIValueFactor = 3		//equals ~100k ai value
 
 	Size = [2, 2]
 	SelectionPriority = 1
@@ -20,7 +23,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeByRotation = true
 	MaxHealth = 4000
 	TypeCategories = [defense, uses_power]
-	PenetrationRectType = Normal
 	MaxDoors = 3
 	ForceManhattanPathInPart = true
 	BlockedTravelCells
@@ -42,7 +44,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "Shield_Roasted_2x2/icon.png"
 			SampleMode = Linear
 		}
-		Size = [42.66, 42.66]
+		Size = [48, 48]
 	}
 	Components : ^/0/Components
 	{
@@ -61,6 +63,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
+		ShieldEmitterEffectToggle
+		{
+			Type = UIToggle
+			ToggleID = "SW.shield_emitter_effect_on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		ShieldEmitterEffectToggleAndIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [ShieldEmitterEffectToggle, IsOperational]
+			Mode = All
+		}
+
 		CommandConsumer
 		{
 			Type = CommandConsumer
@@ -73,8 +90,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 12000
-			ToggleOnResources = 3000
+			MaxResources = 8000
+			ToggleOnResources = 2000
 			ToggleOffResources = 0
 			DrainOnFtlJump = true
 			DeliveryLocation = [1, 1.5]
@@ -92,7 +109,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatteryStorageBar
 		{
 			Type = ProgressBar
-			OperationalToggle = IsOperational
+			OperationalToggle = BatteryStorage
 			ShowProgressFor = BatteryStorage
 			LowColor = [0, 0, 255]
 			HighColor = [0, 0, 255]
@@ -125,51 +142,140 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.shield_color_type"
-			Default = 0
-			AvailableChoices = [0, 1, 2]
+			Default = 7
+			AvailableChoices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
 			AlwaysAllowInBuildMode = true
-		}
-
-		BlueShieldColorToggle
-		{
-			Type = ModeToggle
-			Mode = ShieldColorType
-			OnMode = 0
-		}
-		BlueShieldColorComponents
-		{
-			Type = ToggledComponents
-			Toggle = BlueShieldColorToggle
-			IncludeInBlueprints = true
-			Components = &<shield2_cyanblue.rules>/Components
 		}
 
 		WhiteShieldColorToggle
 		{
 			Type = ModeToggle
 			Mode = ShieldColorType
-			OnMode = 1
+			OnMode = 0
 		}
 		WhiteShieldColorComponents
 		{
 			Type = ToggledComponents
 			Toggle = WhiteShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<shield2_white.rules>/Components
+			Components = &<Shield2/shield2_white.rules>/Components
 		}
 
 		InvisShieldColorToggle
 		{
 			Type = ModeToggle
 			Mode = ShieldColorType
-			OnMode = 2
+			OnMode = 1
 		}
 		InvisShieldColorComponents
 		{
 			Type = ToggledComponents
 			Toggle = InvisShieldColorToggle
-			IncludeInBlueprints = true
-			Components = &<shield2_invis.rules>/Components
+			Components = &<Shield2/shield2_invis.rules>/Components
+		}
+
+		RedShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 2
+		}
+		RedShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedShieldColorToggle
+			Components = &<Shield2/shield2_red.rules>/Components
+		}
+
+		OrangeShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 3
+		}
+		OrangeShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = OrangeShieldColorToggle
+			Components = &<Shield2/shield2_orange.rules>/Components
+		}
+
+		YellowShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 4
+		}
+		YellowShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = YellowShieldColorToggle
+			Components = &<Shield2/shield2_yellow.rules>/Components
+		}
+
+		GreenShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 5
+		}
+		GreenShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreenShieldColorToggle
+			Components = &<Shield2/shield2_green.rules>/Components
+		}
+
+		CyanShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 6
+		}
+		CyanShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = CyanShieldColorToggle
+			Components = &<Shield2/shield2_cyan.rules>/Components
+		}
+
+		BlueShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 7
+		}
+		BlueShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueShieldColorToggle
+			Components = &<Shield2/shield2_blue.rules>/Components
+		}
+
+		PurpleShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 8
+		}
+		PurpleShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = PurpleShieldColorToggle
+			Components = &<Shield2/shield2_purple.rules>/Components
+		}
+
+		PinkShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 9
+		}
+		PinkShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = PinkShieldColorToggle
+			Components = &<Shield2/shield2_pink.rules>/Components
 		}
 
 		ShieldEmitterLoop
@@ -522,8 +628,8 @@ ShieldStatBase
 	BlockedByOperationalParts = false
 	DrainResourcesFrom = BatteryStorage
 	Location = [1, 45/64]
-	PenetrationResistance = [81, 0]
-	ResourceDrainPerDamage = 0.6
+	PenetrationResistance = [16, 0]
+	ResourceDrainPerDamage = 0.4
 
 	BlueprintArcSprite
 	{

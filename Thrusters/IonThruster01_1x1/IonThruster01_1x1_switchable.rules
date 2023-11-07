@@ -1,17 +1,19 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/IonThruster01_1x1"
-	IconNameKey = "Parts/IonThruster01_1x1_Icon"
 	ID = SW.IonThruster01_1x1_switchable
 	OtherIDs = ["IonThruster01_1x1","SW.IonThruster01_1x1"]
-	EditorGroups = ["Flight", "TechI"]
+	NameKey = "Parts/IonThruster01_1x1"
+	IconNameKey = "Parts/IonThruster01_1x1_Icon"
 	DescriptionKey = "Parts/IonThrusterDesc"
+	EditorGroups = ["Flight", "TechI"]
+	TypeCategories = [thruster, ion_thruster, uses_power]
+	//RequiresCategories = []
 	Resources
 	[
 		[steel, 10]//120%*8 of vanilla
 		[coil, 4]//133%*3 of vanilla
 	]
-	TypeCategories = [thruster, ion_thruster, uses_power]
+
 	Size = [1, 2]
 	PhysicalRect = [0, 0, 1, 1]
 	SaveRect = &PhysicalRect
@@ -20,14 +22,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeByRotation = true
 	SelectionTypeID = "thrusters"
 	MaxHealth = 800 //80%*1000 of vanilla
-	ProhibitBelow = 3
+
 	ThrusterForce = 640 //160%*400 of vanilla
 	ThrustIncreaseTime = 0.96 //softer accel
 	ThrustRecoveryTime = 0.96 //softer deccel
 	FuelUsage = 19.2 //160%*40%*30 of vanilla
 
+	ProhibitBelow = 2
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
-
 	AllowedDoorLocations
 	[
 		[0, -1]
@@ -43,7 +45,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [21.33, 42.66]
 	}
-	Components : ^/0/Components
+	Components : ^/0/Components, &<toggles.rules>
 	{
 		IsOperational
 		{
@@ -51,7 +53,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Toggles = [PowerToggle, BatteryStorage]
 			Mode = All
 		}
-		
+
 		PowerToggle
 		{
 			Type = UIToggle
@@ -59,6 +61,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
+
 		CommandConsumer
 		{
 			Type = CommandConsumer
@@ -104,7 +107,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
 					ResupplyThreshold = 500
 					OperationalToggle = PowerToggle
-					//ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 				}
 			}
 		}
@@ -119,60 +121,50 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
-		RedThrusterToggle
+		RedToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 0
 		}
-		RedThrusterComponents
-		{
-			Type = ToggledComponents
-			Toggle = RedThrusterToggle
-			IncludeInBlueprints = false
-			Components = &<thruster_red.rules>/Components
-		}
-
-		BlueThrusterToggle
+		BlueToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 1
 		}
-		BlueThrusterComponents
-		{
-			Type = ToggledComponents
-			Toggle = BlueThrusterToggle
-			IncludeInBlueprints = false
-			Components = &<thruster_blue.rules>/Components
-		}
-
-		YellowThrusterToggle
+		YellowToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 2
 		}
-		YellowThrusterComponents
-		{
-			Type = ToggledComponents
-			Toggle = YellowThrusterToggle
-			IncludeInBlueprints = false
-			Components = &<thruster_yellow.rules>/Components
-		}
-		
-		PurpleThrusterToggle
+		PurpleToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 3
 		}
-		PurpleThrusterComponents
+
+		RedToggleProxy
 		{
-			Type = ToggledComponents
-			Toggle = PurpleThrusterToggle
-			IncludeInBlueprints = false
-			Components = &<thruster_purple.rules>/Components
+			Type = ToggleProxy
+			ComponentID = RedToggle
+		}
+		BlueToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = BlueToggle
+		}
+		YellowToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = YellowToggle
+		}
+		PurpleToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = PurpleToggle
 		}
 
 		ThrusterEffectAmountType
@@ -180,40 +172,43 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2]
-			AlwaysAllowInBuildMode = true
+			AvailableChoices = [0, 1, 2]//, 3, 4
 			RequiresCommand = false
 		}
+
 		GlowToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectAmountType
-			OnMode = 0
+			OnModes = [0, 1, 2]
 		}
 		SparksToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectAmountType
-			OnMode = 1
+			OnModes = [1, 3]
 		}
+
 		FullsetToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectAmountType
-			OnMode = 2
+			OnModes = [2, 4]
 		}
-		
-		GlowProxy
+
+		GlowToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = GlowToggle
 		}
-		SparksProxy
+
+		SparksToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = SparksToggle
 		}
-		FullsetProxy
+
+		FullsetToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = FullsetToggle
@@ -229,18 +224,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ValueProxy
 			ComponentID = MainThruster
-		}
-
-		ReverseThrusterLocationProxy
-		{
-			Type = ChainableProxy
-			ComponentID = ReverseThruster
-		}
-
-		ReverseThrusterValueProxy
-		{
-			Type = ValueProxy
-			ComponentID = ReverseThruster
 		}
 
 		EngineFloorGraphics
@@ -402,7 +385,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		NozzleGraphics
 		{
 			Type = Graphics
-			Location = [0.5, 1.5+0/64]//exactpixelcoords
+			Location = [0.5, 1.5+0.5/64]//exactpixelcoords
 			Floor
 			{
 				Layer = "weapons"
@@ -426,7 +409,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-		
+
 		BatterySprites
 		{
 			Type = ResourceSprites
@@ -450,9 +433,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		MainThruster
 		{
 			Type = Thruster
-			OperationalToggle = IsOperational
 			Location = [0.5, 1.225]
 			Rotation = 90d// Relative to unrotated part.
+			OperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
@@ -470,59 +453,37 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxActivation = 0.05
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			FuelUsagePerSecond = (&../../FuelUsage)/20
 			AllowAutoFire = false
 		}
+		/*
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
 			MinActivation = 0
 			MaxActivation = { BaseValue=0.42; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
+			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
+			FuelUsagePerSecond = (&../../FuelUsage)*1.25//Penalty for reverse Thrust
 			AllowAutoFire = false
 		}
-		
+		*/
 		ActivationBar
 		{
 			Type = ProgressBar
 			OperationalToggle = IsOperational
-			ShowProgressFor = MainThruster
+			ShowProgressFor = MainThrusterValueProxy
 			LowColor = [0, 0, 0]
 			HighColor = [250, 250, 250]
 			FullColor = [255, 255, 255]
 		}
-/*
-		ActivationBarTrigger
-		{
-			Type = ThresholdTrigger
-			AmountFrom = MainThruster
-			MinAmount = 0.01
-		}
-		ActivationBarToggle
-		{
-			Type = TriggeredToggle
-			OnTrigger = ActivationBarTrigger
-			StartsOn = false
-		}
-		ActivationBar
-		{
-			Type = ProgressBar
-			OperationalToggle = ActivationBarToggle
-			ShowProgressFor = MainThruster
-			LowColor = [0, 0, 0]
-			HighColor = [250, 250, 250]
-			FullColor = [255, 255, 255]
-		}
-*/
-		ThrustEffectsSound
+
+		ThrustEffectsSounds
 		{
 			Type = ContinuousEffects
-			ChainedTo = MainThruster
-			FactorMediaEffectsIntensityWith = MainThruster
+			ChainedTo = MainThrusterLocationProxy
+			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
 			MediaEffects
 			[
 				: /COMMON_SOUNDS/ThrusterRumble
@@ -533,27 +494,33 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		
+
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
-			AmountFrom = MainThruster
+			AmountFrom = MainThrusterValueProxy
 			MinAmount = 0.5
+		}
+
+		BurstTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = BurstTrigger
 		}
 
 		BurstEffects
 		{
 			Type = TriggeredEffects
-			ChainedTo = MainThruster
+			ChainedTo = MainThrusterLocationProxy
 			Trigger = BurstTrigger
-			FactorMediaEffectsIntensityWith = MainThruster
+			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
 			AnchorMediaEffects = true
 			MediaEffects
 			[
 				: /COMMON_SOUNDS/ThrusterBurst
 				{
 					Volume = 0.125
-					Speed = 2
+					Speed = 1
 					MaxConcurrentVolume = 0.25
 				}
 			]
@@ -574,12 +541,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		
+
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
 			Location = [.5, .5]
+			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
@@ -587,8 +554,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
-			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyed
 			Location = [.5, .5]
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyed
 		}
 
 		Indicators
@@ -622,7 +589,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		Blueprints
 		{
-			Type=BlueprintSprite
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [1, 2]
 		}
