@@ -1,114 +1,18 @@
 Components
 	{
-		SwitchTimerTrigger
+		ReloadProgressBar : &<fixedlaser.rules>/ReloadProgressBarBase
 		{
-			Type = Timer
-			Duration = 2.75
-			AutoStart = true
-			Repeats = false
-		}
-		SwitchTimerProgressBar
-		{
-			Type = ProgressBar
-			ShowProgressFor = SwitchTimerTrigger
-			Invert = true
-			OperationalToggle = SwitchCooldownToggle
-			InvertOperationalToggle = true
-		}
-		SwitchCooldownToggle
-		{
-			Type = TriggeredToggle
-			OnTrigger = SwitchTimerTrigger
-			StartsOn = false
-		}
-		WeaponIsOperational
-		{
-			Type = MultiToggle
-			Toggles = [IsOperational, SwitchCooldownToggle]
-			Mode = All
+			LowColor = [0, 0, 64]
+			HighColor = [0, 0, 255]
 		}
 
-		Turret
+		BulletEmitter : &<fixedlaser.rules>/BulletEmitterBase
 		{
-			Type = TurretWeapon
-			OperationalToggle = WeaponIsOperational
-			AutoFireToggle = AutoFireToggle
-			Location = [-0.25, 0.625]  //[-0.140625, 0.75]
-			Rotation = -90d
-			FireInterval = .20
-			FiringArc = 15d
-			RotateSpeed = 90d
-			FireThresholdAngle = 1d
-			AIFirepowerRating = 400
-			FirePermissionToggle = FireModeToggle
-			Emitter = BulletEmitter
-
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
-		}
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = WeaponIsOperational
-			ShowProgressFor = Turret
-		}
-
-		BulletEmitter
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger = Turret
-			GetTargetFrom = Turret
-			Location = [3.4, -0.1]
-			OperationalToggle = IsOperational
 			Bullet = &/SW_SHOTS/bluexwinglasershot
-			ResourceStorage = BatteryStorage
-			ResourcesUsed = 40
 		}
 
-		ChargeEffect
+		FireEffect : &<fixedlaser.rules>/FireEffectBase
 		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = Turret
-			Location = [1.1, 0]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/SW_SOUNDS/SmallLaserCharge
-			]
-		}
-
-		FireEffect
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [3.3, -0.1]
-			AnchorMediaEffects = true
-
 			MediaEffects
 			[
 				&/SW_PARTICLES/SmallBlueLaserShoot
@@ -117,60 +21,26 @@ Components
 			]
 		}
 
-		TurretCollider
-		{
-			Type = CircleCollider
-			ChainedTo = Turret
-			Radius = .45
-			Density = .75
-		}
-
-		TurretGraphics
+		LightGraphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational,
-			ChainedTo = Turret
-			Location = [.5, 0]
-			Rotation = 90d
-			Walls
+			OperationalToggle = CommonOnShootEffectTimer
+			InvertOperationalToggle = true
+			ChainedTo = TurretLocationProxy
+			Location = [2.0, 0] //guess
+
+			OperationalRoofLighting
 			{
-				Layer = "walls"
+				Layer = "roof_lights_fancy"
 				DamageLevels
 				[
 					{
-						// None.
-					}
-					{
-						File = "turret damage_33.png"
-						Size = [1, 2]
-					}
-					{
-						File = "turret damage_66.png"
-						Size = [1, 2]
+						File = "./Data/ships/common/light_blob.png"
+						Size = &<fixedlaser.rules>/OperationalRoofLightingBase/Size
+						Z = &<fixedlaser.rules>/OperationalRoofLightingBase/Z
+						VertexColor = [16, 16, 255]
 					}
 				]
-			}
-		}
-
-		WeaponSprite
-		{
-			Type = Sprite
-			ChainedTo = Turret
-			Location = [1.30, -0.10]
-			Rotation = 90d
-			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitter
-			AtlasSprite
-			{
-				AnimationFiles
-				[
-					"weapon.png"
-					"weapon.png"
-				]
-				Size = [1, 5]
-				AnimationInterval = 0.01
-				AnimationStartTime = MinValue
-				ClampAnimation = true
 			}
 		}
 	}
@@ -180,10 +50,12 @@ LaserStats
 	Stats
 	{
 		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<fixedlaser.rules>/TurretStats/Stats/ROF)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-		DamagePerSecond = (&DamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
+		DamagePerSecond = (&DamagePerShot) * (&<fixedlaser.rules>/TurretStats/Stats/ROF)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		ShotSpeed = &~/Components/BulletEmitter/Bullet/Speed
+		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
 	}
 }
