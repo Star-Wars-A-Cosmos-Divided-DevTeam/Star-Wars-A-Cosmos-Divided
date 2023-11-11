@@ -1,11 +1,11 @@
-Part : <../base_part_terran.rules>/Part
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/ReactorSmall"
 	IconNameKey = "Parts/ReactorSmallIcon"
+	DescriptionKey = "Parts/ReactorSmallDesc"
 	ID = SW.reactor_small
 	OtherIDs = [SW.reactor, SW.reactor_medium]
 	EditorGroups = [Power, TechI, TechII]
-	DescriptionKey = "Parts/ReactorSmallDesc"
 	Resources
 	[
 		[steel, 32]
@@ -34,6 +34,18 @@ Part : <../base_part_terran.rules>/Part
 	}
 	Components : ^/0/Components
 	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [True]
+			Mode = All
+		}
+		True
+		{
+			Type = StaticToggle
+			ToggleOn = "true"
+		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -43,6 +55,8 @@ Part : <../base_part_terran.rules>/Part
 			SuppliesResources = true
 			MinResourcesPickUp = 1000
 			MaxResourcesPickUp = 1000
+			InitPickUp = 1000
+			PickUpRate = 1000 / 1.0
 			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
 			ToggleOnResources = 1000
 			ToggleOffResources = (&ToggleOnResources)-1
@@ -53,6 +67,15 @@ Part : <../base_part_terran.rules>/Part
 			ToStorage = BatteryStorage
 			ToQuantity = 1000
 			Interval = .6666
+		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = True
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
 		}
 
 		Graphics
@@ -312,9 +335,9 @@ Part : <../base_part_terran.rules>/Part
 
 			MediaEffects
 			[
-				&<particles/reactor_explode_small.rules>
-				&<particles/reactor_explode_flash_small.rules>
-				&<particles/reactor_shockwave_small.rules>
+				&<./Data/ships/terran/reactor_small/particles/reactor_explode_small.rules>
+				&<./Data/ships/terran/reactor_small/particles/reactor_explode_flash_small.rules>
+				&<./Data/ships/terran/reactor_small/particles/reactor_shockwave_small.rules>
 				&<./Data/common_effects/particles/explosions/med_part_explode_debris.rules>
 				&<./Data/common_effects/particles/explosions/big_part_explode_smoke.rules>
 
@@ -336,7 +359,7 @@ Part : <../base_part_terran.rules>/Part
 			[
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 90000
+					TotalDamage = 90000*(&~/Scale)
 					Radius = 6
 					Delay = .05
 					ExpandDuration = .1
@@ -354,7 +377,7 @@ Part : <../base_part_terran.rules>/Part
 				}
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 20000
+					TotalDamage = 20000*(&~/Scale)
 					Radius = 4
 					Delay = .05
 					ExpandDuration = .05
@@ -403,7 +426,7 @@ Part : <../base_part_terran.rules>/Part
 	{
 		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
 		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
-		BatteryFillTime = 0
+		BatteryFillTime = 1000 / (&~/Part/Components/BatteryStorage/PickUpRate)
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	}
 }
