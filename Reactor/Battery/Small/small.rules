@@ -1,23 +1,23 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : <../base_part_terran.rules>/Part
 {
-	NameKey = "Parts/Smallrea"
-	IconNameKey = "Parts/Smallrea"
-	ID = SW.reactor_small1
-	OtherIDs = ["reactor_small1"]
-	EditorGroups = ["Power", "TechI"]
-	DescriptionKey = "Parts/SmallreaDesc"
+	NameKey = "Parts/ReactorSmall"
+	IconNameKey = "Parts/ReactorSmallIcon"
+	ID = SW.reactor_small
+	OtherIDs = [SW.reactor, SW.reactor_medium]
+	EditorGroups = [Power, TechI, TechII]
+	DescriptionKey = "Parts/ReactorSmallDesc"
 	Resources
 	[
-		[steel, 8]
-		[coil, 20]
-		[enriched_uranium, 2]
+		[steel, 32]
+		[coil, 82]
+		[enriched_uranium, 8]
 	]
 	AIValueFactor = 5
-	Size = [1, 1]
+	Size = [2, 2]
 	IsRotateable = false
 	SelectionPriority = 0
 	SelectionTypeID = "reactors"
-	MaxHealth = 1000
+	MaxHealth = 4000
 	AutoDoorMaxPathLength = 5
 	TypeCategories = [reactor, provides_power]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
@@ -30,7 +30,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [32, 32]
+		Size = [48, 48]
 	}
 	Components : ^/0/Components
 	{
@@ -38,35 +38,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 2000
+			MaxResources = 8000
 			StartingResources = &MaxResources
 			SuppliesResources = true
-			MinResourcesPickUp = 500
+			MinResourcesPickUp = 1000
 			MaxResourcesPickUp = 1000
 			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
-			ToggleOnResources = 500
-			ToggleOffResources = 499
+			ToggleOnResources = 1000
+			ToggleOffResources = (&ToggleOnResources)-1
 		}
 		BatteryProducer
 		{
 			Type = ResourceConverter
 			ToStorage = BatteryStorage
-			ToQuantity = 500
-			Interval = .33
-		}
-		BatteryStorageBar
-		{
-			Type = ProgressBar
-			ShowProgressFor = BatteryStorage
-			LowColor = [64, 64, 0]
-			HighColor = [250, 250, 0]
-			FullColor = [255, 255, 0]
+			ToQuantity = 1000
+			Interval = .6666
 		}
 
 		Graphics
 		{
 			Type = Graphics
-			Location = [0.5, 0.5]
+			Location = [1, 1]
 			Floor
 			{
 				Layer = "floors"
@@ -84,8 +76,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"floor_on7.png"
 							"floor_on8.png"
 						]
-						Size = [1, 1]
-						AnimationInterval = 0.095
+						Size = [2, 2]
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -99,8 +91,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"floor_on7_33.png"
 							"floor_on8_33.png"
 						]
-						Size = [1, 1]
-						AnimationInterval = 0.095
+						Size = [2, 2]
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -114,8 +106,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"floor_on7_66.png"
 							"floor_on8_66.png"
 						]
-						Size = [1, 1]
-						AnimationInterval = 0.095
+						Size = [2, 2]
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 				]
 			}
@@ -126,15 +118,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "reactor.png"
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 					{
 						File = "reactor_33.png"
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 					{
 						File = "reactor_66.png"
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 				]
 			}
@@ -155,8 +147,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"lights7.png"
 							"lights8.png"
 						]
-						Size = [1, 1]
-						AnimationInterval = 0.075
+						Size = [2, 2]
+						AnimationInterval = 0.075*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -170,8 +162,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"lights7.png"
 							"lights8.png"
 						]
-						Size = [1, 1]
-						AnimationInterval = 0.075/1.75
+						Size = [2, 2]
+						AnimationInterval = 0.075/1.75*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -185,8 +177,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"lights7.png"
 							"lights8.png"
 						]
-						Size = [1, 1]
-						AnimationInterval = 0.075/2.5
+						Size = [2, 2]
+						AnimationInterval = 0.075/2.5*(&~/Scale)
 					}
 				]
 			}
@@ -197,15 +189,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "walls.png"
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 					{
 						File = "walls_33.png"
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 					{
 						File = "walls_66.png"
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 				]
 			}
@@ -217,17 +209,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "roof.png"
 						NormalsFile = "roof_normals.png"
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 					{
 						File = "roof_33.png"
 						NormalsFile = "roof_normals_33.png"
-						Size = [1, 1]
+						Size = [2, 2]
 					}
 					{
 						File = "roof_66.png"
 						NormalsFile = "roof_normals_66.png"
-						Size = [1, 1]
+						Size = [2, 2]
+					}
+				]
+			}
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [6, 6]
+						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [180*1.0,255*1.0, 77*1.0]
 					}
 				]
 			}
@@ -236,19 +242,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ReactorHum
 		{
 			Type = ContinuousEffects
-			Location = [0.5, 0.5]
-			OnlyWhenOperational = true
+			Location = [1, 1]
 			MediaEffects
 			[
 				: /BASE_SOUNDS/AudioInterior
 				{
 					Sound = "./Data/ships/terran/reactor_small/operating.wav"
 					Volume = .5
-					Speed = .75
+					Speed = .5
 					MaxConcurrent = 1
 					DynamicVolume : ^/0/DynamicVolume
 					{
-						ExteriorVolume = .5
+						ExteriorVolume = .5*(&~/Scale)
 					}
 				}
 			]
@@ -257,7 +262,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [0.5, 0.5]
+			Location = [1, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			Round = Down
@@ -265,37 +270,37 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				{
 					File = "batteries1.png"
-					Offset = [0.12625, -0.25]
-					Size = [0.5, 0.5]
+					Offset = [0.2525, -0.5]
+					Size = [1, 1]
 				}
 				{
 					File = "batteries2.png"
-					Offset = [0.12625, -0.25]
-					Size = [0.5, 0.5]
+					Offset = [0.2525, -0.5]
+					Size = [1, 1]
 				}
 				{
 					File = "batteries3.png"
-					Size = [1, 1]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries4.png"
-					Size = [1, 1]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries5.png"
-					Size = [1, 1]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries6.png"
-					Size = [1, 1]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries7.png"
-					Size = [1, 1]
+					Size = [2, 2]
 				}
 				{
 					File = "batteries8.png"
-					Size = [1, 1]
+					Size = [2, 2]
 				}
 			]
 		}
@@ -303,13 +308,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
-			Location = [0.5, 0.5]
+			Location = [1, 1]
 
 			MediaEffects
 			[
-				&<./Data/ships/terran/reactor_small/particles/reactor_explode_small.rules>
-				&<./Data/ships/terran/reactor_small/particles/reactor_explode_flash_small.rules>
-				&<./Data/ships/terran/reactor_small/particles/reactor_shockwave_small.rules>
+				&<particles/reactor_explode_small.rules>
+				&<particles/reactor_explode_flash_small.rules>
+				&<particles/reactor_shockwave_small.rules>
 				&<./Data/common_effects/particles/explosions/med_part_explode_debris.rules>
 				&<./Data/common_effects/particles/explosions/big_part_explode_smoke.rules>
 
@@ -331,15 +336,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 22500
-					Radius = 2.1
+					TotalDamage = 90000
+					Radius = 6
 					Delay = .05
 					ExpandDuration = .1
-					ExpandStartRadius = 1
+					ExpandStartRadius = 2
 					ExpandLoss = 100%
-					FireChancePerNDamage = 20%
-					ImpulsePerNDamage = 2.5
-					NDamage = 250
+					FireChancePerNDamage = 50%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
 					Filter
 					{
 						OperationalHealth = true
@@ -349,14 +354,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 5000
-					Radius = 1.4
+					TotalDamage = 20000
+					Radius = 4
 					Delay = .05
 					ExpandDuration = .05
-					ExpandStartRadius = 0.4
+					ExpandStartRadius = 2
 					ExpandLoss = 100%
-					ImpulsePerNDamage = 1
-					NDamage = 200
+					ImpulsePerNDamage = 5
+					NDamage = 1000
 					Filter
 					{
 						OperationalHealth = false
@@ -370,7 +375,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [0.5, 0.5]
+			Location = [1, 1]
 			Layer = "indicators"
 			Indicators
 			[
@@ -380,7 +385,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [0.75, 0.75]
+						Size = [1, 1]
 					}
 				}
 			]
@@ -390,7 +395,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [1, 1]
+			Size = [2, 2]
 		}
 	}
 
@@ -402,3 +407,5 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	}
 }
+Size = Small
+Scale = (1/1)

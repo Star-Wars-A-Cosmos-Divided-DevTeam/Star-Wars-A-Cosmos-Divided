@@ -1,28 +1,25 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/HypermatterReactor4x4"
-	IconNameKey = "Parts/HypermatterReactor4x4Icon"
-	DescriptionKey = "Parts/HypermatterReactor4x4Desc"
-	ID = SW.hypermatter_reactor_4x4
-	//OtherIDs = []
-	EditorGroups = ["Power", "TechIII"]
+	NameKey = "Parts/SW_TinyReactor"
+	IconNameKey = "Parts/SW_TinyReactor"
+	ID = SW.reactor_tiny
+	OtherIDs = [reactor_small1,SW.reactor_small1]
+	EditorGroups = ["Power", "TechI"]
+	DescriptionKey = "Parts/SW_TinyReactorDesc"
 	Resources
 	[
-		[SW.durasteel, 128]
-		[coil, 24]
-		[coil2, 8]
-		[processor, 2]
-		[hyperium, 20]
-		[enriched_uranium, 64]
+		[steel, 8]
+		[coil, 20]
+		[enriched_uranium, 2]
 	]
 	AIValueFactor = 5
-	Size = [4, 4]
+	Size = [1, 1]
 	IsRotateable = false
 	SelectionPriority = 0
 	SelectionTypeID = "reactors"
-	MaxHealth = 32000
+	MaxHealth = 1000
 	AutoDoorMaxPathLength = 5
-	TypeCategories = [hypermatter_reactor, provides_power]
+	TypeCategories = [reactor, provides_power]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	CreateUnderlyingWhenDestroyed = false
 	IgnoreRotationForMirroredSelection = true
@@ -33,56 +30,43 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [64, 64]
+		Size = [32, 32]
 	}
 	Components : ^/0/Components
 	{
-		IsOperational
-		{
-			Type = MultiToggle
-			Toggles = [True]
-			Mode = All
-		}
-		True
-		{
-			Type = StaticToggle
-			ToggleOn = "true"
-		}
-
-		HypermatterStorage
+		BatteryStorage
 		{
 			Type = ResourceStorage
-			ResourceType = SW.hypermatter
-			MaxResources = 16000
-			StartingResources = 0
+			ResourceType = battery
+			MaxResources = 2000
+			StartingResources = &MaxResources
 			SuppliesResources = true
-			MinResourcesPickUp = 1000
-			MaxResourcesPickUp = 3000
-			ExpectedResourceGenerationRate = (&../HypermatterProducer/ToQuantity) / (&../HypermatterProducer/Interval)
-			ToggleOnResources = 1000
-			ToggleOffResources = (&ToggleOnResources) -1
+			MinResourcesPickUp = 500
+			MaxResourcesPickUp = 1000
+			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+			ToggleOnResources = 500
+			ToggleOffResources = (&ToggleOnResources)-1
 		}
-		HypermatterProducer
+		BatteryProducer
 		{
 			Type = ResourceConverter
-			ToStorage = HypermatterStorage
-			ToQuantity = 1000
-			Interval = 1
+			ToStorage = BatteryStorage
+			ToQuantity = 500
+			Interval = .6666
 		}
-		HypermatterStorageBar
+		BatteryStorageBar
 		{
 			Type = ProgressBar
-			ShowProgressFor = HypermatterStorage
-			OperationalToggle = True
-			LowColor = [0, 32, 64]
-			HighColor = [0, 250, 250]
-			FullColor = [0, 255, 255]
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
 		}
 
 		Graphics
 		{
 			Type = Graphics
-			Location = [2, 2]
+			Location = [0.5, 0.5]
 			Floor
 			{
 				Layer = "floors"
@@ -100,8 +84,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"floor_on7.png"
 							"floor_on8.png"
 						]
-						Size = [4, 4]
-						AnimationInterval = 0.095
+						Size = [1, 1]
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -115,8 +99,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"floor_on7_33.png"
 							"floor_on8_33.png"
 						]
-						Size = [4, 4]
-						AnimationInterval = 0.095
+						Size = [1, 1]
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -130,27 +114,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"floor_on7_66.png"
 							"floor_on8_66.png"
 						]
-						Size = [4, 4]
-						AnimationInterval = 0.095
+						Size = [1, 1]
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 				]
 			}
 			OperationalDoodad
 			{
-				Layer = "doodads_low"
+				Layer = "doodads_high"
 				DamageLevels
 				[
 					{
 						File = "reactor.png"
-						Size = [4, 4]
+						Size = [1, 1]
 					}
 					{
 						File = "reactor_33.png"
-						Size = [4, 4]
+						Size = [1, 1]
 					}
 					{
 						File = "reactor_66.png"
-						Size = [4, 4]
+						Size = [1, 1]
 					}
 				]
 			}
@@ -171,8 +155,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"lights7.png"
 							"lights8.png"
 						]
-						Size = [4, 4]
-						AnimationInterval = 0.075
+						Size = [1, 1]
+						AnimationInterval = 0.075*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -186,8 +170,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"lights7.png"
 							"lights8.png"
 						]
-						Size = [4, 4]
-						AnimationInterval = 0.075/1.75
+						Size = [1, 1]
+						AnimationInterval = 0.075/1.75*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -201,8 +185,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"lights7.png"
 							"lights8.png"
 						]
-						Size = [4, 4]
-						AnimationInterval = 0.075/2.5
+						Size = [1, 1]
+						AnimationInterval = 0.075/2.5*(&~/Scale)
 					}
 				]
 			}
@@ -212,16 +196,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "walls.png"
-						Size = [4, 4]
+						File = "walls_tiny.png"
+						Size = [1, 1]
 					}
 					{
-						File = "walls_33.png"
-						Size = [4, 4]
+						File = "walls_tiny_33.png"
+						Size = [1, 1]
 					}
 					{
-						File = "walls_66.png"
-						Size = [4, 4]
+						File = "walls_tiny_66.png"
+						Size = [1, 1]
 					}
 				]
 			}
@@ -233,40 +217,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "roof.png"
 						NormalsFile = "roof_normals.png"
-						Size = [4, 4]
+						Size = [1, 1]
 					}
 					{
 						File = "roof_33.png"
 						NormalsFile = "roof_normals_33.png"
-						Size = [4, 4]
+						Size = [1, 1]
 					}
 					{
 						File = "roof_66.png"
 						NormalsFile = "roof_normals_66.png"
-						Size = [4, 4]
-					}
-				]
-			}
-
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [10, 10]
-						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
-						VertexColor = [0, 240, 240]
+						Size = [1, 1]
 					}
 				]
 			}
 		}
 
-		HypermatterHum
+		ReactorHum
 		{
 			Type = ContinuousEffects
-			Location = [2, 2]
+			Location = [0.5, 0.5]
+			OnlyWhenOperational = true
 			MediaEffects
 			[
 				: /BASE_SOUNDS/AudioInterior
@@ -277,54 +248,54 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					MaxConcurrent = 1
 					DynamicVolume : ^/0/DynamicVolume
 					{
-						ExteriorVolume = .5
+						ExteriorVolume = .5*(&~/Scale)
 					}
 				}
 			]
 		}
 
-		HypermatterSprites
+		BatterySprites
 		{
 			Type = ResourceSprites
-			OperationalToggle = True
-			Location = [2, 2]
-			ResourceStorage = HypermatterStorage
+			Location = [0.5, 0.5]
+			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
+			Round = Down
 			ResourceLevels
 			[
 				{
 					File = "batteries1.png"
-					Offset = [0.505, -1]
-					Size = [2, 2]
+					Offset = [0.12625, -0.25]
+					Size = [0.5, 0.5]
 				}
 				{
 					File = "batteries2.png"
-					Offset = [0.505, -1]
-					Size = [2, 2]
+					Offset = [0.12625, -0.25]
+					Size = [0.5, 0.5]
 				}
 				{
 					File = "batteries3.png"
-					Size = [4, 4]
+					Size = [1, 1]
 				}
 				{
 					File = "batteries4.png"
-					Size = [4, 4]
+					Size = [1, 1]
 				}
 				{
 					File = "batteries5.png"
-					Size = [4, 4]
+					Size = [1, 1]
 				}
 				{
 					File = "batteries6.png"
-					Size = [4, 4]
+					Size = [1, 1]
 				}
 				{
 					File = "batteries7.png"
-					Size = [4, 4]
+					Size = [1, 1]
 				}
 				{
 					File = "batteries8.png"
-					Size = [4, 4]
+					Size = [1, 1]
 				}
 			]
 		}
@@ -332,7 +303,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
-			Location = [2, 2]
+			Location = [0.5, 0.5]
 
 			MediaEffects
 			[
@@ -355,20 +326,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					Duration = 2
 				}
 			]
-/*
+
 			HitEffects
 			[
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 90000
-					Radius = 6
+					TotalDamage = 22500
+					Radius = 2.1
 					Delay = .05
 					ExpandDuration = .1
-					ExpandStartRadius = 2
+					ExpandStartRadius = 1
 					ExpandLoss = 100%
-					FireChancePerNDamage = 50%
-					ImpulsePerNDamage = 10
-					NDamage = 1000
+					FireChancePerNDamage = 20%
+					ImpulsePerNDamage = 2.5
+					NDamage = 250
 					Filter
 					{
 						OperationalHealth = true
@@ -378,14 +349,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 20000
-					Radius = 4
+					TotalDamage = 5000
+					Radius = 1.4
 					Delay = .05
 					ExpandDuration = .05
-					ExpandStartRadius = 2
+					ExpandStartRadius = 0.4
 					ExpandLoss = 100%
-					ImpulsePerNDamage = 5
-					NDamage = 1000
+					ImpulsePerNDamage = 1
+					NDamage = 200
 					Filter
 					{
 						OperationalHealth = false
@@ -394,23 +365,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				}
 			]
-*/
 		}
 
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [2, 2]
+			Location = [0.5, 0.5]
 			Layer = "indicators"
 			Indicators
 			[
 				// Out of power.
 				{
-					Toggle = HypermatterStorage
+					Toggle = BatteryStorage
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [1, 1]
+						Size = [0.5, 0.5]
 					}
 				}
 			]
@@ -420,17 +390,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [4, 4]
+			Size = [1, 1]
 		}
 	}
 
 	Stats
 	{
-		HypermatterGeneration = (&~/Part/Components/HypermatterProducer/ToQuantity) / (&~/Part/Components/HypermatterProducer/Interval) / 1000
-		HypermatterSize = (&~/Part/Components/HypermatterStorage/MaxResourcesPickUp) / 1000
-		HypermatterFillTime = 0
-		HypermatterCapacity = (&~/Part/Components/HypermatterStorage/MaxResources) / 1000
+		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
+		BatteryFillTime = 0
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	}
 }
-Size = Large
-Scale = (1/1*4)
+Size = Tiny
+Scale = (1/4)
