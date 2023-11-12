@@ -31,9 +31,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]
 	AllowedDoorLocations
 	[
-		[-1, 0]
+		//[-1, 0] //door to outside of ship?
 		[1, 0]
-		//[0, 1] //door to outside of ship?
+		[0, 1]
 		[0,-1]
 	]
 	IsFlippable = true
@@ -286,6 +286,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "../common_graphics_1/lights.png"
 						Size = [1, 1]
+						UVRotation = 3
 					}
 				]
 			}
@@ -403,9 +404,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		WeaponSprite
 		{
 			Type = Sprite
-			ChainedTo = Turret
-			Location = [0.25, 0]
-			Rotation = 90d
+			//ChainedTo = Turret
+			Location = [-0.25, 0.375]
+			//Rotation = 90d
 			Layer = "weapons"
 			ResetAnimationTrigger = BulletEmitterBase
 			AtlasSprite
@@ -526,16 +527,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [1, 1]
 					}
 				}
-
-				// No crew.
-				{
-					Toggle = PartCrew
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
-					}
-				}
 			]
 		}
 		Blueprints
@@ -596,7 +587,7 @@ TurretStats
 			ChainedTo = TurretLocationProxy
 			FireTrigger = CommonReloadResetTriggerProxy
 			GetTargetFrom = Turret
-			Location = [0.8, 0]
+			Location = [4/64, 0]
 			FireDelay = 0.03
 			ResourceStorage = BatteryStorage
 			ResourcesUsed = 40
@@ -606,7 +597,7 @@ TurretStats
 		ReloadProgressBarBase
 		{
 			Type = ProgressBar
-			OperationalToggle = IsOperational
+			OperationalToggle = SwitchWeaponCooldownTimer
 			ShowProgressFor = CommonReloadTimer
 			Invert = true
 		}
@@ -623,7 +614,7 @@ TurretStats
 			Type = TriggeredEffects
 			ChainedTo = TurretLocationProxy
 			Trigger = CommonReloadResetTriggerProxy
-			Location = [1.1, 0]
+			Location = [0, 0]
 			AnchorMediaEffects = true
 
 			MediaEffects
@@ -645,10 +636,10 @@ TurretStats
 			Type = TurretWeapon
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			Location = [-0.25, 0.625]  //[-0.140625, 0.75]
+			Location = [-16/64, -6/64]
 			Rotation = -90d
 			FireInterval = 0
-			FiringArc = 10d
+			FiringArc = 9d
 			RotateSpeed = 90d
 			FireThresholdAngle = 1d
 			AIFirepowerRating = 400
