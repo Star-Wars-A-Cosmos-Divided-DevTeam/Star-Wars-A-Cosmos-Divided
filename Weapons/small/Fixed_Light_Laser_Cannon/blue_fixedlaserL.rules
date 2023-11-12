@@ -1,5 +1,63 @@
 Components
 	{
+		ReloadProgressBar : &<fixedlaserL.rules>/ReloadProgressBarBase
+		{
+			LowColor = [0, 0, 64]
+			HighColor = [0, 0, 255]
+		}
+
+		BulletEmitter : &<fixedlaserL.rules>/BulletEmitterBase
+		{
+			Bullet = &/SW_SHOTS/bluesmalllasershot
+		}
+
+		FireEffect : &<fixedlaserL.rules>/FireEffectBase
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/SmallBlueLaserShoot
+				
+				&/SW_SOUNDS/SmallLaserFire
+			]
+		}
+		LightGraphics
+		{
+			Type = Graphics
+			OperationalToggle = CommonOnShootEffectTimer
+			InvertOperationalToggle = true
+			ChainedTo = TurretLocationProxy
+			Location = [1.4, 0]
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = &<fixedlaserL.rules>/OperationalRoofLightingBase/Size
+						Z = &<fixedlaserL.rules>/OperationalRoofLightingBase/Z
+						VertexColor = [16, 16, 255]
+					}
+				]
+			}
+		}
+	}
+LaserStats
+{
+	NameKey = "StatCategories/SingleBlueLasershot"
+	Stats
+	{
+//		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+//		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
+//		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+//		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+//		DamagePerSecond = (&DamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
+//		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}
+
+/*
 		SwitchTimerTrigger
 		{
 			Type = Timer
@@ -73,50 +131,9 @@ Components
 			OperationalToggle = WeaponIsOperational
 			ShowProgressFor = Turret
 		}
+/*
 
-		BulletEmitter
-		{
-			Type = BulletEmitter
-			ChainedTo = Turret
-			FireTrigger = Turret
-			GetTargetFrom = Turret
-			Location = [0.8, 0]
-			OperationalToggle = IsOperational
-			Bullet = &/SW_SHOTS/bluesmalllasershot
-			ResourceStorage = BatteryStorage
-			ResourcesUsed = 40
-		}
-
-		ChargeEffect
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = Turret
-			Location = [1.1, 0]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/SW_SOUNDS/SmallLaserCharge
-			]
-		}
-
-		FireEffect
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = BulletEmitter
-			Location = [0.8, 0]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/SW_PARTICLES/SmallBlueLaserShoot
-				
-				&/SW_SOUNDS/SmallLaserFire
-			]
-		}
-
+/*
 		TurretCollider
 		{
 			Type = CircleCollider
@@ -141,11 +158,11 @@ Components
 						// None.
 					}
 					{
-						File = "turret damage_33.png"
+						File = "../common_graphics_1/turret damage_33.png"
 						Size = [1, 2]
 					}
 					{
-						File = "turret damage_66.png"
+						File = "./common_graphics_1/turret damage_66.png"
 						Size = [1, 2]
 					}
 				]
@@ -174,17 +191,4 @@ Components
 				ClampAnimation = true
 			}
 		}
-	}
-LaserStats
-{
-	NameKey = "StatCategories/SingleBlueLasershot"
-	Stats
-	{
-		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
-		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-		DamagePerSecond = (&DamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
-		Damage = [&../DamagePerShot, &../DamagePerSecond]
-	}
-}
+*/
