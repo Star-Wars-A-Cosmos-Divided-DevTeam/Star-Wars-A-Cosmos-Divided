@@ -29,7 +29,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	FuelUsage = 128 //160%*40%*200 of vanilla
 
 	ProhibitBelow = 5
-	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Accelerator]
+
 	AllowedDoorLocations
 	[
 		[-1, 0]
@@ -87,15 +88,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 255, 0]
 		}
 
-		EngineBuffToggle
+		SWIonEngineBuffToggle
 		{
 			Type = BuffToggle
-			BuffType = Engine
+			BuffType = SW_Ion_Accelerator
 		}
+
+		SWIonEngineBuffProxy
+		{
+			Type = ToggleProxy
+			ComponentID = SWIonEngineBuffToggle
+		}
+
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle
+			Toggle = SWIonEngineBuffToggle
 			Invert = true
 			IncludeInBlueprints = true
 			Components
@@ -463,7 +471,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Accelerator; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime

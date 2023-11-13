@@ -31,7 +31,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	FuelUsage = 2100 
 
 	ProhibitBelow = 11 // 26
-	ReceivableBuffs : ^/0/ReceivableBuffs [Engine,PowerCellBuff]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Accelerator]
 	
 	AllowedDoorLocations
 	[
@@ -90,7 +90,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 45000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -101,15 +100,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 255, 0]
 		}
 
-		EngineBuffToggle
+		SWIonEngineBuffToggle
 		{
 			Type = BuffToggle
-			BuffType = Engine
+			BuffType = SW_Ion_Accelerator
 		}
+
+		SWIonEngineBuffProxy
+		{
+			Type = ToggleProxy
+			ComponentID = SWIonEngineBuffToggle
+		}
+
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle
+			Toggle = SWIonEngineBuffToggle
 			Invert = true
 			IncludeInBlueprints = true
 			Components
@@ -122,7 +128,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
 					ResupplyThreshold = 1000
 					OperationalToggle = PowerToggle
-					ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 				}
 			}
 		}
@@ -288,7 +293,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Accelerator; BuffMode=Multiply; }
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
