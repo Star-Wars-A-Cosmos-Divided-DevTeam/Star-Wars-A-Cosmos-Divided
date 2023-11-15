@@ -1,24 +1,24 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/ReactorSmall"
-	IconNameKey = "Parts/ReactorSmallIcon"
-	DescriptionKey = "Parts/ReactorSmallDesc"
+	NameKey = "Parts/SW_LightReactor"
+	IconNameKey = "Parts/SW_LightReactorIcon"
+	DescriptionKey = "Parts/SW_LightReactorDesc"
 	ID = SW.reactor_small
 	OtherIDs = [SW.reactor, SW.reactor_medium]
 	EditorGroups = [Power, TechI, TechII]
 	Resources
 	[
-
-		[steel, 32]
-		[coil, 82]
-		[enriched_uranium, 8]
+		[SW.durasteel, 126]
+		[coil, 164]
+		[coil2, 80]
+		[enriched_uranium, 16]
 	]
 	AIValueFactor = 5
 	Size = [2, 2]
 	IsRotateable = false
 	SelectionPriority = 0
 	SelectionTypeID = "reactors"
-	MaxHealth = 4000
+	MaxHealth = 8000
 	AutoDoorMaxPathLength = 5
 	TypeCategories = [reactor, provides_power]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
@@ -31,7 +31,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [48, 48]
+		Size = [56, 56]
 	}
 	Components : ^/0/Components
 	{
@@ -51,15 +51,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 8000
+			MaxResources = 16000
 			StartingResources = &MaxResources
 			SuppliesResources = true
-			MinResourcesPickUp = 1000
-			MaxResourcesPickUp = 1000
-			InitPickUp = 1000
-			PickUpRate = 1000 / 1.0
+			MinResourcesPickUp = 2000
+			MaxResourcesPickUp = 2000
+			InitPickUp = 1001
+			PickUpRate = 1000 / 0.5
 			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
-			ToggleOnResources = 1000
+			ToggleOnResources = 4001
 			ToggleOffResources = (&ToggleOnResources)-1
 		}
 		BatteryProducer
@@ -67,8 +67,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceConverter
 			ToStorage = BatteryStorage
 			ToQuantity = 1000
-			Interval = .6666
+			Interval = .4444 / 2 // .6666
 		}
+
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -247,27 +248,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			/*
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [6, 6]
-						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
-						VertexColor = [180*1.0,255*1.0, 77*1.0]
 					}
-				]
-			}
-			*/
-		}
 
 		ReactorHum
 		{
 			Type = ContinuousEffects
 			Location = [1, 1]
+			OnlyWhenOperational = true
 			MediaEffects
 			[
 				: /BASE_SOUNDS/AudioInterior
@@ -428,7 +415,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	{
 		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
 		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
-		BatteryFillTime = 1000 / (&~/Part/Components/BatteryStorage/PickUpRate)
+		BatteryFillTime = 0 // 1000 / (&~/Part/Components/BatteryStorage/PickUpRate)
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	}
 }
