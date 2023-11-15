@@ -21,11 +21,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "blasterlasers"
-	IsFlippable = true
 	MaxHealth = 2000
 	InitialPenetrationResistance = 1.2
 	ProhibitLeft = 1
-	MaxDoors = 2
+//	MaxDoors = 2
 	AllowedDoorLocations
 	[
 		//[-1, 0]
@@ -33,13 +32,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[0, 1]
 		[0,-1]
 	]
+	IsFlippable = true
 	FlipHRotate = [0, 3, 2, 1]
 	FlipVRotate = [2, 1, 0, 3]
 	EditorIcon
 	{
 		Texture
 		{
-			File = "iconL.png"
+			File = "icon.png"
 			SampleMode = Linear
 		}
 		Size = [34, 92]
@@ -112,7 +112,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = RedMunitionToggle
-			Components = &<red_fixedlaserL.rules>/Components
+			Components = &<red_fixedlaser.rules>/Components
 		}
 
 		BlueMunitionToggle
@@ -125,7 +125,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = BlueMunitionToggle
-			Components = &<blue_fixedlaserL.rules>/Components
+			Components = &<blue_fixedlaser.rules>/Components
 		}
 
         GreenMunitionToggle
@@ -138,7 +138,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = GreenMunitionToggle
-			Components = &<green_fixedlaserL.rules>/Components
+			Components = &<green_fixedlaser.rules>/Components
 		}
 
 		CommonReloadTimer
@@ -220,7 +220,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Graphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational,
+			OperationalToggle = IsOperational
+			Rotation = 270d
 			Location = [.5, .5]
 			Floor
 			{
@@ -259,7 +260,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"../common_graphics_1/doodads on8.png"
 						]
 						Size = [1, 1]
-						UVRotation = 3
+						//UVRotation = 3
 						AnimationInterval = 0.1
 					}
 				]
@@ -272,7 +273,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "../common_graphics_1/doodads off.png"
 						Size = [1, 1]
-						UVRotation = 3
+						//UVRotation = 3
 					}
 				]
 			}
@@ -315,19 +316,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = "../common_graphics_1/roof.png"
 						NormalsFile = "../common_graphics_1/roof_normals.png"
 						Size = [1, 1]
-						UVRotation = 3
+						//UVRotation = 3
 					}
 					{
 						File = "../common_graphics_1/roof_33.png"
 						NormalsFile = "../common_graphics_1/roof_normals_33.png"
 						Size = [1, 1]
-						UVRotation = 3
+						//UVRotation = 3
 					}
 					{
 						File = "../common_graphics_1/roof_66.png"
 						NormalsFile = "../common_graphics_1/roof_normals_66.png"
 						Size = [1, 1]
-						UVRotation = 3
+						//UVRotation = 3
 					}
 				]
 			}
@@ -377,9 +378,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			Location = [-.5, 1]
 			OperationalToggle = IsOperational
+			ChainedTo = Turret 
+			Rotation = 90d
 			Walls
 			{
-				Layer = "doodads_high"
+				Layer = "walls" //"doodads_high"
 				DamageLevels
 				[
 					{
@@ -396,11 +399,38 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-
+		WeaponSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [1.30, -0.10]
+			Rotation = 90d
+			Layer = "weapons"
+			ResetAnimationTrigger = BulletEmitterBase
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"weapon.png"
+					"weapon.png"
+				]
+				NormalsAnimationFiles
+				[
+					"weapon_normals.png"
+					"weapon_normals.png"
+				]
+				Size = [1, 5]
+				AnimationInterval = 0.01
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+		
 		BatterySprites
 		{
 			Type = ResourceSprites
 			Location = [.5, .5]
+			Rotation = 270d
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			HasZeroResourceSprite = true
@@ -409,47 +439,56 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				{
 					File = "../common_graphics_1/batteries0.png"
 					Size = [1, 1]
-					UVRotation = 3
+					MirrorU = true 
+//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries1.png"
 					Size = [1, 1]
-					UVRotation = 3
+					MirrorU = true
+//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries2.png"
 					Size = [1, 1]
-					UVRotation = 3
+					MirrorU = true
+//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries3.png"
 					Size = [1, 1]
-					UVRotation = 3
+					MirrorU = true
+//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries4.png"
 					Size = [1, 1]
-					UVRotation = 3
+					MirrorU = true
+//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries5.png"
 					Size = [1, 1]
-					UVRotation = 3
+					MirrorU = true
+//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries6.png"
 					Size = [1, 1]
-					UVRotation = 3
+					MirrorU = true
+//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries7.png"
 					Size = [1, 1]
-					UVRotation = 3
+					MirrorU = true
+//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries8.png"
 					Size = [1, 1]
-					UVRotation = 3
+					MirrorU = true
+//					UVRotation = 3
 				}
 			]
 		}
@@ -457,7 +496,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
+			Toggle = IsOperational
 			Location = [.5, .5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
@@ -501,36 +540,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Blueprints
 		{
 			Type = BlueprintSprite
-			File = "blueprintsl.png"
-			Size = [2, 3]
-			Offset = [-0.5, -1]
+			File = "blueprints.png"
+			Size = [2, 5]
+			Offset = [-.5, -1.5]
 		}
 	}
 	Stats
 	{
-		CrewRequired = &../Components/PartCrew/Crew
+		CrewRequired = 0 //&~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = (&PowerPerSecond) * 1
-		RecCrew = (&CrewRequired) + (&RecPower) * 4
-/*
-		ROF = 1 / (&<red_fixedlaserLA.rules>/Components/Turret/FireInterval)
-		Range = &<red_fixedlaserLA.rules>/Components/BulletEmitter/Bullet/Range
-		Arc = deg(&<red_fixedlaserLA.rules>/Components/Turret/FiringArc)
-		TurretSpeed = deg(&<red_fixedlaserLA.rules>/Components/Turret/RotateSpeed)
-		ShotSpeed = &<red_fixedlaserLA.rules>/Components/BulletEmitter/Bullet/Speed
-		ShotHP = &<red_fixedlaserLA.rules>/Components/BulletEmitter/Bullet/Components/Targetable/Health
-		PowerPerShot = (&<red_fixedlaserLA.rules>/Components/BulletEmitter/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * 1 / (&<red_fixedlaserLA.rules>/Components/Turret/FireInterval)
-		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
-*/
+		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
+		RecCrew = (&RecPower) * 2//(&CrewRequired) + 
+
 	}
 	StatsByCategory
 	[
 		//&~/TurretStats
-		&<red_fixedlaserL.rules>/LaserStats
-		&<blue_fixedlaserL.rules>/LaserStats
-		&<green_fixedlaserL.rules>/LaserStats
+		&<red_fixedlaser.rules>/LaserStats
+		&<blue_fixedlaser.rules>/LaserStats
+		&<green_fixedlaser.rules>/LaserStats
 	]
 }
 TurretStats
@@ -563,7 +592,7 @@ BulletEmitterBase
 	ChainedTo = TurretLocationProxy
 	FireTrigger = CommonReloadResetTriggerProxy
 	GetTargetFrom = Turret
-	Location = [3.4, 0]
+	Location = [3.4, -.1]
 	FireDelay = 0.03
 	ResourceStorage = BatteryStorage
 	ResourcesUsed = 50
@@ -581,8 +610,8 @@ FireEffectBase
 {
 	Type = TriggeredEffects
 	ChainedTo = BulletEmitter
-	Trigger = BulletEmitter
-	Location = [3.3, 0]
+	Trigger = CommonReloadResetTriggerProxy
+	//Location = [1.3, 0]
 	AnchorMediaEffects = true
 }
 ChargeEffectBase
@@ -605,12 +634,12 @@ TurretColliderBase
 	Radius = .45
 	Density = .75
 }
-TurretBase
+		TurretBase
 		{
 			Type = TurretWeapon
 			Location = [-0.25, 0.625]
 			Rotation = -90d
-			OperationalToggle = IsOperationalAndNormalTurretToggle
+			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0
 			FiringArc = 15d
