@@ -69,7 +69,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [64, 106.66]
 	}
-	Components : ^/0/Components, &<toggles.rules>, &<toggles2.rules>, &<graphics8x16_doodads.rules>, &<graphics8x16_floor.rules>, &<graphics8x16_walls.rules>, &<graphics8x16_roof.rules>
+	Components : ^/0/Components, &<toggles.rules>, &<toggles2.rules>, &<graphics.rules>
 	{
 		IsOperational
 		{
@@ -330,10 +330,29 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AllowAutoFire = false
 		}
 		*/
+
+		ThrusterActivationBarToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = ThrusterOn
+			OffTrigger = ThrusterOff
+		}
+		ThrusterOn
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThrusterValueProxy
+			MinAmount = 1%
+		}
+		ThrusterOff
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThrusterValueProxy	
+			MaxAmount = 1%
+		}
 		ActivationBar
 		{
 			Type = ProgressBar
-			OperationalToggle = IsOperational
+			OperationalToggle = ThrusterActivationBarToggle
 			ShowProgressFor = MainThrusterValueProxy
 			LowColor = [0, 0, 0]
 			HighColor = [250, 250, 250]
@@ -377,6 +396,50 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					Volume = .25
 					Speed = 1.5
 					MaxConcurrentVolume = .5
+				}
+			]
+		}
+
+		BatterySpritesHolder
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+
+			Location = [4, 3 + 56/64 + 1/256]
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "../Ion_Common/IonThruster_battery_holder03.png"
+						Size = [6, 3]
+					}
+				]
+			}
+			NonOperationalDoodad = &OperationalDoodad
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = &../BatterySpritesHolder/Location
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../Ion_Common/batteries 1.png"
+					Size = [6, 3]
+				}
+				{
+					File = "../Ion_Common/batteries 2.png"
+					Size = [6, 3]
+				}
+				{
+					File = "../Ion_Common/batteries 3.png"
+					Size = [6, 3]
 				}
 			]
 		}

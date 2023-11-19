@@ -477,10 +477,29 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AllowAutoFire = false
 		}
 		*/
+
+		ThrusterActivationBarToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = ThrusterOn
+			OffTrigger = ThrusterOff
+		}
+		ThrusterOn
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThrusterValueProxy
+			MinAmount = 1%
+		}
+		ThrusterOff
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThrusterValueProxy	
+			MaxAmount = 1%
+		}
 		ActivationBar
 		{
 			Type = ProgressBar
-			OperationalToggle = IsOperational
+			OperationalToggle = ThrusterActivationBarToggle
 			ShowProgressFor = MainThrusterValueProxy
 			LowColor = [0, 0, 0]
 			HighColor = [250, 250, 250]
