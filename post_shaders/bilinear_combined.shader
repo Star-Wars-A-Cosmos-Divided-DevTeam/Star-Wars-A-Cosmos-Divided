@@ -2,9 +2,9 @@
 #include "./Data/base.shader"
 
 #define SCALE_AMOUNT 1.0
-#define SATURATION_AMOUNT 1.11
-#define CONTRAST_AMOUNT 1.11
-#define BRIGHTNESS 0.81
+#define SATURATION_AMOUNT 1.08
+#define CONTRAST_AMOUNT 1.08
+#define BRIGHTNESS 0.92
 
 PIX_OUTPUT pix(in VERT_OUTPUT input) : SV_TARGET
 {
