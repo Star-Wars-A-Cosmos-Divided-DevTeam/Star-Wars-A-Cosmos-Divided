@@ -1,11 +1,16 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/Navicomputer"
-	IconNameKey = "Parts/NavicomputerIcon"
 	ID = SW.navicomputer
 	OtherIDs = ["navicomputer"]
-	EditorGroups = ["Flight", "TechII"]
+
+	NameKey = "Parts/Navicomputer"
+	IconNameKey = "Parts/NavicomputerIcon"
 	DescriptionKey = "Parts/NavicomputerDesc"
+
+	EditorGroups = ["Flight", "TechII"]
+	TypeCategories = [navicomputer, uses_power, is_crewed]
+	RequiresCategories = []
+
 	Resources
 	[
 		[steel, 32]
@@ -14,11 +19,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[processor, 1]
 	]
 	Size = [2, 2]
-	SelectionPriority = 0
 	MaxHealth = 4000
+
+	SelectionPriority = 0
+	SelectionTypeID = "navicomputer"
+
 	AutoDoorMaxPathLength = 5
-	RequiresCategories = []
-	TypeCategories = [navicomputer]
+
 	AllowedDoorLocations
 	[
 		[-1, 1]
@@ -34,8 +41,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [48,48]
+		Size = [48, 48]
 	}
+
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -52,14 +60,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
-/*
+
 		CommandConsumer
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
-			CommandPoints = 1
+			CommandPoints = 0
 		}
-*/
+
+		Sensor
+		{
+			Type = Sensor
+			OperationalToggle = IsOperational
+			SightRadius = 640 //400
+			RadarRadius = 2100 //1800
+		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -76,6 +92,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			DefaultPriority = &/PRIORITIES/Utility_Supply
 			ResupplyThreshold = 1000
 			OperationalToggle = PowerToggle
+		}
+
+		PowerDrain
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
+			FromQuantity = 100
+			MinFromQuantityForConversion = 1
+			Interval = 6 // Drains 1 power every minute.
 		}
 
 		Graphics
@@ -137,15 +163,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "walls.png"
+						File = "../walls_02.png"
 						Size = [2, 2]
 					}
 					{
-						File = "walls_33.png"
+						File = "../walls_02_33.png"
 						Size = [2, 2]
 					}
 					{
-						File = "walls_66.png"
+						File = "../walls_02_66.png"
 						Size = [2, 2]
 					}
 				]
@@ -176,24 +202,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [0.55, 1.2]
+			Location = [0.65, 1.2]
 		}
 		CrewLocation2
 		{
 			Type = CrewLocation
-			Location = [1.45, 1.2]
+			Location = [1.35, 1.2]
 		}
 		PartCrew
 		{
 			Type = PartCrew
 			Crew = 2
-			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
 			PrerequisitesBeforeCrewing = [PowerToggle]
 			HighPriorityPrerequisites = [BatteryStorage]
 			CrewDestinations
 			[
-				[0.55, .5]
-				[1.45, .5]
+				&../../CrewLocation1/Location
+				&../../CrewLocation2/Location
 			]
 			CrewLocations
 			[
@@ -281,5 +307,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "blueprints.png"
 			Size = [2, 2]
 		}
+	}
+
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		SightRange = &~/Part/Components/Sensor/SightRadius
+		RadarRange = &~/Part/Components/Sensor/RadarRadius
+
+		RecPower = (&PowerUsageContinuousMinutes) / 60
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
 }
