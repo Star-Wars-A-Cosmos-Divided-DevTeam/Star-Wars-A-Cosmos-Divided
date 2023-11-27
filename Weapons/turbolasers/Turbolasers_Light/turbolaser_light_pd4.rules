@@ -1,32 +1,50 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {	
+	//IDs
 	ID = SW.turbolaser_light_pd4
+
+	//StringKeys
 	NameKey = "Parts/TurbolaserLightPD4"
 	IconNameKey = "Parts/TurbolaserLightPD4Icon"
-	EditorGroups = ["WeaponsEnergy", "Defenses", "TechII"]
 	DescriptionKey = "Parts/TurbolaserLightPD4Desc"
+
+	//Groups&Categories
+	EditorGroups = ["WeaponsEnergy", "Defenses", "TechII"]
+	TypeCategories = [defense, uses_power, is_crewed]
+	
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 60] 
 		[coil, 40] //
 	]  //Cost = 8000
-	AIValueFactor = 1
-
-	ReceivableBuffs : ^/0/ReceivableBuffs []
-	TypeCategories = [defense, uses_power, is_crewed]
 	Size = [2, 2]
+	MaxHealth = 4000
+
+	//Rects
+	
+	//Selections
+	SelectionTypeID = "cannons"
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	SelectionTypeID = "cannons"
-	MaxHealth = 4000
+
+	//PartSpecific
+	AIValueFactor = 1
 	InitialPenetrationResistance = 5
+	
+	//ReceivableBuffs
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	
+	//Doors&Etc
 	AllowedDoorLocations
 	[
 		[-1, 1]
 		[2, 1]
-                [1, 2]
-                [0, 2]
-	]
+        [1, 2]
+        [0, 2]
+	]	
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -37,8 +55,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Size = [60, 60]
 	}
 	
-	Components : ^/0/Components, &<turret04_graphics.rules>, &<turbolaser04_green.rules>/Components
+	//Components	
+	Components : ^/0/Components, /*&<turret04_graphics.rules>,*/ &<turbolaser04_green.rules>/Components
 	{
+		WeaponIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, SwitchCooldownToggle]
+			Mode = All
+		}
 		IsOperational
 		{
 			Type = MultiToggle
@@ -51,11 +76,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 		}
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 3
+		}
+
 		FireModeToggle
 		{
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
+			// AvailableChoices = [-1, 1, 2]
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
 		}
 		AutoFireToggle
 		{
@@ -63,11 +103,53 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-		AutoTargetToggle
+		FirePrefToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_pref"
+			Default = 1
+		}
+		FirePrefAttack
 		{
 			Type = ModeToggle
-			Mode = FireModeToggle
+			Mode = FirePrefToggle
+			OnModes = [0, 2]
+		}
+		FirePrefDefend
+		{
+			Type = ModeToggle
+			Mode = FirePrefToggle
 			OnModes = [1, 2]
+		}
+		AttackToggle
+		{
+			Type = MultiToggle
+			Toggles = [AutoTargetToggle, FirePrefAttack]
+			Mode = All
+		}
+		DefendToggle
+		{
+			Type = MultiToggle
+			Toggles = [AutoTargetToggle, FirePrefDefend]
+			Mode = All
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 4000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			ResupplyThreshold = 1000
+			DefaultPriority = &/PRIORITIES/Defense_Supply
+			OperationalToggle = PowerToggle
 		}
 
 		Graphics
@@ -221,23 +303,141 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}*/
-		
-		BatteryStorage
+
+
+		Turret
 		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 4000
+			Type = TurretWeapon
+			Location = [1, 1]
+			Rotation = -90d// Relative to unrotated part.
+			OperationalToggle = IsOperational //WeaponIsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = .6
+			FiringArc = 320d
+			RotateSpeed = 90d
+			FireThresholdAngle = 1d
+			AIFirepowerRating = 1600
+			TargetSearchesPerSecond = 4 // Default is 2.
+			//TargetSearchTriesPerFrame = 1
+			HoldTargetAfterCancel = .5
+			TargetPathThickness = .2// &../BulletEmitter/Bullet/Components/Physics/Radius
+			EstimateFirepowerToggle = AttackToggle
+			AlwaysShowCoverage = true
+			FirePermissionToggle = FireModeToggle
+			Emitter = BulletEmitter
+			IgnoreSourceShipLOSChecks = true
+			IgnoreSourceShipLowLOSChecks = true
+
+			AutoTargets
+			[
+				{
+					TargetType = Bullets
+					BulletTargetCategories = [missile, mine, bullet, laser, ion_shot]
+					Toggle = DefendToggle
+				}
+				{
+					TargetType = ShipParts
+					Toggle = AttackToggle
+					Overridable = true
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
 		}
 
-		BatteryConsumer
+		ReloadProgressBar
 		{
-			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 1000
-			OperationalToggle = PowerToggle
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			Type = ProgressBar
+			OperationalToggle = WeaponIsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = Turret
+			GetTargetFrom = Turret
+			Location = [75/64, -23/64] //-23,-71
+			OperationalToggle = IsOperational
+			Bullet = &/SW_SHOTS/YellowSmallLaserPDShot
+			// Spread = [-5d, 5d]
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 100
+			Burst = 2 //3
+			BurstDelay = .075
+			FireDelay = .25
+			UseResourcePerShotInBurst = true
+		}
+		BulletEmitter2 : &BulletEmitter
+		{
+			Location = [75/64, 23/64]
+		}
+		ChargeEffectBase
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitter
+			Trigger = Turret
+			AnchorMediaEffects = true
+		
+			MediaEffects
+			[
+				&/SW_SOUNDS/LaserReCharge
+			]
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitter
+			Trigger = BulletEmitter //BulletEmitterLeft
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/SW_SOUNDS/TurbolaserSFX
+				&/SW_PARTICLES/SmallGreenLaserShoot
+			]
+		}
+		FireEffect2 : &FireEffect
+		{
+			ChainedTo = BulletEmitter2
+			Trigger = BulletEmitter2 //BulletEmitterRight
+		}
+
+		TurretGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			//Location = [0, 0]
+			Rotation = 90d
+			Floor
+			{
+				Layer = "roof_turrets"
+				Offset = [0, -12/64]
+				DamageLevels
+				[
+					{
+						File = "Flak Cannon.png"
+						NormalsFile = "Flak Cannon_normals.png"
+						Size = [2, 2]
+					}
+				]
+			}
 		}
 
 		CrewLocation1
@@ -373,21 +573,33 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecPower = (&PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 2 / (&<turbolaser04_green.rules>/Components/Turret/FireInterval)
-		Range = &<turbolaser04_green.rules>/Components/BulletEmitter/Bullet/Range
-		Arc = deg(&<turbolaser04_green.rules>/Components/Turret/FiringArc)
-		TurretSpeed = deg(&<turbolaser04_green.rules>/Components/Turret/RotateSpeed)
-		ShotSpeed = &<turbolaser04_green.rules>/Components/BulletEmitter/Bullet/Speed
-		ShotHP = &<turbolaser04_green.rules>/Components/BulletEmitter/Bullet/Components/Targetable/Health
-		PowerPerShot = (&<turbolaser04_green.rules>/Components/BulletEmitter/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * 2 / (&<turbolaser04_green.rules>/Components/Turret/FireInterval)
+		ROF = 2 / (&~/Part/Components/Turret/FireInterval)
+		Range = &~/Part/Components/BulletEmitter/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Speed
+		//ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Targetable/Health
+		PowerPerShot = (&~/Part/Components/BulletEmitter/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * 2 / (&~/Part/Components/Turret/FireInterval)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	
 	StatsByCategory
 	[
-//		&<light_turbolaser_red.rules>/LaserStats
-//		&<light_turbolaser_blue.rules>/LaserStats
-		&<turbolaser04_green.rules>/LaserStats
+	//		&<light_turbolaser_red.rules>/LaserStats
+	//		&<light_turbolaser_blue.rules>/LaserStats
+	//		&<turbolaser04_green.rules>/LaserStats
+		{
+			NameKey = "StatCategories/PDLaserShot"
+			Stats
+			{
+				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				DamagePerSecond = (&DamagePerShot) * 2 / (&~/Part/Components/Turret/FireInterval)
+				Damage = [&../DamagePerShot, &../DamagePerSecond]
+//				ShotDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/AntiBullet/HitBullet/HitEffects/0/Damage
+//				ShotDamagePerSecond = (&ShotDamagePerShot) * 2 / (&~/Components/Turret/FireInterval)
+//				ShotDamage = [&../ShotDamagePerShot, &../ShotDamagePerSecond]
+			}
+		}
 	]
 }
