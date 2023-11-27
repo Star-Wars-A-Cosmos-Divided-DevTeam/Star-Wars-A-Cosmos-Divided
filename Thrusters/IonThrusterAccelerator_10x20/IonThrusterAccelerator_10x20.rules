@@ -1,46 +1,32 @@
-/* ----------------------------------------------------------------------------
-
-Introduction: SW:ACD 0.3.7
-
-Author : Lafiel
-Description:
-Currently setup prototyping not in working condition yet
-
-Accelerator for the large ion thrusters.
-One-way buffing but switch-able to one side so different class of larger thrusters can be served in a different space occupying setup. (Similar to Abh's variable_plasma_thruster)
-Buffing value is discriminated between thruster sizes to prevent size discrepancy cheating.
-Works the same as railgun.
-
-Versions:
-
- o 1.0 Cosmoteer 0.15.16 (code compatible to 0.14.8+ but not recommended due to game bugs)
- o with future community mod only for Cosmoteer 0.15.16b+
-
----------------------------------------------------------------------------- */ 
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	ID = SW.IonThrusterAccelerator10x20
+
 	NameKey = "Parts/IonThrusterAccelerator10x20"
 	IconNameKey = "Parts/IonThrusterAccelerator10x20Icon"
 	DescriptionKey = "Parts/IonThrusterAccelerator10x20Desc"
 
 	EditorGroups = ["Flight", "TechIII"]
-	TypeCategories = [thruster_accelerator]
-	RequiresCategories = [bridge1]
+	TypeCategories = [engine_room, ion_accelerator, uses_power]
+	RequiresCategories = [SW_Bridge]
 
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 430000 // 1.3_*area*1.1^5 //(level7 growth factor) lv5:1.61051=>430; lv6:1.771561=>472; lv7:1.9487171=>520 // shall not be lower than 280000
+		[SW.durasteel, 200]
+		[coil2, 80]
+		[processor, 10]
+	]  
+	//Cost = 430000 // 1.3_*area*1.1^5 //(level7 growth factor) lv5:1.61051=>430; lv6:1.771561=>472; lv7:1.9487171=>520 // shall not be lower than 280000
 	Size = [10, 20]
-	Density = 4
+	//Density = 4 //WHY BUFF THEN; TO BE HEAVIER???
 	MaxHealth = 200000
 
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	SelectionTypeID = "thrusters"
+	SelectionTypeID = "ion_thrusters"
 
-	ReceivableBuffs : ^/0/ReceivableBuffs [Railgun,SWAcceleratedThrust]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Accelerator]
+
 	AllowedDoorLocations
 	[
 		[0, -1]
@@ -105,25 +91,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Toggles = [PowerToggle, BatteryStorage]
 			Mode = All
 		}
-		ModularOperational
-		{
-			Type = MultiToggle
-			Toggles = [IsOperational,IsConnectedProxy,RailgunBuffToggle]
-			Mode = All
-		}
 
 		PowerToggle
 		{
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 260 //520 //1 per tile
 		}
 
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 12000
+			MaxResources = 200000
 		}
 		BatteryConsumer
 		{
@@ -135,35 +123,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
 
 		BuffProvider
 		{
 			Type = GridBuffProvider
-			BuffType = Engine
-			BuffAmount = 50%
-			GridDistance = 1
+			BuffType = SW_Ion_Accelerator
+			BuffAmount = 100%
+			GridDistance = 10
 			OperationalToggle = IsOperational
 		}
-
-//-----------------------------------------------------------------------------
-		RailgunOperationBuffToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = RailgunOperationBuffToggle
-			IsOnWhenNotConnected = false
-			//ValueWhenNotConnected = 0
-			//ModeWhenNotConnected = 0
-		}
-		RailgunReverseOperationBuffToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = RailgunReverseOperationBuffToggle
-			IsOnWhenNotConnected = false
-			//ValueWhenNotConnected = 0
-			//ModeWhenNotConnected = 0
-		}
-
-//-----------------------------------------------------------------------------
 
 		DirectionOptionToggle
 		{
@@ -208,20 +185,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-//-----------------------------------------------------------------------------
-
 		IsConnectedProxy
 		{
 			Type = ToggleProxy
 			ComponentID = IsConnected
 			IsOnWhenNotConnected = false
 		}
-		RailgunBuffToggle
-		{
-			Type = BuffToggle
-			BuffType = Railgun
-		}
-//-----------------------------------------------------------------------------
 
 
 /*
@@ -298,34 +267,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
 			Location = [5, 10]
-		}
-
-		RecursiveDeath1
-		{
-			Type = DeathEffects
-			Location = [4, -0.5]
-
-			HitEffects
-			[
-				{
-					Type = AreaDamage
-					Damage = 10000
-					Radius = .6
-					Falloff = 0
-					Delay = .15
-					Filter
-					{
-						OperationalHealth = true
-						StructuralHealth = false
-						Friendlies = true
-					}
-				}
-			]
-		}
-
-		RecursiveDeath2 : RecursiveDeath1
-		{
-			Location = [5, 20.5]
 		}
 
 		Indicators
@@ -441,68 +382,4 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]
 
 */
-
 }
-
-
-/*
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-###############################################################################
-*/
