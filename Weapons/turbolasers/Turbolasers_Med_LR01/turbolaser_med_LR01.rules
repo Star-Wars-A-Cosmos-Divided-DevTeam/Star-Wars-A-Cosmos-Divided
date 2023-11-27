@@ -1,39 +1,40 @@
-/* ----------------------------------------------------------------------------
-
-Introduction: SW:ACD 0.3.7
-
-Author : Lafiel
-
-Description:
-Currently prototyping. Everything is temporary.
-
-
-Versions:
-
- o 1.0 Cosmoteer 0.15.14
-
----------------------------------------------------------------------------- */ 
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {	
+    //IDs
 	ID = SW.turbolaser_med_LR01
+
+    //StringKeys
 	NameKey = "Parts/TurbolaserMedLR01"
 	IconNameKey = "Parts/TurbolaserMedLR01Icon"
 	DescriptionKey = "Parts/TurbolaserMedLR01Desc"
+
+    //Groups&Categories
 	EditorGroups = ["WeaponsEnergy", "TechII"]
+	TypeCategories = [weapon, uses_power, uses_laser_parts, is_crewed]
+
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 48]
 		[coil2, 18] //
 	]  //Cost = 30000
-	AIValueFactor = 1
-
-	TypeCategories = [weapon, uses_power, uses_laser_parts, is_crewed]
 	Size = [2, 2]
+	MaxHealth = 8000
+
+    //Rects
+
+    //Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "cannons"
-	MaxHealth = 8000
+
+    //PartSpecific
+	AIValueFactor = 1
 	InitialPenetrationResistance = 5
+
+    //ReceivableBuffs&ProbitedBy
+
+    //Doors&Etc
 	AllowedDoorLocations
 	[
 		[-1, 1]
@@ -41,6 +42,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
                 [1, 2]
                 [0, 2]
 	]
+
+    //Editor
 	EditorIcon
 	{
 		Texture
@@ -50,7 +53,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [29, 72]
 	}
-	
+
+
+    //Components	
 	Components : ^/0/Components, &<turbolaser01_green.rules>/Components, &<turret01_graphics.rules>
 	{
 		IsOperational
@@ -65,6 +70,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 6//4?
+		}
+
 		FireModeToggle
 		{
 			Type = UIToggle
@@ -437,6 +450,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	}
 
+   //Stats
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
