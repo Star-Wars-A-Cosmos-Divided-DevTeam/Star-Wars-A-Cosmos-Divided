@@ -12,11 +12,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]  //Cost = 500
 	Size = [1, 1]
 	SelectionPriority = 0
+	SelectionTypeID = "hyperdrives"
 	MaxHealth = 1000
 	InitialPenetrationResistance = 1
 	AutoDoorMaxPathLength = 5
-	RequiresCategories = [LargeHyperdrive]
-    TypeCategories = [ftl, uses_power]
+	RequiresCategories = [SW_Hyperdrive_Large]
+    TypeCategories = [ftl, uses_power, SW_Hypernode]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
 	EditorIcon
@@ -38,14 +39,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
-/*
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 1
-		}
-*/
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -62,9 +56,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			DefaultPriority = &/PRIORITIES/Ftl_Supply
 			OperationalToggle = FtlDrive
 			AllowNonOperationalMinPriorityDelivery = false
+			OverrideExclusiveCrewAssignment = true
 		}
-
-		ReloadProgressBar
+		BatteryStorageBar
 		{
 			Type = ProgressBar
 			OperationalToggle = FtlDrive
@@ -76,11 +70,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = hyperium
-			MaxResources = 20
+			MaxResources = 0
 			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
 		}
+		/*
 		HyperiumConsumer
 		{
 			Type = ResourceConsumer
@@ -90,6 +85,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			ConsumptionToggleButtonOffset = [0, -.4]
 		}
+		*/
 		
 		FtlDrive
 		{
@@ -97,12 +93,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			PowerStorage = BatteryStorage
 			FuelStorage = HyperiumStorage
-			SpinDownDuration = 5
+			SpinDownDuration = 10
 			JumpEfficiency = 100%
-			JumpEfficiencyDistanceRange = [5, 10]
+			JumpEfficiencyDistanceRange = [10, 20]
 
-			JumpOutMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
-			JumpOutGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
+			[
+				&/SW_SOUNDS/Hyperdrive
+			]
+			JumpOutGateMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			[
+				&/SW_SOUNDS/Hyperdrive
+			]
 			JumpInMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInMediaEffects
 			JumpInGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
 		}
@@ -183,15 +185,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "walls.png"
+						File = "walls_01.png"
 						Size = [1, 1]
 					}
 					{
-						File = "walls_33.png"
+						File = "walls_01_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "walls_66.png"
+						File = "walls_01_66.png"
 						Size = [1, 1]
 					}
 				]
