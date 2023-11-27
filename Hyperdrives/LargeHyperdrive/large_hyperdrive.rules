@@ -1,24 +1,31 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/LargeHyperdrive"
-	IconNameKey = "Parts/LargeHyperdrive"
 	ID = SW.HyperdriveLarge
 	OtherIDs = ["HyperdriveLarge"]
 
-	EditorGroups = ["Flight", "TechIII"]
+	NameKey = "Parts/LargeHyperdrive"
+	IconNameKey = "Parts/LargeHyperdrive"
 	DescriptionKey = "Parts/LargeHyperdriveDesc"
+
+	EditorGroups = ["Flight", "TechIII"]
+    TypeCategories = [ftl, uses_power, SW_Hyperdrive_Large, SW_Hyperdrive]
+	RequiresCategories = [WarRoom]
+
 	Resources
 	[
-		[steel, 160]
-		[coil2, 32]
+		[steel, 200]
+		[coil2, 60]
+		[diamond, 6]
 	]
+
 	Size = [3, 3]
-	SelectionPriority = 0
-	MaxHealth = 8000
+	MaxHealth = 9000
+
+	SelectionPriority = 1
+	SelectionTypeID = "hyperdrives"
 	AutoDoorMaxPathLength = 5
-	RequiresCategories = [WarRoom]
-    TypeCategories = [ftl, uses_power, LargeHyperdrive]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
+	//ProhibitedBy : ^/0/ProhibitedBy [tall]
 
 	EditorIcon
 	{
@@ -35,7 +42,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, CommandToggle]//, PartCrew
+			Toggles = [PowerToggle, FtlBeaconBatteryStorage, CommandToggle]
 			Mode = All
 		}
 
@@ -51,7 +58,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
-			CommandPoints = 12
+			CommandPoints = 9
 		}
 
 		CommandToggle
@@ -65,38 +72,83 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 		}
 
-		BatteryStorage
+		FtlBeaconBatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 16000
+			MaxResources = 12000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-		BatteryConsumer
+		FtlBeaconBatteryConsumer
 		{
 			Type = ResourceConsumer
 			ResourceType = battery
-			Storage = BatteryStorage
+			Storage = FtlBeaconBatteryStorage
+			DefaultPriority = &/PRIORITIES/Utility_Supply
+			ResupplyThreshold = 1000
+			OperationalToggle = PowerToggle
+		}
+		FtlBeaconPowerDrain
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			FromStorage = FtlBeaconBatteryStorage
+			FromQuantity = 200
+			MinFromQuantityForConversion = 1
+			Interval = 1
+		}
+		Pulse
+		{
+			Type = ContinuousEffects
+			Location = [1.5, 1.5]
+			OperationalToggle = IsOperational
+			FactorMediaEffectsIntensityWith = RoofOpacity
+			MediaEffects
+			[
+				&<hyperdrive_beacon_pulse.rules>
+				//&<hyperdrive_beacon_pulse_simple.rules>
+			]
+		}
+		RoofOpacity
+		{
+			Type = RoofOpacity // DO NOT EVER USE COMPONENTS OF THIS TYPE FOR GAMEPLAY LOGIC!!! IT WILL CAUSE DESYNCS!!! USE FOR RENDERING ONLY!!!
+		}
+
+		FtlDriveBatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 18000 //3*3*2000
+			InitToMaxResources = 0
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		FtlBatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = FtlDriveBatteryStorage
 			DefaultPriority = &/PRIORITIES/Ftl_Supply
 			OperationalToggle = FtlDrive
 			AllowNonOperationalMinPriorityDelivery = false
 			OverrideExclusiveCrewAssignment = true
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
-		ReloadProgressBar
+		FtlDriveBatteryStorageBar
 		{
 			Type = ProgressBar
 			OperationalToggle = FtlDrive
-			ShowProgressFor = BatteryStorage
+			ShowProgressFor = FtlDriveBatteryStorage
+			LowColor = [0, 0, 255]
+			HighColor = [0, 0, 255]
+			FullColor = [0, 0, 255]
+			Height = 10
 		}
-		//Keep or replace later with diff resource?
+
 		HyperiumStorage
 		{
 			Type = ResourceStorage
 			ResourceType = hyperium
-			MaxResources = 40
-			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
+			MaxResources = 200
+			UITileRect = [.5 + 7/64, .5 + 7/64, 2 - 14/64, 2 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
 		}
@@ -114,14 +166,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = FtlDrive
 			OperationalToggle = PowerToggle
-			PowerStorage = BatteryStorage
+			PowerStorage = FtlDriveBatteryStorage
 			FuelStorage = HyperiumStorage
 			SpinDownDuration = 5
 			JumpEfficiency = 100%
-			JumpEfficiencyDistanceRange = [10, 60]
+			JumpEfficiencyDistanceRange = [40, 80]
 
-			JumpOutMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
-			JumpOutGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
+			[
+				&/SW_SOUNDS/Hyperdrive
+			]
+			JumpOutGateMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			[
+				&/SW_SOUNDS/Hyperdrive
+			]
 			JumpInMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInMediaEffects
 			JumpInGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
 		}
@@ -131,7 +189,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = MultiResourceStorage
 			ResourceType = battery
-			ResourceStorages = [BatteryStorage]
+			ResourceStorages = [FtlDriveBatteryStorage]
 			ToggleOnResources = 1
 			ToggleOffResources = 0
 		}
@@ -139,7 +197,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = MultiResourceStorage
 			ResourceType = battery
-			ResourceStorages = [BatteryStorage]
+			ResourceStorages = [FtlDriveBatteryStorage]
 			ToggleOnResources = 16000
 			ToggleOffResource = 15999
 		}
@@ -150,6 +208,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [1.5, 1.5]
 			OperationalToggle = PowerToggle
 			AnimationSpeedFactor = FtlDrive
+			AnimationSpeedFactorRenormalize = [0.1, 1.0]
 			Floor
 			{
 				Layer = "floors"
@@ -187,7 +246,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"doodads_on1.png"
 						]
 						Size = [3, 3]
-						AnimationInterval = 0.0075
+						AnimationInterval = 0.035
 					}
 				]
 			}
@@ -226,22 +285,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-
 			Walls
 			{
 				Layer = "walls"
 				DamageLevels
 				[
 					{
-						File = "walls.png"
+						File = "../walls_03.png"
 						Size = [3, 3]
 					}
 					{
-						File = "walls_33.png"
+						File = "../walls_03_33.png"
 						Size = [3, 3]
 					}
 					{
-						File = "walls_66.png"
+						File = "../walls_03_66.png"
 						Size = [3, 3]
 					}
 				]
@@ -307,7 +365,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceSprites
 			Location = [1.5, 1.5]
-			ResourceStorage = BatteryStorage
+			ResourceStorage = FtlDriveBatteryStorage
 			Layer = "doodads_low"
 			ResourceLevels
 			[
@@ -381,9 +439,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = PowerToggle
-
 			Location = [1.5, 1.5]
+			Toggle = PowerToggle
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -427,7 +484,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		FtlMaxEfficiencyRange = &~/Part/Components/FtlDrive/JumpEfficiencyDistanceRange/0
 		FtlMinEfficiencyRange = &~/Part/Components/FtlDrive/JumpEfficiencyDistanceRange/1
 		HyperiumCapacity = &~/Part/Components/HyperiumStorage/MaxResources
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		PowerCapacity = (&~/Part/Components/FtlDriveBatteryStorage/MaxResources) / 1000
 	}
 
 	StatsNotesKey = "Stats/LargeHyperdrive_Notes"

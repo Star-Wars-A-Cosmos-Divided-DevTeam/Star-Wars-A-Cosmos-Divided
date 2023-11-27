@@ -2,22 +2,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	NameKey = "Parts/MedHyperdrive"
 	IconNameKey = "Parts/MedHyperdrive"
+	DescriptionKey = "Parts/MedHyperdriveDesc"
+
 	ID = SW.HyperdriveMed
 	OtherIDs = ["HyperdriveMed"]
+
 	EditorGroups = ["Flight", "TechII"]
-	DescriptionKey = "Parts/MedHyperdriveDesc"
 	Resources
 	[
-		[steel, 40]
-		[coil, 20]
-		[coil2, 5]
+		[steel, 80]
+		[coil, 40]
+		[coil2, 10]
 	]
 	Size = [2, 2]
 	SelectionPriority = 0
+	SelectionTypeID = "hyperdrives"
 	MaxHealth = 4000
 	AutoDoorMaxPathLength = 5
 	RequiresCategories = [navicomputer]
-    TypeCategories = [ftl, uses_power, MediumHyperdrive]
+    TypeCategories = [ftl, uses_power, SW_Hyperdrive_Med, SW_Hyperdrive]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
 	EditorIcon
@@ -32,6 +35,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Components : ^/0/Components
 	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, CommandToggle]
+			Mode = All
+		}
 		PowerToggle
 		{
 			Type = UIToggle
@@ -39,14 +48,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
-/*
+
 		CommandConsumer
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
 			CommandPoints = 4
 		}
-*/
+
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -64,19 +78,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AllowNonOperationalMinPriorityDelivery = false
 			OverrideExclusiveCrewAssignment = true
 		}
-
-		ReloadProgressBar
+		BatteryStorageBar
 		{
 			Type = ProgressBar
 			OperationalToggle = FtlDrive
 			ShowProgressFor = BatteryStorage
+			LowColor = [0, 0, 255]
+			HighColor = [0, 0, 255]
+			FullColor = [0, 0, 255]
+			Height = 10
 		}
-		//Keep or replace later with diff resource?
+
 		HyperiumStorage
 		{
 			Type = ResourceStorage
 			ResourceType = hyperium
-			MaxResources = 20
+			MaxResources = 80
 			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
@@ -99,10 +116,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelStorage = HyperiumStorage
 			SpinDownDuration = 5
 			JumpEfficiency = 100%
-			JumpEfficiencyDistanceRange = [5, 30]//u tune that
+			JumpEfficiencyDistanceRange = [20, 40]
 
-			JumpOutMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
-			JumpOutGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
+			[
+				&/SW_SOUNDS/Hyperdrive
+			]
+			JumpOutGateMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			[
+				&/SW_SOUNDS/Hyperdrive
+			]
 			JumpInMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInMediaEffects
 			JumpInGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
 		}
@@ -131,6 +154,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [1, 1]
 			OperationalToggle = PowerToggle
 			AnimationSpeedFactor = FtlDrive
+			AnimationSpeedFactorRenormalize = [0.1, 1.0]
 			Floor
 			{
 				Layer = "floors"
@@ -156,8 +180,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "doodads_on1.png"
+						AnimationFiles
+						[
+							"doodads_on1.png"
+							"doodads_on1.png"
+							"doodads_on1.png"
+							"doodads_on1.png"
+							"doodads_on1.png"
+							"doodads_on1.png"
+							"doodads_on1.png"
+							"doodads_on1.png"
+						]
 						Size = [2, 2]
+						AnimationInterval = 0.035
 					}
 				]
 			}
@@ -201,15 +236,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "walls.png"
+						File = "walls_02.png"
 						Size = [2, 2]
 					}
 					{
-						File = "walls_33.png"
+						File = "walls_02_33.png"
 						Size = [2, 2]
 					}
 					{
-						File = "walls_66.png"
+						File = "walls_02_66.png"
 						Size = [2, 2]
 					}
 				]
