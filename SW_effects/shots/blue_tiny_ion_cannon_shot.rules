@@ -25,25 +25,27 @@ Components
 	{
 		Type = Targetable
 		Health = 600
-		TargetCategory = "laser"
+		TargetCategory = "ion_shot"
 	}
 
 
 	Hit
 	{
 		Type = PenetratingHit
-		Penetration = 0.1
+		Penetration = 50// 0.1
 		PenetratesOperational = false
+		FactorEffectsWith = Targetable
 		
 		CrewCollisions = {Enemies=true; Junk=true}
-		SourceShipLowCollisions = false
 		PenetratesCrew = true
 		HitCrew = &HitOperational
+		SourceShipLowCollisions = false
 
 
 		HitShield
 		{
 			ReduceEffectsByPenetration = true
+
 			HitEffects
 			[
 				{
@@ -51,12 +53,12 @@ Components
 					Type = Damage
 
 					Damage = 1000
-
+					TreatShieldAsPart = true
 				}
-				{
-					Type = Impulse
-					Impulse = 1
-				}
+//				{
+//					Type = Impulse
+//					Impulse = 1
+//				}
 			]
 
 			MediaEffects = &../HitOperational/MediaEffects
@@ -64,20 +66,30 @@ Components
 		HitOperational
 		{
 			ReduceEffectsByPenetration = true
+
 			HitEffects
 			[
 				{
+					Type = ResourceDrain
+					ResourceType = battery
+					Amount = 600
 
-					Type = Damage
-
-					Damage = 100
-
+					MediaEffectsOnDrain
+					[
+						: /BASE_SOUNDS/AudioExterior
+						{
+							Sound = "discharge.wav"
+							Volume = 1
+							SpeedVariation = .2
+						}
+					]
 				}
 				{
-					Type = Impulse;
-					Impulse = 1
+					Type = Damage
+					Damage = 100
 				}
 			]
+
 
 			MediaEffects
 			[
@@ -103,13 +115,13 @@ Components
 
 					Type = Damage
 
-					Damage = 50
+					Damage = 75
 
 				}
-				{
-					Type = Impulse;
-					Impulse = .5;
-				}
+//				{
+//					Type = Impulse;
+//					Impulse = .5;
+//				}
 			]
 
 			MediaEffects
@@ -132,14 +144,8 @@ Components
 		{
 			// No effect.
 		}
-		FinishedPenetratingOperational
-		{
-			// No effect.
-		}
-		FinishedPenetratingStructural
-		{
-			// No effect.
-		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
 	}
 
 	Sprite
