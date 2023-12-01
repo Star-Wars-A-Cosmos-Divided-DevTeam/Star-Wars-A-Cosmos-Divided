@@ -1,30 +1,48 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/FixedHeavyLaser"
-	IconNameKey = "Parts/FixedHeavyLaserIcon"
+ 	//IDs
 	ID = SW.fixed_heavy_laser
 //	OtherIDs = ["fixed_Heavy_laser"]
-	EditorGroups = ["WeaponsEnergy", "TechII", "TechIII"]
+
+    //StringKeys
+	NameKey = "Parts/FixedHeavyLaser"
+	IconNameKey = "Parts/FixedHeavyLaserIcon"
 	DescriptionKey = "Parts/FixedHeavyLaserDesc"
+
+    //Groups&Categories
+	EditorGroups = ["WeaponsEnergy", "TechII", "TechIII"]
+	TypeCategories = [weapon, uses_power,is_crewed]
+
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 40]
 		[coil, 20]
 		[coil2, 10]
 	]
-	AIValueFactor = 2
-	TypeCategories = [weapon, uses_power,is_crewed]
-	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [2, 5]
+	MaxHealth = 8500
+
+    //Rects
 	PhysicalRect = [0, 2, 2, 3]
 	SaveRect = &PhysicalRect
+//	GenerateRectCollider = false
+
+    //Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "blasterlasers"
-	MaxHealth = 8500
+
+    //PartSpecific
+	AIValueFactor = 2
 	InitialPenetrationResistance = 3
+
+    //ReceivableBuffs&ProbitedBy
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	ProhibitAbove = 3
-	MaxDoors = 2
+
+    //Doors&Etc
+	MaxDoors = 3
 	AllowedDoorLocations
 	[
 		[-1, 4]
@@ -32,7 +50,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[1, 5]
 		[2, 4]
 	]
-//	GenerateRectCollider = false
+
+    //Editor
 	EditorIcon
 	{
 		Texture
@@ -42,6 +61,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [36.8, 92]
 	}
+
+    //Components
 	Components : ^/0/Components
 	{
 /*
@@ -582,6 +603,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
+    //Stats
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -618,7 +640,7 @@ TurretStats
 }
 BulletStats
 {
-	NameKey = "StatCategories/MedGreenLasershot"
+	NameKey = "StatCategories/HeavyGreenLasershot"
 	Stats
 	{
 		ShieldDamagePerShot = &~/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
@@ -647,7 +669,7 @@ BulletEmitterBase
 		FireDelay = 0.01
 		ResourceStorage = BatteryStorage
 		ResourcesUsed = 60
-		Bullet = &/SW_SHOTS/greenmedlasershot // &/SW_SHOTS/redmedfixedcannonshot
+		Bullet = &/SW_SHOTS/greenheavylasershot // &/SW_SHOTS/redmedfixedcannonshot
 }
 TurretBase
 		{
