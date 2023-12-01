@@ -1,9 +1,9 @@
 ID = SW.eta2_small_laser_shot_common
 OtherIDs = ["eta2_small_laser_shot"]
-Range = 300
-IdealRange = [60, 250]
+Range = 450 // 300
+IdealRange = [150, 350]
 IdealRadius = [5, 50]
-Speed = 95
+Speed = 120
 
 Components
 {
@@ -23,14 +23,14 @@ Components
 	Targetable
 	{
 		Type = Targetable
-		Health = 400
-		TargetCategory = "laser"
+		Health = 1000 //400
+		TargetCategory = "ion_shot"
 	}
 
 	Hit
 	{
 		Type = PenetratingHit
-		Penetration = 0.1
+		Penetration = 50// 0.1
 		PenetratesOperational = false
 		
 		CrewCollisions = {Enemies=true; Junk=true}
@@ -41,7 +41,8 @@ Components
 		HitShield
 		{
 			ReduceEffectsByPenetration = true
-			HitEffects
+
+/*			HitEffects
 			[
 				{
 					Type = Damage
@@ -50,6 +51,15 @@ Components
 				{
 					Type = Impulse;
 					Impulse = 2.5;
+				}
+			]
+*/
+			HitEffects
+			[
+				: ../../HitOperational/HitEffects/0
+				{
+					Amount = 900
+					TreatShieldAsPart = true
 				}
 			]
 
@@ -71,6 +81,32 @@ Components
 		HitOperational
 		{
 			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = ResourceDrain
+					ResourceType = battery
+					Amount = 600
+
+					MediaEffectsOnDrain
+					[
+						&/SW_PARTICLES/CyanShipDrain
+						&/SW_PARTICLES/CyanIonShotHitSizzle
+						&/SW_PARTICLES/CyanIonShotLightning
+						&/SW_SOUNDS/IonDischarge
+					]
+				}
+				{
+					Type = Damage
+					Damage = 125
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+/*
 			HitEffects
 			[
 				{
@@ -82,6 +118,7 @@ Components
 					Impulse = 2.5;
 				}
 			]
+*/
 
 			MediaEffects
 			[
@@ -105,7 +142,7 @@ Components
 			[
 				{
 					Type = Damage
-					Damage = 58
+					Damage = 75 // 58
 				}
 				{
 					Type = Impulse;
