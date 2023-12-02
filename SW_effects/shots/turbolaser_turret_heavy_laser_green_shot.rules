@@ -1,0 +1,173 @@
+ID = SW.turbolaser_turret_heavy_laser_green_shot
+//OtherIDs = ["green_heavy_laser_shot"]
+Range = 600
+IdealRange = [60, 400]
+IdealRadius = [5, 50]
+Speed = 80
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.1
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 3200
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		FriendlyShipLowCollisions = false
+		PenetratesCrew = true
+
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 2000
+				}
+				{
+					Type = Impulse;
+					Impulse = 3.5;
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 4000
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 2400
+					Radius = 3.6
+					Filter
+					{
+						Friendlies = false
+					}
+				}
+				{
+					Type = Impulse;
+					Impulse = 20
+				}
+			]
+		MediaEffects
+			[
+				&/SW_PARTICLES/GreenLaserHit
+				&/SW_PARTICLES/GreenLaserFlash
+				&/SW_PARTICLES/GreenLaserSparks
+	
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 3850
+					Radius = 6
+				}
+				{
+					Type = Impulse
+					Impulse = 10.25
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/GreenLaserHitStruct
+
+				&/SW_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational
+		{
+			// No effect.
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational
+		{
+			// No effect.
+		}
+		FinishedPenetratingStructural
+		{
+			// No effect.
+		}
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "lasershotgreen.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [2.1, 1.05]//2.4 1.2
+			}
+			FrameCount = 2
+			FrameSize = [64, 32]
+			FramesPerRow = 1
+			FramesPerSecond = 60
+		}
+		//NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/SW_PARTICLES/LargeGreenLaserShotGlow
+		]
+	}
+}

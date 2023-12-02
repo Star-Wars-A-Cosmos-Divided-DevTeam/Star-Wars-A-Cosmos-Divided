@@ -1,0 +1,214 @@
+ID = SW.concussion_turret_heavy_laser_red_shot
+Range = 350
+IdealRange = [60, 325]
+IdealRadius = [5, 50]
+Speed = 70
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.3
+		Density = 0.1
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 4000
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		//Penetration = 200.0
+		//PenetrationSpeed = 15
+		PenetratesShields = false
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		FriendlyShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 7000  // bad vs shield 1/5 of total part damage
+				}
+				{
+					Type = Impulse
+					Impulse = 300
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/SWConcussionLaserHitRed
+				&/SW_PARTICLES/RedLaserFlash
+				&/SW_PARTICLES/RedLaserSparks
+	
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 25000
+					Radius = 9
+					ExpandDuration = 0.2
+					ExpandStartRadius = 1
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 10000
+					// Filter
+					// {
+					// 	Friendlies = true
+					// }
+				}
+				{
+					Type = Damage
+					Damage = 200
+				}
+				{
+					Type = Impulse
+					Impulse = 100
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/RedLaserSparks
+				&/SW_PARTICLES/RedLaserFlash
+				&/SW_PARTICLES/SWConcussionLaserHitRed
+				&/SW_PARTICLES/SWFlakLargeFlash
+				// &/SW_PARTICLES/SWFlakLargeSmoke
+	
+				&/SW_SOUNDS/SWConcussionLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .2
+					Duration = .75
+				}
+			]
+		}
+		HitStructural = &HitOperational
+	}
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "lasershotred.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [2.1, 1.05]//2.4 1.2
+			}
+			FrameCount = 2
+			FrameSize = [64, 32]
+			FramesPerRow = 1
+			FramesPerSecond = 60
+		}
+		//NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
+	}
+/*
+	Sprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Sprite
+		{
+			Texture
+			{
+				File = "shot_red.png"
+				SampleMode = Linear
+				MipLevels = max
+			}
+			Size = [1.2, 1.2]
+		}
+	}
+*/
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Offset = [-1.5, 0]
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [18, 9]
+			VertexColor = [255, 0, 0] // VertexColor = [255, 100, 0]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.125
+		}
+	}
+	MediaEffects3
+	{
+		Type = MediaEffects
+		Offset = [45/64, 0]
+		MediaEffects
+		[
+				&/SW_PARTICLES/RedLaserShotGlow
+				&/SW_PARTICLES/SWConcussionLaserTrail			// &/SW_PARTICLES/CyanIonShotTrailLightning
+		]
+	}	
+	/*
+		MediaEffects
+		{
+			Type = MediaEffects
+			// Offset = [10.5, 0]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/RedLaserShotGlow
+				&/SW_PARTICLES/SWConcussionLaserTrail
+			]
+		}
+	*/
+
+}
+
