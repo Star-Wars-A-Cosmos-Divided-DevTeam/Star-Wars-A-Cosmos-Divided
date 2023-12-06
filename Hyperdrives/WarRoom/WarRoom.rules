@@ -1,11 +1,19 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/WarRoom"
-	IconNameKey = "Parts/WarRoomIcon"
+    //IDs
 	ID = SW.WarRoom
 
-	EditorGroups = ["Flight", "TechIII"]
+    //StringKeys
+	NameKey = "Parts/WarRoom"
+	IconNameKey = "Parts/WarRoomIcon"
 	DescriptionKey = "Parts/WarRoomDesc"
+
+    //Groups&Categories
+	EditorGroups = ["Flight", "TechIII"]
+	RequiresCategories = [SW_Bridge]
+	TypeCategories = [WarRoom]
+
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 720]//[steel, 360]
@@ -14,31 +22,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[coil2, 160]//[coil2, 80]
 		[processor, 48]//[processor, 16]
 	]
-	//reduce cost by adding durasteel as an part cost? durasteel factory is 35k rn...
-	AIValueFactor = 5
 	Size = [6, 7]
-	SelectionPriority = 0
 	MaxHealth = 20000
-	AutoDoorMaxPathLength = 5
-	RequiresCategories = []
-	TypeCategories = [command, WarRoom]
+
+    //Rects
+
+    //Selections
+	SelectionPriority = 0
+
+    //PartSpecific
+	AIValueFactor = 5
+
+    //ReceivableBuffs&ProbitedBy
 	ReceivableBuffs : ^/0/ReceivableBuffs []
-
-	AllowedDoorLocations
-	[
-		[3, -1]
-		[2, -1]
-
-		[-1, 2]
-		[6, 2]
-		[-1, 3]
-		[6, 3]
-		[-1, 4]
-		[6, 4]
-
-		[3, 7]
-		[2, 7]
-	]
 	ForceManhattenPathInPart = true
 	BlockedTravelCells
 	[
@@ -121,6 +117,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	]
 
+    //Doors&Etc
+	AutoDoorMaxPathLength = 5
+	AllowedDoorLocations
+	[
+		[3, -1]
+		[2, -1]
+
+		[-1, 2]
+		[6, 2]
+		[-1, 3]
+		[6, 3]
+		[-1, 4]
+		[6, 4]
+
+		[3, 7]
+		[2, 7]
+	]
+
+    //Editor
 	EditorIcon
 	{
 		Texture
@@ -130,6 +145,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [47, 55]
 	}
+
+
+    //Components
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -488,4 +506,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Size = [6, 7]
 		}
     }
+   //Stats
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		SightRange = &~/Part/Components/Sensor/SightRadius
+		RadarRange = &~/Part/Components/Sensor/RadarRadius
+		CommandPoints =  &~/Part/Components/CommandProvider/CommandPoints
+
+		RecPower = (&PowerUsageContinuousMinutes) / 60
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
 }
