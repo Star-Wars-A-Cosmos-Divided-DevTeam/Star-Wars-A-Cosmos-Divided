@@ -17,11 +17,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
     //Resources&Size&Health
 	Resources
 	[
-		[steel, 48]
-		[coil, 18]
+		[steel, 64]
+		[coil, 32]
 	]
 	Size = [2, 2]
-	MaxHealth = 5000
+	MaxHealth = 10000
 
     //Rects
 	GenerateRectCollider = true
@@ -43,7 +43,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
     //ReceivableBuffs&ProbitedBy
 	ReceivableBuffs : ^/0/ReceivableBuffs []
-	ProhibitedBy : ^/0/ProhibitedBy [tall]
+	//ProhibitedBy : ^/0/ProhibitedBy [tall]
 
     //Doors&Etc
 	AutoDoorMaxPathLength = 8
@@ -233,11 +233,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ExteriorType
 			OnMode = 0
 		}
+
 		WhiteExteriorComponents
 		{
 			Type = ToggledComponents
 			Toggle = WhiteExteriorToggle
-			IncludeInBlueprints = true
+			IncludeInBlueprints = false
 			Components = &<med_turbolaser_white.rules>/Components
 		}
 
@@ -251,7 +252,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = GreyExteriorToggle
-			IncludeInBlueprints = true
+			IncludeInBlueprints = false
 			Components = &<med_turbolaser_grey.rules>/Components
 		}
 
@@ -259,7 +260,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 6000 //7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
+			MaxResources = 10000 //7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
 		}
 		BatteryConsumer
 		{
@@ -453,6 +454,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IsHigh = true
 		}
 
+		CommonReloadResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [Turret]
+		}
+
 		ChargeEffectSound
 		{
 			Type = TriggeredEffects
@@ -478,12 +485,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				&/SW_SOUNDS/TurbolaserSFX
 			]
-		}
-
-		CommonReloadResetTrigger
-		{
-			Type = MultiTrigger
-			Triggers = [Turret]
 		}
 
 		TurretLocationProxy
@@ -666,8 +667,10 @@ BulletEmitterBase
 	FireDelay = 0.05
 	ResourceStorage = BatteryStorage
 	ResourcesUsed = 320
-	Bullet = &/SW_SHOTS/redmedlasershot
-	Recoil = 12
+	Bullet = &/SW_SHOTS/turretturbolasermediumlaserredshot
+	Recoil = 24
+	Spread = [-5d, 5d]
+
 }
 ReloadProgressBarBase
 {
