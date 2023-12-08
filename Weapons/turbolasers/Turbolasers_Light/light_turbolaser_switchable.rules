@@ -1,37 +1,55 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {	
+    //IDs
 	ID = SW.light_turbolaser_switchable
 	OtherIDs = ["light_turbolaser","light_turbolaserblue","light_turbolasergreen","SW.light_turbolaser","SW.light_turbolaserblue","SW.light_turbolasergreen"]
+
+    //StringKeys
 	NameKey = "Parts/LightTurbolaserSwitchable"
 	IconNameKey = "Parts/LightTurbolaserSwitchableIcon"
 	DescriptionKey = "Parts/LightTurbolaserSwitchableDesc"
-	EditorGroups = ["WeaponsEnergy", "TechII"]
+
+    //Groups&Categories
+	EditorGroups = ["WeaponsEnergy", "TechI", "TechII"]
+	TypeCategories = [weapon, uses_power, is_crewed]
+	//RequiresCategories = []
+
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 78]
 		[coil, 18]
 	]
-	AIValueFactor = 2
-	TypeCategories = [weapon, uses_power, is_crewed]
-	ProhibitedBy : ^/0/ProhibitedBy [tall]
 	Size = [2, 2]
-	MaxHealth = 3000
-	SelectionPriority = 1
+	MaxHealth = 5000
 
+    //Rects
+
+    //Selections
+	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "turbolasers"
-//RequiresCategories = []
+
+    //PartSpecific
+	AIValueFactor = 2
 	InitialPenetrationResistance = 5
+
+    //ReceivableBuffs&ProbitedBy
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	//ProhibitedBy : ^/0/ProhibitedBy [tall]
+
+    //Doors&Etc
 	AutoDoorMaxPathLength = 8
 	MaxDoors = 3
-	ReceivableBuffs : ^/0/ReceivableBuffs []
 	AllowedDoorLocations
 	[
 		[-1, 1]
 		[2, 1]
-                [1, 2]
-                [0, 2]
+        [1, 2]
+        [0, 2]
 	]
+
+    //Editor
 	EditorIcon
 	{
 		Texture
@@ -41,7 +59,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [48, 60]
 	}
-	
+
+
+    //Components
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -196,7 +216,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 4000
+			MaxResources = 5000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
@@ -563,6 +583,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Size = [2, 2]
 		}
 	}
+
+   //Stats
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -584,7 +606,7 @@ TurretStats
 	NameKey = "StatCategories/Turret"
 	Stats
 	{
-		Barrels = 4
+		Barrels = 2
 		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
 		Salvo = [&../Barrels, &../ReloadTime]
 		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
@@ -612,9 +634,10 @@ BulletEmitterBase
 	OperationalToggle = IsOperational
 	FireDelay = 0.05
 	ResourceStorage = BatteryStorage
-	ResourcesUsed = 100
-	Bullet = &/SW_SHOTS/redlightlasershot
+	ResourcesUsed = 250
+	Bullet = &/SW_SHOTS/turretturbolaserlightlaserredshot
 	Recoil = 12
+	Spread = [-2.5d, 2.5d]
 }
 ReloadProgressBarBase
 {
@@ -632,7 +655,7 @@ TurretBase
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0 // Uses separate common fire timer.
 			FiringArc = 180d
-			RotateSpeed = 90d
+			RotateSpeed = 24d 
 			FireThresholdAngle = 1d
 			AIFirepowerRating = 1600
 			//CanBeGivenExplicitTarget = true
