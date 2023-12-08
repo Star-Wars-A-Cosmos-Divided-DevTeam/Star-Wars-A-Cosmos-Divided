@@ -1,0 +1,184 @@
+ID = SW.turbolaser_direct_light_laser_green_shot //DIRECT WEAPONSHOT
+//OtherIDs = ["green_heavy_laser_shot"]
+Range = 320
+IdealRange = [96, 320]
+IdealRadius = [5, 50]
+Speed = 200
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 400
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		Penetration = 5.0
+		PenetrationSpeed = 15
+		FactorEffectsWith = Targetable
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = true
+		FriendlyShipLowCollisions = true
+		PenetratesCrew = true
+
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 500
+				}
+				{
+					Type = Impulse;
+					Impulse = 10;
+				}
+			]
+			
+		MediaEffects = &../HitOperational/MediaEffects
+		}
+
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 1000
+				}
+				{
+					Type = Impulse;
+					Impulse = 25;
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/GreenLaserHit
+				&/SW_PARTICLES/GreenLaserFlash
+				&/SW_PARTICLES/GreenLaserSparks
+	
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .2
+				}
+			]
+		}
+
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 1000
+				}
+				{
+					Type = Impulse;
+					Impulse = 25;
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/GreenLaserHitStruct
+
+				&/SW_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 1000
+				}
+				{
+					Type = Fire
+					FireChance = .05
+				}
+				{
+					Type = Impulse
+					Impulse = 25
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/GreenLaserFlash
+				&/SW_PARTICLES/GreenLaserSparks
+			]
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		//ReduceScaleWith = Hit
+		//ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "green_laser.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [0.64, 0.64]
+			}
+			FrameCount = 8
+			FrameSize = [128, 128]
+			FramesPerRow = 2
+			FramesPerSecond = 32
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/SW_PARTICLES/SmallGreenLaserShotGlow
+		]
+	}
+}
