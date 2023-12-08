@@ -1,9 +1,9 @@
-ID = SW.turbolaser_turret_heavy_laser_red_shot  //TURRET WEAPONSHOT
-//OtherIDs = ["red_heavy_laser_shot"]
-Range = 300
-IdealRange = [90, 300]
+ID = SW.turbolaser_direct_heavy_laser_blue_shot //DIRECT WEAPONSHOT
+//OtherIDs = ["blue_heavy_laser_shot"]
+Range = 320
+IdealRange = [96, 320]
 IdealRadius = [5, 50]
-Speed = 80
+Speed = 160
 
 Components
 {
@@ -23,24 +23,55 @@ Components
 	Targetable
 	{
 		Type = Targetable
-		Health = 3200
+		Health = 1600
 		TargetCategory = "laser"
 	}
 
 	Hit
 	{
 		Type = PenetratingHit
-		Penetration = 5.0
-		PenetrationSpeed = 20
+		Penetration = 15.0
+		PenetrationSpeed = 30
 		
 		CrewCollisions = {Enemies=true; Junk=true}
-		SourceShipLowCollisions = false
-		FriendlyShipLowCollisions = false
+		SourceShipLowCollisions = true
+		FriendlyShipLowCollisions = true
 		PenetratesCrew = true
 
 		HitCrew = &HitOperational
 
-		HitShield = &HitOperational
+		HitShield
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 2000
+				}
+				{
+					Type = Impulse
+					Impulse = 50
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/BlueLaserHit
+				&/SW_PARTICLES/BlueLaserFlash
+				&/SW_PARTICLES/BlueLaserSparks
+	
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .1
+					Duration = .4
+				}
+			]
+		}
 
 		HitOperational
 		{
@@ -61,9 +92,9 @@ Components
 
 			MediaEffects
 			[
-				&/SW_PARTICLES/RedLaserHit
-				&/SW_PARTICLES/RedLaserFlash
-				&/SW_PARTICLES/RedLaserSparks
+				&/SW_PARTICLES/BlueLaserHit
+				&/SW_PARTICLES/BlueLaserFlash
+				&/SW_PARTICLES/BlueLaserSparks
 	
 				&/SW_SOUNDS/SmallLaserHit
 
@@ -83,17 +114,17 @@ Components
 			[
 				{
 					Type = Damage
-					Damage = 2000
+					Damage = 4000
 				}
 				{
 					Type = Impulse
-					Impulse = 50
+					Impulse = 100
 				}
 			]
 
 			MediaEffects
 			[
-				&/SW_PARTICLES/RedLaserHitStruct
+				&/SW_PARTICLES/BlueLaserHitStruct
 
 				&/SW_SOUNDS/SmallLaserHit
 			]
@@ -106,7 +137,7 @@ Components
 			[
 				{
 					Type = Damage
-					Damage = 2000
+					Damage = 4000
 				}
 				{
 					Type = Fire
@@ -114,14 +145,14 @@ Components
 				}
 				{
 					Type = Impulse
-					Impulse = 100
+					Impulse = 180
 				}
 			]
 
 			MediaEffects
 			[
-				&/SW_PARTICLES/RedLaserFlash
-				&/SW_PARTICLES/RedLaserSparks
+				&/SW_PARTICLES/BlueLaserFlash
+				&/SW_PARTICLES/BlueLaserSparks
 			]
 		}
 		PenetratingStructural
@@ -144,7 +175,7 @@ Components
 			{
 				Texture
 				{
-					File = "lasershotred.png"
+					File = "lasershotblue.png"
 					SampleMode = Linear
 					MipLevels = max
 				}
@@ -167,7 +198,7 @@ Components
 		FactorEffectsExponent = 0.5
 		MediaEffects
 		[
-			&/SW_PARTICLES/LargeRedLaserShotGlow
+			&/SW_PARTICLES/LargeBlueLaserShotGlow
 		]
 	}
 }
