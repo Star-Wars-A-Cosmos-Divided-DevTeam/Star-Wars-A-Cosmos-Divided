@@ -1,27 +1,44 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {	
+    //IDs
 	ID = SW.xx9_turbolaser_switchable
 	OtherIDs = ["XX9_turbolaserr","XX92_turbolaserr","XX9_turbolaser1g","XX9_turbolaser2g"]
+
+    //StringKeys
 	NameKey = "Parts/XX9turbolaserswitchable"
 	IconNameKey = "Parts/XX9turbolaserswitchableIcon"
 	DescriptionKey = "Parts/XX9turbolaserswitchableDesc"
+
+    //Groups&Categories
 	EditorGroups = ["WeaponsEnergy", "TechIII"]
+	TypeCategories = [weapon, uses_power,  is_crewed]
+	//RequiresCategories = []
+
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 135]
 		[coil, 75]
 		[coil2, 10]
 	]
-	AIValueFactor = 2
-	TypeCategories = [weapon, uses_power,  is_crewed]
-	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [4, 4]
-	MaxHealth = 42000  
+	MaxHealth = 22000  
+
+    //Rects
+
+    //Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "turbolasers"
-	//RequiresCategories = []
+
+    //PartSpecific
+	AIValueFactor = 2
 	InitialPenetrationResistance = 5
+
+    //ReceivableBuffs&ProbitedBy
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+    //Doors&Etc	
 	AutoDoorMaxPathLength = 8
 	MaxDoors = 4
 	AllowedDoorLocations
@@ -43,6 +60,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		//[1, -1]
 		//[0, -1]
 	]
+
+    //Editor
 	EditorIcon
 	{
 		Texture
@@ -52,6 +71,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [64, 64]
 	}
+
+    //Components
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -107,7 +128,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CommonReloadTimer
 		{
 			Type = Timer
-			Duration = 4.5
+			Duration = 4.2
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
@@ -664,6 +685,8 @@ BulletEmitterBase
 	ResourceStorage = BatteryStorage
 	ResourcesUsed = 500
 	Bullet = &/SW_SHOTS/redxx9lasershot
+	Recoil = 48
+	Spread = [-1d, 1d]
 }
 ReloadProgressBarBase
 {
@@ -681,15 +704,17 @@ TurretBase
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0//4.5
-			FiringArc = 360d
+			FiringArc = 180d
 			RotateSpeed = 15d
 			FireThresholdAngle = 2d
-			AIFirepowerRating = 3200
+			AIFirepowerRating = 6400
 			TargetSearchesPerSecond = 1
 			FirePermissionToggle = FirePermissionToggle
 			HoldTargetAfterCancel = 0.15
+			IgnoreSourceShipLOSChecks = false
 			AutoTargetCrewSafetyDist = 8
 			IgnoreSourceShipLowLOSChecks = true
+			AllowFireWithBlockedLOS = false
 
 			AutoTargets
 			[
