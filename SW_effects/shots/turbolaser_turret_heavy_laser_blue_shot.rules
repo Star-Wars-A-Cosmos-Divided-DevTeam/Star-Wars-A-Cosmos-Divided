@@ -1,4 +1,4 @@
-ID = SW.turbolaser_turret_heavy_laser_blue_shot
+ID = SW.turbolaser_turret_heavy_laser_blue_shot //TURRET WEAPONSHOT
 //OtherIDs = ["blue_heavy_laser_shot"]
 Range = 300
 IdealRange = [90, 300]
@@ -10,8 +10,8 @@ Components
 	Physics
 	{
 		Type = CirclePhysics
-		Radius = 0.01
-		Density = 0.1
+		Radius = 0.45
+		Density = 0.0001
 	}
 
 	Death
@@ -30,7 +30,8 @@ Components
 	Hit
 	{
 		Type = PenetratingHit
-		FactorEffectsWith = Targetable
+		Penetration = 5.0
+		PenetrationSpeed = 20
 		
 		CrewCollisions = {Enemies=true; Junk=true}
 		SourceShipLowCollisions = false
@@ -39,42 +40,22 @@ Components
 
 		HitCrew = &HitOperational
 
-		HitShield
-		{
-			HitEffects
-			[
-				{
-					Type = Damage
-					Damage = 6400
-				}
-				{
-					Type = Impulse;
-					Impulse = 5.5;
-				}
-			]
+		HitShield = &HitOperational
 
-			MediaEffects = &../HitOperational/MediaEffects
-		}
 		HitOperational
 		{
+			ReduceEffectsByPenetration = true
+			Offset = [-0.15, 0]
+
 			HitEffects
 			[
 				{
 					Type = Damage
-					Damage = 1600
-				}
-				{
-					Type = ExplosiveDamage
-					TotalDamage = 400
-					Radius = 3.6
-					Filter
-					{
-						Friendlies = false
-					}
+					Damage = 4000
 				}
 				{
 					Type = Impulse
-					Impulse = 10.5
+					Impulse = 100
 				}
 			]
 
@@ -88,23 +69,25 @@ Components
 
 				: /BASE_SHAKE
 				{
-					ShakeAmount = .03
-					Duration = .3
+					ShakeAmount = .1
+					Duration = .4
 				}
 			]
 		}
 		HitStructural
 		{
+			ReduceEffectsByPenetration = true
+			Offset = [0.5, 0]
+
 			HitEffects
 			[
 				{
-					Type = ExplosiveDamage
-					TotalDamage = 3050
-					Radius = 6
+					Type = Damage
+					Damage = 2000
 				}
 				{
 					Type = Impulse
-					Impulse = 12
+					Impulse = 50
 				}
 			]
 
@@ -117,20 +100,36 @@ Components
 		}
 		PenetratingOperational
 		{
-			// No effect.
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 2000
+				}
+				{
+					Type = Fire
+					FireChance = .2
+				}
+				{
+					Type = Impulse
+					Impulse = 100
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/BlueLaserFlash
+				&/SW_PARTICLES/BlueLaserSparks
+			]
 		}
 		PenetratingStructural
 		{
 			// No effect.
 		}
-		FinishedPenetratingOperational
-		{
-			// No effect.
-		}
-		FinishedPenetratingStructural
-		{
-			// No effect.
-		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
 	}
 
 	Sprite
