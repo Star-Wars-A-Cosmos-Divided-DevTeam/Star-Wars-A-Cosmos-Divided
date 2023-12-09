@@ -3,7 +3,7 @@ OtherIDs = ["blue_xwing_shot_common"]
 Range = 320
 IdealRange = [96, 320]
 IdealRadius = [5, 50]
-Speed = 240 //120
+Speed = 180 //120
 
 Components
 {
@@ -30,44 +30,15 @@ Components
 	Hit
 	{
 		Type = PenetratingHit
-		Penetration = 0.1
-		PenetratesOperational = false
+		Penetration = 1
+		PenetrationSpeed = 20
+		SourceShipLowCollisions = false
+		FactorEffectsWith = Targetable
 		
 		CrewCollisions = {Enemies=true; Junk=true}
-		SourceShipLowCollisions = false
-		PenetratesCrew = true
 		HitCrew = &HitOperational
 
-		HitShield
-		{
-			ReduceEffectsByPenetration = true
-			HitEffects
-			[
-				{
-					Type = Damage
-					Damage = 250
-				}
-				{
-					Type = Impulse;
-					Impulse = 2.5;
-				}
-			]
-
-			MediaEffects
-			[
-				&/SW_PARTICLES/BlueLaserHit
-				&/SW_PARTICLES/BlueLaserFlash
-				&/SW_PARTICLES/BlueLaserSparks
-	
-				&/SW_SOUNDS/SmallLaserHit
-
-				: /BASE_SHAKE
-				{
-					ShakeAmount = .03
-					Duration = .3
-				}
-			]
-		}
+		HitShield = &HitOperational
 		HitOperational
 		{
 			ReduceEffectsByPenetration = true
@@ -75,11 +46,11 @@ Components
 			[
 				{
 					Type = Damage
-					Damage = 150
+					Damage = 450
 				}
 				{
-					Type = Impulse;
-					Impulse = 2.5;
+					Type = Impulse
+					Impulse = 2.5
 				}
 			]
 
@@ -105,7 +76,7 @@ Components
 			[
 				{
 					Type = Damage
-					Damage = 100
+					Damage = 300
 				}
 				{
 					Type = Impulse;
@@ -161,7 +132,7 @@ Components
 			FramesPerRow = 2
 			FramesPerSecond = 32
 		}
-		NormalsTexture = &Animation/AtlasSprite/Texture
+//		NormalsTexture = &Animation/AtlasSprite/Texture
 		DiffuseShader = "./Data/default.shader"
 		NormalsShader = "./Data/no_normals.shader"
 	}

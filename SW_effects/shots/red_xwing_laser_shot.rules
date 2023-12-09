@@ -3,7 +3,7 @@ OtherIDs = ["red_xwing_shot_common"]
 Range = 320
 IdealRange = [96, 320]
 IdealRadius = [5, 50]
-Speed = 240 //120
+Speed = 180 //120
 
 Components
 {
@@ -30,42 +30,27 @@ Components
 	Hit
 	{
 		Type = PenetratingHit
+	Penetration = 1
+		PenetrationSpeed = 20
+		SourceShipLowCollisions = false
 		FactorEffectsWith = Targetable
 		
 		CrewCollisions = {Enemies=true; Junk=true}
-		SourceShipLowCollisions = true
-		PenetratesCrew = true
 		HitCrew = &HitOperational
 
-		HitShield
-		{
-			HitEffects
-			[
-				{
-					Type = Damage
-					Damage = 200
-				}
-				{
-					Type = Impulse;
-					Impulse = 2.5;
-				}
-			]
-
-			MediaEffects = &../HitOperational/MediaEffects
-		}
-
+		HitShield = &HitOperational
 		HitOperational
 		{
+			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
 					Type = Damage
-					Damage = 200
-					TreatShieldAsPart = true
+					Damage = 450
 				}
 				{
-					Type = Impulse;
-					Impulse = 2.5;
+					Type = Impulse
+					Impulse = 2.5
 				}
 			]
 
@@ -86,12 +71,12 @@ Components
 		}
 		HitStructural
 		{
+			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
 					Type = Damage
-					Damage = 100
-					TreatShieldAsPart = true
+					Damage = 300
 				}
 				{
 					Type = Impulse;
@@ -146,7 +131,7 @@ Components
 			FramesPerRow = 2
 			FramesPerSecond = 32
 		}
-		NormalsTexture = &Animation/AtlasSprite/Texture
+//		NormalsTexture = &Animation/AtlasSprite/Texture
 		DiffuseShader = "./Data/default.shader"
 		NormalsShader = "./Data/no_normals.shader"
 	}
