@@ -3,7 +3,7 @@ OtherIDs = ["green_xwing_shot_common"]
 Range = 320
 IdealRange = [96, 320]
 IdealRadius = [5, 50]
-Speed = 240 //120
+Speed = 180 //120
 
 Components
 {
@@ -30,50 +30,27 @@ Components
 	Hit
 	{
 		Type = PenetratingHit
+		Penetration = 1
+		PenetrationSpeed = 20
+		SourceShipLowCollisions = false
 		FactorEffectsWith = Targetable
-		Penetration = 0 // Enough to get through one shield and lose half penetration.
-		PenetratesOperational = false
-		SourceShipCollisionDelay = 0
-		HitShield
-		{
-			HitEffects
-			[
-				{
-					Type = Damage
-					Damage = 150
-				}
-				{
-					Type = Impulse;
-					Impulse = 2.5;
-				}
-			]
 
-			MediaEffects
-			[
-				&/SW_PARTICLES/GreenLaserHit
-				&/SW_PARTICLES/GreenLaserFlash
-				&/SW_PARTICLES/GreenLaserSparks
-	
-				&/SW_SOUNDS/SmallLaserHit
+		CrewCollisions = {Enemies=true; Junk=true}
+		HitCrew = &HitOperational
 
-				: /BASE_SHAKE
-				{
-					ShakeAmount = .03
-					Duration = .3
-				}
-			]
-		}
+		HitShield = &HitOperational
 		HitOperational
 		{
+			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
 					Type = Damage
-					Damage = 250
+					Damage = 450
 				}
 				{
-					Type = Impulse;
-					Impulse = 2.5;
+					Type = Impulse
+					Impulse = 2.5
 				}
 			]
 
@@ -94,11 +71,12 @@ Components
 		}
 		HitStructural
 		{
+			ReduceEffectsByPenetration = true
 			HitEffects
 			[
 				{
 					Type = Damage
-					Damage = 100
+					Damage = 300
 				}
 				{
 					Type = Impulse;

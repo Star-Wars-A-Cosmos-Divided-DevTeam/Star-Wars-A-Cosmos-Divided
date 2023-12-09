@@ -1,30 +1,50 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/FixedLaserL"
-	IconNameKey = "Parts/FixedLaserIcon"
-	DescriptionKey = "Parts/FixedLaserDesc"
+ 	//IDs
 	ID = SW.x_wing_laserL
 	OtherIDs = [SW.x_wing_laserR]
 	FlipWhenLoadingIDs = [SW.x_wing_laserR]
+
+    //StringKeys
+	NameKey = "Parts/FixedLaserL"
+	IconNameKey = "Parts/FixedLaserIcon"
+	DescriptionKey = "Parts/FixedLaserDesc"
+
+    //Groups&Categories
 	EditorGroups = ["WeaponsEnergy", "TechI"]
+	TypeCategories = [weapon, uses_power]//, is_crewed
+
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 16]
 		[coil, 6]
 	]
-	AIValueFactor = 2
-	TypeCategories = [weapon, uses_power]//, is_crewed
-	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [1, 1]
+	MaxHealth = 2000
+
+    //Rects
 	//PhysicalRect = [0, 1, 1, 1]
 	//SaveRect = &PhysicalRect
+	IsFlippable = true
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
+
+    //Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "blasterlasers"
-	MaxHealth = 2000
+
+    //PartSpecific
+	AIValueFactor = 2
 	InitialPenetrationResistance = 1.2
+
+    //ReceivableBuffs&ProbitedBy
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	ProhibitLeft = 1
-//	MaxDoors = 2
+
+    //Doors&Etc
+	//	MaxDoors = 2
 	AllowedDoorLocations
 	[
 		//[-1, 0]
@@ -32,9 +52,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[0, 1]
 		[0,-1]
 	]
-	IsFlippable = true
-	FlipHRotate = [0, 3, 2, 1]
-	FlipVRotate = [2, 1, 0, 3]
+
+    //Editor
 	EditorIcon
 	{
 		Texture
@@ -44,6 +63,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [34, 92]
 	}
+
+    //Components
+
+   //Stats
 	
 	Components : ^/0/Components
 	{
@@ -593,10 +616,10 @@ BulletEmitterBase
 	FireTrigger = CommonReloadResetTriggerProxy
 	GetTargetFrom = Turret
 	Location = [3.4, -.1]
-	FireDelay = 0.03
+	FireDelay = 0.7
 	ResourceStorage = BatteryStorage
-	ResourcesUsed = 50
-	MinResourcesUsed = 50
+	ResourcesUsed = 100
+	MinResourcesUsed = 100
 	Bullet = &/SW_SHOTS/redsmalllasershot
 }
 ReloadProgressBarBase
