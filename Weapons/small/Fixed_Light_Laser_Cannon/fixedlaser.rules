@@ -1,39 +1,57 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/fixedlasercannon"
-	IconNameKey = "Parts/fixedlasercannonIcon"
-	DescriptionKey = "Parts/fixedlasercannonDesc"
+   //IDs
 	ID = SW.fixed_laser_cannon_switchable
 	OtherIDs = [SW.fixed_laser_cannonL,SW.fixedlaserL,SW.fixed_laser_cannon_L,SW.fixedlaserR,SW.fixed_laser_cannonR, SW.fixed_laser_cannon_R]
 	FlipWhenLoadingIDs = [SW.fixedlaserR, SW.fixed_laser_cannonR, SW.fixed_laser_cannon_R]
+
+    //StringKeys
+	NameKey = "Parts/fixedlasercannon"
+	IconNameKey = "Parts/fixedlasercannonIcon"
+	DescriptionKey = "Parts/fixedlasercannonDesc"
+
+    //Groups&Categories
+	TypeCategories = [weapon, uses_power]//, is_crewed
 	EditorGroups = ["WeaponsEnergy", "TechI"]
+
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 12]
 		[coil, 10]
 	]
-	AIValueFactor = 2
-	TypeCategories = [weapon, uses_power]//, is_crewed
-	ReceivableBuffs : ^/0/ReceivableBuffs []
 	Size = [1, 1]
+	MaxHealth = 2000
+
+    //Rects
 	//PhysicalRect = [0, 1, 1, 1]
 	//SaveRect = [0, 1, 1, 1]
+	IsFlippable = true
+	FlipHRotate = [0, 3, 2, 1] 
+	FlipVRotate = [2, 1, 0, 3]
+
+    //Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "blasterlasers"
-	MaxHealth = 2000
+
+    //PartSpecific
+	AIValueFactor = 2
 	InitialPenetrationResistance = 3
+
+    //ReceivableBuffs&ProbitedBy
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	ProhibitLeft = 1
 
+    //Doors&Etc
 	AllowedDoorLocations
 	[
 		[1, 0]
 		[0, 1]
 		[0,-1]
 	]
-	IsFlippable = true
-	FlipHRotate = [0, 3, 2, 1] 
-	FlipVRotate = [2, 1, 0, 3]
+
+    //Editor
 	EditorIcon
 	{
 		Texture
@@ -41,9 +59,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [96, 48]
+		Size = [64, 22]
 	}
-	
+
+    //Components
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -142,7 +161,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CommonReloadTimer
 		{
 			Type = Timer
-			Duration = 0.375
+			Duration = 0.1
 			AutoStart = true
 			Toggle = IsOperational
 			StartTrigger = CommonReloadResetTriggerProxy
@@ -150,7 +169,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CommonOnShootEffectTimer
 		{
 			Type = Timer
-			Duration = 0.25
+			Duration = 0.1
 			AutoStart = true
 			Toggle = IsOperational
 			StartsOn = 0
@@ -543,6 +562,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Offset = [-0.5, 0]
 		}
 	}
+
+   //Stats
 	Stats
 	{
 		CrewRequired = 0 //&~/Part/Components/PartCrew/Crew
@@ -576,6 +597,7 @@ TurretStats
 		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
 		PowerPerSecond = (&PowerPerShot) * (&ROF)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+		Spread = deg(&~/BulletEmitterBase/Spread/1)
 		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
 	}
 }
@@ -599,6 +621,7 @@ TurretStats
 			ResourcesUsed = 40
 			MinResourcesUsed = 50
 			Bullet = &/SW_SHOTS/bluesmalllasershot
+			Spread = [-2.5d, 2.5d]
 		}
 		ReloadProgressBarBase
 		{
@@ -655,9 +678,9 @@ TurretStats
 			FirePermissionToggle = FirePermissionToggle
 			HoldTargetAfterCancel = 0.15
 			AutoTargetCrewSafetyDist = 8
-			IgnoreSourceShipLOSChecks = false
-			IgnoreSourceShipLowLOSChecks = false
-			AllowFireWithBlockedLOS = false
+			IgnoreSourceShipLOSChecks = true
+			IgnoreSourceShipLowLOSChecks = true
+			AllowFireWithBlockedLOS = true
 
 			AutoTargets
 			[
