@@ -599,31 +599,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
-		Blueprints
-		{
-			Type = BlueprintSprite
-			File = "Shield_Roasted_2x2/blueprints.png"
-			Size = [2, 2]
-		}
-	}
-
-	Stats
-	{
-		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
-		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
-		ShieldArc = deg(360d)
-		ShieldDist = (&~/ShieldStatBase/Radius)
-		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-
-		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
-		RecCrew = (&RecPower)
-	}
-}
 ShieldStatBase
 {
+	Type = ArcShield
 	Radius = 20
-	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
+	Arc = 360d
 	OperationalToggle = IsOperational
 	BlockedByOperationalParts = false
 	DrainResourcesFrom = BatteryStorage
@@ -641,7 +621,7 @@ ShieldStatBase
 			MipLevels = 1
 		}
 		Size = &<ShieldTuner.rules>/Med/Size
-		Color = [50, 50, 255, 127]
+		Color = [0, 0, 255, 127]
 	}
 	BlueprintArcSpriteSegments = 64
 
@@ -659,3 +639,26 @@ ShieldStatBase
 	}
 	CoverageArcSpriteSegments = 64
 }
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "Shield_Roasted_2x2/blueprints.png"
+			Size = [2, 2]
+		}
+	}
+
+	Stats
+	{
+		ShieldHP = (&~/Part/Components/BatteryStorage/MaxResources) / (&~/Part/Components/ShieldStatBase/ResourceDrainPerDamage)
+		ShieldPenResist = &~/Part/Components/ShieldStatBase/PenetrationResistance/0
+		ShieldArc = deg(&~/Part/Components/ShieldStatBase/Arc)
+		ShieldDist = (&~/Part/Components/ShieldStatBase/Radius)
+		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/Part/Components/ShieldStatBase/ResourceDrainPerDamage)
+		RecCrew = (&RecPower)
+	}
+}
+
