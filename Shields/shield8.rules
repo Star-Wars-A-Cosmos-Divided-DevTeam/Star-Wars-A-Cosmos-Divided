@@ -1245,50 +1245,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		ShieldStatBase
-		{
-			Type = ArcShield
-			OperationalToggle = IsOperational
-			BlockedByOperationalParts = false
-			Radius = 80
-			Arc = 360d 
-			DrainResourcesFrom = BatteryStorage
-			Location = [4, 2.5]
-			PenetrationResistance = [256, 0]
-			ResourceDrainPerDamage = 0.4
-
-			BlueprintArcSprite
-			{
-				Texture
-				{
-					File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
-					UVMode = Wrap
-					SampleMode = Linear
-					MipLevels = 1
-				}
-				_xScale = &<ShieldTuner.rules>/Giga/_xScale
-				Size = &<ShieldTuner.rules>/Giga/Size
-				UVRect = [0, 1, 2, 1]
-				Color = [0, 0, 255, 127]
-			}
-			BlueprintArcSpriteSegments = 64
-
-			CoverageArcSprite
-			{
-				Texture
-				{
-					File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-					UVMode = Wrap
-					SampleMode = Linear
-					MipLevels = 1
-				}
-				_xScale = &<ShieldTuner.rules>/Giga/_xScale
-				Size = &<ShieldTuner.rules>/Giga/Size
-				UVRect = [0, 1, 2, 1]
-				Color = [255, 255, 255, 127]
-			}
-			CoverageArcSpriteSegments = 64
-		}
 
 		Blueprints
 		{
@@ -1300,17 +1256,59 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		ShieldHP = (((&~/Part/Components/BatteryStorageLeft/MaxResources) / (&~/Part/Components/ShieldStatBase/ResourceDrainPerDamage)) + ((&~/Part/Components/BatteryStorageRight/MaxResources) / (&~/Part/Components/ShieldStatBase/ResourceDrainPerDamage)))
-		ShieldPenResist = &~/Part/Components/ShieldStatBase/PenetrationResistance/0
+		ShieldHP = (((&~/Part/Components/BatteryStorageLeft/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)) + ((&~/Part/Components/BatteryStorageRight/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)))
+		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
 		ShieldArc = deg(360d)
-		ShieldDist = (&~/Part/Components/ShieldStatBase/Radius)
+		ShieldDist = (&~/ShieldStatBase/Radius)
 		PowerUsageContinuous = (&~/Part/Components/PowerDrainLeft/FromQuantity) / (&~/Part/Components/PowerDrainLeft/Interval) / 1000
 		PowerCapacity = (&~/MaxResources) / 1000
 
-		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/Part/Components/ShieldStatBase/ResourceDrainPerDamage)
+		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
 		RecCrew = (&RecPower)
 	}
 }
+ShieldStatBase
+{
+	OperationalToggle = IsOperational
+	BlockedByOperationalParts = false
+	Radius = 80
+	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
+	DrainResourcesFrom = BatteryStorage
+	Location = [4, 2.5]
+	PenetrationResistance = [256, 0]
+	ResourceDrainPerDamage = 0.4
 
+	BlueprintArcSprite
+	{
+		Texture
+		{
+			File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		_xScale = &<ShieldTuner.rules>/Giga/_xScale
+		Size = &<ShieldTuner.rules>/Giga/Size
+		UVRect = [0, 1, 2, 1]
+		Color = [50, 50, 255, 127]
+	}
+	BlueprintArcSpriteSegments = 64
+
+	CoverageArcSprite
+	{
+		Texture
+		{
+			File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		_xScale = &<ShieldTuner.rules>/Giga/_xScale
+		Size = &<ShieldTuner.rules>/Giga/Size
+		UVRect = [0, 1, 2, 1]
+		Color = [255, 255, 255, 127]
+	}
+	CoverageArcSpriteSegments = 64
+}
 Size = Giga
-MaxResources = 128000 //Why is this here?
+MaxResources = 128000
