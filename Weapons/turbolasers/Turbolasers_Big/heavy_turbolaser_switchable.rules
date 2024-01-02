@@ -105,7 +105,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
-			AvailableChoices = [-1, 0, 1, 2]
+			AvailableChoices = [-1, 0, 1, 2] // REVIEW: Is this needed? Not in Vanilla Cannon Deck or Laser Blaser
 			ToggledOnChoices = [0, 1, 2]
 		}
 		AutoTargetToggle
@@ -120,12 +120,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-		FireAlternatingToggle
+		FireAlternatingToggle //REVIEW: Should this be cleaned up if unused?
 		{
 			Type = UIToggle
 			ToggleID = "fire_alternating"
 			Default = 0
-			AvailableChoices = [0]
+			AvailableChoices = [0] //REVIEW: Vanilla does not use AvailableChoices
 		}
 
 		CommonReloadTimer
@@ -271,6 +271,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 20000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver //REVIEW: This tends to be in Batter Consumer which is unlike vanilla should be moved to Battery Storage 
 		}
 		BatteryConsumer
 		{
@@ -280,7 +281,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
 			ResupplyThreshold = 1000
 			OperationalToggle = PowerToggle
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryStorageBar
 		{
@@ -614,7 +614,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational,
+			Toggle = IsOperational
 			Location = [2, 2]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
