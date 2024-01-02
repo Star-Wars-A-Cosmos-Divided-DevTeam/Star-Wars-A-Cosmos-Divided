@@ -30,10 +30,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeID = "cannons"
 
     //PartSpecific
-	AIValueFactor = 1
+	AIValueFactor = 2
 	InitialPenetrationResistance = 5
 
     //ReceivableBuffs&ProbitedBy
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	//ProhibitedBy : ^/0/ProhibitedBy [tall]
 
     //Doors&Etc
 	AllowedDoorLocations
@@ -57,7 +59,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 
     //Components	
-	Components : ^/0/Components, &<turbolaser01_green.rules>/Components, &<turret01_graphics.rules>
+	Components : ^/0/Components, &<turret01_graphics.rules>
 	{
 		IsOperational
 		{
@@ -65,18 +67,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Toggles = [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
+
 		PowerToggle
 		{
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
+			RequiresCommand = false
 		}
 
 		CommandConsumer
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
-			CommandPoints = 6//4?
+			CommandPoints = 6
 		}
 
 		FireModeToggle
@@ -99,61 +103,126 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnMode = 2
 		}
 
-/*
-		LightTurbolaserType
+		CommonReloadTimer
+		{
+			Type = Timer
+			Duration = 2.1
+			AutoStart = true
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+		CommonOnShootEffectTimer
+		{
+			Type = Timer
+			Duration = 0.42
+			AutoStart = true
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+		CommonReloadResetTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = CommonReloadResetTrigger
+		}
+
+
+		SwitchWeaponCooldownProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = SwitchWeaponCooldownTimer
+			InvertOperationalToggle = true
+			ShowProgressFor = SwitchWeaponCooldownTimer
+			Invert = true
+			LowColor = [16, 16, 16]
+			HighColor = [255, 255, 255]
+		}
+		SwitchWeaponCooldownTimer
+		{
+			Type = Timer
+			Duration = 6.3
+			AutoStart = true
+			Repeats = false
+			StartsOn = 0
+			StartTrigger = SwitchWeaponCooldownTrigger
+		}
+		SwitchWeaponCooldownTrigger
+		{
+			Type = ModeTrigger
+			Mode = MunitionType
+			TriggerInModes = [0, 1, 2]
+		}
+
+		MunitionType
 		{
 			Type = UIToggle
-			ToggleID = "SW.lightturbolaser_type"
+			ToggleID = "SW.munition_type"
 			Default = 0
+			AvailableChoices = [0, 1, 2]
 			AlwaysAllowInBuildMode = true
-			ToggledOnChoices = [0, 1, 2]
+			RequiresCommand = false
 		}
-
-		LightTurbolaserRedToggle
+		RedMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = LightTurbolaserType
+			Mode = MunitionType
 			OnMode = 0
 		}
-
-		LightTurbolaserRedComponents
+		RedMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = LightTurbolaserRedToggle
-			IncludeInBlueprints = true
-			Components = &<light_turbolaser_red.rules>/Components
+			Toggle = RedMunitionToggle
+			Components = &<turbolaser01_red.rules>/Components
 		}
-
-		LightTurbolaserBlueToggle
+		BlueMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = LightTurbolaserType
+			Mode = MunitionType
 			OnMode = 1
 		}
-
-		LightTurbolaserBlueComponents
+		BlueMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = LightTurbolaserBlueToggle
-			IncludeInBlueprints = true
-			Components = &<light_turbolaser_blue.rules>/Components
+			Toggle = BlueMunitionToggle
+			Components = &<turbolaser01_blue.rules>/Components
 		}
-
-		LightTurbolaserGreenToggle
+		GreenMunitionToggle
 		{
 			Type = ModeToggle
-			Mode = LightTurbolaserType
+			Mode = MunitionType
 			OnMode = 2
 		}
-
-		LightTurbolaserGreenComponents
+		GreenMunitionComponents
 		{
 			Type = ToggledComponents
-			Toggle = LightTurbolaserGreenToggle
-			IncludeInBlueprints = true
-			Components = &<light_turbolaser_green.rules>/Components
+			Toggle = GreenMunitionToggle
+			Components = &<turbolaser01_green.rules>/Components
 		}
-*/
+		
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 4000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 1000
+			OperationalToggle = PowerToggle
+		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -264,23 +333,33 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		
-		BatteryStorage
+
+		FirePermissionToggle
 		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 4000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			Type = MultiToggle
+			Toggles = [CommonReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
+			Mode = All
 		}
 
-		BatteryConsumer
+		Turret : &~/TurretBase
 		{
-			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 1000
-			OperationalToggle = PowerToggle
+
+		}
+
+		BulletEmitterBase : &~/BulletEmitterBase
+		{
+			FireTrigger 
+		}
+		CommonReloadResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [Turret]
+		}
+
+		TurretLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
 		}
 
 		CrewLocation1
@@ -351,8 +430,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleEffects
 			Location = [1, 1]
 			Toggle = IsOperational
-			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
-			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
 
 		DestroyedEffects
@@ -409,46 +488,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Size = [2, 2]
 		}
 
-/*
-		BlueprintsRed
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
-
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.lightturbolaser_type
-				Mode = 0
-			}
-		}
-
-		BlueprintsBlue
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
-
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.lightturbolaser_type
-				Mode = 1
-			}
-		}
-		
-		BlueprintsGreen
-		{
-			Type = BlueprintSprite
-			File = "blueprints.png"
-			Size = [2, 2]
-			ShowOnlyInToggleMode
-			{
-				ToggleID = SW.lightturbolaser_type
-				Mode = 2
-			}
-		}
-*/
-
 	}
 
    //Stats
@@ -457,23 +496,98 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = (&PowerPerSecond) * 1
+		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 2 / (&<turbolaser01_green.rules>/Components/Turret/FireInterval)
-		Range = &<turbolaser01_green.rules>/Components/BulletEmitter/Bullet/Range
-		Arc = deg(&<turbolaser01_green.rules>/Components/Turret/FiringArc)
-		TurretSpeed = deg(&<turbolaser01_green.rules>/Components/Turret/RotateSpeed)
-		ShotSpeed = &<turbolaser01_green.rules>/Components/BulletEmitter/Bullet/Speed
-		ShotHP = &<turbolaser01_green.rules>/Components/BulletEmitter/Bullet/Components/Targetable/Health
-		PowerPerShot = (&<turbolaser01_green.rules>/Components/BulletEmitter/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * 2 / (&<turbolaser01_green.rules>/Components/Turret/FireInterval)
-		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	StatsByCategory
 	[
-//		&<light_turbolaser_red.rules>/LaserStats
-//		&<light_turbolaser_blue.rules>/LaserStats
+		&~/TurretStats
+		&<turbolaser01_red.rules>/LaserStats
+		&<turbolaser01_blue.rules>/LaserStats
 		&<turbolaser01_green.rules>/LaserStats
 	]
 }
+TurretStats
+{
+	NameKey = "StatCategories/Turret"
+	Stats
+	{
+		Barrels = 1
+		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
+		Salvo = [&../Barrels, &../ReloadTime]
+		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		Range = &~/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/TurretBase/FiringArc)
+		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
+		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+
+	}
+}
+BulletEmitterBase
+{
+	Type = BulletEmitter
+	ChainedTo = Turret
+	FireTrigger = Turret
+	GetTargetFrom = Turret
+	Location = [3.36, 0] //0,188
+	OperationalToggle = IsOperational
+	FireDelay = 0.05
+	Bullet = &/SW_SHOTS/greenlongrangelasershot
+	ResourceStorage = BatteryStorage
+	ResourcesUsed = 100
+}
+ReloadProgressBarBase
+{
+	Type = ProgressBar
+	OperationalToggle = SwitchWeaponCooldownTimer
+	ShowProgressFor = CommonReloadTimer
+	Invert = true
+}
+
+TurretBase
+{
+		Type = TurretWeapon
+		Location = [1, 1]
+		Rotation = -90d// Relative to unrotated part.
+		OperationalToggle = IsOperational
+		AutoFireToggle = AutoFireToggle
+		FireInterval = .6
+		FiringArc = 180d
+		RotateSpeed = 15d
+		FireThresholdAngle = 1d
+		//TargetSearchTriesPerFrame = 1
+		AIFirepowerRating = 1600
+		FirePermissionToggle = FirePermissionToggle
+		Emitter = BulletEmitterBase
+		IgnoreSourceShipLOSChecks = false
+		IgnoreSourceShipLowLOSChecks = true
+		AllowFireWithBlockedLOS = false
+
+		AutoTargets
+		[
+			{
+				TargetType = ShipParts
+				Toggle = AutoTargetToggle
+			}
+		]
+
+		BlueprintArcSprite
+		{
+			Texture = &/INDICATORS/WeaponArc
+			Size = [0, 1.5]
+			Color = [255, 0, 0, 63]
+		}
+		BlueprintArcRadius = 10
+		BlueprintArcSpriteSegments = 64
+
+		CoverageSectorArc
+		{
+			Texture = &/INDICATORS/VerticalGradient
+			VertexColor = [255, 255, 255, 51]
+			QuadCount = 64
+		}
+}
+
