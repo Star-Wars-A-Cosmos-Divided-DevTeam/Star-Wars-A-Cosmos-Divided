@@ -1,0 +1,175 @@
+ID = SW.turbolaser_turret_longrange_laser_red_shot //TURRET WEAPONSHOT
+Range = 420
+IdealRange = [128, 420]
+IdealRadius = [5, 50]
+Speed = 120 //90
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.1
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 1000
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		Penetration = 0 // Enough to get through one shield and lose half penetration.
+		PenetratesOperational = false
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+
+		// SourceShipCollisionDelay = 10
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 700
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.5;
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/RedLaserHit
+				&/SW_PARTICLES/RedLaserFlash
+				&/SW_PARTICLES/RedLaserSparks
+	
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 1200
+					TreatShieldAsPart = true
+				}
+				{
+					Type = Impulse;
+					Impulse = 2.3;
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/RedLaserHit
+				&/SW_PARTICLES/RedLaserFlash
+				&/SW_PARTICLES/RedLaserSparks
+	
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .04
+					Duration = .3
+				}
+			]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 650
+					TreatShieldAsPart = true
+				}
+				{
+					Type = Impulse;
+					Impulse = 1.25;
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/RedLaserHitStruct
+
+				&/SW_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational
+		{
+			// No effect.
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational
+		{
+			// No effect.
+		}
+		FinishedPenetratingStructural
+		{
+			// No effect.
+		}
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "lasershotred.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [1.54, 0.72]
+			}
+			FrameCount = 2
+			FrameSize = [64, 32]
+			FramesPerRow = 1
+			FramesPerSecond = 60
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/SW_PARTICLES/RedLaserShotGlow
+		]
+	}
+}
+
