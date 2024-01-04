@@ -1,14 +1,20 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+    //IDs
 	ID = SW.IonThruster01_7x10_switchable
 	OtherIDs = ["IonThruster01_7x10","SW.IonThruster01_7x10"]
+
+    //StringKeys
 	NameKey = "Parts/IonThruster01_7x10"
 	IconNameKey = "Parts/IonThruster01_7x10_Icon"
 	DescriptionKey = "Parts/IonThrusterBigDesc"
+
+    //Groups&Categories
 	EditorGroups = ["Flight", "SWTechIII"]
 	TypeCategories = [thruster, uses_power]
 	RequiresCategories = [SW_Bridge]
 
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 520] //80/9*7*10=622*81%
@@ -17,22 +23,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]
 
 	Size = [7, 13]
+	MaxHealth = 56000 //56700 //81% of vanilla 1000 per tile //70000
+
+    //Rects
 	PhysicalRect = [0, 0, 7, 10]
 	SaveRect = &PhysicalRect
 	BoundingRectType = Physical
+
+    //Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "ion_thrusters"
-	MaxHealth = 56000 //56700 //81% of vanilla 1000 per tile //70000
-	InitialPenetrationResistance = 1
 
+    //PartSpecific
+	InitialPenetrationResistance = 1
 	ThrusterForce = 54000 //70%sizedegrade*[normalized] 122,5% of vanilla 1000*8/9 per tile // 53355
 	ThrustIncreaseTime = 7.2
 	ThrustRecoveryTime = 2.4
 	FuelUsage = 1600 //3200 //3111,11 //50%sizedegrade*[normalized] 133% of vanilla 50*8/9 per tile //870 //6.6_*250*(3/4)^5 = ~ 1666.6_*(0.85)^4=870.0
 
+
+    //ReceivableBuffs&ProbitedBy
 	ProhibitBelow = 8 // 11 //17
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Accelerator]
+	ReceivableBuffs : ^/0/ReceivableBuffs [/*SW_Ion_Accelerator,*/Engine]
+
+    //Doors&Etc
 	AllowedDoorLocations
 	[
 		[-1, 3]
@@ -51,6 +66,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[7, 2]
 		[7, 3]
 	]
+
+    //Editor
 	EditorIcon
 	{
 		Texture
@@ -60,6 +77,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [64, 106.66]
 	}
+
+    //Components
 	Components : ^/0/Components, &<toggles.rules>, &<toggles2.rules>, &<graphics.rules>
 	{
 		IsOperational
@@ -101,6 +120,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 255, 0]
 		}
 
+		EngineBuffToggle //REPLACE WITH BELOW WHEN BUFFS ARE IMPLEMENTED
+		{
+			Type = BuffToggle
+			BuffType = Engine
+		}
+/*
 		SWIonEngineBuffToggle
 		{
 			Type = BuffToggle
@@ -112,11 +137,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = SWIonEngineBuffToggle
 		}
-
+*/
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = SWIonEngineBuffToggle
+			Toggle = EngineBuffToggle/*SWIonEngineBuffToggle*/
 			Invert = true
 			IncludeInBlueprints = true
 			Components
@@ -283,7 +308,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Accelerator; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=1; BuffType=Engine/*SW_Ion_Accelerator*/; BuffMode=Multiply; }
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -304,7 +329,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Rotation = -90d
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.21; BuffType=Engine; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=0.21; BuffType=Engine/*SW_Ion_Accelerator*/; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -495,6 +520,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
+   //Stats
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce

@@ -1,39 +1,56 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/rcs"
-	IconNameKey = "Parts/rcsIcon"
+   //IDs
 	ID = SW.rcs
 	OtherIDs = ["rcs"]
-	EditorGroups = ["Flight", "SWTechI"]
+
+    //StringKeys
+	NameKey = "Parts/rcs"
+	IconNameKey = "Parts/rcsIcon"
 	DescriptionKey = "Parts/rcsDesc"
+
+    //Groups&Categories
+	EditorGroups = ["Flight", "SWTechI"]
+	TypeCategories = [thruster, uses_power]
+
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 8]//100%*8 of vanilla
 		[coil, 2]//66%*3 of vanilla
 	]
-	TypeCategories = [thruster, uses_power]
 	Size = [1, 1]
+	MaxHealth = 600 //60%*1000 of vanilla
+
+    //Rects
 	PhysicalRect = [0, 0, 1, 1]
 	SaveRect = &PhysicalRect
 	BoundingRectType = Physical
+
+    //Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "ion_thrusters"
-	MaxHealth = 600 //60%*1000 of vanilla
-	ProhibitBelow = 1
+
+    //PartSpecific
 	ThrusterForce = 160 //40%*400 of vanilla
 	ThrustIncreaseTime = 0.21 //softer accel
 	ThrustRecoveryTime = 0.21 //softer deccel
 	FuelUsage = 12 //40%*30 of vanilla
 
-	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
+    //ReceivableBuffs&ProbitedBy
+	ProhibitBelow = 1
+	ReceivableBuffs : ^/0/ReceivableBuffs [/*SW_Ion_Accelerator,*/Engine]
 
+    //Doors&Etc
 	AllowedDoorLocations
 	[
 		[0, -1]
 		[1, 0]
 		[-1, 0]
 	]
+
+    //Editor
 	EditorIcon
 	{
 		Texture
@@ -43,6 +60,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [21.33, 21.33]
 	}
+
+
+    //Components
 	Components : ^/0/Components, <../../Armor/Doonium/doonium_armor/roof_toggles.rules>
 	{
 		IsOperational
@@ -51,6 +71,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Toggles = [PowerToggle, BatteryStorage]
 			Mode = All
 		}
+
 		PowerToggle
 		{
 			Type = UIToggle
@@ -58,12 +79,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
+
 		CommandConsumer
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
 			CommandPoints = 1
 		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -71,6 +94,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 1000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -160,10 +184,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = BuffToggle
 			BuffType = Engine
 		}
+/*
+		SWIonEngineBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Ion_Accelerator
+		}
+
+		SWIonEngineBuffProxy
+		{
+			Type = ToggleProxy
+			ComponentID = SWIonEngineBuffToggle
+		}
+*/
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle
+			Toggle = EngineBuffToggle/*SWIonEngineBuffToggle*/
 			Invert = true
 			IncludeInBlueprints = true
 			Components
@@ -176,10 +213,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
 					ResupplyThreshold = 500
 					OperationalToggle = PowerToggle
-					ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 				}
 			}
 		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -326,7 +363,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = 90d
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=Engine; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=1; BuffType=Engine/*SW_Ion_Accelerator*/; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -347,7 +384,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Rotation = -90d
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.42; BuffType=Engine; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=0.42; BuffType=Engine/*SW_Ion_Accelerator*/; BuffMode=Multiply; }
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = (&../../ThrustIncreaseTime)*2.1
@@ -457,6 +494,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
+   //Stats 
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce

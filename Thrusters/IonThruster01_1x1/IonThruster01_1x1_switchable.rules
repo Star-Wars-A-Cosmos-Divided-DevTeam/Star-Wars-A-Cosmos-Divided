@@ -1,42 +1,57 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+	//IDs
 	ID = SW.IonThruster01_1x1_switchable
 	OtherIDs = ["IonThruster01_1x1","SW.IonThruster01_1x1"]
+
+	//StringKeys
 	NameKey = "Parts/IonThruster01_1x1"
 	IconNameKey = "Parts/IonThruster01_1x1_Icon"
 	DescriptionKey = "Parts/IonThrusterDesc"
+
+	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechI"]
 	TypeCategories = [thruster, ion_thruster, uses_power]
 	//RequiresCategories = []
+
+	//Resources & Size & Health
 	Resources
 	[
 		[steel, 10]//120%*8 of vanilla
 		[coil, 4]//133%*3 of vanilla
 	]
-
 	Size = [1, 2]
+	MaxHealth = 800 //80%*1000 of vanilla
+
+	//Rects
 	PhysicalRect = [0, 0, 1, 1]
 	SaveRect = &PhysicalRect
 	BoundingRectType = Physical
+
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "ion_thrusters"
-	MaxHealth = 800 //80%*1000 of vanilla
 
+	//Partspecific 
 	ThrusterForce = 640 //160%*400 of vanilla
 	ThrustIncreaseTime = 0.96 //softer accel
 	ThrustRecoveryTime = 0.96 //softer deccel
 	FuelUsage = 19.2 //160%*40%*30 of vanilla
 
+	//ReceivableBuffs&ProhibitedBy
+	ReceivableBuffs : ^/0/ReceivableBuffs [/*SW_Ion_Accelerator,*/Engine]
 	ProhibitBelow = 2
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Accelerator]
 
+	//Doors etc
 	AllowedDoorLocations
 	[
 		[0, -1]
 		[1, 0]
 		[-1, 0]
 	]
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -46,6 +61,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [21.33, 42.66]
 	}
+
+	//Components
 	Components : ^/0/Components, &<toggles.rules>
 	{
 		IsOperational
@@ -87,6 +104,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 255, 0]
 		}
 
+		EngineBuffToggle //REPLACE WITH BELOW WHEN BUFFS ARE IMPLEMENTED
+		{
+			Type = BuffToggle
+			BuffType = Engine
+		}
+/*
 		SWIonEngineBuffToggle
 		{
 			Type = BuffToggle
@@ -98,11 +121,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = SWIonEngineBuffToggle
 		}
+*/
 
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = SWIonEngineBuffToggle
+			Toggle = EngineBuffToggle/*SWIonEngineBuffToggle*/
 			Invert = true
 			IncludeInBlueprints = true
 			Components
@@ -446,7 +470,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Accelerator; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=1; BuffType=Engine/*SW_Ion_Accelerator*/; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -467,7 +491,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Rotation = -90d
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.42; BuffType=Engine; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=0.42; BuffType=Engine/*SW_Ion_Accelerator*/; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
