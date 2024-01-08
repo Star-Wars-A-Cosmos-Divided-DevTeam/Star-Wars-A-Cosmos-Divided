@@ -30,6 +30,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ConstructionDuration = 0.5 //Buff
 	RepairDuration = 0.5 //Buff
 	Density = 1.5 //v:3?
+	MaxHealth = 6000
 	//HealthType = Operational
 	ExplosiveDamageAbsorption = 100%
 	DamageResistances = {explosive = 80%}
@@ -68,13 +69,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//RequiresCategories = [] //no requirements
 	FlipHRotate = [0, 3, 2, 1] //using vanila def mostly
 	FlipVRotate = [2, 1, 0, 3] //using vanila def mostly
-	InitialPenetrationResistance = 16 //common value// most files use own def
+	InitialPenetrationResistance = 14 //common value// most files use own def
 	ContinuingPenetrationResistance = &InitialPenetrationResistance //(floor((&InitialPenetrationResistance)/2.5)) //shared scaler
 	PenetrationRectType = Physical //shared across all
 	ReceivableBuffs : ^/0/ReceivableBuffs [] //common own type buffs later?
 
 	Components : ^/0/Components
 	{
+
+		DummyCollider//copymelol
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0.50-1/64, 0.50-1/64]
+				[0.50-1/64, 0.50+1/64]
+				[0.50+1/64, 0.50+1/64]
+				[0.50+1/64, 0.50-1/64]
+			]
+			Density = 0
+		}
+
 		ConstructionStructureSprites
 		{
 			Type = SpriteGrid
