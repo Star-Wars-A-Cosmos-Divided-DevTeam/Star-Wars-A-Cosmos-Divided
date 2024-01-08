@@ -71,31 +71,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
-		MyRepeatingTimerTrigger
-		{
-			Type = Timer
-			Duration = 10
-			AutoStart = true
-			Repeats = true
-		}
-		MyTriggeredEffects
-		{
-			Type = TriggeredEffects
-			Trigger = MyRepeatingTimerTrigger
-			MediaEffects
-			[
-				: /BASE_SOUNDS/AudioExterior
-				{
-					RandomSounds = ["../Astromech_Base/R2 Chatter 1.wav", "../Astromech_Base/R2 Chatter 2.wav", "../Astromech_Base/R2 Chatter 3.wav"]
-					Volume = 0.2
-					Speed = 1
-					IgnoreIntensity = true
-					SpeedVariation = .25
-					MaxConcurrent = 10
-				}
-			]
-		}
-
 		RepairRepeatingTimerTrigger
 		{
 			Type = Timer
@@ -129,6 +104,40 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Friendlies = true
 						Enemies = false
 					}
+				}
+			]
+		}
+
+		DroidTalkEffectToggle
+		{
+			Type = UIToggle
+			ToggleID = "SW.droid_talk_effect_on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		MyRepeatingTimerTrigger
+		{
+			Type = Timer
+			OperationalToggle = DroidTalkEffectToggle
+			Duration = 21
+			AutoStart = true
+			Repeats = true
+		}
+		MyTriggeredEffects
+		{
+			Type = TriggeredEffects
+			Trigger = MyRepeatingTimerTrigger
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["../Astromech_Base/R2 Chatter 1.wav", "../Astromech_Base/R2 Chatter 2.wav", "../Astromech_Base/R2 Chatter 3.wav"]
+					Volume = 0.2
+					Speed = 1
+					IgnoreIntensity = true
+					SpeedVariation = .25
+					MaxConcurrent = 10
 				}
 			]
 		}
@@ -328,7 +337,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"R2D2on14.png"
 							"R2D2on15.png"
 							"R2D2on16.png"
-						    "R2D2on1.png"
+							"R2D2on1.png"
 						]
 						NormalsAnimationFiles
 						[
