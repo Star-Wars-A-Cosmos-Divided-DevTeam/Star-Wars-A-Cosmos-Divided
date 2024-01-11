@@ -343,34 +343,55 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 4 / (&~/Part/Components/WeaponTimerBuffProvider/BuffAmount)
-		Range = &~/Part/Components/WeaponEmitter/Bullet/Range
-		Arc = deg(&~/Part/Components/Turret/FiringArc)
-		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		//		ROF = 8 / (&~/Part/Components/WeaponTimerBuffProvider/BuffAmount)
+		//		Range = &~/Part/Components/WeaponEmitter/Bullet/Range
+		//		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		//		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 
 	}
 
 	StatsByCategory
 	[
+		&~/TurretStats
 		{
 			NameKey = "StatCategories/LightGreenTurbolasershot"
 			Stats
 			{
 
 				ShieldDamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/TurretStats/Stats/ROF)
 				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 				DamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
+				DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
 //				Spread = deg(&~/Part/Components/WeaponEmitter/Spread/1)
 				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
 				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
-				PowerPerShot = (&~/Part/Components/WeaponEmitter/ResourcesUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
-				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+//				PowerPerShot = (&~/Part/Components/WeaponEmitter/ResourcesUsed) / 1000
+//				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
+//				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 
 			}
 		}
 	]
+}
+
+TurretStats
+{
+	NameKey = "StatCategories/Turret"
+	Stats
+	{
+		Barrels = 8
+		ReloadTime = &~/Part/Components/WeaponTimerBuffProvider/BuffAmount
+		Salvo = [&../Barrels, &../ReloadTime]
+		ROF = (&Barrels) / (&~/Part/Components/WeaponTimerBuffProvider/BuffAmount)
+		Range = &~/Part/Components/WeaponEmitter/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		PowerPerShot = (&~/Part/Components/WeaponEmitter/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+		//Spread = deg(&~/BulletEmitterBase/Spread/1)
+		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
+	}
 }
