@@ -329,6 +329,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = &../Turret/Location
 			Radius = 4/3
 			IsHigh = true
+			Density = 3
 		}
 
 		BeamEmitterBase : &<../../SW_effects/shots/mining_beam_huge_pink.rules>
@@ -377,26 +378,44 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Width = &/SW_SHOTS/miningbeamhugepink/Width // BeamEmitterBase overrides width for targeting purposes.
 		}
 
-		CrewLocation
+		CrewLocationMid
 		{
 			Type = CrewLocation
-			Location = [2, 1.36]
-			Rotation = 0d
+			Location = [2, 1.81]
+			Rotation = 180d
+		}
+
+		CrewLocationLeft
+		{
+			Type = CrewLocation
+			Location = [1.36, 1.36]
+			Rotation = 315d
+		}
+
+		CrewLocationRight
+		{
+			Type = CrewLocation
+			Location = [2.64, 1.36]
+			Rotation = 45d
 		}
 		PartCrew
 		{
 			Type = PartCrew
-			Crew = 1
+			Crew = 3
 			DefaultPriority = &<./Data/ships/base_ship.rules>/DefaultSalvagePriority
 			PrerequisitesBeforeCrewing = [PowerToggle]
 			HighPriorityPrerequisites = [BatteryStorage]
 			CrewDestinations
 			[
-				&../../CrewLocation/Location
+				&../../CrewLocationMid/Location
+				&../../CrewLocationLeft/Location
+				&../../CrewLocationRight/Location
 			]
 			CrewLocations
 			[
-				CrewLocation
+				CrewLocationMid
+				CrewLocationLeft
+				CrewLocationRight
 			]
 		}
 
