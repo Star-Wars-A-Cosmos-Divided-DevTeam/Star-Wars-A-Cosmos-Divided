@@ -576,16 +576,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
-
-//		ROF = 2 / (&~/Part/Components/Turret/FireInterval)
-//		Range = &~/Part/Components/BulletEmitter/Bullet/Range
-//		Arc = deg(&~/Part/Components/Turret/FiringArc)
-//		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-//		ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Speed
-//		//ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Targetable/Health
-//		PowerPerShot = (&~/Part/Components/BulletEmitter/ResourcesUsed) / 1000
-//		PowerPerSecond = (&PowerPerShot) * 2 / (&~/Part/Components/Turret/FireInterval)
-//		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 	
 	StatsByCategory
@@ -597,11 +587,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Stats
 			{
 				DamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-				DamagePerSecond = (&DamagePerShot) * 2 / (&~/Part/Components/Turret/FireInterval)
+				DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
 				Damage = [&../DamagePerShot, &../DamagePerSecond]
-//				ShotDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/AntiBullet/HitBullet/HitEffects/0/Damage
-//				ShotDamagePerSecond = (&ShotDamagePerShot) * 2 / (&~/Components/Turret/FireInterval)
-//				ShotDamage = [&../ShotDamagePerShot, &../ShotDamagePerSecond]
+				ShotDamagePerShot = &~/Part/Components/BulletEmitter/Bullet/Components/Hit/HitBullet/HitEffects/0/Damage
+				ShotDamagePerSecond = (&ShotDamagePerShot) * (&~/TurretStats/Stats/ROF)
+				ShotDamage = [&../ShotDamagePerShot, &../ShotDamagePerSecond]
 			}
 		}
 	]
@@ -612,8 +602,8 @@ TurretStats
 	Stats
 	{
 		Barrels = 2
-		//ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
-		//Salvo = [&../Barrels, &../ReloadTime]
+		ReloadTime = &~/Part/Components/Turret/FireInterval
+		Salvo = [&../Barrels, &../ReloadTime]
 		ROF = (&Barrels) / (&~/Part/Components/Turret/FireInterval)
 		Range = &~/Part/Components/BulletEmitter/Bullet/Range
 		Arc = deg(&~/Part/Components/Turret/FiringArc)
