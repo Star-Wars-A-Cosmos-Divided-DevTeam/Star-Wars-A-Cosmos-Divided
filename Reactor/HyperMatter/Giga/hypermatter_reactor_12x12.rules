@@ -16,10 +16,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	AIValueFactor = 5
 	Size = [12, 12]
 	SelectionPriority = 0
-	SelectionTypeID = "hypermatter_reactors"
+	SelectionTypeID = "hypermatter-reactors"
 	MaxHealth = 144000
 	AutoDoorMaxPathLength = 5
-	TypeCategories = [hypermatter_reactor, reactor, provides_power]
+	TypeCategories = [hypermatter_reactor, reactor, provides_power, consumes_hypermatter]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	RequiresCategories = [SW_Bridge, SW_WarRoom]
 	CreateUnderlyingWhenDestroyed = false
@@ -187,11 +187,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 216000
 			StartingResources = 0
 			SuppliesResources = true
-			MinResourcesPickUp = 2000
-			MaxResourcesPickUp = 5000
-			InitPickUp = 2000
+			MinResourcesPickUp = 3000
+			MaxResourcesPickUp = 3000
+			InitPickUp = 3000
 			PickUpRate = 10000
-			//ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
 			ToggleOnResources = 5000
 			ToggleOffResources = (&ToggleOnResources)-1
 		}
@@ -211,17 +211,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Interval = 3/30
 			//CheckResourceLimits = true
 		}
-		/*
-		BatteryProducer2
-		{
-			Type = ResourceConverter
-			OperationalToggle = HypermatterReactorToggle
-			InvertOperationalToggle = true
-			ToStorage = BatteryStorage
-			ToQuantity = 1000
-			Interval = 60
-		}
-		*/
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -245,6 +234,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleOnResources = 1000
 			ToggleOffResources = (&ToggleOnResources) -1
 		}
+		HypermatterProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			ToStorage = HypermatterStorage
+			ToQuantity = 10
+			Interval = 1/10
+		}
 		HypermatterStorageBar
 		{
 			Type = ProgressBar
@@ -253,14 +250,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			LowColor = [0, 32, 64]
 			HighColor = [0, 250, 250]
 			FullColor = [0, 255, 255]
-		}
-		HypermatterProducer
-		{
-			Type = ResourceConverter
-			OperationalToggle = IsOperational
-			ToStorage = HypermatterStorage
-			ToQuantity = 10
-			Interval = 1/10
 		}
 
 		IsOperationalAndHypermatterReactorToggle
