@@ -19,10 +19,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Size = [4, 4]
 	IsRotateable = false
 	SelectionPriority = 0
-	SelectionTypeID = "reactors"
+	SelectionTypeID = "hypermatter-reactors"
 	MaxHealth = 32000
 	AutoDoorMaxPathLength = 5
-	TypeCategories = [hypermatter_reactor, provides_power]
+	TypeCategories = [hypermatter_reactor, provides_hypermatter]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	CreateUnderlyingWhenDestroyed = false
 	BlockedTravelCells
@@ -66,6 +66,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			SuppliesResources = true
 			MinResourcesPickUp = 1000
 			MaxResourcesPickUp = 3000
+			InitPickUp = 1000
+			PickUpRate = 1000
 			ExpectedResourceGenerationRate = (&../HypermatterProducer/ToQuantity) / (&../HypermatterProducer/Interval)
 			ToggleOnResources = 1000
 			ToggleOffResources = (&ToggleOnResources) -1
@@ -437,9 +439,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	{
 		HypermatterGeneration = (&~/Part/Components/HypermatterProducer/ToQuantity) / (&~/Part/Components/HypermatterProducer/Interval) / 1000
 		HypermatterSize = (&~/Part/Components/HypermatterStorage/MaxResourcesPickUp) / 1000
-		HypermatterFillTime = 0
+		HypermatterFillTime = 0 / (&~/Part/Components/HypermatterStorage/PickUpRate)
 		HypermatterCapacity = (&~/Part/Components/HypermatterStorage/MaxResources) / 1000
 	}
 }
 Size = Large
-Scale = (1/1*4)
+Scale = (1/1*16)
