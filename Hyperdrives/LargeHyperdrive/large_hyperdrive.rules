@@ -54,7 +54,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, FtlBeaconBatteryStorage, CommandToggle]
+			Toggles = [PowerToggle]
 			Mode = All
 		}
 
@@ -66,64 +66,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
+		//temp fixi remove in 2,3 months started 16.01.2024
+		FtlBeaconBatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 0
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
 		CommandConsumer
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
 			CommandPoints = 9
-		}
-
-		CommandToggle
-		{
-			Type = CommandToggle
-		}
-
-		FtlBeacon
-		{
-			Type = FtlBeacon
-			OperationalToggle = IsOperational
-		}
-
-		FtlBeaconBatteryStorage
-		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 12000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-		}
-		FtlBeaconBatteryConsumer
-		{
-			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = FtlBeaconBatteryStorage
-			DefaultPriority = &/PRIORITIES/Utility_Supply
-			ResupplyThreshold = 1000
-			OperationalToggle = PowerToggle
-		}
-		FtlBeaconPowerDrain
-		{
-			Type = ResourceConverter
-			OperationalToggle = IsOperational
-			FromStorage = FtlBeaconBatteryStorage
-			FromQuantity = 200
-			MinFromQuantityForConversion = 1
-			Interval = 1
-		}
-		Pulse
-		{
-			Type = ContinuousEffects
-			Location = [1.5, 1.5]
-			OperationalToggle = IsOperational
-			FactorMediaEffectsIntensityWith = RoofOpacity
-			MediaEffects
-			[
-				&<hyperdrive_beacon_pulse.rules>
-				//&<hyperdrive_beacon_pulse_simple.rules>
-			]
-		}
-		RoofOpacity
-		{
-			Type = RoofOpacity // DO NOT EVER USE COMPONENTS OF THIS TYPE FOR GAMEPLAY LOGIC!!! IT WILL CAUSE DESYNCS!!! USE FOR RENDERING ONLY!!!
 		}
 
 		FtlDriveBatteryStorage
