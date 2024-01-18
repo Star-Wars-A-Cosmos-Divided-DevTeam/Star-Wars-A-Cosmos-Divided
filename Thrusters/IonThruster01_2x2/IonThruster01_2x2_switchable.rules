@@ -1,7 +1,7 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
     //IDs
-   	ID = SW.IonThruster01_2x2_switchable
+	ID = SW.IonThruster01_2x2_switchable
 	OtherIDs = ["IonThruster01_2x2","SW.IonThruster01_2x2"]
 
     //StringKeys
@@ -35,13 +35,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeID = "ion_thrusters"
 
     //PartSpecific
-	ThrusterForce = 5120 //160%*3200 of vanilla
+	ThrusterForce = //3200 //5120 managed thru delaying buff //160%*3200 of vanilla
 	ThrustIncreaseTime = 4.8 //custom
 	ThrustRecoveryTime = 2.1 //custom
 	FuelUsage = 128 //160%*40%*200 of vanilla
 
     //ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [/*SW_Ion_Accelerator,*/Engine]
+	ReceivableBuffs : ^/0/ReceivableBuffs [/*SW_Ion_Thruster_Accelerator,*/SW_Ion_Thruster_Overdrive ,Engine]
 	ProhibitBelow = 5
 
     //Doors&Etc
@@ -115,7 +115,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		SWIonEngineBuffToggle
 		{
 			Type = BuffToggle
-			BuffType = SW_Ion_Accelerator
+			BuffType = SW_Ion_Thruster_Accelerator
 		}
 
 		SWIonEngineBuffProxy
@@ -257,6 +257,36 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ValueProxy
 			ComponentID = MainThruster
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
+		}
+		
+		ThrusterIsFiringMultiToggle
+		{
+			Type = MultiToggle
+			Toggles = [ThrusterIsFiringTriggeredToggle, IsOperational]
+			Mode = All
+		}
+
+		ThrusterIsFiringRampUpBuff
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Ion_Thruster_Overdrive  //used as divide by the fixed weapon fire rate
+			BuffAmount = 1
+			BuffMultiplier = ThrusterIsFiringTween
+		}
+		ThrusterIsFiringTween
+		{
+			Type = ValueTween
+			OffValue = 1
+			OnValue = 1.6 //160% Boost if on for OnTweenDuration
+			OnTweenDuration = 60
+			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
+			IsOnToggle = ThrusterIsFiringMultiToggle
 		}
 
 		FloorGrid
@@ -495,7 +525,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=Engine/*SW_Ion_Accelerator*/; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Overdrive; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -515,9 +545,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
-			Force = (&../../ThrusterForce)*0.3
+			Force = (&../../ThrusterForce)
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.42; BuffType=Engine/*SW_Ion_Accelerator*/; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=0.10; BuffType=Engine/*SW_Ion_Thruster_Accelerator*/; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -526,19 +556,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AllowAutoFire = false
 		}
 
-		ThrusterActivationBarToggle
+		ThrusterIsFiringTriggeredToggle
 		{
 			Type = TriggeredToggle
-			OnTrigger = ThrusterOn
-			OffTrigger = ThrusterOff
+			OnTrigger = ThrusterOnThresholdTrigger
+			OffTrigger = ThrusterOffThresholdTrigger
 		}
-		ThrusterOn
+		ThrusterOnThresholdTrigger
 		{
 			Type = ThresholdTrigger
 			AmountFrom = MainThrusterValueProxy
 			MinAmount = 1%
 		}
-		ThrusterOff
+		ThrusterOffThresholdTrigger
 		{
 			Type = ThresholdTrigger
 			AmountFrom = MainThrusterValueProxy	
@@ -547,7 +577,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ActivationBar
 		{
 			Type = ProgressBar
-			OperationalToggle = ThrusterActivationBarToggle
+			OperationalToggle = ThrusterIsFiringTriggeredToggle
 			ShowProgressFor = MainThrusterValueProxy
 			LowColor = [0, 0, 0]
 			HighColor = [250, 250, 250]
