@@ -1,15 +1,20 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+	//IDs
 	ID = SW.IonThrusterAccelerator10x20
+	//OtherIDs = []
 
+	//StringKeys
 	NameKey = "Parts/IonThrusterAccelerator10x20"
 	IconNameKey = "Parts/IonThrusterAccelerator10x20Icon"
 	DescriptionKey = "Parts/IonThrusterAccelerator10x20Desc"
 
+	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechIII"]
-	TypeCategories = [engine_room, ion_accelerator, uses_power]
+	TypeCategories = [SW_ion_accelerator, engine_room, uses_power, is_crewed]
 	RequiresCategories = [SW_Bridge]
 
+	//Resources & Size & Health
 	Resources
 	[
 		[SW.durasteel, 200]
@@ -18,14 +23,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]  
 	//Cost = 430000 // 1.3_*area*1.1^5 //(level7 growth factor) lv5:1.61051=>430; lv6:1.771561=>472; lv7:1.9487171=>520 // shall not be lower than 280000
 	Size = [10, 20]
-	//Density = 4 //WHY BUFF THEN; TO BE HEAVIER???
 	MaxHealth = 200000
 
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "ion_thrusters"
 
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator]
+	//Partspecific 
+	//Density = 4 //WHY BUFF THEN; TO BE HEAVIER???
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs [] //grants SW_Ion_Thruster_Accelerator Buff
 
 	AllowedDoorLocations
 	[
@@ -83,12 +92,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [64, 106.66]
 	}
-	Components : ^/0/Components, <graphics10x20.rules>
+	Components : ^/0/Components, <graphics.rules>
 	{
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
 
@@ -104,44 +113,124 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
-			CommandPoints = 260 //520 //1 per tile
+			CommandPoints = 200 //1 per tile
 		}
 
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 200000
+			MaxResources = 400000
+		}
+		CombinedBatteryStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorage]
+			ViaBuffs
+			{
+				OutgoingBuffProviders = [BuffProvider]
+				ComponentID = BatteryStorage
+			}
+			AddMode = PrioritizeLeastResources
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
 		{
-			Type = ResourceStorage
+			Type = ResourceConsumer
 			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			Storage = CombinedBatteryStorage
+			DefaultPriority = &/PRIORITIES/Thruster_Supply
 			ResupplyThreshold = 500
 			OperationalToggle = PowerToggle
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryStorageBar
 		{
 			Type = ProgressBar
 			OperationalToggle = IsOperational
-			ShowProgressFor = BatteryStorage
+			ShowProgressFor = CombinedBatteryStorage
 			LowColor = [64, 64, 0]
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
 		}
-
+		PowerDrain
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
+			FromQuantity = 100
+			MinFromQuantityForConversion = 1
+			Interval = 1
+		}
+/*
 		BuffProvider
 		{
 			Type = GridBuffProvider
 			BuffType = SW_Ion_Thruster_Accelerator
-			BuffAmount = 100%
+			BuffAmount = 60%
 			GridDistance = 10
 			OperationalToggle = IsOperational
 		}
+*/
+		BuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = SW_Ion_Thruster_Accelerator
+			BuffAmount = 60%
+			BuffArea = [-10, 20, 30, 30]
+			OperationalToggle = IsOperational
+		}
 
+
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [0.47, 1.5]
+			Rotation = 90d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [2.53, 1.5]
+			Rotation = -90d
+		}
+		CrewLocation3
+		{
+			Type = CrewLocation
+			Location = [1.5, 0.47]
+			Rotation = 180d
+		}
+		CrewLocation4
+		{
+			Type = CrewLocation
+			Location = [1.5, 2.53]
+			Rotation = 0d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 2
+			DefaultPriority = &/PRIORITIES/Thruster_Supply // Needs to be at least as high as the supply priority.
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				[0.4, 1.5]
+				[2.6, 1.5]
+				[1.5, 0.4]
+				[1.5, 2.6]
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+				CrewLocation3
+				CrewLocation4
+			]
+			SwitchLocationInterval = [5, 10]
+		}
+
+/*
 		DirectionOptionToggle
 		{
 			Type = UIToggle
@@ -191,7 +280,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ComponentID = IsConnected
 			IsOnWhenNotConnected = false
 		}
-
+*/
 
 /*
 		BatterySprites
@@ -296,9 +385,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [5, 5]
 					}
 				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [1, 1]
+					}
+				}
 			]
 		}
 
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [10, 20]
+		}
+
+		/*
 		BlueprintsV
 		{
 			Type = BlueprintSprite
@@ -323,19 +430,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				Mode = 1
 			}
 		}
+		*/
 	}
 
-/*
+
 	Stats
 	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
 		ThrusterBuff = (&~/Part/Components/BuffProvider/BuffAmount) * 100
-		PowerUsageContinuousMinutes = 1000 / 1000
+		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = &PowerUsageContinuousMinutes
-		RecCrew = (&RecPower) * 4
+		RecPower = &PowerUsageContinuous
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
-
+}
+/*
 	StatsByCategory
 	[
 		{
@@ -382,4 +492,3 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]
 
 */
-}

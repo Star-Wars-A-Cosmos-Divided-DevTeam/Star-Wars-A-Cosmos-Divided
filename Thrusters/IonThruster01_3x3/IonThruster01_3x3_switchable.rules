@@ -36,14 +36,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeID = "ion_thrusters"
 
     //PartSpecific
-	ThrusterForce = 12800 //160%*8000 of vanilla
+	ThrusterForce = 8000 //12800 managed thru ramping buff //160%*8000 of vanilla
 	ThrustIncreaseTime = 6.4 //custom
 	ThrustRecoveryTime = 3.5 //custom
 	FuelUsage = 256 //160%*40%*400 of vanilla
 
     //ReceivableBuffs&Prohibits
 	ProhibitBelow = 7
-	ReceivableBuffs : ^/0/ReceivableBuffs [/*SW_Ion_Thruster_Accelerator,*/Engine]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive]
 
     //Doors&Etc
 	BlockedTravelCells
@@ -109,6 +109,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 9000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Thruster_Supply
+			ResupplyThreshold = 1000
+			OperationalToggle = PowerToggle
+		}
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -117,44 +126,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			LowColor = [64, 64, 0]
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
-		}
-
-		EngineBuffToggle //REPLACE WITH BELOW WHEN BUFFS ARE IMPLEMENTED
-		{
-			Type = BuffToggle
-			BuffType = Engine
-		}
-/*
-		SWIonEngineBuffToggle
-		{
-			Type = BuffToggle
-			BuffType = SW_Ion_Thruster_Accelerator
-		}
-
-		SWIonEngineBuffProxy
-		{
-			Type = ToggleProxy
-			ComponentID = SWIonEngineBuffToggle
-		}
-*/
-		ToggledBatteryConsumer
-		{
-			Type = ToggledComponents
-			Toggle = EngineBuffToggle/*SWIonEngineBuffToggle*/
-			Invert = true
-			IncludeInBlueprints = true
-			Components
-			{
-				BatteryConsumer
-				{
-					Type = ResourceConsumer
-					ResourceType = battery
-					Storage = BatteryStorage
-					DefaultPriority = &/PRIORITIES/Thruster_Supply
-					ResupplyThreshold = 1000
-					OperationalToggle = PowerToggle
-				}
-			}
 		}
 
 		ThrusterEffectColorType
@@ -270,6 +241,63 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ValueProxy
 			ComponentID = MainThruster
+			ValueWhenNotConnected = 0
+		}
+
+		ThrusterActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ThrusterIsFiringTriggeredToggle
+			ShowProgressFor = MainThrusterValueProxy
+			LowColor = [0, 0, 0]
+			HighColor = [250, 250, 250]
+			FullColor = [255, 255, 255]
+		}
+
+		ThrusterIsFiringTriggeredToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = ThrusterOnThresholdTrigger
+			OffTrigger = ThrusterOffThresholdTrigger
+		}
+		ThrusterOnThresholdTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThrusterValueProxy
+			MinAmount = 9%
+		}
+		ThrusterOffThresholdTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThrusterValueProxy	
+			MaxAmount = 9%
+		}
+
+		ThrusterIsFiringRampUpBuff
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Ion_Thruster_Overdrive
+			BuffAmount = 1
+			BuffMultiplier = ThrusterIsFiringTween
+		}
+		ThrusterIsFiringTween
+		{
+			Type = ValueTween
+			OffValue = 1
+			OnValue = 1.6 //160% Boost if on for OnTweenDuration
+			OnTweenDuration = 60
+			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is tenth of the ramp up
+			IsOnToggle = ThrusterIsFiringTriggeredToggle
+		}
+		OverdriveActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ThrusterIsFiringTriggeredToggle
+			ShowProgressFor = ThrusterIsFiringTween
+			LowColor = [0, 0, 0]
+			HighColor = [0, 250, 0]
+			FullColor = [0, 255, 0]
+			ValueRange = [&~/Part/Components/ThrusterIsFiringTween/OffValue, &~/Part/Components/ThrusterIsFiringTween/OnValue]
 		}
 
 		FloorGrid
@@ -537,7 +565,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=Engine/*SW_Ion_Thruster_Accelerator*/; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Overdrive; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -557,43 +585,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
-			Force = (&../../ThrusterForce)
+			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.1; BuffType=Engine/*SW_Ion_Thruster_Accelerator*/; BuffMode=Multiply; }
+			MaxActivation = 0.20
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
 			AllowAutoFire = false
-		}
-
-		ThrusterActivationBarToggle
-		{
-			Type = TriggeredToggle
-			OnTrigger = ThrusterOnThresholdTrigger
-			OffTrigger = ThrusterOffThresholdTrigger
-		}
-		ThrusterOnThresholdTrigger
-		{
-			Type = ThresholdTrigger
-			AmountFrom = MainThrusterValueProxy
-			MinAmount = 1%
-		}
-		ThrusterOffThresholdTrigger
-		{
-			Type = ThresholdTrigger
-			AmountFrom = MainThrusterValueProxy	
-			MaxAmount = 1%
-		}
-		ActivationBar
-		{
-			Type = ProgressBar
-			OperationalToggle = ThrusterActivationBarToggle
-			ShowProgressFor = MainThrusterValueProxy
-			LowColor = [0, 0, 0]
-			HighColor = [250, 250, 250]
-			FullColor = [255, 255, 255]
 		}
 
 		ThrustEffectsSounds
@@ -718,6 +718,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterForce = &~/Part/ThrusterForce
 		ThrusterRampUp = &~/Part/ThrustIncreaseTime
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
+		ThrusterBuff = (&~/Part/Components/ThrusterIsFiringTween/OnValue) * 100
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = (&ThrusterPowerUsage) / 2
