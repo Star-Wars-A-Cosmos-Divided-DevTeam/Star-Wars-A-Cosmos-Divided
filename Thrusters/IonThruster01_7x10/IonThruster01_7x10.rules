@@ -44,7 +44,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
     //ReceivableBuffs&Prohibits
 	ProhibitBelow = 8 // 11 //17
-	ReceivableBuffs : ^/0/ReceivableBuffs [/*SW_Ion_Thruster_Accelerator,*/Engine]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator]
 
     //Doors&Etc
 	AllowedDoorLocations
@@ -119,12 +119,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 255, 0]
 		}
 
-		EngineBuffToggle //REPLACE WITH BELOW WHEN BUFFS ARE IMPLEMENTED
-		{
-			Type = BuffToggle
-			BuffType = Engine
-		}
-/*
 		SWIonEngineBuffToggle
 		{
 			Type = BuffToggle
@@ -136,11 +130,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = SWIonEngineBuffToggle
 		}
-*/
+
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle/*SWIonEngineBuffToggle*/
+			Toggle = SWIonEngineBuffToggle
 			Invert = true
 			IncludeInBlueprints = true
 			Components
@@ -290,12 +284,53 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ValueProxy
 			ComponentID = MainThruster
+			ValueWhenNotConnected = 0
 		}
 
 		NozzleLocationProxy
 		{
 			Type = ChainableProxy
 			ComponentID = NozzlePosition
+		}
+
+		ThrusterActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ThrusterIsFiringTriggeredToggle
+			ShowProgressFor = MainThrusterValueProxy
+			LowColor = [0, 0, 0]
+			HighColor = [250, 250, 250]
+			FullColor = [255, 255, 255]
+		}
+
+		ThrusterIsFiringTriggeredToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = ThrusterOnThresholdTrigger
+			OffTrigger = ThrusterOffThresholdTrigger
+		}
+		ThrusterOnThresholdTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThrusterValueProxy
+			MinAmount = 4%
+		}
+		ThrusterOffThresholdTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThrusterValueProxy	
+			MaxAmount = 4%
+		}
+
+		OverdriveActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ThrusterIsFiringTriggeredToggle
+			ShowProgressFor = MainThrusterValueProxy
+			LowColor = [0, 0, 0]
+			HighColor = [0, 250, 0]
+			FullColor = [0, 255, 0]
+			ValueRange = [1, 1.6]
 		}
 
 		MainThruster
@@ -307,7 +342,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=Engine/*SW_Ion_Thruster_Accelerator*/; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Multiply; }
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -318,6 +353,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		LateralThruster : MainThruster
 		{
 			Rotation = 0d
+			Force = (&../../ThrusterForce)/72
 			MinActivation = -0.01
 			MaxActivation = 0.01
 			MinUncommandedActivation = &MinActivation
@@ -328,41 +364,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Rotation = -90d
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.21; BuffType=Engine/*SW_Ion_Thruster_Accelerator*/; BuffMode=Multiply; }
+			MaxActivation = 0.10
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
 			AllowAutoFire = false
-		}
-
-		ThrusterActivationBarToggle
-		{
-			Type = TriggeredToggle
-			OnTrigger = ThrusterOn
-			OffTrigger = ThrusterOff
-		}
-		ThrusterOn
-		{
-			Type = ThresholdTrigger
-			AmountFrom = MainThrusterValueProxy
-			MinAmount = 1%
-		}
-		ThrusterOff
-		{
-			Type = ThresholdTrigger
-			AmountFrom = MainThrusterValueProxy	
-			MaxAmount = 1%
-		}
-		ActivationBar
-		{
-			Type = ProgressBar
-			OperationalToggle = ThrusterActivationBarToggle
-			ShowProgressFor = MainThrusterValueProxy
-			LowColor = [0, 0, 0]
-			HighColor = [250, 250, 250]
-			FullColor = [255, 255, 255]
 		}
 
 		ThrustEffectsSounds
