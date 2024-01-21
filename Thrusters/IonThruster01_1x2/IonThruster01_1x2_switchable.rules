@@ -40,7 +40,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	FuelUsage = 64 //160%*40%*100 of vanilla
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine]
 	ProhibitBelow = 4
 
 	//Doors etc
@@ -94,15 +94,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 2000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-		BatteryConsumer
-		{
-			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Thruster_Supply
-			ResupplyThreshold = 500
-			OperationalToggle = PowerToggle
-		}
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -111,6 +102,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			LowColor = [64, 64, 0]
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
+		}
+
+		EngineBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = Engine
+		}
+		ToggledBatteryConsumer
+		{
+			Type = ToggledComponents
+			Toggle = EngineBuffToggle
+			Invert = true
+			IncludeInBlueprints = true
+			Components
+			{
+				BatteryConsumer
+				{
+					Type = ResourceConsumer
+					ResourceType = battery
+					Storage = BatteryStorage
+					DefaultPriority = &/PRIORITIES/Thruster_Supply
+					ResupplyThreshold = 500
+					OperationalToggle = PowerToggle
+				}
+			}
 		}
 
 		ThrusterEffectColorType
@@ -249,13 +265,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ThresholdTrigger
 			AmountFrom = MainThrusterValueProxy
-			MinAmount = 2%
+			MinAmount = 1%
 		}
 		ThrusterOffThresholdTrigger
 		{
 			Type = ThresholdTrigger
 			AmountFrom = MainThrusterValueProxy	
-			MaxAmount = 2%
+			MaxAmount = 1%
+		}
+
+		ThrusterHasEngineRoomBuff
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Ion_Thruster_Overdrive
+			BuffAmount = 1
+			BuffMultiplier = ThrusterHasEngineRoomTween
+		}
+		ThrusterHasEngineRoomTween
+		{
+			Type = ValueTween
+			OffValue = 0
+			OnValue = 0.5
+			OnTweenDuration = 0
+			OffTweenDuration = 0
+			IsOnToggle = EngineBuffToggle
 		}
 
 		ThrusterIsFiringRampUpBuff
@@ -269,9 +302,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ValueTween
 			OffValue = 1
-			OnValue = 1.3 //130% Boost if on for OnTweenDuration
-			OnTweenDuration = 30
-			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
+			OnValue = 1.6 //160% Boost if on for OnTweenDuration
+			OnTweenDuration = 15 //target is to reward continous flight and NOT provide burst buffing
+			OffTweenDuration = (&OnTweenDuration) / 5 //cooldown is sixth the ramp up
 			IsOnToggle = ThrusterIsFiringTriggeredToggle
 		}
 		OverdriveActivationBar
