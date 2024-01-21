@@ -42,7 +42,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
     //ReceivableBuffs&Prohibits
 	ProhibitBelow = 11 // 26
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator, Engine]
 
     //Doors&Etc
 	AllowedDoorLocations
@@ -130,12 +130,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ComponentID = SWIonEngineBuffToggle
 		}
 
+		EngineBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = Engine
+		}
+
+		ThrusterIsExternallySupplied
+		{
+			Type = MultiToggle
+			Toggles = [EngineBuffToggle, SWIonEngineBuffToggle]
+			Mode = Any
+		}
+
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = SWIonEngineBuffToggle
+			Toggle = ThrusterIsExternallySupplied
 			Invert = true
-			IncludeInBlueprints = true
+			//IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -333,15 +346,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxAmount = 4%
 		}
 
-		OverdriveActivationBar
+		ThrusterHasEngineRoomBuff
 		{
-			Type = ProgressBar
-			OperationalToggle = ThrusterIsFiringTriggeredToggle
-			ShowProgressFor = MainThrusterValueProxy
-			LowColor = [0, 0, 0]
-			HighColor = [0, 250, 0]
-			FullColor = [0, 255, 0]
-			ValueRange = [1, 1.6]
+			Type = SelfBuffProvider
+			BuffType = SW_Ion_Thruster_Accelerator
+			BuffAmount = 1
+			BuffMultiplier = ThrusterHasEngineRoomTween
+		}
+		ThrusterHasEngineRoomTween
+		{
+			Type = ValueTween
+			OffValue = 0
+			OnValue = 0.5
+			OnTweenDuration = 0
+			OffTweenDuration = 0
+			IsOnToggle = EngineBuffToggle
 		}
 
 		MainThruster
