@@ -11,7 +11,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
     //Groups&Categories
 	EditorGroups = ["Flight", "SWTechIII"]
 	RequiresCategories = [SW_Bridge]
-	TypeCategories = [SW_WarRoom]
+	TypeCategories = [command, uses_power, is_crewed, SW_WarRoom]
 
     //Resources&Size&Health
 	Resources
@@ -29,9 +29,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
     //Selections
 	SelectionPriority = 0
+	SelectionTypeID = "control_room"
 
     //PartSpecific
 	AIValueFactor = 5
+	IsContiguityOrigin = true
+	IsShipForward = true
+	ContiguityOriginPriority = 1
 
     //ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
@@ -146,14 +150,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Size = [47, 55]
 	}
 
-
     //Components
 	Components : ^/0/Components
 	{
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, FtlBeaconBatteryStorage, CommandToggle, PartCrew]
+			Toggles = [PowerToggle, BatteryStorage, CommandToggle, PartCrew]
 			Mode = All
 		}
 
@@ -169,32 +172,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = FtlBeacon
 			OperationalToggle = IsOperational
-		}
-
-		FtlBeaconBatteryStorage
-		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 12000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-		}
-		FtlBeaconBatteryConsumer
-		{
-			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = FtlBeaconBatteryStorage
-			DefaultPriority = &/PRIORITIES/Utility_Supply
-			ResupplyThreshold = 1000
-			OperationalToggle = PowerToggle
-		}
-		FtlBeaconPowerDrain
-		{
-			Type = ResourceConverter
-			OperationalToggle = IsOperational
-			FromStorage = FtlBeaconBatteryStorage
-			FromQuantity = 200
-			MinFromQuantityForConversion = 1
-			Interval = 1
 		}
 		Pulse
 		{
@@ -225,15 +202,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			CommandPoints = 3600 // Remember to update tooltip.
 		}
 
-/*
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 42
-		}
-*/
-
 		Sensor
 		{
 			Type = Sensor
@@ -258,11 +226,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
+		//temp fixi remove in 2,3 months started 16.01.2024
+		FtlBeaconBatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 0
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
 		PowerDrain
 		{
 			Type = ResourceConverter
 			FromStorage = BatteryStorage
-			FromQuantity = 100
+			FromQuantity = 150 // 100 + 50 for Beacon
 			Interval = 3
 		}
 
@@ -496,25 +473,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
 			Location = [3,3.5]
 		}
-/*
-		OperationSoundLoop
-		{
-			Type = ContinuousEffects
-			Location = [3,3.5]
-			OperationalToggle = IsOperational
-			MediaEffects
-			[
-				: /BASE_SOUNDS/AudioInterior
-				{
-					Sound = "cockpit_operating.wav"
-					Volume = .15
-					MaxConcurrentVolume = .3
-					Speed = .75
-					MaxConcurrent = 1
-				}
-			]
-		}
-*/
+
 		Indicators
 		{
 			Type = IndicatorSprites
@@ -531,7 +490,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [4, 4]
 					}
 				}
-				 //Out of power.
+				//Out of power.
 				{
 					Toggle = BatteryStorage
 					AtlasSprite
@@ -540,7 +499,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [4, 4]
 					}
 				}
-				 //No crew.
+				//No crew.
 				{
 					Toggle = PartCrew
 					AtlasSprite
@@ -559,7 +518,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Size = [6, 7]
 		}
     }
-   //Stats
+	//Stats
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
