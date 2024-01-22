@@ -263,8 +263,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResourcesPickUp = 3000
 			InitPickUp = 3000
 			PickUpRate = 100000
-			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
-			ToggleOnResources = 5000
+			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval) / 4
+			ToggleOnResources = 3000
 			ToggleOffResources = (&ToggleOnResources)-1
 		}
 		BatteryProducer
@@ -334,6 +334,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		HypermatterReactorToggle
 		{
 			Type = TriggeredToggle
+			OperationalToggle = IsOperational
 			OnTrigger = BatteryStorageTurnsReactorOn
 			OffTrigger = BatteryStorageTurnsReactorOff
 		}
@@ -512,6 +513,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Layer = "indicators"
 			Indicators
 			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [5, 5]
+					}
+				}
 				// Out of power.
 				{
 					Toggle = BatteryStorage
