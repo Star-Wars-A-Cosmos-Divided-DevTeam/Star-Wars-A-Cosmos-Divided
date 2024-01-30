@@ -1,0 +1,272 @@
+Part : <../base_part_terran.rules>/Part
+{
+	NameKey = "Parts/ThrusterRocketBattery"
+	IconNameKey = "Parts/ThrusterRocketBatteryIcon"
+	ID = cosmoteer.thruster_rocket_battery // Part IDs must always be in the form of "author_name.part_name". If making your own mod, do *not* use "cosmoteer" as your author name, because it may conflict with future vanilla parts.
+	EditorGroup = "Flight"
+	DescriptionKey = "Parts/ThrusterRocketBatteryDesc"
+	Resources
+	[
+		[steel, 60]
+		[coil2, 20]
+	]
+	TypeCategories = [thruster, uses_power]
+	Size = [1, 2]
+	MaxHealth = 2000
+	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
+	MaxBuffValues = { Engine=100% }
+	FlipHRotate = [2, 1, 0, 3]
+	FlipVRotate = [0, 3, 2, 1]
+	AllowedDoorLocations
+	[
+		[-1, 0]
+		[-1, 1]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 64]
+	}
+	Components : ^/0/Components
+	{
+		ModuleIsConnected
+		{
+			Type = ToggleProxy
+			PartLocation = [1, 0]
+			ProxyableComponents
+			[
+				{
+					ComponentID = IsConnected
+					PartCriteria
+					{
+						IDs = [cosmoteer.thruster_rocket_nozzle, cosmoteer.thruster_rocket_extender]
+						Rot = 0
+						Top = 0
+						Left = 1
+					}
+				}
+				{
+					ComponentID = IsConnected
+					PartCriteria
+					{
+						IDs = [cosmoteer.thruster_rocket_nozzle, cosmoteer.thruster_rocket_extender]
+						Rot = 2
+						Bottom = 2
+						Left = 1
+					}
+				}
+			]
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 4000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		EngineBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = Engine
+		}
+		ToggledBatteryConsumer
+		{
+			Type = ToggledComponents
+			Toggle = EngineBuffToggle
+			Invert = true
+			IncludeInBlueprints = true
+			Components
+			{
+				BatteryConsumer
+				{
+					Type = ResourceConsumer
+					ResourceType = battery
+					Storage = BatteryStorage
+					DefaultPriority = &/PRIORITIES/Thruster_Supply
+					ResupplyThreshold = 1000
+					OperationalToggle = ModuleIsConnected
+				}
+			}
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [.5, 1]
+			OperationalToggle = BatteryStorage
+			Floor
+			{
+				Layer = "floors"
+				//Offset = [0, 1]
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 2]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [1, 2]
+					}
+					{
+						File = "walls_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "walls_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "roof_glows.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_glows_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_glows_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [.5, 1]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_low"
+			ResourceLevels
+			[
+				{
+					File = "batteries1.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries2.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries3.png"
+					Size = [1, 2]
+				}
+				{
+					File = "batteries4.png"
+					Size = [1, 2]
+				}
+			]
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyed
+			Location = [.5, 1]
+		}
+
+		ConnectedToggle
+		{
+			Type = ComponentPresenceToggle
+			PartLocation = [1, 0]
+			ComponentID = ExtendableBatteryStorage
+			ProxyableComponents = &../ModuleIsConnected/ProxyableComponents
+		}
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [.5, 1]
+			Layer = "indicators"
+			Indicators
+			[
+				// Missing component
+				{
+					Toggle = ConnectedToggle
+					ShowInBuildMode = true
+					AtlasSprite
+					{
+						File = &/INDICATORS/MissingComponent
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
+		}
+	}
+
+	Stats
+	{
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		//RecPower = (&ThrusterPowerUsage) / 2
+		//RecCrew = (&RecPower) * 4
+	}
+}
