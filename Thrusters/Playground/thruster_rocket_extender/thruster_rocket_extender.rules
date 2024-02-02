@@ -7,8 +7,8 @@ Part : <../base_part_terran.rules>/Part
 	DescriptionKey = "Parts/ThrusterRocketExtenderDesc"
 	Resources
 	[
-		[steel, 56]
-		[coil2, 12]
+		[steel, 60]
+		[coil2, 20]
 	]
 	TypeCategories = [thruster, uses_power]
 	Size = [3, 2]
@@ -80,13 +80,6 @@ Part : <../base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 4
-		}
-
 		LocalBatteryStorage
 		{
 			Type = ResourceStorage
@@ -99,7 +92,7 @@ Part : <../base_part_terran.rules>/Part
 			Type = ResourceStorageProxy
 			ResourceType = battery
 			PartLocation = [-1, 0]
-			ComponentID = BatteryStorage
+			ComponentID = LocalBatteryStorage
 			PartCriteria
 			{
 				ID = cosmoteer.thruster_rocket_battery
@@ -114,11 +107,11 @@ Part : <../base_part_terran.rules>/Part
 			Type = ResourceStorageProxy
 			ResourceType = battery
 			PartLocation = [3, 0]
-			ComponentID = BatteryStorage
+			ComponentID = LocalBatteryStorage
 			PartCriteria
 			{
 				ID = cosmoteer.thruster_rocket_battery
-				Rot = 2
+				Rot = 0
 				Top = 0
 				Bottom = 2
 				Left = 3
@@ -129,8 +122,6 @@ Part : <../base_part_terran.rules>/Part
 			Type = MultiResourceStorage
 			ResourceType = battery
 			ResourceStorages = [LocalBatteryStorage, LeftBatteryStorage, RightBatteryStorage]
-			AddMode = PrioritizeLeastResources
-			RemoveMode = PrioritizeMostResources
 		}
 		PrevPowerToggle
 		{
@@ -171,24 +162,55 @@ Part : <../base_part_terran.rules>/Part
 			RemoveMode = DistributeProportionallyByCapacity
 		}
 
-		EngineBuffToggle
+		LocalEngineBuffToggle
 		{
 			Type = BuffToggle
 			BuffType = Engine
 		}
+		LeftEngineBuffToggle
+		{
+			Type = ToggleProxy
+			PartLocation = [-1, 0]
+			ComponentID = LocalEngineBuffToggle
+			PartCriteria
+			{
+				ID = cosmoteer.thruster_rocket_battery
+				Rot = 0
+				Top = 0
+				Right = 0
+			}
+		}
+		RightEngineBuffToggle
+		{
+			Type = ToggleProxy
+			PartLocation = [3, 0]
+			ComponentID = LocalEngineBuffToggle
+			PartCriteria
+			{
+				ID = cosmoteer.thruster_rocket_battery
+				Rot = 0
+				Top = 0
+				Left = 3
+			}
+		}
+		ExtendableEngineBuffToggle
+		{
+			Type = MultiToggle
+			Toggles = [LocalEngineBuffToggle, LeftEngineBuffToggle, RightEngineBuffToggle]
+			Mode = Any
+		}
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle
+			Toggle = ExtendableEngineBuffToggle
 			Invert = true
-			IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
 				{
 					Type = ResourceConsumer
 					ResourceType = battery
-					Storage = LocalBatteryStorage
+					Storage = ExtendableBatteryStorage
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
 					ResupplyThreshold = 500
 					OperationalToggle = IsConnected
