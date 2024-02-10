@@ -47,10 +47,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
     //Doors&Etc
 	AllowedDoorLocations
 	[
-		//[-1, 7]
-		//[-1, 6]
-		//[-1, 5]
-		//[-1, 4]
+		[-1, 7]
+		[-1, 6]
+		[-1, 5]
+		[-1, 4]
 		[-1, 3]
 		[-1, 2]
 		[-1, 1]
@@ -67,10 +67,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[8, 1]
 		[8, 2]
 		[8, 3]
-		//[8, 4]
-		//[8, 5]
-		//[8, 6]
-		//[8, 7]
+		[8, 4]
+		[8, 5]
+		[8, 6]
+		[8, 7]
 	]
 
     //Editor
@@ -85,7 +85,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
     //Components
-	Components : ^/0/Components, &<toggles.rules>, &<toggles2.rules>, &<graphics.rules>
+	Components : ^/0/Components, &<toggles.rules>, &<toggles2.rules>, &<graphics.rules> //, &<hyperdrive.rules> //maybe used one day ...
 	{
 		IsOperational
 		{
@@ -148,7 +148,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterIsExternallySupplied
 		{
 			Type = MultiToggle
-			Toggles = [SWIonEngineBuffToggle]//[EngineBuffToggle, SWIonEngineBuffToggle]
+			Toggles = [EngineBuffToggle, SWIonEngineBuffToggle]
 			Mode = Any
 		}
 
@@ -307,10 +307,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ValueWhenNotConnected = 0
 		}
 
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
+			ValueWhenNotConnected = 0
+		}
+
 		NozzleLocationProxy
 		{
 			Type = ChainableProxy
 			ComponentID = NozzlePosition
+		}
+
+		DoodadAnimationSpeedFactorValue
+		{
+			Type = MultiValue
+			Values = [MainThrusterValueProxy, ReverseThrusterValueProxy]//, FtlDrive]
+			Mode = Add
 		}
 
 		ThrusterActivationBar
@@ -470,15 +484,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceLevels
 			[
 				{
-					File = "../Ion_Common/batteries 1.png"
+					File = "../Ion_Common/batteries_1.png"
 					Size = [6, 3]
 				}
 				{
-					File = "../Ion_Common/batteries 2.png"
+					File = "../Ion_Common/batteries_2.png"
 					Size = [6, 3]
 				}
 				{
-					File = "../Ion_Common/batteries 3.png"
+					File = "../Ion_Common/batteries_3.png"
 					Size = [6, 3]
 				}
 			]
