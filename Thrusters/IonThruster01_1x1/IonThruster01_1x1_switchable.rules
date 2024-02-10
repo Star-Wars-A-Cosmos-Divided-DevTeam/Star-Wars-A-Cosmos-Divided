@@ -14,7 +14,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	TypeCategories = [thruster, ion_thruster, uses_power]
 	//RequiresCategories = []
 
-	//Resources & Size & Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 10]//120%*8 of vanilla
@@ -33,17 +33,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeByRotation = true
 	SelectionTypeID = "ion_thrusters"
 
-	//Partspecific 
+	//PartSpecific
 	ThrusterForce = 400 //640 managed thru ramping buff //160%*400 of vanilla
 	ThrustIncreaseTime = 0.96 //softer accel
 	ThrustRecoveryTime = 0.96 //softer deccel
 	FuelUsage = 19.2 //160%*40%*30 of vanilla
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine]
 	ProhibitBelow = 2
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine]
 
-	//Doors etc
+	//Doors&Etc
 	AllowedDoorLocations
 	[
 		[0, -1]
@@ -134,7 +134,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = 1
-			AvailableChoices = [0, 1, 2, 3]
+			AvailableChoices = [0, 1, 2, 3, 4]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
@@ -163,6 +163,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectColorType
 			OnMode = 3
 		}
+		GreenToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 4
+		}
 
 		RedToggleProxy
 		{
@@ -184,13 +190,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = PurpleToggle
 		}
+		GreenToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = GreenToggle
+		}
 
 		ThrusterEffectAmountType
 		{
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2]//, 3, 4
+			AvailableChoices = [0, 1, 2, 3, 4]
 			RequiresCommand = false
 		}
 
@@ -253,7 +264,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			LowColor = [0, 0, 0]
 			HighColor = [250, 250, 250]
 			FullColor = [255, 255, 255]
-			ValueRange = [0, 1]
 		}
 
 		ThrusterIsFiringTriggeredToggle
@@ -678,6 +688,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
+	//Stats
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce

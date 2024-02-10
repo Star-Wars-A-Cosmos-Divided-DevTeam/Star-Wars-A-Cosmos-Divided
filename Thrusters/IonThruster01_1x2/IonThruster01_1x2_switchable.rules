@@ -1,6 +1,5 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	
 	//IDs
 	ID = SW.IonThruster01_1x2_switchable
 	OtherIDs = ["IonThruster01_1x2","SW.IonThruster01_1x2"]
@@ -13,6 +12,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechI"]
 	TypeCategories = [thruster, ion_thruster, uses_power]
+	//RequiresCategories = []
 
 	//Resources & Size & Health
 	Resources
@@ -33,15 +33,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeByRotation = true
 	SelectionTypeID = "ion_thrusters"
 
-	//Partspecific Things
+	//Partspecific
 	ThrusterForce = 1200 //1920 managed thru ramping buff //160%*1200 of vanilla
 	ThrustIncreaseTime = 3.2 //80%*4.0 of vanilla
 	ThrustRecoveryTime = 1.6 //80%*2.0 of vanilla
 	FuelUsage = 64 //160%*40%*100 of vanilla
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine]
 	ProhibitBelow = 4
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine]
 
 	//Doors etc
 	AllowedDoorLocations
@@ -134,7 +134,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = 1
-			AvailableChoices = [0, 1, 2, 3]
+			AvailableChoices = [0, 1, 2, 3, 4]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
@@ -163,6 +163,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectColorType
 			OnMode = 3
 		}
+		GreenToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 4
+		}
 
 		RedToggleProxy
 		{
@@ -184,13 +190,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = PurpleToggle
 		}
+		GreenToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = GreenToggle
+		}
 
 		ThrusterEffectAmountType
 		{
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2]//, 3, 4
+			AvailableChoices = [0, 1, 2, 3, 4]
 			RequiresCommand = false
 		}
 
