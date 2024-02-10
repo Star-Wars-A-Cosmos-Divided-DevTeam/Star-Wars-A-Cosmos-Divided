@@ -41,7 +41,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ProhibitBelow = 5
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine, EnginePowerDistribution]
 
 	//Doors&Etc
 	AllowedDoorLocations
@@ -110,12 +110,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = BuffToggle
 			BuffType = Engine
 		}
+
+		PowerDistributionBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = EnginePowerDistribution
+		}
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle
+			Toggle = PowerDistributionBuffToggle
 			Invert = true
-			IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -124,7 +129,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					ResourceType = battery
 					Storage = BatteryStorage
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
-					ResupplyThreshold = 500
+					ResupplyThreshold = 1000
 					OperationalToggle = PowerToggle
 				}
 			}
