@@ -1,50 +1,49 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-    //IDs
+	//IDs
 	ID = SW.IonThruster01_2x2_switchable
 	OtherIDs = ["IonThruster01_2x2","SW.IonThruster01_2x2"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/IonThruster01_2x2"
 	IconNameKey = "Parts/IonThruster01_2x2_Icon"
 	DescriptionKey = "Parts/IonThruster01_2x2_Desc"
 
-    //Groups&Categories
+	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechII"]
 	TypeCategories = [thruster, ion_thruster, uses_power]
 	//RequiresCategories = []
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 50]//125%*40 of vanilla
 		[coil2, 14]//140%*10 of vanilla
 	]
-
 	Size = [2, 3]
 	MaxHealth = 3200 //80%*4000 of vanilla
 
-    //Rects
+	//Rects
 	PhysicalRect = [0, 0, 2, 2]
 	SaveRect = &PhysicalRect
 	BoundingRectType = Physical
 
-    //Selections
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "ion_thrusters"
 
-    //PartSpecific
+	//PartSpecific
 	ThrusterForce = 3200 //5120 managed thru ramping buff //160%*3200 of vanilla
 	ThrustIncreaseTime = 4.8 //custom
 	ThrustRecoveryTime = 2.1 //custom
 	FuelUsage = 128 //160%*40%*200 of vanilla
 
-    //ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine]
+	//ReceivableBuffs&Prohibits
 	ProhibitBelow = 5
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine]
 
-    //Doors&Etc
+	//Doors&Etc
 	AllowedDoorLocations
 	[
 		[-1, 0]
@@ -53,7 +52,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[2, 0]
 	]
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -64,7 +63,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Size = [42.66, 64]
 	}
 
-    //Components
+	//Components
 	Components : ^/0/Components, &<toggles.rules>
 	{
 		IsOperational
@@ -136,7 +135,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = 1
-			AvailableChoices = [0, 1, 2, 3]
+			AvailableChoices = [0, 1, 2, 3, 4]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
@@ -165,6 +164,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectColorType
 			OnMode = 3
 		}
+		GreenToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 4
+		}
 
 		RedToggleProxy
 		{
@@ -186,13 +191,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = PurpleToggle
 		}
+		GreenToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = GreenToggle
+		}
 
 		ThrusterEffectAmountType
 		{
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2]//, 3, 4
+			AvailableChoices = [0, 1, 2, 3, 4]
 			RequiresCommand = false
 		}
 
