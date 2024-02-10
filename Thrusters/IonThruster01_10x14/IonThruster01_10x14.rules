@@ -42,7 +42,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
     //ReceivableBuffs&Prohibits
 	ProhibitBelow = 11 // 26
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator, Engine]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator, Engine, EnginePowerDistribution]
 
     //Doors&Etc
 	AllowedDoorLocations
@@ -132,16 +132,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 255, 0]
 		}
 
-		SWIonEngineBuffToggle
+		SWIonAcceleratorBuffToggle
 		{
 			Type = BuffToggle
 			BuffType = SW_Ion_Thruster_Accelerator
-		}
-
-		SWIonEngineBuffToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = SWIonEngineBuffToggle
 		}
 
 		EngineBuffToggle
@@ -150,19 +144,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			BuffType = Engine
 		}
 
-		ThrusterIsExternallySupplied
+		PowerDistributionBuffToggle
 		{
-			Type = MultiToggle
-			Toggles = [EngineBuffToggle, SWIonEngineBuffToggle]
-			Mode = Any
+			Type = BuffToggle
+			BuffType = EnginePowerDistribution
 		}
-
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle
+			Toggle = PowerDistributionBuffToggle
 			Invert = true
-			IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
