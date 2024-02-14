@@ -1,92 +1,84 @@
-/* ----------------------------------------------------------------------------
-
-Introduction: SW:ACD 0.3.7+
-
-Author : Lafiel
-
-Description:
-This is a work in progress. Ultimately it will include options for:
-different floor
-different floor projector lights
-different deck lights
-maybe different roofs; 
-roofs eventually might get or share a custom layer with a community mod. So current layer is just temporary to avoid creating a mess now.
-roofs can be colored via crew job
-
-This implementation features 4 tiled sprite "sectors" to allow more detailed configuration for certain composition
-
-Versions:
-
- o 1.0 Cosmoteer 0.15.15 
-
-
----------------------------------------------------------------------------- */
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+	//IDs
+	ID = SW.HangarBay_20x20
+	//OtherIDs = []
+
+	//StringKeys
 	NameKey = "Parts/HangarBay_20x20"
 	IconNameKey = "Parts/HangarBay_20x20_Icon"
-	ID = SW.HangarBay_20x20
 	DescriptionKey = "Parts/HangarBay_20x20_Desc"
-	EditorGroup = "Misc"
-	Size = [20, 20]
-//	ProhibitAbove = 20
-	SelectionTypeID = "hangar"
-	SelectionPriority = 0
+
+	//Groups&Categories
+	EditorGroups = ["Flight", "SWTechII"]
+	TypeCategories = [hangar, hangarbay]
+	//RequiresCategories = [SW_Bridge] //some sort of requirement or non since it just decoration??
+
+	//Resoures&Size&Health
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 40000
+		[steel, (4*20*20)]		//just so it works ...
+	]
+	Size = [20, 20]
 	MaxHealth = 40000
+//	ProhibitAbove = 20
+
+	//Selections
+	SelectionPriority = 0
+	SelectionTypeID = "hangar-bay"
+//	SelectionTypeByRotation = true
+
+
+	//PartSpecific
 	InitialPenetrationResistance = 5
 	Flammable = false
-//	RequiresCategories = []
 //	AllowedContiguity = [Top, Left, Right, Bottom]
 	Density = 1
-//	SelectionTypeByRotation = true;
-//	ReceivableBuffs = []
-
-	GeneratorRequiresDoor = false
-	AllowedDoorLocations []
-
 	CreatePassableHolesWhenDestroyed = true
 	CrewSpeedFactor = 1
-	TypeCategories = [hangar]
-//	InternalWalls = [None] //	InternalWalls = [All]
-	ExternalWalls = [None]
-	IsWalled = false
-	IsExternal = true //to be fixed
-//	NoAutoDoors = true
-
 	GenerateRectCollider = false
 
-/*
-	ExternalWallsByCell
-	[
-	 	{
-	 		Key = [0, 0]
-	 		Value = None // [TopLeft, Top, TopRight]
-	 	}
-	]
-	InternalWallsByCell
-	[
-	 	{
-	 		Key = [0, 0]
-	 		Value = None // [TopLeft, Top, TopRight]
-	 	}
-	]
-*/
+	//Doors&Etc
+	GeneratorRequiresDoor = false
+	IsWalled = false
+//	NoAutoDoors = true
+	AllowedDoorLocations []
+	IsExternal = true //to be fixed
+	/*
+		ExternalWallsByCell
+			[
+				{
+				Key = [0, 0]
+				Value = None // [TopLeft, Top, TopRight]
+			}
+		]
+		InternalWallsByCell
+		[
+			{
+				Key = [0, 0]
+	 			Value = None // [TopLeft, Top, TopRight]
+			}
+		]
+	*/
+	//	InternalWalls = [None] //	InternalWalls = [All]
+	ExternalWalls = [None]
 
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	//	ProhibitAbove = 20
 
-EditorIcon
-{
-	Texture
+	//Editor
+	EditorIcon
 	{
-		File = "floor01[5,5]03lines-w-double.png";
-		SampleMode = Linear;
+		Texture
+		{
+			File = "floor01[2,3]03.png"
+			SampleMode = Linear
+		}
+		Size = [32, 92]
 	}
-	Size = [92, 92]
-}
 
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 		CrewSource
@@ -99,8 +91,7 @@ EditorIcon
 
 		FloorOptionToggle
 		{
-			Type = UIToggle;
-			ToggleID = "hangar_floor_options"
+			Type = UIToggle			ToggleID = "hangar_floor_options"
 			Default = 0
 			//ToggledOnChoices = [1]
 			RememberValue = true
@@ -409,8 +400,7 @@ EditorIcon
 
 		RoofOptionToggle
 		{
-			Type = UIToggle;
-			ToggleID = "roof_visibility_mode"
+			Type = UIToggle			ToggleID = "roof_visibility_mode"
 			Default = 1
 			ToggledOnChoices = [1]
 			RememberValue = true
