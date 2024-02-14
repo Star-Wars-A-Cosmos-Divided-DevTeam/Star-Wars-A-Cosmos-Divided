@@ -1,10 +1,19 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+	//IDs
+	ID = SW.factory_durasteel
+
+	//StringKeys
 	NameKey = "Parts/FactoryDuraSteel"
 	IconNameKey = "Parts/FactoryDuraSteelIcon"
-	ID = SW.factory_durasteel
-	EditorGroup = "Production"
 	DescriptionKey = "Parts/FactoryDuraSteelDesc"
+
+	//Groups&Categories
+	EditorGroups = ["Production"]
+	TypeCategories = [provides_SW.durasteel, uses_carbon, uses_SW.zersium, uses_steel, uses_power]
+	//RequiresCategories = []
+
+	//Resoures&Size&Health
 	Resources
 	[
 		[steel, 128]
@@ -12,11 +21,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[processor, 12]
 	]
 	Size = [6, 4]
-	IsFlippable = true //true
+	MaxHealth = 24000
+
+	//Selections
 	SelectionPriority = 1
-	MaxHealth = 12000
-	TypeCategories = [provides_SW.durasteel, uses_carbon, uses_SW.zersium, uses_steel, uses_power]
+	//SelectionTypeID = "factory"
+
+	//PartSpecific
+	IsFlippable = true
+
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [Factory]
+
+	//Doors&Etc
 	AllowedDoorLocations
 	[
 		[-1, 2]
@@ -30,6 +47,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[6, 2]
 		[6, 3]
 	]
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -39,6 +58,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [64, 48]
 	}
+
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -208,7 +229,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 			ToStorage = DuraSteelStorage
 			ToQuantity = 2
-			Interval = 0.5
+			Interval = { BaseValue=0.5; BuffType=Factory; BuffMode=Divide; }
 			CheckResourceLimits = true
 		}
 
@@ -888,6 +909,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
+	//Stats
 	Stats
 	{
 		DuraSteelProduction = (&~/Part/Components/ResourceConverter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval)
