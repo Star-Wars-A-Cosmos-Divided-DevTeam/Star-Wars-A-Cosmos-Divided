@@ -1,10 +1,19 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+	//IDs
+	ID = SW.factory_doonium
+
+	//StringKeys
 	NameKey = "Parts/FactoryDoonium"
 	IconNameKey = "Parts/FactoryDooniumIcon"
-	ID = SW.factory_doonium
-	EditorGroup = "Production"
 	DescriptionKey = "Parts/FactoryDooniumDesc"
+
+	//Groups&Categories
+	EditorGroups = ["Production"]
+	TypeCategories = [provides_SW.doonium_ingots, uses_SW.doonium, uses_power]
+	//RequiresCategories = []
+
+	//Resoures&Size&Health
 	Resources
 	[
 		[steel, 44]
@@ -12,11 +21,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[SW.doonium, 16]
 	]
 	Size = [4, 4]
-	IsFlippable = true
-	SelectionPriority = 1
 	MaxHealth = 16000
-	TypeCategories = [provides_SW.doonium_ingots, uses_SW.doonium, uses_power]
+
+	//Selections
+	SelectionPriority = 1
+	//SelectionTypeID = "factory"
+
+	//PartSpecific
+	IsFlippable = true
+
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [Factory]
+
+	//Doors&Etc
 	AllowedDoorLocations
 	[
 		[-1, 2]
@@ -28,6 +45,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[4, 3]
 		[4, 2]
 	]
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -37,6 +56,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [64, 64]
 	}
+
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -68,6 +89,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			GridRect = [0, 2, 2, 2]
 			Layer = "doodads_low"
 			SpriteInset = [8/64, 6/64, 2/64, 9/64]
+			ToggleOnResources = &../ResourceConverter/From/0/Quantity
+			ToggleOffResources = (&ToggleOnResources) - 1
 			RandomSpriteRotation = true
 		}
 		DooniumConsumer
@@ -129,7 +152,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 			ToStorage = DooniumIngotStorage
 			ToQuantity = 1
-			Interval = 1
+			Interval = { BaseValue=1; BuffType=Factory; BuffMode=Divide; }
 			CheckResourceLimits = true
 		}
 
@@ -670,6 +693,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
+	//Stats
 	Stats
 	{
 		DooniumIngotProduction = (&~/Part/Components/ResourceConverter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval)
