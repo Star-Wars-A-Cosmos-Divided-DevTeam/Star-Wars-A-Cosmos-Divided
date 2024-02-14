@@ -11,21 +11,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechI"]
-    TypeCategories = [ftl, uses_power, SW_Hyperdrive_Small]
+    TypeCategories = [ftl, uses_power, SW_Hyperdrive_Small, SW_Hyperdrives]
 	RequiresCategories = [astromech]
 
 	//Resoures&Size&Health
 	Resources
 	[
-		[steel, 21]
-		[coil2, 16]
+		[steel, 21] //V:2x2 costs 40
+		[coil2, 16] //V:2x2 costs 30
 	]
 	Size = [1, 1]
-	MaxHealth = 1000
+	MaxHealth = 2000 //cost based buff.
 
 	//Selections
 	SelectionPriority = 0
 	//SelectionTypeByRotation = true
+	IgnoreRotationForMirroredSelection = true
 	SelectionTypeID = "hyperdrives"
 
 	//PartSpecific
@@ -55,14 +56,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
-/*
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 1
-		}
-*/
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -93,7 +87,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = hyperium
-			MaxResources = 5
+			MaxResources = 5 //V:2x2 has 20
 			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
@@ -107,7 +101,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			ConsumptionToggleButtonOffset = [0, -.4]
 		}
-		
+		HyperiumStorageBar
+		{
+			Type = ProgressBar
+			ShowProgressFor = HyperiumStorage
+			LowColor = [0, 64, 64]
+			HighColor = [0, 250, 250]
+			FullColor = [0, 255, 255]
+		}
+
 		FtlDrive
 		{
 			Type = FtlDrive
@@ -115,33 +117,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			PowerStorage = BatteryStorage
 			FuelStorage = HyperiumStorage
 			SpinDownDuration = 5
-			JumpEfficiency = 100%
-			JumpEfficiencyDistanceRange = [5, 10]
+			JumpEfficiency = 100% //SW Efficiency Buff
+			JumpEfficiencyDistanceRange = [4, 16] //V:2x2 is 5, 30
 
-			JumpOutMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
-			JumpOutGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
+			[
+				&/SW_SOUNDS/Hyperdrive
+			]
+			JumpOutGateMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			[
+				&/SW_SOUNDS/Hyperdrive
+			]
 			JumpInMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInMediaEffects
 			JumpInGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
 		}
-		//used in base Hyperdrive for Doodad Control
-/*
-		BatteryStorageCharging
-		{
-			Type = MultiResourceStorage
-			ResourceType = battery
-			ResourceStorages = [BatteryStorage]
-			ToggleOnResources = 1
-			ToggleOffResources = 0
-		}
-		BatteryStorageFull
-		{
-			Type = MultiResourceStorage
-			ResourceType = battery
-			ResourceStorages = [BatteryStorage]
-			ToggleOnResources = 16000
-			ToggleOffResource = 15999
-		}
-*/
 		Graphics
 		{
 			Type = Graphics
