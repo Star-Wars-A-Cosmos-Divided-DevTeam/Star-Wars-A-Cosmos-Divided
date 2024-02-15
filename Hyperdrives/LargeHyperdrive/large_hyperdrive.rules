@@ -34,7 +34,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	AutoDoorMaxPathLength = 5
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_HyperNode_Large]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	//ProhibitedBy : ^/0/ProhibitedBy [tall]
 	BlockedTravelCells
 	[
@@ -83,14 +83,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			
 		}
 
-		CommandConsumer
+		BuffStorageCollector
 		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 9
+			Type = GridBuffProvider
+			BuffType = Engine
+			BuffAmount = 0%
+			GridDistance = 1000
+			OperationalToggle = IsOperational
 		}
 
-/*
 		CombinedBatteryStorage
 		{
 			Type = MultiResourceStorage
@@ -98,13 +99,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceStorages = [BatteryStorage]
 			ViaBuffs
 			{
-				OutgoingBuffProviders = [BuffProvider]
+				OutgoingBuffProviders = [BuffStorageCollector]
 				ComponentID = BatteryStorage
 			}
 			AddMode = PrioritizeLeastResources
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-*/
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -134,7 +135,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Height = 10
 		}
 
-/*
 		CombinedHyperiumStorage
 		{
 			Type = MultiResourceStorage
@@ -142,18 +142,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceStorages = [HyperiumStorage]
 			ViaBuffs
 			{
-				OutgoingBuffProviders = [BuffProvider]
+				OutgoingBuffProviders = [BuffStorageCollector]
 				ComponentID = HyperiumStorage
 			}
 			AddMode = PrioritizeLeastResources
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-*/
+
 		HyperiumStorage
 		{
 			Type = ResourceStorage
 			ResourceType = hyperium
-			MaxResources = 200
+			MaxResources = 120
 			UITileRect = [.5 + 7/64, .5 + 7/64, 2 - 14/64, 2 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
