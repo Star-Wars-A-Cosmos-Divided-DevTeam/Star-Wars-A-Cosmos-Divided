@@ -1,11 +1,20 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+	//IDs
+	ID = SW.reactor_small
+	OtherIDs = [SW.reactor, SW.reactor_medium]
+
+	//StringKeys
 	NameKey = "Parts/SW_SmallReactor"
 	IconNameKey = "Parts/SW_SmallReactorIcon"
 	DescriptionKey = "Parts/SW_SmallReactorDesc"
-	ID = SW.reactor_small
-	OtherIDs = [SW.reactor, SW.reactor_medium]
+
+	//Groups&Categories
 	EditorGroups = [Power, SWTechI, SWTechII]
+	TypeCategories = [reactor, provides_power, SW_REACTOR_SMALL, SW_TECH_I, SW_TECH_II]
+	//RequiresCategories = []
+
+	//Resoures&Size&Health
 	Resources
 	[
 		[SW.durasteel, 126]
@@ -13,17 +22,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[coil2, 80]
 		[enriched_uranium, 16]
 	]
-	AIValueFactor = 5
 	Size = [2, 2]
-	IsRotateable = false
-	SelectionPriority = 0
-	SelectionTypeID = "reactors"
 	MaxHealth = 8000
-	AutoDoorMaxPathLength = 5
-	TypeCategories = [reactor, provides_power]
-	ReceivableBuffs : ^/0/ReceivableBuffs []
-	CreateUnderlyingWhenDestroyed = false
+
+	//Selections
+	SelectionPriority = 0
+	//SelectionTypeByRotation = true
 	IgnoreRotationForMirroredSelection = true
+	SelectionTypeID = "reactors"
+
+	//PartSpecific
+	AIValueFactor = 5
+	IsRotateable = false
+	AutoDoorMaxPathLength = 5
+	CreateUnderlyingWhenDestroyed = false
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -33,6 +50,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [56, 56]
 	}
+
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -59,7 +78,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			InitPickUp = 1001
 			PickUpRate = 1000 / 0.5
 			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
-			ToggleOnResources = 4001
+			ToggleOnResources = 4000
 			ToggleOffResources = (&ToggleOnResources)-1
 		}
 		BatteryProducer
@@ -69,11 +88,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToQuantity = 1000
 			Interval = .4444 / 2 // .6666
 		}
-
 		BatteryStorageBar
 		{
 			Type = ProgressBar
-			OperationalToggle = True
+			OperationalToggle = IsOperational
 			ShowProgressFor = BatteryStorage
 			LowColor = [64, 64, 0]
 			HighColor = [250, 250, 0]
@@ -248,7 +266,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-					}
+		}
 
 		ReactorHum
 		{

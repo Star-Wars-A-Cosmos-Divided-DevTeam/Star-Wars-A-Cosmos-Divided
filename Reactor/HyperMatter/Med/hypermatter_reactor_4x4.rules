@@ -1,11 +1,20 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+	//IDs
+	ID = SW.hypermatter_reactor_4x4
+	// OtherIDs = []
+
+	//StringKeys
 	NameKey = "Parts/HypermatterReactor4x4"
 	IconNameKey = "Parts/HypermatterReactor4x4Icon"
 	DescriptionKey = "Parts/HypermatterReactor4x4Desc"
-	ID = SW.hypermatter_reactor_4x4
-	//OtherIDs = []
+
+	//Groups&Categories
 	EditorGroups = ["Power", "SWTechIII"]
+	TypeCategories = [hypermatter_reactor, provides_hypermatter, SW_REACTOR_LARGE, SW_TECH_III]
+	//RequiresCategories = []
+
+	//Resoures&Size&Health
 	Resources
 	[
 		[SW.durasteel, 128]
@@ -15,16 +24,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[hyperium, 20]
 		[enriched_uranium, 64]
 	]
-	AIValueFactor = 5
 	Size = [4, 4]
-	IsRotateable = false
-	SelectionPriority = 0
-	SelectionTypeID = "hypermatter-reactors"
 	MaxHealth = 32000
+
+	//Selections
+	SelectionPriority = 0
+	//SelectionTypeByRotation = true
+	IgnoreRotationForMirroredSelection = true
+	SelectionTypeID = "hypermatter-reactors"
+
+	//PartSpecific
+	AIValueFactor = 5
+	IsRotateable = false
 	AutoDoorMaxPathLength = 5
-	TypeCategories = [hypermatter_reactor, provides_hypermatter]
-	ReceivableBuffs : ^/0/ReceivableBuffs []
 	CreateUnderlyingWhenDestroyed = false
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	BlockedTravelCells
 	[
 		[1, 1]
@@ -33,7 +49,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[2, 2]
 	]
 	ForceManhattanPathInPart = true
-	IgnoreRotationForMirroredSelection = true
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -43,6 +60,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [64, 64]
 	}
+
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -82,8 +101,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		HypermatterStorageBar
 		{
 			Type = ProgressBar
+			OperationalToggle = IsOperational
 			ShowProgressFor = HypermatterStorage
-			OperationalToggle = True
 			LowColor = [0, 32, 64]
 			HighColor = [0, 250, 250]
 			FullColor = [0, 255, 255]
@@ -111,7 +130,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"floor_on8.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.095
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -126,7 +145,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"floor_on8_33.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.095
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -141,7 +160,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"floor_on8_66.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.095
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 				]
 			}
@@ -182,7 +201,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"lights8.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.075
+						AnimationInterval = 0.075*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -197,7 +216,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"lights8.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.075/1.75
+						AnimationInterval = 0.075/1.75*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -212,7 +231,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"lights8.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.075/2.5
+						AnimationInterval = 0.075/2.5*(&~/Scale)
 					}
 				]
 			}
@@ -296,7 +315,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		HypermatterSprites
 		{
 			Type = ResourceSprites
-			OperationalToggle = True
+			//OperationalToggle = IsOperational
 			Location = [2, 2]
 			ResourceStorage = HypermatterStorage
 			Layer = "doodads_high"
@@ -366,12 +385,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					Duration = 2
 				}
 			]
-/*
+
 			HitEffects
 			[
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 90000
+					TotalDamage = 90000*(&~/Scale)
 					Radius = 6
 					Delay = .05
 					ExpandDuration = .1
@@ -389,7 +408,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 20000
+					TotalDamage = 20000*(&~/Scale)
 					Radius = 4
 					Delay = .05
 					ExpandDuration = .05
@@ -405,7 +424,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				}
 			]
-*/
 		}
 
 		Indicators
