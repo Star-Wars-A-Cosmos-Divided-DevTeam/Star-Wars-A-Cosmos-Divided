@@ -306,15 +306,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleOnResources = 1000
 			ToggleOffResources = (&ToggleOnResources) -1
 		}
-		HypermatterStorageBar
-		{
-			Type = ProgressBar
-			OperationalToggle = True
-			ShowProgressFor = HypermatterStorage
-			LowColor = [0, 32, 64]
-			HighColor = [0, 250, 250]
-			FullColor = [0, 255, 255]
-		}
 		HypermatterProducer
 		{
 			Type = ResourceConverter
@@ -322,6 +313,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToStorage = HypermatterStorage
 			ToQuantity = 10
 			Interval = 1/10
+		}
+		HypermatterConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = SW.hypermatter
+			Storage = HypermatterStorage
+			DefaultPriority = &/PRIORITIES/Defense_Supply
+			ResupplyThreshold = 0
+			OperationalToggle = PowerToggle
+		}
+		HypermatterStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = HypermatterStorage
+			LowColor = [0, 32, 64]
+			HighColor = [0, 250, 250]
+			FullColor = [0, 255, 255]
 		}
 
 		IsOperationalAndHypermatterReactorToggle
