@@ -3,7 +3,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//IDs
 	ID = SW.HyperdriveNodeMed
 	OtherIDs = ["HyperdriveNodeMed"]
-	
+
 	//StringKeys
 	NameKey = "Parts/HyperdriveNodeMed"
 	IconNameKey = "Parts/HyperdriveNodeMedIcon"
@@ -11,9 +11,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechII"]
-    TypeCategories = [ftl, uses_power, SW_Hypernode]
-	RequiresCategories = [SW_Hyperdrive_Med]
-	
+    TypeCategories = [ftl, uses_power, SW_Hypernodes, SW_Hypernode_Med, SW_TECH_II]
+	AffectsValidityOfCategories = [SW_Hypernode_Med]
+	RequiresCategories = [SW_Hyperdrive_Medium]
+
 	//Resoures&Size&Health
 	Resources
 	[
@@ -22,17 +23,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]
 	Size = [1, 1]
 	MaxHealth = 1000
-	
+
 	//Selections
 	SelectionPriority = 0
-	InitialPenetrationResistance = 1
 	SelectionTypeID = "hyperdrives"
 
 	//PartSpecific
 	AutoDoorMaxPathLength = 5
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs []
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Hypernode_Med]
+	//ProhibitedBy : ^/0/ProhibitedBy [tall]
 
 	//Editor
 	EditorIcon
@@ -55,14 +56,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
-/*
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 1
-		}
-*/
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -71,6 +65,32 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			InitToMaxResources = 0
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+		BuffStorageCollectorToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Hypernode_Med
+		}
+		ToggledBatteryConsumer
+		{
+			Type = ToggledComponents
+			Toggle = BuffStorageCollectorToggle
+			Invert = true
+			IncludeInBlueprints = true
+			Components
+			{
+				BatteryConsumer
+				{
+					Type = ResourceConsumer
+					ResourceType = battery
+					Storage = BatteryStorage
+					DefaultPriority = &/PRIORITIES/Ftl_Supply
+					OperationalToggle = FtlDrive
+					AllowNonOperationalMinPriorityDelivery = false
+					OverrideExclusiveCrewAssignment = true
+				}
+			}
+		}
+		/*
 		BatteryConsumer
 		{
 			Type = ResourceConsumer
@@ -81,12 +101,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AllowNonOperationalMinPriorityDelivery = false
 			OverrideExclusiveCrewAssignment = true
 		}
-
-		ReloadProgressBar
+		*/
+		BatteryStorageBar
 		{
 			Type = ProgressBar
 			OperationalToggle = FtlDrive
 			ShowProgressFor = BatteryStorage
+			LowColor = [0, 0, 255]
+			HighColor = [0, 0, 255]
+			FullColor = [0, 0, 255]
+			Height = 10
 		}
 		
 		//Keep or replace later with diff resource?
@@ -94,10 +118,29 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = hyperium
-			MaxResources = 1
+			MaxResources = 10
 			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
+		}
+		ToggledHyperiumConsumer
+		{
+			Type = ToggledComponents
+			Toggle = BuffStorageCollectorToggle
+			Invert = true
+			IncludeInBlueprints = true
+			Components
+			{
+				BatteryConsumer
+				{
+					Type = ResourceConsumer
+					ResourceType = hyperium
+					Storage = HyperiumStorage
+					DefaultPriority = &/PRIORITIES/Utility_Supply
+					OperationalToggle = PowerToggle
+					ConsumptionToggleButtonOffset = [0, -.4]
+				}
+			}
 		}
 		/*
 		HyperiumConsumer
@@ -118,7 +161,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelStorage = HyperiumStorage
 			SpinDownDuration = 10
 			JumpEfficiency = 100%
-			JumpEfficiencyDistanceRange = [5, 10]
+			JumpEfficiencyDistanceRange = [4, 16]
 
 			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
 			[
