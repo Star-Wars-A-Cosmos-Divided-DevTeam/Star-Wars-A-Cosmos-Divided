@@ -1,11 +1,19 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/SW_TinyReactor"
-	IconNameKey = "Parts/SW_TinyReactorIcon"
+	//IDs
 	ID = SW.reactor_tiny
 	OtherIDs = [reactor_small1,SW.reactor_small1]
-	EditorGroups = ["Power", "SWTechI"]
+
+	//StringKeys
+	NameKey = "Parts/SW_TinyReactor"
+	IconNameKey = "Parts/SW_TinyReactorIcon"
 	DescriptionKey = "Parts/SW_TinyReactorDesc"
+
+	//Groups&Categories
+	EditorGroups = ["Power", "SWTechI"]
+	TypeCategories = [reactor, provides_power, SW_REACTOR_TINY, SW_TECH_I]
+
+	//Resoures&Size&Health
 	Resources
 	[
 		[SW.durasteel, 8]
@@ -13,17 +21,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[coil, 20]
 		[enriched_uranium, 2]
 	]
-	AIValueFactor = 5
 	Size = [1, 1]
-	IsRotateable = false
-	SelectionPriority = 0
-	SelectionTypeID = "reactors"
 	MaxHealth = 1000
-	AutoDoorMaxPathLength = 5
-	TypeCategories = [reactor, provides_power]
-	ReceivableBuffs : ^/0/ReceivableBuffs []
-	CreateUnderlyingWhenDestroyed = false
+
+	//Selections
+	SelectionPriority = 0
+	//SelectionTypeByRotation = true
 	IgnoreRotationForMirroredSelection = true
+	SelectionTypeID = "reactors"
+
+	//PartSpecific
+	AIValueFactor = 5
+	IsRotateable = false
+	AutoDoorMaxPathLength = 5
+	CreateUnderlyingWhenDestroyed = false
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -33,6 +49,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [32, 32]
 	}
+
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -72,7 +90,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatteryStorageBar
 		{
 			Type = ProgressBar
-			OperationalToggle = True
+			OperationalToggle = IsOperational
 			ShowProgressFor = BatteryStorage
 			LowColor = [64, 64, 0]
 			HighColor = [250, 250, 0]
@@ -247,21 +265,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-/*
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [3, 3]
-						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
-						VertexColor = [180*1.0,255*1.0, 77*1.0]
-					}
-				]
-			}
-*/
 		}
 
 		ReactorHum
