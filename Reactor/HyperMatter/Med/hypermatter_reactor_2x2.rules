@@ -1,11 +1,20 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+	//IDs
+	ID = SW.hypermatter_reactor_2x2
+	// OtherIDs = []
+
+	//StringKeys
 	NameKey = "Parts/HypermatterReactor2x2"
 	IconNameKey = "Parts/HypermatterReactor2x2Icon"
 	DescriptionKey = "Parts/HypermatterReactor2x2Desc"
-	ID = SW.hypermatter_reactor_2x2
-	// OtherIDs = [SW.reactor]
+
+	//Groups&Categories
 	EditorGroups = ["Power", "SWTechII"]
+	TypeCategories = [hypermatter_reactor, provides_hypermatter, SW_REACTOR_SMALL, SW_TECH_II]
+	//RequiresCategories = []
+
+	//Resoures&Size&Health
 	Resources
 	[
 		[SW.durasteel, 32]
@@ -15,17 +24,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[hyperium, 16]
 		[enriched_uranium, 16]
 	]
-	AIValueFactor = 5
 	Size = [2, 2]
-	IsRotateable = false
-	SelectionPriority = 0
-	SelectionTypeID = "hypermatter-reactors"
 	MaxHealth = 8000
-	AutoDoorMaxPathLength = 5
-	TypeCategories = [hypermatter_reactor, provides_hypermatter]
-	ReceivableBuffs : ^/0/ReceivableBuffs []
-	CreateUnderlyingWhenDestroyed = false
+
+	//Selections
+	SelectionPriority = 0
+	//SelectionTypeByRotation = true
 	IgnoreRotationForMirroredSelection = true
+	SelectionTypeID = "hypermatter-reactors"
+
+	//PartSpecific
+	AIValueFactor = 5
+	IsRotateable = false
+	AutoDoorMaxPathLength = 5
+	CreateUnderlyingWhenDestroyed = false
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -35,6 +52,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [48, 48]
 	}
+
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -74,7 +93,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		HypermatterStorageBar
 		{
 			Type = ProgressBar
-			OperationalToggle = True
+			OperationalToggle = IsOperational
 			ShowProgressFor = HypermatterStorage
 			LowColor = [0, 32, 64]
 			HighColor = [0, 250, 250]
