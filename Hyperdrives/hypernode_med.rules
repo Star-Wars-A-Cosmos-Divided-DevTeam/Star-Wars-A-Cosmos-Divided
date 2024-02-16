@@ -11,8 +11,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechII"]
-    TypeCategories = [ftl, uses_power, SW_Hypernodes, SW_Hypernode_Med, SW_TECH_II]
-	AffectsValidityOfCategories = [SW_Hypernode_Med]
+    TypeCategories = [ftl, uses_power, SW_Hypernodes, SW_Hypernode_Medium, SW_Tech_II]
+	AffectsValidityOfCategories = [SW_Hypernode_Medium]
 	RequiresCategories = [SW_Hyperdrive_Medium]
 
 	//Resoures&Size&Health
@@ -32,7 +32,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	AutoDoorMaxPathLength = 5
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Hypernode_Med]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Hypernode_Medium]
 	//ProhibitedBy : ^/0/ProhibitedBy [tall]
 
 	//Editor
@@ -49,6 +49,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BuffStorageCollectorToggle]
+			Mode = All
+		}
+
 		PowerToggle
 		{
 			Type = UIToggle
@@ -61,14 +68,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 16000
+			MaxResources = 6000
 			InitToMaxResources = 0
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BuffStorageCollectorToggle
 		{
 			Type = BuffToggle
-			BuffType = SW_Hypernode_Med
+			BuffType = SW_Hypernode_Medium
 		}
 		ToggledBatteryConsumer
 		{
@@ -119,6 +126,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceStorage
 			ResourceType = hyperium
 			MaxResources = 10
+			InitToMaxResources = 0
 			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
@@ -131,7 +139,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = true
 			Components
 			{
-				BatteryConsumer
+				HyperiumConsumer
 				{
 					Type = ResourceConsumer
 					ResourceType = hyperium
