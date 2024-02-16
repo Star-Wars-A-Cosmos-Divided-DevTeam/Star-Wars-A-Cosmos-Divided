@@ -148,7 +148,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = 1
-			AvailableChoices = [0, 1, 2, 3, 4]
+			AvailableChoices = [0, 1, 2, 3,	4, 5, 6, 7, 8, 9]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
@@ -177,11 +177,41 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectColorType
 			OnMode = 3
 		}
-		GreenToggle
+		CyanToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 4
+		}
+		OrangeToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 5
+		}
+		GreenToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 6
+		}
+		MagentaToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 7
+		}
+		WhiteToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 8
+		}
+		BlackToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 9
 		}
 
 		RedToggleProxy
@@ -204,10 +234,35 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = PurpleToggle
 		}
+		CyanToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = CyanToggle
+		}
+		OrangeToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = OrangeToggle
+		}
 		GreenToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = GreenToggle
+		}
+		MagentaToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = MagentaToggle
+		}
+		WhiteToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = WhiteToggle
+		}
+		BlackToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = BlackToggle
 		}
 
 		ThrusterEffectAmountType
@@ -215,7 +270,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2, 3, 4]
+			AvailableChoices = [0, 1, 2, 3, 4] //5
 			RequiresCommand = false
 		}
 
@@ -268,6 +323,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ValueProxy
 			ComponentID = MainThruster
 			ValueWhenNotConnected = 0
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
+			ValueWhenNotConnected = 0
+		}
+
+		DoodadAnimationSpeedFactorValue
+		{
+			Type = MultiValue
+			Values = [MainThrusterValueProxy, ReverseThrusterValueProxy]
+			Mode = Add
 		}
 
 		ThrusterActivationBar
@@ -560,46 +629,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		BatterySprites
-		{
-			Type = ResourceSprites
-			Location = [1.5, 1]
-			ResourceStorage = BatteryStorage
-			Layer = "doodads_high"
-			HasZeroResourceSprite = false
-			ResourceLevels
-			[
-				{
-					File = "batteries_1.png"
-					Size = [2, 2]
-				}
-				{
-					File = "batteries_2.png"
-					Size = [2, 2]
-				}
-				{
-					File = "batteries_3.png"
-					Size = [2, 2]
-				}
-				{
-					File = "batteries_4.png"
-					Size = [2, 2]
-				}
-				{
-					File = "batteries_5.png"
-					Size = [2, 2]
-				}
-				{
-					File = "batteries_6.png"
-					Size = [2, 2]
-				}
-				{
-					File = "batteries_7.png"
-					Size = [2, 2]
-				}
-			]
-		}
-
 		MainThruster
 		{
 			Type = Thruster
@@ -662,12 +691,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MinAmount = 0.5
 		}
 
-		BurstTriggerProxy
-		{
-			Type = TriggerProxy
-			ComponentID = BurstTrigger
-		}
-
 		BurstEffects
 		{
 			Type = TriggeredEffects
@@ -702,11 +725,51 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [1.5, 1]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "batteries_1.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_2.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_3.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_4.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_5.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_6.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_7.png"
+					Size = [2, 2]
+				}
+			]
+		}
+
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [1.5, 1.5]
 			Toggle = IsOperational
+			Location = [1.5, 1.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}

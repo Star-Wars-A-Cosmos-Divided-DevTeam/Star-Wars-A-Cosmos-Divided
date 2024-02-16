@@ -270,7 +270,7 @@ Actions
 	{
 		Action = AddMany
 		AddTo = "<./Data/ships/terran/terran.rules>/Terran/RenderLayers"
-		ManyToAdd = &<ships/terran.rules>/Terran/RenderLayers
+		ManyToAdd = &<ships/terran/terran.rules>/Terran/RenderLayers
 	}
 	// GUI TOGGLES 
 	{
@@ -279,7 +279,7 @@ Actions
 		ManyToAdd = &<gui/SW_toggles.rules>/PartToggles
 	}
 	/*
-	// GUI STATS
+	// GUI STATS // Added to low load priority mod
 	{
 		Action = Replace
 		Replace = <gui/game/parts/part_stats.rules>/PartStats
@@ -319,7 +319,7 @@ Actions
 	{ 
 		Action = AddMany
 		AddTo = "<ships/asteroid/asteroid.rules>/asteroid/parts"
-		ManyToAdd = &<Asteroids.rules>/Parts
+		ManyToAdd = &<ships/asteroid/Asteroids.rules>/Parts
 	}
 	// ADDING ZERSIUM & DOONIUM (ASTEROIDS) TO CAREER 
 	{
@@ -337,7 +337,7 @@ Actions
 		AddTo = "<./Data/modes/career/sysgen_asteroids.rules>/SunAsteroidTypes"
 		ManyToAdd = &<career/sysgen_asteroids.rules>/SunAsteroidTypes
 	}
-	// ADDING ZERSIUM & DOONIUM & DOONIUM_INGOTS & DURASTEEL (Resource as Tradeable) TO CAREER 
+	// ADDING ZERSIUM & DOONIUM & DOONIUM_INGOTS & DURASTEEL (Resources as Tradeables) TO CAREER 
 	{
 		Action = AddMany
 		AddTo = "<./Data/modes/career/career.rules>/ResourceDeliveryMissions/DeliveryTypes"
@@ -353,7 +353,7 @@ Actions
 		AddTo = "<./Data/modes/career/career.rules>/BaseTradeShip/ResourcesCarried"
 		ManyToAdd = &<career/career.rules>/BaseTradeShip/ResourcesCarried
 	}
-	// ADDING ETC & DOONIUM & DURASTEEL TECHS TO CAREER 
+	// ADDING TECHS TO CAREER 
 	{
 		Action = AddMany
 		AddTo = "<./Data/modes/career/techs.rules>/Techs"
@@ -363,7 +363,7 @@ Actions
 	{ 
 		Action = AddMany
 		AddTo = "<ships/terran/terran.rules>/terran/parts"
-		ManyToAdd = &<Parts.rules>/Parts
+		ManyToAdd = &<Parts.rules>/Parts // ships/terran/
 	}
 	// ADDING LOGO SCREEN SHIP 
 	{
@@ -392,41 +392,6 @@ Actions
 		Overrides = &<gui/indicators.rules>
 	}
 
-	// Compatiblity Fix/Add
-	{
-		Action = Add
-		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/OtherIDs"
-		CreateIfNotExisting = true
-		ToAdd = "SW.structure1x3_wedge_L"
-	}
-	{
-		Action = Add
-		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/OtherIDs"
-		CreateIfNotExisting = true
-		ToAdd = "SW.structure1x3_wedge_R"
-	}
-	{
-		Action = Add
-		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/FlipWhenLoadingIDs"
-		CreateIfNotExisting = true
-		ToAdd = "SW.structure1x3_wedge_R"
-	}
-	// ADDING A STRUCTURE TRIANGLE TO THE VANILLA ARMOR TRIANGLE WHEN DESTROYED 
-	{
-		Action = Overrides
-		OverrideIn = "<ships/terran/armor_tri/armor_tri.rules>/Part"
-		Overrides
-		{
-			CreatePartWhenDestroyed = cosmoteer.structure_tri			
-		}
-	}
-	{
-		Action = Add
-		AddTo = "<./Data/ships/terran/structure_tri/structure_tri.rules>/Part/OtherIDs"
-		CreateIfNotExisting = true
-		ToAdd = "SW.Structure1x1_Triangle"
-	}
-
 	//CategoryLimits - Parts sharing the same categorytype will share the limit, create new categories as needed in section below
 	{
 		Action = Add
@@ -453,26 +418,6 @@ Actions
 				Max = 1
 			}
 			{
-				Category = "SW_Hyperdrive_Small" //Globally per Ship 
-				Max = 16 //4 //1 buffered nerf
-			}
-			{
-				Category = "SW_Hyperdrive_Medium" //Globally per Ship 
-				Max = 16 //4 //1 buffered nerf
-			}
-			{
-				Category = "SW_Hyperdrive_Large" //Globally per Ship 
-				Max = 16 //4 //1 buffered nerf
-			}
-			{
-				Category = "SW_Hyperdrives" //Globally per Ship 
-				Max = 16 //4 //1 buffered nerf
-			}
-			{
-				Category = "SW_Hypernode_Medium" //Globally per Ship 
-				Max = 8
-			}
-			{
 				Category = "XWingThruster" 
 				Max = 1
 			}
@@ -491,6 +436,27 @@ Actions
 			{
 				Category = "limit_4" //Globally per Ship
 				Max = 4
+			}
+
+			{
+				Category = "SW_Hyperdrive_Small" //Globally per Ship 
+				Max = 16 //4 //1 buffered nerf
+			}
+			{
+				Category = "SW_Hyperdrive_Medium" //Globally per Ship 
+				Max = 16 //4 //1 buffered nerf
+			}
+			{
+				Category = "SW_Hypernode_Medium" //Globally per Ship 
+				Max = 8
+			}
+			{
+				Category = "SW_Hyperdrive_Large" //Globally per Ship 
+				Max = 16 //4 //1 buffered nerf
+			}
+			{
+				Category = "SW_Hyperdrives" //Globally per Ship 
+				Max = 16 //4 //1 buffered nerf
 			}
 		]
 	}
@@ -529,7 +495,61 @@ Actions
         AddTo = "<post_shaders/post_shaders.rules>/Shaders"
         ManyToAdd = 
         [
-			/*{
+			{
+				NameKey = "PostShaders/BilinearXCombined"
+				Material
+				{
+					Shader = "post_shaders/bilinear_combined.shader"
+				}
+			}
+		]
+	}
+
+	// Compatiblity Fix/Add
+	{
+		Action = Add
+		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/OtherIDs"
+		CreateIfNotExisting = true
+		ToAdd = "SW.structure1x3_wedge_L"
+	}
+	{
+		Action = Add
+		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/OtherIDs"
+		CreateIfNotExisting = true
+		ToAdd = "SW.structure1x3_wedge_R"
+	}
+	{
+		Action = Add
+		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/FlipWhenLoadingIDs"
+		CreateIfNotExisting = true
+		ToAdd = "SW.structure1x3_wedge_R"
+	}
+	// ADDING A STRUCTURE TRIANGLE TO THE VANILLA ARMOR TRIANGLE WHEN DESTROYED 
+	{
+		Action = Overrides
+		OverrideIn = "<ships/terran/armor_tri/armor_tri.rules>/Part"
+		Overrides
+		{
+			CreatePartWhenDestroyed = cosmoteer.structure_tri			
+		}
+	}
+	{
+		Action = Add
+		AddTo = "<./Data/ships/terran/structure_tri/structure_tri.rules>/Part/OtherIDs"
+		CreateIfNotExisting = true
+		ToAdd = "SW.Structure1x1_Triangle"
+	}
+
+
+
+	//WIP Code
+	/*
+	{
+        Action = AddMany
+        AddTo = "<post_shaders/post_shaders.rules>/Shaders"
+        ManyToAdd = 
+        [
+			{
 				NameKey = "PostShaders/ContrastX1_23"
 				Material
 				{
@@ -556,15 +576,7 @@ Actions
 				{
 					Shader = "post_shaders/bilinear.shader"
 				}
-			}*/
-			{
-				NameKey = "PostShaders/BilinearXCombined"
-				Material
-				{
-					Shader = "post_shaders/bilinear_combined.shader"
-				}
 			}
-			/*
 			{
 				NameKey = "PostShaders/Pulsing"
 				Material
@@ -572,8 +584,6 @@ Actions
 					Shader = "post_shaders/pulsing.shader"
 				}
 			}
-			*/
-			/*
 			{
 				NameKey = "PostShaders/SW_WIP_1"
 				Material
@@ -588,8 +598,6 @@ Actions
 					Shader = "post_shaders/SW_WIP_2.shader"
 				}
 			}
-			*/
-			/*
 			{
 				NameKey = "PostShaders/OVERSCAN"
 				Material
@@ -632,28 +640,9 @@ Actions
 					Shader = "post_shaders/distortion.shader"
 				}
 			}
-			*/
-		]    
-		/*
-		{
-			Action = AddMany
-			AddTo = "<ships/terran/terran.rules>/Terran/CategoryNouns"
-	
-			ManyToAdd
-			[
-				{
-					Category=fighter_cockpit
-					SingularKey="CategoryNouns/RDFighter_cockpitSingular"
-					PluralKey="CategoryNouns/RDFighter_cockpitPlural"
-				}
-			]
-		}
-		*/
+		]
 	}
-
-
-
-	//WIP Code
+	*/
 	/*
 	{
 		Action = AddBase
