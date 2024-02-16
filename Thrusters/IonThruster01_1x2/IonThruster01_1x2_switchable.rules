@@ -11,10 +11,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [thruster, ion_thruster, uses_power]
+	TypeCategories = [thruster, ion_thruster, uses_power, SW_Tech_I]
 	//RequiresCategories = []
 
-	//Resources & Size & Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 30]//125%*24 of vanilla
@@ -33,7 +33,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeByRotation = true
 	SelectionTypeID = "ion_thrusters"
 
-	//Partspecific
+	//PartSpecific
 	ThrusterForce = 1200 //1920 managed thru ramping buff //160%*1200 of vanilla
 	ThrustIncreaseTime = 3.2 //80%*4.0 of vanilla
 	ThrustRecoveryTime = 1.6 //80%*2.0 of vanilla
@@ -43,7 +43,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ProhibitBelow = 4
 	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine]
 
-	//Doors etc
+	//Doors&Etc
 	AllowedDoorLocations
 	[
 		[0, -1]
@@ -134,7 +134,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = 1
-			AvailableChoices = [0, 1, 2, 3, 4]
+			AvailableChoices = [0, 1, 2, 3,	4, 5, 6, 7, 8, 9]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
@@ -163,11 +163,41 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectColorType
 			OnMode = 3
 		}
-		GreenToggle
+		CyanToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 4
+		}
+		OrangeToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 5
+		}
+		GreenToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 6
+		}
+		MagentaToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 7
+		}
+		WhiteToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 8
+		}
+		BlackToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 9
 		}
 
 		RedToggleProxy
@@ -190,10 +220,35 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = PurpleToggle
 		}
+		CyanToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = CyanToggle
+		}
+		OrangeToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = OrangeToggle
+		}
 		GreenToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = GreenToggle
+		}
+		MagentaToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = MagentaToggle
+		}
+		WhiteToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = WhiteToggle
+		}
+		BlackToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = BlackToggle
 		}
 
 		ThrusterEffectAmountType
@@ -201,7 +256,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2, 3, 4]
+			AvailableChoices = [0, 1, 2, 3, 4] //5
 			RequiresCommand = false
 		}
 
@@ -254,6 +309,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ValueProxy
 			ComponentID = MainThruster
 			ValueWhenNotConnected = 0
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
+			ValueWhenNotConnected = 0
+		}
+
+		DoodadAnimationSpeedFactorValue
+		{
+			Type = MultiValue
+			Values = [MainThrusterValueProxy, ReverseThrusterValueProxy]
+			Mode = Add
 		}
 
 		ThrusterActivationBar
@@ -374,7 +443,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [.5, 1]
 			OperationalToggle = IsOperational
 
-			AnimationSpeedFactor = MainThruster
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
 			AnimationSpeedFactorRenormalize = [0.64, 2.1]
 
 			OperationalDoodad
@@ -427,7 +496,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Walls
 			{
 				Layer = "walls"
-				Offset = [0, 0]
 				DamageLevels
 				[
 					{
@@ -447,7 +515,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Roof
 			{
 				Layer = "roofs"
-				Offset = [0, 0]
 				DamageLevels
 				[
 					{
@@ -523,32 +590,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		BatterySprites
-		{
-			Type = ResourceSprites
-			Location = [.5, 0.5]
-			ResourceStorage = BatteryStorage
-			Layer = "doodads_high"
-			HasZeroResourceSprite = false
-			ResourceLevels
-			[
-				{
-					File = "batteries_1.png"
-					Size = [1, 1]
-				}
-				{
-					File = "batteries_2.png"
-					Size = [1, 1]
-				}
-			]
-		}
-
 		MainThruster
 		{
 			Type = Thruster
+			OperationalToggle = IsOperational
 			Location = [0.5, 2.56]
 			Rotation = 90d// Relative to unrotated part.
-			OperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Multiply; }
@@ -605,12 +652,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MinAmount = 0.5
 		}
 
-		BurstTriggerProxy
-		{
-			Type = TriggerProxy
-			ComponentID = BurstTrigger
-		}
-
 		BurstEffects
 		{
 			Type = TriggeredEffects
@@ -645,11 +686,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [.5, 0.5]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "batteries_1.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries_2.png"
+					Size = [1, 1]
+				}
+			]
+		}
+
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [.5, 1]
 			Toggle = IsOperational
+			Location = [.5, 1]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
@@ -698,6 +759,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
+	//Stats
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce
