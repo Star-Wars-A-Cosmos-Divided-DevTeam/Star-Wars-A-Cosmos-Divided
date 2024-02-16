@@ -11,7 +11,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechII"]
-    TypeCategories = [ftl, uses_power, SW_Hyperdrive_Medium, SW_Hyperdrives, SW_TECH_II]
+    TypeCategories = [ftl, uses_power, SW_Hyperdrive_Medium, SW_Hyperdrives, SW_Tech_II]
 	AffectsValidityOfCategories = [SW_Hyperdrive_Medium, SW_Hyperdrives]
 	RequiresCategories = [navicomputer]
 
@@ -35,7 +35,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	AutoDoorMaxPathLength = 5
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [/*SW_HyperNode_Med*/]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	//ProhibitedBy : ^/0/ProhibitedBy [tall]
 
 	//Editor
 	EditorIcon
@@ -51,6 +52,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle]
+			Mode = All
+		}
+
 		PowerToggle
 		{
 			Type = UIToggle
@@ -59,19 +67,41 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
+		BuffStorageCollector
+		{
+			Type = GridBuffProvider
+			BuffType = SW_Hypernode_Medium
+			GridDistance = 1000
+			OperationalToggle = IsOperational
+		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 12000
+			MaxResources = 12000 //2*2*3000
 			InitToMaxResources = 0
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		CombinedBatteryStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorage]
+			ViaBuffs
+			{
+				OutgoingBuffProviders = [BuffStorageCollector]
+				ComponentID = BatteryStorage
+			}
+			AddMode = PrioritizeLeastResources
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
 		{
 			Type = ResourceConsumer
 			ResourceType = battery
-			Storage = BatteryStorage
+			Storage = CombinedBatteryStorage
 			DefaultPriority = &/PRIORITIES/Ftl_Supply
 			OperationalToggle = FtlDrive
 			AllowNonOperationalMinPriorityDelivery = false
@@ -81,7 +111,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ProgressBar
 			OperationalToggle = FtlDrive
-			ShowProgressFor = BatteryStorage
+			ShowProgressFor = CombinedBatteryStorage
 			LowColor = [0, 0, 255]
 			HighColor = [0, 0, 255]
 			FullColor = [0, 0, 255]
@@ -93,15 +123,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceStorage
 			ResourceType = hyperium
 			MaxResources = 80 // + 80 max thru nodes = 160
+			InitToMaxResources = 0
 			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
+		}
+
+		CombinedHyperiumStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = hyperium
+			ResourceStorages = [HyperiumStorage]
+			ViaBuffs
+			{
+				OutgoingBuffProviders = [BuffStorageCollector]
+				ComponentID = HyperiumStorage
+			}
+			AddMode = PrioritizeLeastResources
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		HyperiumConsumer
 		{
 			Type = ResourceConsumer
 			ResourceType = hyperium
-			Storage = HyperiumStorage
+			Storage = CombinedHyperiumStorage
 			DefaultPriority = &/PRIORITIES/Utility_Supply
 			OperationalToggle = PowerToggle
 			ConsumptionToggleButtonOffset = [0, -.4]
@@ -109,7 +154,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		HyperiumStorageBar
 		{
 			Type = ProgressBar
-			ShowProgressFor = HyperiumStorage
+			ShowProgressFor = CombinedHyperiumStorage
 			LowColor = [0, 64, 64]
 			HighColor = [0, 250, 250]
 			FullColor = [0, 255, 255]

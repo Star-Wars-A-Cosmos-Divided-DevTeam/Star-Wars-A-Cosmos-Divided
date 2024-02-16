@@ -1,0 +1,149 @@
+Type = Particles
+Def = &<../../def/sparks/thruster_magenta_sparks_def.rules>
+EmitterDef
+{
+	EmitPerSecond = 30
+	EmitPerOneShot
+	{
+		Min = 0
+		Max = 0
+	}
+	PreInitializers
+	[
+		{
+			Type = SetRandomVelocity
+			VelocityOut = velocity
+			Speed
+			{
+				Min = 3
+				Max = 10
+			}
+			Direction
+			{
+				Min = -15d
+				Max = 15d
+			}
+			Name = "randomize velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.3
+			ToValue = 1.2
+			Name = "randomize lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = base_scale
+			ValueType = Float
+			FromValue = 0.5
+			ToValue = 2
+			Name = "randomize base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			VelocityIn = velocity
+			RotationInOut = rotation
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+			DataOut = location
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0
+				Y = -0.25
+			}
+			ToValue
+			{
+				X = 0
+				Y = 0.25
+			}
+		}
+		{
+			Type = SetRandomVelocityFromPoint
+			DataOut = location
+			ValueType = Vector2
+			Value
+			{
+				X = -1
+				Y = 0
+			}
+			LocationIn = location
+			VelocityOut = velocity
+			Speed
+			{
+				Min = 10
+				Max = 20
+			}
+			AwayFromPoint
+			{
+				X = -1
+				Y = 0
+			}
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AlignToVelocity
+			VelocityIn = velocity
+			RotationInOut = rotation
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = Upper5
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 0.1
+IsFancy = true
+IsFancyLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 5
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.4028235E+38
+ScaleEmissionWithIntensity = true
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Junk = true
+	TargetedJunk
+}
+Delay = 0
+IgnoreIntensity = false
+ScaleEmissionWithWorldVelocity = false
