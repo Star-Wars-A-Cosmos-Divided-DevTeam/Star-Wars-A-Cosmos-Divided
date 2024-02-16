@@ -1,20 +1,20 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-    //IDs
+	//IDs
 	ID = SW.IonThruster01_10x14_switchable
 	OtherIDs = ["IonThruster01_10x14","SW.IonThruster01_10x14"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/IonThruster01_10x14"
 	IconNameKey = "Parts/IonThruster01_10x14_Icon"
 	DescriptionKey = "Parts/IonThruster01_10x14_Desc"
 
-    //Groups&Categories
+	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechIII"]
-	TypeCategories = [thruster, uses_power]
+	TypeCategories = [thruster, ion_thruster, uses_power, SW_Tech_III]
 	RequiresCategories = [SW_Bridge]
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 1040] //80/9*10*14=1244*81%
@@ -24,17 +24,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Size = [10, 18]
 	MaxHealth = 114000 //113400 //81% of vanilla 1000 per tile
 
-    //Rects
+	//Rects
 	PhysicalRect = [0, 0, 10, 14]
 	SaveRect = &PhysicalRect
 	BoundingRectType = Physical
 
-    //Selections
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "ion_thrusters"
 
-    //PartSpecific
+	//PartSpecific
 	ThrusterForce = 145000 //149.240 //75%sizedegrade*[normalized] 160% of vanilla 1000*8/9 per tile
 	ThrustIncreaseTime = (&ThrusterForce) / 10000
 	ThrustRecoveryTime = (&ThrusterForce) / 10000 / 3
@@ -138,12 +138,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			BuffType = SW_Ion_Thruster_Accelerator
 		}
 
-		SWIonEngineBuffToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = SWIonEngineBuffToggle
-		}
-
 		EngineBuffToggle
 		{
 			Type = BuffToggle
@@ -182,7 +176,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_color_type"
 			Default = 1
-			AvailableChoices = [0, 1, 2, 3, 4]
+			AvailableChoices = [0, 1, 2, 3,	4, 5, 6, 7, 8, 9]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
@@ -211,11 +205,41 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectColorType
 			OnMode = 3
 		}
-		GreenToggle
+		CyanToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 4
+		}
+		OrangeToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 5
+		}
+		GreenToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 6
+		}
+		MagentaToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 7
+		}
+		WhiteToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 8
+		}
+		BlackToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectColorType
+			OnMode = 9
 		}
 
 		RedToggleProxy
@@ -238,10 +262,35 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = PurpleToggle
 		}
+		CyanToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = CyanToggle
+		}
+		OrangeToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = OrangeToggle
+		}
 		GreenToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = GreenToggle
+		}
+		MagentaToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = MagentaToggle
+		}
+		WhiteToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = WhiteToggle
+		}
+		BlackToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = BlackToggle
 		}
 
 		ThrusterEffectAmountType
@@ -249,7 +298,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2, 3, 4]
+			AvailableChoices = [0, 1, 2, 3, 4] //5
 			RequiresCommand = false
 		}
 
@@ -300,7 +349,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
-
 		NozzleRoofCoverOptionToggle
 		{
 			Type = UIToggle
@@ -340,7 +388,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		DoodadAnimationSpeedFactorValue
 		{
 			Type = MultiValue
-			Values = [MainThrusterValueProxy, ReverseThrusterValueProxy]//, FtlDrive]
+			Values = [MainThrusterValueProxy, ReverseThrusterValueProxy]//, FtlDrive
 			Mode = Add
 		}
 
@@ -400,7 +448,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
+			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
@@ -433,8 +481,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrustEffectsSounds
 		{
 			Type = ContinuousEffects
-			ChainedTo = MainThruster
-			FactorMediaEffectsIntensityWith = MainThruster
+			ChainedTo = MainThrusterLocationProxy
+			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
 			MediaEffects
 			[
 				: /SW_SOUNDS/ThrusterRumble
@@ -449,16 +497,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
-			AmountFrom = MainThruster
+			AmountFrom = MainThrusterValueProxy
 			MinAmount = 0.5
 		}
 
 		BurstEffects
 		{
 			Type = TriggeredEffects
-			ChainedTo = MainThruster
+			ChainedTo = MainThrusterLocationProxy
 			Trigger = BurstTrigger
-			FactorMediaEffectsIntensityWith = MainThruster
+			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
 			AnchorMediaEffects = true
 			MediaEffects
 			[
@@ -467,6 +515,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					Volume = .25
 					Speed = 1.5
 					MaxConcurrentVolume = .5
+				}
+			]
+		}
+
+		ThrusterHum
+		{
+			Type = ContinuousEffects
+			Location = [5, 7]
+			OperationalToggle = IsOperational
+			MediaEffects
+			[
+				: /SW_SOUNDS/ThrusterHum
+				{
+					Volume = .1
+					Speed = 1.25
+					MaxConcurrentVolume = 1
 				}
 			]
 		}
@@ -527,24 +591,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
+			Location = [5, 7]
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [5, 7]
-		}
-
-		ThrusterHum
-		{
-			Type = ContinuousEffects
-			Location = [5, 7]
-			OperationalToggle = IsOperational
-			MediaEffects
-			[
-				: /SW_SOUNDS/ThrusterHum
-				{
-					Volume = .1
-					Speed = 1.25
-					MaxConcurrentVolume = 1
-				}
-			]
 		}
 
 		Indicators
@@ -575,6 +623,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
+
 		Blueprints
 		{
 			Type = BlueprintSprite
@@ -584,7 +633,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
-   //Stats
+	//Stats
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce
@@ -596,3 +645,4 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecCrew = (&RecPower) * 4
 	}
 }
+Size = Giga
