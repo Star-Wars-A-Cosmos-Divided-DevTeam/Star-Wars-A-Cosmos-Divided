@@ -77,10 +77,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<large_hyperdrive.ru
 		BuffStorageCollector
 		{
 			Type = GridBuffProvider
-			BuffType = Engine
-			BuffAmount = 0%
+			BuffType = SW_Hypernode_Large
 			GridDistance = 1000
 			OperationalToggle = IsOperational
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 27000 //3*3*3000
+			InitToMaxResources = 0
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
 		CombinedBatteryStorage
@@ -96,20 +104,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<large_hyperdrive.ru
 			AddMode = PrioritizeLeastResources
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
-		BatteryStorage
-		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 18000 //3*3*2000
-			InitToMaxResources = 0
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-		}
 		BatteryConsumer
 		{
 			Type = ResourceConsumer
 			ResourceType = battery
-			Storage = BatteryStorage
+			Storage = CombinedBatteryStorage
 			DefaultPriority = &/PRIORITIES/Ftl_Supply
 			OperationalToggle = FtlDrive
 			AllowNonOperationalMinPriorityDelivery = false
@@ -119,11 +118,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<large_hyperdrive.ru
 		{
 			Type = ProgressBar
 			OperationalToggle = FtlDrive
-			ShowProgressFor = BatteryStorage
+			ShowProgressFor = CombinedBatteryStorage
 			LowColor = [0, 0, 255]
 			HighColor = [0, 0, 255]
 			FullColor = [0, 0, 255]
 			Height = 10
+		}
+
+		HyperiumStorage
+		{
+			Type = ResourceStorage
+			ResourceType = hyperium
+			MaxResources = 120 //+20 per Node
+			InitToMaxResources = 0
+			UITileRect = [.5 + 7/64, .5 + 7/64, 2 - 14/64, 2 - 14/64]
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
+			DropResourcesWhenDestroyed = true
 		}
 
 		CombinedHyperiumStorage
@@ -139,21 +149,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<large_hyperdrive.ru
 			AddMode = PrioritizeLeastResources
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
-		HyperiumStorage
-		{
-			Type = ResourceStorage
-			ResourceType = hyperium
-			MaxResources = 120
-			UITileRect = [.5 + 7/64, .5 + 7/64, 2 - 14/64, 2 - 14/64]
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
-			DropResourcesWhenDestroyed = true
-		}
 		HyperiumConsumer
 		{
 			Type = ResourceConsumer
 			ResourceType = hyperium
-			Storage = HyperiumStorage
+			Storage = CombinedHyperiumStorage
 			DefaultPriority = &/PRIORITIES/Utility_Supply
 			OperationalToggle = PowerToggle
 			ConsumptionToggleButtonOffset = [0, -.4]
@@ -161,7 +161,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<large_hyperdrive.ru
 		HyperiumStorageBar
 		{
 			Type = ProgressBar
-			ShowProgressFor = HyperiumStorage
+			ShowProgressFor = CombinedHyperiumStorage
 			LowColor = [0, 64, 64]
 			HighColor = [0, 250, 250]
 			FullColor = [0, 255, 255]
@@ -175,7 +175,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part, &<large_hyperdrive.ru
 			FuelStorage = HyperiumStorage
 			SpinDownDuration = 5
 			JumpEfficiency = 100% //SW Efficiency Buff
-			JumpEfficiencyDistanceRange = [32, 92] //V:3x3 is 20, 120
+			JumpEfficiencyDistanceRange = [32, 92] //V:4x4 is 20, 120
 
 			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
 			[

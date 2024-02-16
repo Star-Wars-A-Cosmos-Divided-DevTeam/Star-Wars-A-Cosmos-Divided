@@ -1,0 +1,136 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	//IDs
+	ID = SW.hangar_corridor
+	//OtherIDs = []
+
+	//StringKeys
+	NameKey = "Parts/Corridor"
+	IconNameKey = "Parts/CorridorIcon"
+	DescriptionKey = "Parts/CorridorDesc"
+
+	//Groups&Categories
+	EditorGroups = ["Flight", "SWTechII"]
+	TypeCategories = [hangar, hangar_corridor, SW_Tech_II]
+	//RequiresCategories = [SW_Bridge] //some sort of requirement or non since it just decoration??
+
+	//Resoures&Size&Health
+	Resources
+	[
+		[steel, 4]
+	]
+	Size = [1, 1]
+	MaxHealth = 1000
+
+	//Selections
+	IgnoreRotationForMirroredSelection = true
+
+	//PartSpecific
+	//DefaultEditorHotkey = [Shift + Z] //hmmm
+	AIValueFactor = 0
+	//CreatePartPerTileWhenGrabbed = "" // aka now is corridor
+	CrewSpeedFactor = 1
+	CrewCongestedSpeedFactor = .5
+	IsRotateable = false
+	IsSelfDestructible = false
+
+	//Doors&Etc
+	GeneratorRequiresDoor = false
+	IsWalled = false
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		//Blend Stuff
+
+		WallsBlend : <../hangar_walls/walls.rules>
+		{
+			Type = BlendSprite
+			Location = [.5, .5]
+			BlendsWithCategories = [hangar_corridor, hangar_corridor_blendable]
+		}
+
+		BlueprintWalls : <../hangar_walls/blueprint_walls.rules>
+		{
+			Location = [.5, .5]
+			BlendsWithCategories = [hangar_corridor, hangar_corridor_blendable]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [.5, .5]
+			Floor
+			{
+				Layer = "floors"
+				RandomUVRotation = true
+				DamageLevels
+				[
+					{
+						File = "hanagr_floor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "hanagr_floor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "hanagr_floor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				RandomUVRotation = true
+				DamageLevels
+				[
+					{
+						File = "hanagr_roof.png"
+						NormalsFile = "hanagr_roof_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "hanagr_roof_33.png"
+						NormalsFile = "hanagr_roof_normals_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "hanagr_roof_66.png"
+						NormalsFile = "hanagr_roof_normals_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+	}
+}
