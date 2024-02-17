@@ -70,14 +70,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			BuffType = SW_Hypernode_Large
 		}
 
-		BatteryStorage
+		NodeBatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 4000
+			MaxResources = 3000
 			InitToMaxResources = 0
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+
+		//This Consumer is never Toggled On
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
@@ -90,7 +92,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				{
 					Type = ResourceConsumer
 					ResourceType = battery
-					Storage = BatteryStorage
+					Storage = NodeBatteryStorage
 					DefaultPriority = &/PRIORITIES/Ftl_Supply
 					OperationalToggle = FtlDrive
 					AllowNonOperationalMinPriorityDelivery = false
@@ -98,40 +100,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			}
 		}
-		/*
-		BatteryConsumer
-		{
-			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Ftl_Supply
-			OperationalToggle = FtlDrive
-			AllowNonOperationalMinPriorityDelivery = false
-			OverrideExclusiveCrewAssignment = true
-		}
-		*/
 		BatteryStorageBar
 		{
 			Type = ProgressBar
 			OperationalToggle = FtlDrive
-			ShowProgressFor = BatteryStorage
-			LowColor = [0, 0, 255]
-			HighColor = [0, 0, 255]
-			FullColor = [0, 0, 255]
+			ShowProgressFor = NodeBatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
 			Height = 10
 		}
-		
-		//Keep or replace later with diff resource?
-		HyperiumStorage
+
+		NodeHyperiumStorage
 		{
 			Type = ResourceStorage
 			ResourceType = hyperium
 			MaxResources = 20
-			InitToMaxResources = 0
-			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
+			UITileRect = [0.0 + 7/64, 0.0 + 7/64, 1 - 14/64, 1 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
 		}
+
+		//This Consumer is never Toggled On
 		ToggledHyperiumConsumer
 		{
 			Type = ToggledComponents
@@ -144,33 +134,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				{
 					Type = ResourceConsumer
 					ResourceType = hyperium
-					Storage = HyperiumStorage
+					Storage = NodeHyperiumStorage
 					DefaultPriority = &/PRIORITIES/Utility_Supply
 					OperationalToggle = PowerToggle
 					ConsumptionToggleButtonOffset = [0, -.4]
 				}
 			}
 		}
-		/*
-		HyperiumConsumer
-		{
-			Type = ResourceConsumer
-			ResourceType = hyperium
-			Storage = HyperiumStorage
-			DefaultPriority = &/PRIORITIES/Utility_Supply
-			OperationalToggle = PowerToggle
-			ConsumptionToggleButtonOffset = [0, -.4]
-		}
-		*/
+
 		FtlDrive
 		{
 			Type = FtlDrive
 			OperationalToggle = PowerToggle
-			PowerStorage = BatteryStorage
-			FuelStorage = HyperiumStorage
+			PowerStorage = NodeBatteryStorage
+			FuelStorage = NodeHyperiumStorage
 			SpinDownDuration = 10
 			JumpEfficiency = 100%
-			JumpEfficiencyDistanceRange = [5, 30]
+			JumpEfficiencyDistanceRange = [8, 32]
 
 			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
 			[
@@ -334,7 +314,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceSprites
 			Location = [0.5, 0.5]
-			ResourceStorage = BatteryStorage
+			ResourceStorage = NodeBatteryStorage
 			Layer = "doodads_low"
 			ResourceLevels
 			[
@@ -418,9 +398,34 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	{
 		FtlMaxEfficiencyRange = &~/Part/Components/FtlDrive/JumpEfficiencyDistanceRange/0
 		FtlMinEfficiencyRange = &~/Part/Components/FtlDrive/JumpEfficiencyDistanceRange/1
-		HyperiumCapacity = &~/Part/Components/HyperiumStorage/MaxResources
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		HyperiumCapacity = &~/Part/Components/NodeHyperiumStorage/MaxResources
+		PowerCapacity = (&~/Part/Components/NodeBatteryStorage/MaxResources) / 1000
 	}
 
 	StatsNotesKey = "Stats/HyperNode_Notes"
 }
+Size = Small
+Scale = (1/1)
+		/*
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Ftl_Supply
+			OperationalToggle = FtlDrive
+			AllowNonOperationalMinPriorityDelivery = false
+			OverrideExclusiveCrewAssignment = true
+		}
+		*/
+		/*
+		HyperiumConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = hyperium
+			Storage = HyperiumStorage
+			DefaultPriority = &/PRIORITIES/Utility_Supply
+			OperationalToggle = PowerToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+		*/

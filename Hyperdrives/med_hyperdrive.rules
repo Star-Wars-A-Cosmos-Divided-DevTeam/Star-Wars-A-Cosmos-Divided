@@ -83,7 +83,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			InitToMaxResources = 0
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
 		CombinedBatteryStorage
 		{
 			Type = MultiResourceStorage
@@ -92,7 +91,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ViaBuffs
 			{
 				OutgoingBuffProviders = [BuffStorageCollector]
-				ComponentID = BatteryStorage
+				ComponentID = NodeBatteryStorage
 			}
 			AddMode = PrioritizeLeastResources
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
@@ -101,8 +100,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceConsumer
 			ResourceType = battery
-			Storage = CombinedBatteryStorage
+			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Ftl_Supply
+			AdditionalStorageForJobPriority = [CombinedBatteryStorage]
 			OperationalToggle = FtlDrive
 			AllowNonOperationalMinPriorityDelivery = false
 			OverrideExclusiveCrewAssignment = true
@@ -111,7 +111,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ProgressBar
 			OperationalToggle = FtlDrive
-			ShowProgressFor = CombinedBatteryStorage
+			ShowProgressFor = BatteryStorage
 			LowColor = [0, 0, 255]
 			HighColor = [0, 0, 255]
 			FullColor = [0, 0, 255]
@@ -123,12 +123,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceStorage
 			ResourceType = hyperium
 			MaxResources = 80 // + 80 max thru nodes = 160
-			InitToMaxResources = 0
 			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
 		}
-
 		CombinedHyperiumStorage
 		{
 			Type = MultiResourceStorage
@@ -137,24 +135,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ViaBuffs
 			{
 				OutgoingBuffProviders = [BuffStorageCollector]
-				ComponentID = HyperiumStorage
+				ComponentID = NodeHyperiumStorage
 			}
 			AddMode = PrioritizeLeastResources
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
+			DropResourcesWhenDestroyed = true
 		}
 		HyperiumConsumer
 		{
 			Type = ResourceConsumer
 			ResourceType = hyperium
-			Storage = CombinedHyperiumStorage
+			Storage = HyperiumStorage
 			DefaultPriority = &/PRIORITIES/Utility_Supply
+			//AdditionalStorageForJobPriority = [CombinedHyperiumStorage]
 			OperationalToggle = PowerToggle
 			ConsumptionToggleButtonOffset = [0, -.4]
 		}
 		HyperiumStorageBar
 		{
 			Type = ProgressBar
-			ShowProgressFor = CombinedHyperiumStorage
+			ShowProgressFor = HyperiumStorage
 			LowColor = [0, 64, 64]
 			HighColor = [0, 250, 250]
 			FullColor = [0, 255, 255]
