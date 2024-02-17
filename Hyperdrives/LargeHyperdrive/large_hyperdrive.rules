@@ -11,7 +11,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechIII"]
-    TypeCategories = [ftl, uses_power, SW_Hyperdrive_Large, SW_Hyperdrives]
+    TypeCategories = [ftl, uses_power, SW_Hyperdrive_Large, SW_Hyperdrives, SW_Tech_III]
 	AffectsValidityOfCategories = [SW_Hyperdrive_Large, SW_Hyperdrives]
 	RequiresCategories = [SW_WarRoom]
 
@@ -72,18 +72,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
-		//temp fixi remove in 2,3 months started 16.01.2024
-		FtlBeaconBatteryStorage
-		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 0
-		}
-		FtlDriveBatteryStorage : FtlBeaconBatteryStorage
-		{
-			
-		}
-
 		BuffStorageCollector
 		{
 			Type = GridBuffProvider
@@ -100,7 +88,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			InitToMaxResources = 0
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
 		CombinedBatteryStorage
 		{
 			Type = MultiResourceStorage
@@ -109,7 +96,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ViaBuffs
 			{
 				OutgoingBuffProviders = [BuffStorageCollector]
-				ComponentID = BatteryStorage
+				ComponentID = NodeBatteryStorage
 			}
 			AddMode = PrioritizeLeastResources
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
@@ -118,8 +105,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceConsumer
 			ResourceType = battery
-			Storage = CombinedBatteryStorage
+			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Ftl_Supply
+			AdditionalStorageForJobPriority = [CombinedBatteryStorage]
 			OperationalToggle = FtlDrive
 			AllowNonOperationalMinPriorityDelivery = false
 			OverrideExclusiveCrewAssignment = true
@@ -128,7 +116,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ProgressBar
 			OperationalToggle = FtlDrive
-			ShowProgressFor = CombinedBatteryStorage
+			ShowProgressFor = BatteryStorage
 			LowColor = [0, 0, 255]
 			HighColor = [0, 0, 255]
 			FullColor = [0, 0, 255]
@@ -140,12 +128,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceStorage
 			ResourceType = hyperium
 			MaxResources = 120 //+20 per Node
-			InitToMaxResources = 0
-			UITileRect = [.5 + 7/64, .5 + 7/64, 2 - 14/64, 2 - 14/64]
+			UITileRect = [0.5 + 7/64, 0.5 + 7/64, 2 - 14/64, 2 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
 		}
-
 		CombinedHyperiumStorage
 		{
 			Type = MultiResourceStorage
@@ -154,24 +140,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ViaBuffs
 			{
 				OutgoingBuffProviders = [BuffStorageCollector]
-				ComponentID = HyperiumStorage
+				ComponentID = NodeHyperiumStorage
 			}
 			AddMode = PrioritizeLeastResources
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
+			DropResourcesWhenDestroyed = true
 		}
 		HyperiumConsumer
 		{
 			Type = ResourceConsumer
 			ResourceType = hyperium
-			Storage = CombinedHyperiumStorage
+			Storage = HyperiumStorage
 			DefaultPriority = &/PRIORITIES/Utility_Supply
+			//AdditionalStorageForJobPriority = [CombinedHyperiumStorage]
 			OperationalToggle = PowerToggle
 			ConsumptionToggleButtonOffset = [0, -.4]
 		}
 		HyperiumStorageBar
 		{
 			Type = ProgressBar
-			ShowProgressFor = CombinedHyperiumStorage
+			ShowProgressFor = HyperiumStorage
 			LowColor = [0, 64, 64]
 			HighColor = [0, 250, 250]
 			FullColor = [0, 255, 255]
@@ -187,16 +175,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			JumpEfficiency = 100% //SW Efficiency Buff
 			JumpEfficiencyDistanceRange = [32, 92] //V:4x4 is 20, 120
 
-			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
+			JumpOutMediaEffects : &<./Data/ships/terran/hyperdrive_large/hyperdrive_large.rules>/Part/Components/FtlDrive/JumpOutMediaEffects
 			[
 				&/SW_SOUNDS/Hyperdrive
 			]
-			JumpOutGateMediaEffects : &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
+			JumpOutGateMediaEffects : &<./Data/ships/terran/hyperdrive_large/hyperdrive_large.rules>/Part/Components/FtlDrive/JumpOutGateMediaEffects
 			[
 				&/SW_SOUNDS/Hyperdrive
 			]
-			JumpInMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInMediaEffects
-			JumpInGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
+			JumpInMediaEffects = &<./Data/ships/terran/hyperdrive_large/hyperdrive_large.rules>/Part/Components/FtlDrive/JumpInMediaEffects
+			JumpInGateMediaEffects = &<./Data/ships/terran/hyperdrive_large/hyperdrive_large.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
 		}
 
 		Graphics

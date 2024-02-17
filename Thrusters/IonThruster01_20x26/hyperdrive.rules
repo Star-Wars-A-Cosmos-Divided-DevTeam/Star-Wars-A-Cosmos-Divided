@@ -1,4 +1,4 @@
-FtlHyperiumStorage
+NodeHyperiumStorage
 {
     Type = ResourceStorage
     ResourceType = hyperium
@@ -7,56 +7,28 @@ FtlHyperiumStorage
     ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
     DropResourcesWhenDestroyed = true
 }
-FtlHyperiumProducer
-{
-    Type = ResourceConverter
-    OperationalToggle = FtlDrive
-    InvertOperationalToggle = true
-    ToStorage = FtlHyperiumStorage
-    ToQuantity = 1
-    Interval = 1/10
-}
-FtlHyperiumStorageBar
+NodeHyperiumStorageBar
 {
     Type = ProgressBar
-    OperationalToggle = IsOperational
-    ShowProgressFor = FtlHyperiumStorage
+    OperationalToggle = FtlDrive
+    ShowProgressFor = NodeHyperiumStorage
     LowColor = [0, 64, 64]
     HighColor = [0, 250, 250]
     FullColor = [0, 255, 255]
 }
-/*
-FtlHyperiumConsumer
-{
-    Type = ResourceConsumer
-    ResourceType = hyperium
-    Storage = HyperiumStorage
-    DefaultPriority = &/PRIORITIES/Utility_Supply
-    OperationalToggle = PowerToggle
-    ConsumptionToggleButtonOffset = [0, -.4]
-}
-*/
 
-FtlBatteryStorage
+NodeBatteryStorage
 {
     Type = ResourceStorage
     ResourceType = battery
     MaxResources = 8000
     ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 }
-FtlBatteryProducer
-{
-    Type = ResourceConverter
-    OperationalToggle = FtlDrive
-    ToStorage = FtlBatteryStorage
-    ToQuantity = 100
-    Interval = 1/10
-}
-FtlBatteryStorageBar
+NodeBatteryStorageBar
 {
     Type = ProgressBar
     OperationalToggle = FtlDrive
-    ShowProgressFor = FtlBatteryStorage
+    ShowProgressFor = NodeBatteryStorage
     LowColor = [0, 64, 64]
     HighColor = [250, 0, 250]
     FullColor = [250, 0, 255]
@@ -65,10 +37,10 @@ FtlBatteryStorageBar
 FtlDrive
 {
     Type = FtlDrive
-    OperationalToggle = IsOperational
+    OperationalToggle = IsOperationalAndBuffStorageCollectorToggle
     Location = [10, 13]
-    PowerStorage = FtlBatteryStorage
-    FuelStorage = FtlHyperiumStorage
+    PowerStorage = NodeBatteryStorage
+    FuelStorage = NodeHyperiumStorage
     SpinDownDuration = 10
     JumpEfficiency = 100%
     JumpEfficiencyDistanceRange = [20, 40]

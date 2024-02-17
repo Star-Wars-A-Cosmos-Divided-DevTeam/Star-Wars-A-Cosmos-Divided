@@ -42,7 +42,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ProhibitBelow = 8 // 11 //17
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator, Engine]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator, Engine] //EnginePowerDistribution, 
 
     //Doors&Etc
 	AllowedDoorLocations
@@ -105,7 +105,38 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			CommandPoints = 70 //1 per tile
 		}
+/*  //For Hyperdrive
+		BuffStorageCollectorToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Hypernode_Large
+		}
 
+		IsOperationalAndBuffStorageCollectorToggle
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, BuffStorageCollectorToggle]
+			Mode = All
+		}
+*/
+		EngineBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = Engine
+		}
+
+		SWIonAcceleratorBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Ion_Thruster_Accelerator
+		}
+/*
+		PowerDistributionBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = EnginePowerDistribution
+		}
+*/
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -113,28 +144,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 30000 //15 secs sustained firing aka maybe ramp up once lmao
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-		BatteryStorageBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = BatteryStorage
-			LowColor = [64, 64, 0]
-			HighColor = [250, 250, 0]
-			FullColor = [255, 255, 0]
-		}
-
-		EngineBuffToggle
-		{
-			Type = BuffToggle
-			BuffType = Engine
-		}
 
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle //ThrusterIsExternallySupplied
+			Toggle = EngineBuffToggle //PowerDistributionBuffToggle
 			Invert = true
-			IncludeInBlueprints = true
+			//IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -148,20 +164,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			}
 		}
-/*
-		SWIonEngineBuffToggle
+		BatteryStorageBar
 		{
-			Type = BuffToggle
-			BuffType = SW_Ion_Thruster_Accelerator
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+			Height = 10
 		}
 
-		ThrusterIsExternallySupplied
-		{
-			Type = MultiToggle
-			Toggles = [EngineBuffToggle, SWIonEngineBuffToggle]
-			Mode = Any
-		}
-*/
 		ThrusterEffectColorType
 		{
 			Type = UIToggle
