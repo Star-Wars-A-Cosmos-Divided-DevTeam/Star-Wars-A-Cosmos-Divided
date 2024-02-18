@@ -10,21 +10,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/HangarBay_2x3_Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechII"]
-	TypeCategories = [hangar, hangar_bay, SW_Tech_II]
+	EditorGroups = ["Flight", "SWHangar", "SWTechII"]
+	TypeCategories = [SW_hangar, SW_hangar_bay, SW_hangar_wall_blendable, SW_Tech_II]
 	//RequiresCategories = [SW_Bridge] //some sort of requirement or non since it just decoration??
 
 	//Resoures&Size&Health
 	Resources
 	[
-		[steel, (4*2*3)]		//just so it works ...
+		[steel, (4*(&~/Part/Size/0)*(&~/Part/Size/1))]		//just so it works ...
 	]
 	Size = [2, 3]
-	MaxHealth = 6000
+	MaxHealth = (1000*(&~/Part/Size/0)*(&~/Part/Size/1))
 
 	//Selections
 	SelectionPriority = 0
-	SelectionTypeID = "hangar-bay"
+	SelectionTypeID = "SW_hangar-bay"
 	//	SelectionTypeByRotation = true
 
 	//PartSpecific
@@ -41,7 +41,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	IsWalled = false
 //	NoAutoDoors = true
 	AllowedDoorLocations []
-	IsExternal = true //to be fixed
+//	IsExternal = true //to be fixed
 	/*
 		ExternalWallsByCell
 			[
@@ -77,8 +77,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components
+	Components : ^/0/Components, &<graphics_2x3.rules>
 	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
 		CrewSource
 		{
 			Type = CrewSource
@@ -86,6 +101,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ColorSRange = [0, 1]
 			ColorVRange = [0, 1]
 		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			Location = [((&~/Part/Size/0)/2), ((&~/Part/Size/1)/2)]
+			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+		}
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints01[2,3]03.png"
+			Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
+		}
+	}
+}
+
+/*
 		Graphics
 		{
 			Type = Graphics
@@ -97,18 +129,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "floor01[2,3]03.png"
-						Size = [2, 3]
+						Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
 					}
-/*
+*//*
 					{
 						File = "floor01[2,3]03_33.png"
-						Size = [2, 3]
+						Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
 					}
 					{
 						File = "floor01[2,3]03_66.png"
-						Size = [2, 3]
+						Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
 					}
-*/
+*//*
 				]
 			}
 		}
@@ -117,7 +149,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		LightsGraphicsLeft
 		{
 			Type = Graphics
-			Location = [1, 1.5]
+			Location = [((&~/Part/Size/0)/2), ((&~/Part/Size/1)/2)]
 			Floor
 			{
 				Layer = "lights_add"
@@ -125,7 +157,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "lights.png"
-						Size = [2, 2]
+						Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
 					}
 				]
 			}
@@ -166,36 +198,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						[
 							{
 								File = "roof.png"
-								Size = [2, 3]
+								Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
 							}
-/*
+*//*
 							{
 								File = "roof_33.png"
-								Size = [2, 3]
+								Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
 							}
 							{
 								File = "roof_66.png"
-								Size = [2, 3]
+								Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
 							}
-*/
+*//*
 						]
 					}
 				}
 			}
 		}
-
-
-		DestroyedEffects
-		{
-			Type = DeathEffects
-			Location = [1, 1.5]
-			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
-		}
-		Blueprints
-		{
-			Type = BlueprintSprite
-			File = "blueprints01[2,3]03.png"
-			Size = [2, 3]
-		}
-	}
-}
+*/
