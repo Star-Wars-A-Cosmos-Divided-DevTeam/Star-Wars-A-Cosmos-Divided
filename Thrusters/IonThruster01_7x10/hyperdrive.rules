@@ -7,35 +7,15 @@ NodeHyperiumStorage
     ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
     DropResourcesWhenDestroyed = true
 }
-FtlHyperiumProducer
-{
-    Type = ResourceConverter
-    OperationalToggle = FtlDrive
-    InvertOperationalToggle = true
-    ToStorage = NodeHyperiumStorage
-    ToQuantity = 1
-    Interval = 1/10
-}
 NodeHyperiumStorageBar
 {
     Type = ProgressBar
-    OperationalToggle = IsOperational
+    OperationalToggle = FtlDrive
     ShowProgressFor = NodeHyperiumStorage
     LowColor = [0, 64, 64]
     HighColor = [0, 250, 250]
     FullColor = [0, 255, 255]
 }
-/*
-FtlHyperiumConsumer
-{
-    Type = ResourceConsumer
-    ResourceType = hyperium
-    Storage = HyperiumStorage
-    DefaultPriority = &/PRIORITIES/Utility_Supply
-    OperationalToggle = PowerToggle
-    ConsumptionToggleButtonOffset = [0, -.4]
-}
-*/
 
 NodeBatteryStorage
 {
@@ -43,14 +23,6 @@ NodeBatteryStorage
     ResourceType = battery
     MaxResources = 8000
     ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-}
-FtlBatteryProducer
-{
-    Type = ResourceConverter
-    OperationalToggle = FtlDrive
-    ToStorage = NodeBatteryStorage
-    ToQuantity = 100
-    Interval = 1/10
 }
 NodeBatteryStorageBar
 {
@@ -65,7 +37,7 @@ NodeBatteryStorageBar
 FtlDrive
 {
     Type = FtlDrive
-    OperationalToggle = IsOperational
+    OperationalToggle = IsOperationalAndHypernodeConnectedToggle
     Location = [10, 13]
     PowerStorage = NodeBatteryStorage
     FuelStorage = NodeHyperiumStorage
