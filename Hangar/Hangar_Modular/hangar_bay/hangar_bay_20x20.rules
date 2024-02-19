@@ -1,13 +1,13 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	//IDs
-	ID = SW.HangarBay_10x20_modular
+	ID = SW.HangarBay_20x20_modular
 	//OtherIDs = []
 
 	//StringKeys
-	NameKey = "Parts/HangarBay_10x20"
-	IconNameKey = "Parts/HangarBay_10x20_Icon"
-	DescriptionKey = "Parts/HangarBay_10x20_Desc"
+	NameKey = "Parts/HangarBay_20x20"
+	IconNameKey = "Parts/HangarBay_20x20_Icon"
+	DescriptionKey = "Parts/HangarBay_20x20_Desc"
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWHangar", "SWTechII"]
@@ -17,14 +17,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Resoures&Size&Health
 	Resources
 	[
-		[steel, (4*(&~/Part/Size/0)*(&~/Part/Size/1))]
+		[steel, (4*(&~/Part/Size/0)*(&~/Part/Size/1))]		//just so it works ...
 	]
-	Size = [10, 20]
+	Size = [20, 20]
 	MaxHealth = (1000*(&~/Part/Size/0)*(&~/Part/Size/1))
 
 	//Selections
 	SelectionPriority = 0
-	SelectionTypeID = "SW_hangar-bay"
+	SelectionTypeID = "SW_hangar_bay"
 	//	SelectionTypeByRotation = true
 
 	//PartSpecific
@@ -42,7 +42,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	IsWalled = false
 //	NoAutoDoors = true
 	AllowedDoorLocations []
-//	IsExternal = true //to be fixed
+	IsExternal = true //to be fixed
 	/*
 		ExternalWallsByCell
 			[
@@ -64,6 +64,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
+	ProhibitedBy : ^/0/ProhibitedBy [tall] //hangar, 
+/*	ProhibitRects
+	[
+		[hangar, [-2, -2, (&~/Part/Size/0) + 1, 1]]					//Left
+		[hangar, [(&~/Part/Size/0), -2, 1, (&~/Part/Size/1) + 1]]	//Bottom
+		[hangar, [0, (&~/Part/Size/1), (&~/Part/Size/0) + 1, 1]]	//Right
+		[hangar, [-2, 0, (&~/Part/Size/0) + 1, 1]]					//Top
+	]	*/
 
 	//Editor
 	EditorIcon
@@ -77,7 +85,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components, &<graphics_10x20.rules>
+	Components : ^/0/Components, &<graphics_20x20.rules>
 	{
 		IsOperational
 		{
@@ -92,6 +100,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 			RequiresCommand = false
+		}
+
+		HangarClampToggle
+		{
+			Type = UIToggle
+			ToggleID = "SW.hangar_bay_clamp_on_off"
+			Default = 0
+			RequiresCommand = false
+		}
+
+		ClampingCollider
+		{
+			Type = PolygonCollider
+			OperationalToggle = HangarClampToggle
+			Vertices
+			[
+				[1, 1]
+				[((&~/Part/Size/0)-1), 1]
+				[((&~/Part/Size/0)-1), ((&~/Part/Size/1)-1)]
+				[1, ((&~/Part/Size/0)-1)]
+			]
+			Density = 0
 		}
 
 		CrewSource
@@ -127,4 +157,4 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 }
-Size = Giga
+Size = Omega
