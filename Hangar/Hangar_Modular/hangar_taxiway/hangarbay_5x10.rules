@@ -17,7 +17,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Resoures&Size&Health
 	Resources
 	[
-		[steel, (4*(&~/Part/Size/0)*(&~/Part/Size/1))]		//just so it works ...
+		[steel, (4*(&~/Part/Size/0)*(&~/Part/Size/1))]
 	]
 	Size = [5, 10]
 	MaxHealth = (1000*(&~/Part/Size/0)*(&~/Part/Size/1))
@@ -34,6 +34,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Density = 1
 	CreatePassableHolesWhenDestroyed = true
 	CrewSpeedFactor = 1
+	CrewCongestedSpeedFactor = .5
 	GenerateRectCollider = false
 
 	//Doors&Etc
@@ -41,7 +42,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	IsWalled = false
 //	NoAutoDoors = true
 	AllowedDoorLocations []
-	IsExternal = true //to be fixed
+//	IsExternal = true //to be fixed
 	/*
 		ExternalWallsByCell
 			[
@@ -63,15 +64,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
-	//	ProhibitAbove = 3
 
 	//Editor
 	EditorIcon
 	{
 		Texture
 		{
-			File = "floor01[2,3]03.png"
-			SampleMode = Linear
+			File = "../hangar_sprites/floor_5x5.png"			
+			SampleMode = Linear	
 		}
 		Size = [32, 92]
 	}
@@ -101,118 +101,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ColorSRange = [0, 1]
 			ColorVRange = [0, 1]
 		}
+/*
+		SalvagedEffects
+		{
+			Type = DeathEffects
+			Location = [((&~/Part/Size/0)/2), ((&~/Part/Size/1)/2)]
+			WhenSalvaged = true
+			MediaEffects
+			[
 
+			]
+		}
+*/
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			Location = [((&~/Part/Size/0)/2), ((&~/Part/Size/1)/2)]
-			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
 		}
 		Blueprints
 		{
 			Type = BlueprintSprite
-			File = "blueprints01[2,3]03.png"
+			File = "../hangar_sprites/blueprints_5x5.png"
 			Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
 		}
 	}
 }
-
-/*
-		Graphics
-		{
-			Type = Graphics
-			Location = [1, 1.5]
-			Floor
-			{
-				Layer = "structure" //"floors"
-				DamageLevels
-				[
-					{
-						File = "floor01[2,3]03.png"
-						Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
-					}
-*//*
-					{
-						File = "floor01[2,3]03_33.png"
-						Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
-					}
-					{
-						File = "floor01[2,3]03_66.png"
-						Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
-					}
-*//*
-				]
-			}
-		}
-
-
-		LightsGraphicsLeft
-		{
-			Type = Graphics
-			Location = [((&~/Part/Size/0)/2), ((&~/Part/Size/1)/2)]
-			Floor
-			{
-				Layer = "lights_add"
-				DamageLevels
-				[
-					{
-						File = "lights.png"
-						Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
-					}
-				]
-			}
-		}
-
-
-		RoofOptionToggle
-		{
-			Type = UIToggle
-			ToggleID = "roof_visibility_mode"
-			Default = 1
-			ToggledOnChoices = [1]
-			RememberValue = true
-			RequiresCommand = false
-		}
-		RoofOptionToggle1
-		{
-			Type = ModeToggle
-			Mode = RoofOptionToggle
-			OnMode = 1
-		}
-		RoofOptionComponents1
-		{
-			Type = ToggledComponents
-			Toggle = RoofOptionToggle1
-			//Invert = true
-			Components
-			{
-				RoofGraphics
-				{
-					Type = Graphics
-					Location = [1, 1.5]
-					GetColorFrom = CrewSource
-					Roof
-					{
-						Layer = "roof_turrets"
-						DamageLevels
-						[
-							{
-								File = "roof.png"
-								Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
-							}
-*//*
-							{
-								File = "roof_33.png"
-								Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
-							}
-							{
-								File = "roof_66.png"
-								Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
-							}
-*//*
-						]
-					}
-				}
-			}
-		}
-*/
+Size = Huge

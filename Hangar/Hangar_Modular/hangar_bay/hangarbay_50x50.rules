@@ -17,7 +17,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Resoures&Size&Health
 	Resources
 	[
-		[steel, (4*(&~/Part/Size/0)*(&~/Part/Size/1))]		//just so it works ...
+		[steel, (4*(&~/Part/Size/0)*(&~/Part/Size/1))]
 	]
 	Size = [50, 50]
 	MaxHealth = (1000*(&~/Part/Size/0)*(&~/Part/Size/1))
@@ -34,6 +34,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Density = 1
 	CreatePassableHolesWhenDestroyed = true
 	CrewSpeedFactor = 1
+	CrewCongestedSpeedFactor = .5
 	GenerateRectCollider = false
 
 	//Doors&Etc
@@ -63,18 +64,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
-	ProhibitedBy : ^/0/ProhibitedBy [tall]
-	ProhibitRects
+	ProhibitedBy : ^/0/ProhibitedBy [tall] //hangar, 
+/*	ProhibitRects
 	[
-		[tall, [-1, -1, (&~/Part/Size/0) + 2, (&~/Part/Size/1) + 2]]
-	]
+		[hangar, [-2, -2, (&~/Part/Size/0) + 1, 1]]					//Left
+		[hangar, [(&~/Part/Size/0), -2, 1, (&~/Part/Size/1) + 1]]	//Bottom
+		[hangar, [0, (&~/Part/Size/1), (&~/Part/Size/0) + 1, 1]]	//Right
+		[hangar, [-2, 0, (&~/Part/Size/0) + 1, 1]]					//Top
+	]	*/
 
 	//Editor
 	EditorIcon
 	{
 		Texture
 		{
-			File = "floor_5x5.png"			
+			File = "../hangar_sprites/floor_5x5.png"			
 			SampleMode = Linear	
 		}
 		Size = [64, 64]
@@ -106,16 +110,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
-		Collider
+		ClampingCollider
 		{
 			Type = PolygonCollider
-			OperationalToggle = HangarClampToggles
+			OperationalToggle = HangarClampToggle
 			Vertices
 			[
 				[1, 1]
-				[(&~/Part/Size/0)-1, 1]
-				[(&~/Part/Size/0)-1, (&~/Part/Size/0)-1]
-				[(&~/Part/Size/0)-1, 1]
+				[((&~/Part/Size/0)-1), 1]
+				[((&~/Part/Size/0)-1), ((&~/Part/Size/1)-1)]
+				[1, ((&~/Part/Size/0)-1)]
 			]
 			Density = 0
 		}
@@ -127,10 +131,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ColorSRange = [0, 1]
 			ColorVRange = [0, 1]
 		}
+/*
 		SalvagedEffects
 		{
+			Type = DeathEffects
+			Location = [((&~/Part/Size/0)/2), ((&~/Part/Size/1)/2)]
+			WhenSalvaged = true
+			MediaEffects
+			[
 
+			]
 		}
+*/
 		DestroyedEffects
 		{
 			Type = DeathEffects
@@ -140,7 +152,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Blueprints
 		{
 			Type = BlueprintSprite
-			File = "blueprints_5x5.png"
+			File = "../hangar_sprites/blueprints_5x5.png"
 			Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
 		}
 	}
