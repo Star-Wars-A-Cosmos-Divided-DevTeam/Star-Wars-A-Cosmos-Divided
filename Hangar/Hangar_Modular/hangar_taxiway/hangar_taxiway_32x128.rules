@@ -1,0 +1,119 @@
+Part : &<../base_part_terran_hangar.rules>/Part
+{
+	//IDs
+	ID = SW.HangarTaxiWay_32x128_modular
+	//OtherIDs = []
+
+	//StringKeys
+	NameKey = "Parts/HangarTaxiWay_32x128"
+	IconNameKey = "Parts/HangarTaxiWay_32x128_Icon"
+	DescriptionKey = "Parts/HangarTaxiWay_32x128_Desc"
+
+	//Groups&Categories
+	EditorGroups = ["Flight", "SWHangar", "SWTechII"]
+	TypeCategories = [SW_hangar, SW_hangar_taxiway, SW_hangar_wall_blendable, SW_Tech_II]
+	//RequiresCategories = [SW_Bridge] //some sort of requirement or non since it just decoration??
+
+	//Resoures&Size&Health
+	Resources
+	[
+		[steel, (4*(&~/Part/Size/0)*(&~/Part/Size/1))]
+	]
+	Size = [32, 128]
+	MaxHealth = (1000*(&~/Part/Size/0)*(&~/Part/Size/1))
+
+	//Selections
+	SelectionPriority = 0
+	SelectionTypeID = "SW_hangar_taxiway"
+	//	SelectionTypeByRotation = true
+
+	//PartSpecific
+	InitialPenetrationResistance = 5
+	Flammable = false
+	AllowedContiguity = [Top, Left, Right, Bottom]
+	Density = 1
+	CreatePassableHolesWhenDestroyed = true
+	CrewSpeedFactor = 0
+	CrewCongestedSpeedFactor = .5
+	GenerateRectCollider = false
+
+	//Doors&Etc
+	GeneratorRequiresDoor = false
+	IsWalled = false
+//	NoAutoDoors = true
+	AllowedDoorLocations []
+	IsExternal = true //to be fixed
+	/*
+		ExternalWallsByCell
+			[
+				{
+				Key = [0, 0]
+				Value = None // [TopLeft, Top, TopRight]
+			}
+		]
+		InternalWallsByCell
+		[
+			{
+				Key = [0, 0]
+	 			Value = None // [TopLeft, Top, TopRight]
+			}
+		]
+	*/
+	//	InternalWalls = [None] //	InternalWalls = [All]
+	ExternalWalls = [None]
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "../hangar_sprites/floor_5x5.png"			
+			SampleMode = Linear	
+		}
+		Size = [32, 128]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components, &<graphics_32x128.rules>
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CrewSource
+		{
+			Type = CrewSource
+			Crew = 0
+			ColorSRange = [0, 1]
+			ColorVRange = [0, 1]
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			Location = [((&~/Part/Size/0)/2), ((&~/Part/Size/1)/2)]
+			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
+		}
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "../hangar_sprites/blueprints_5x5.png"
+			Size = [(&~/Part/Size/0), (&~/Part/Size/1)]
+		}
+	}
+}
+Size = Omega
