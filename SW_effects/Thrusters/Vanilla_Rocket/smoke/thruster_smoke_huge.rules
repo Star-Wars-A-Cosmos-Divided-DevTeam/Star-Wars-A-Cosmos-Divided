@@ -1,8 +1,8 @@
 Type = Particles
-Def = &<../../def/smoke/thruster_smoke_def.rules>
+Def = &<../../def/smoke/thruster_rocket_smoke_def.rules>
 EmitterDef
 {
-	EmitPerSecond = 120
+	EmitPerSecond = 25 //v:25	//d:120	//s:120
 	EmitPerOneShot
 	{
 		Min = 0
@@ -17,12 +17,12 @@ EmitterDef
 			FromValue
 			{
 				X = 0
-				Y = -0.012
+				Y = -0.012 //v:-0.012	//d:-0.012	//s:-0.012
 			}
 			ToValue
 			{
 				X = 0
-				Y = 0.012
+				Y = 0.012 //v:0.012		//d:0.012	//s:0.012
 			}
 			Name = ""
 			Enabled = true
@@ -32,8 +32,8 @@ EmitterDef
 			Type = SetRandom
 			DataOut = base_scale
 			ValueType = Float
-			FromValue = 4
-			ToValue = 5
+			FromValue = 3	//v:3	//d:4	//s:4
+			ToValue = 5  	//v:5	//d:5	//s:5
 			Name = "random base scale"
 			Enabled = true
 			UpdateAfterInit = false
@@ -41,8 +41,8 @@ EmitterDef
 		{
 			Type = ScaleFromIntensity
 			ScaleOut = intensity_scale
-			ScaleFactor = 1
-			IntensityExponent = 0.6
+			ScaleFactor = 1  //v:1
+			IntensityExponent = 0.5	//v:0.5	//d:0.6	//s:0.6
 			Name = "get intensity scale"
 			Enabled = true
 			UpdateAfterInit = false
@@ -50,26 +50,51 @@ EmitterDef
 		{
 			Type = ScaleFromIntensity
 			ScaleOut = intensity_velocity
-			ScaleFactor = 60
-			IntensityExponent = 1
+			ScaleFactor = 42  		//v:42	//d:60	//s:60
+			IntensityExponent = 0.8	//v:0.8	//d:1	//s:1
 			Name = "get instensity velocity"
 			Enabled = true
 			UpdateAfterInit = false
 		}
 		{
+			Type = VelocityFromIntensity
+			VelocityOut = positionOffset
+			VelocityFactor
+			{
+				X = 0.005	//v:0.005
+				Y = 0  		//v:0
+			}
+			IntensityExponent = 1   //v:1
+			Name = "position offset for velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = positionOffset
+			ResultOut = offsetLocation
+			Operator = Add
+			Name = "offset velocity location"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
 			Type = SetRandomVelocityFromPoint
-			LocationIn = location
+			LocationIn = offsetLocation
 			VelocityOut = base_velocity
 			Speed
 			{
-				Min = 1
-				Max = 1
+				Min = 1  	//v:1
+				Max = 1  	//v:1
 			}
 			AwayFromPoint
 			{
-				X = -0.06
-				Y = 0
+				X = -0.1	//v:-0.1	//d:-0.06	//s:-0.06
+				Y = 0		//v:0		//d:0		//s:0
 			}
+			ConvertPointToWorldSpace = false
 			Name = "get base velocity"
 			Enabled = true
 			UpdateAfterInit = false
@@ -91,13 +116,13 @@ EmitterDef
 			ValueType = Vector2
 			FromValue
 			{
-				X = 0.7
-				Y = 0.7
+				X = 0.7	//v:0.7	//d:0.7	//s:0.7
+				Y = 0.7	//v:0.7	//d:0.7	//s:0.7
 			}
 			ToValue
 			{
-				X = 1.3
-				Y = 1.3
+				X = 1.3	//v:1.3	//d:1.3	//s:1.3
+				Y = 1.3	//v:1.3	//d:1.3	//s:1.3
 			}
 			Name = "random scale2"
 			Enabled = true
@@ -115,8 +140,19 @@ EmitterDef
 			UpdateAfterInit = false
 		}
 		{
+			Type = OperatorConst
+			AIn = intensity_scale
+			ResultOut = clamped_intensity
+			Operator = Min
+			ValueType = Float
+			Value = 1
+			Name = "Create clamped intensity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
 			Type = Lerp
-			LerpIn = intensity_scale
+			LerpIn = clamped_intensity
 			DataOut = intensity_alpha
 			Invert = false
 			ValueType = Color
@@ -147,6 +183,7 @@ PenetratingBucket
 MinIntensity = 0.2
 IsFancy = true
 IsFancyLight = false
+IsSimpleLight = false
 IsSimple = false
 Sharing = Global
 UnsharedRenderInWorldSpace = false
@@ -154,7 +191,8 @@ DontEmitWhenOffScreen = true
 DontEmitWhenOffScreenSizeInflate = 3
 UseCustomShapeForOffScreenCheck = false
 MaxEmissionZoom = 3.4028235E+38
-ScaleEmissionWithIntensity = false
+MaxParticleCount = 2500
+ScaleEmissionWithIntensity = true
 ScaleEmissionWithBeamLength = false
 ScaleEmissionWithWorldVelocity = false
 ScaleEmissionWithPartSize = false
@@ -180,8 +218,11 @@ Filter
 	TargetedFriendlies
 	Enemies = true
 	TargetedEnemies
+	Neutrals = true
+	TargetedNeutrals
 	Junk = true
 	TargetedJunk
+	Deconstruction
 }
 Delay = 0
 IgnoreIntensity = false
