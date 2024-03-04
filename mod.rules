@@ -25,7 +25,7 @@
 ID = SW.1.StarWars
 Name = "Star Wars: A Cosmos Divided - GIT"
 Version = 1.0.rc3
-CompatibleGameVersions = ["0.25.0","0.24.0"]
+CompatibleGameVersions = ["0.25.0","0.24.0","0.26.0"]
 Author = "ClassicJam, Lafiel, Skipper_Wraith, Roasted(Art), Rojamahorse(Art)"
 Logo = "ModLogo.png"
 Description = "Star Wars: A Cosmos Divided is the definitive Star Wars experience for Cosmoteer." //It introduces new weapons from the Star Wars universe into the game, new technology tiers and superweapons.It includes new types of parts, such as droids, new armor classes, and now all types of shapes from Kroom's New Armor Expanded. You can also download the Ships Pack add-on, which will add dozens of ships from the Star Wars universe into your game."
@@ -34,6 +34,30 @@ ModifiesGameplay = true
 
 Actions
 [
+	//rc compatibility workaround
+	{	
+		Action = Add
+		AddTo = "<buffs/buffs.rules>"
+		Name = "EnginePowerDistribution"
+		OnlyIfNotExisting = true
+		ToAdd
+		{
+			// Only exists to piggyback engine room power distribution off the buff system.
+		}
+    }
+/*
+	{
+		Action = Add
+		OnlyIfNotExisting = true
+		AddTo = <./data/gui/game/parts/part_toggles.rules>/PartToggles
+		ToAdd = &<gui/game/parts/SW_toggles_rc.rules>/PartToggles/0
+	}
+	{
+		Action = Overrides
+		OverrideIn = <./data/ships/terran/engine_room/engine_room.rules>/Part/Components
+		Overrides = &<ships/terran/engine_room/engine_room.rules>/Part/Components
+	}
+*/
 	{	
 		Action = Add
 		AddTo = "<gui/game/designer/editor_groups.rules>"
@@ -46,6 +70,7 @@ Actions
 				Texture = &<Resources/hypermatter/hypermatter.rules>/Overlay/Texture
 				VertexColor = [0, 183, 255]
 			}
+			SortOrder = 1210
 		}
     }
 	{	
@@ -60,6 +85,26 @@ Actions
 				Texture = &<Resources/zersium/zersium.rules>/Overlay/Texture
 				VertexColor = [0, 183, 255]
 			}
+			SortOrder = 1220
+		}
+    }
+	{	
+		Action = Add
+		AddTo = "<gui/game/designer/editor_groups.rules>"
+		Name = "SWDurasteel"
+		ToAdd
+		{
+			NameKey = "EditorGroups/Durasteel"
+			Icon
+			{
+				Texture 
+				{
+					File = "Gui/icon_durasteel_noglow.png"
+					MipLevels = 2
+					SampleMode = Linear
+				}
+			}
+			SortOrder = 1280
 		}
     }
 	{	
@@ -78,40 +123,7 @@ Actions
 					SampleMode = Linear
 				}
 			}
-		}
-    }
-	/*
-	{	
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWDooniumIngot"
-		ToAdd
-		{
-			NameKey = "Resource/DooniumIngot"
-			Icon
-			{
-				Texture = &<Resources/doonium_ingot/doonium_ingot.rules>/Overlay/Texture
-				VertexColor = [0, 183, 255]
-			}
-		}
-    }
-	*/
-	{	
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWDurasteel"
-		ToAdd
-		{
-			NameKey = "EditorGroups/Durasteel"
-			Icon
-			{
-				Texture 
-				{
-					File = "Gui/icon_durasteel_noglow.png"
-					MipLevels = 2
-					SampleMode = Linear
-				}
-			}
+			SortOrder = 1290
 		}
     }
 	/*
@@ -125,6 +137,22 @@ Actions
 			Icon
 			{
 				Texture = &<Resources/durasteel/durasteel.rules>/Overlay/Texture
+				VertexColor = [0, 183, 255]
+			}
+		}
+    }
+	*/
+	/*
+	{	
+		Action = Add
+		AddTo = "<gui/game/designer/editor_groups.rules>"
+		Name = "SWDooniumIngot"
+		ToAdd
+		{
+			NameKey = "Resource/DooniumIngot"
+			Icon
+			{
+				Texture = &<Resources/doonium_ingot/doonium_ingot.rules>/Overlay/Texture
 				VertexColor = [0, 183, 255]
 			}
 		}
@@ -146,6 +174,7 @@ Actions
 					SampleMode = Linear
 				}
 			}
+			SortOrder = 1230
 		} 
 	}
 	{
@@ -160,7 +189,8 @@ Actions
 				Texture = "Gui/tie_gui.png"
 				VertexColor = [0, 183, 255]
 			}
-		} 
+			SortOrder = 1240
+		}
 	}
 	{
 		Action = Add
@@ -178,6 +208,7 @@ Actions
 					SampleMode = Linear
 				}
 			}
+			SortOrder = 1250
 		}
 
 	}
@@ -197,6 +228,7 @@ Actions
 					SampleMode = Linear
 				}
 			}
+			SortOrder = 1260
 		}
 	}
 	{	
@@ -215,15 +247,16 @@ Actions
 					SampleMode = Linear
 				}
 			}
+			SortOrder = 1270
 		}
     }
 
 	//CUSTOM EFFECTS / MAGIC / STUFF I NEED TO GET MY STUFF TO WORK
-	{
+	/*{
 		Action = Overrides
 		OverrideIn = "<./data/common_effects/sounds/COMMON_SOUNDS.rules>"
 		Overrides = &<SW_effects/mod_sounds.rules>
-	}
+	}*/
 	{
 		Action = Add
 		AddTo = <cosmoteer.rules>
@@ -507,7 +540,7 @@ Actions
 	{
         Action = AddMany
         AddTo = "<post_shaders/post_shaders.rules>/Shaders"
-        ManyToAdd = 
+        ManyToAdd
         [
 			{
 				NameKey = "PostShaders/BilinearXCombined"
