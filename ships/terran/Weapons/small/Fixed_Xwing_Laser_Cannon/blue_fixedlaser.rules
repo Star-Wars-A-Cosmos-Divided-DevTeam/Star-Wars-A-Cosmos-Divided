@@ -1,0 +1,61 @@
+Components
+	{
+		ReloadProgressBar : &<fixedlaser.rules>/ReloadProgressBarBase
+		{
+			LowColor = [0, 0, 64]
+			HighColor = [0, 0, 255]
+		}
+
+		BulletEmitter : &<fixedlaser.rules>/BulletEmitterBase
+		{
+			Bullet = &/SW_SHOTS/bluexwinglasershot
+		}
+
+		FireEffect : &<fixedlaser.rules>/FireEffectBase
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Small/Blue
+				
+				&/SW_SOUNDS/XWingLaserFire
+			]
+		}
+
+		LightGraphics
+		{
+			Type = Graphics
+			OperationalToggle = CommonOnShootEffectTimer
+			InvertOperationalToggle = true
+			ChainedTo = TurretLocationProxy
+			Location = [2.0, 0] //guess
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = &<fixedlaser.rules>/OperationalRoofLightingBase/Size
+						Z = &<fixedlaser.rules>/OperationalRoofLightingBase/Z
+						VertexColor = [16, 16, 255]
+					}
+				]
+			}
+		}
+	}
+LaserStats
+{
+	NameKey = "StatCategories/BlueXWingLasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<fixedlaser.rules>/TurretStats/Stats/ROF)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&<fixedlaser.rules>/TurretStats/Stats/ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		//ShotSpeed = &~/Components/BulletEmitter/Bullet/Speed
+		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
+	}
+}

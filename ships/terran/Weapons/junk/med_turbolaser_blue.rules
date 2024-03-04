@@ -1,0 +1,258 @@
+Components
+	{
+		SwitchTimerTrigger
+		{
+			Type = Timer
+			Duration = 5
+			AutoStart = true
+			Repeats = false
+		}
+		SwitchTimerProgressBar
+		{
+			Type = ProgressBar
+			ShowProgressFor = SwitchTimerTrigger
+			Invert = true
+		}
+		SwitchCooldownToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = SwitchTimerTrigger
+			StartsOn = false
+		}
+		WeaponIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, SwitchCooldownToggle]
+			Mode = All
+		}
+
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [1, 1] // [1, .66]// Relative to upper-left corner of unrotated part.
+			Rotation = -90d// Relative to unrotated part.
+			OperationalToggle = WeaponIsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 1
+			FireDelay = .15
+			FiringArc = 130d
+			RotateSpeed = 180d
+			FireThresholdAngle = 1d
+			SpawnLoc = [2.1, 0.1]  // x=.78
+			TargetSearchTriesPerFrame = 1
+			AIFirepowerRating = 1600
+			Emitter = BulletEmitterBase
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = FireModeToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitterBase
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger
+			GetTargetFrom = Turret
+			Location = [2.1, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/SW_SHOTS/bluemedlasershot
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 200
+			Recoil = 2
+		}
+
+		BulletEmitterLeft : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.5, 0.25]
+		}
+
+		BulletEmitterRight : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [1.5, -0.25]
+		}
+
+		ChargeEffectLeft
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterLeft
+			Trigger = Turret
+			AnchorMediaEffects = true
+		
+			MediaEffects
+			[
+				&/SW_SOUNDS/LaserReCharge
+			]
+		}
+
+		ChargeEffectRight : ChargeEffectLeft
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = Turret
+		}
+
+		FireEffectLeft
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Small/Blue
+		
+				&/SW_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		FireEffectRight : FireEffectLeft
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = BulletEmitterRight
+		}
+
+		TurretCollider
+		{
+			Type = CircleCollider
+			ChainedTo = Turret
+			Radius = .8
+			Density = 1.5
+		}
+
+		WeaponSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [0, 0]
+			Rotation = 90d
+			Layer = "roof_turrets"
+			ResetAnimationTrigger = Turret
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"Barrel_A2.png"
+					"Barrel_A3.png"
+					"Barrel_A1.png" // Loop back to beginning and clamp there.
+				]
+				Size = [2, 3]
+				AnimationInterval = 0.625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+	}
+	
+		MunitionType
+		{
+			Type = UIToggle
+			ToggleID = "SW.munition_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
+		}
+		RedMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 0
+		}
+		RedMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedMunitionToggle
+			IncludeInBlueprints = true
+			Components = &<med_turbolaser_red.txt>/Components
+		}
+		BlueMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 1
+		}
+		BlueMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueMunitionToggle
+			IncludeInBlueprints = true
+			Components = &<med_turbolaser_blue.txt>/Components
+		}
+		GreenMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 2
+		}
+		GreenMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreenMunitionToggle
+			IncludeInBlueprints = true
+			Components = &<med_turbolaser_green.txt>/Components
+		}
+
+		ExteriorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.exterior_type"
+			Default = 2
+			ToggledOnChoices = [0,1]
+			AlwaysAllowInBuildMode = true
+		}
+		WhiteExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 0
+		}
+		WhiteExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<med_turbolaser_white.txt>/Components
+		}
+		GreyExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 1
+		}
+		GreyExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreyExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<med_turbolaser_grey.txt>/Components
+		}

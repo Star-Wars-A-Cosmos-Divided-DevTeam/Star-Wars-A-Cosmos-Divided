@@ -1,0 +1,197 @@
+Components
+{
+		
+
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [4, 4] // Relative to upper-left corner of unrotated part.
+			Rotation = -90d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 0 // Uses separate fire timer.
+			FiringArc = 160d
+			RotateSpeed = 15d
+			FireThresholdAngle = 1d
+			HoldTargetAfterCancel = 0.5
+			AIFirepowerRating = 6400
+			FirePermissionToggle = FirePermissionToggle
+			IgnoreSourceShipLOSChecks = false
+			IgnoreSourceShipLowLOSChecks = true
+			AllowFireWithBlockedLOS = false
+			Emitter = WeaponEmitter
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+
+		WeaponEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = ShootLeftTriggerProxy
+			GetTargetFrom = Turret
+			Location = [4.21875, 1.40625]  //-90,-266:126;153;199
+			OperationalToggle = IsOperational
+			Bullet = &/SW_SHOTS/turretturbolaserlightlasergreenshot
+			SourceShipCollisions = false
+			//Spread = [-2.5d, 2.5d]
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 200 //250-350?
+			//Recoil = 10
+		}
+		WeaponEmitter2 : WeaponEmitter
+		{
+			Location = [4.21875, 2.5]  //-160,-266
+			FireTrigger = ShootRightTriggerProxy
+			ResourceStorage = BatteryStorage
+		}
+		WeaponEmitter3 : WeaponEmitter
+		{
+			Location = [4.21875, 1.96875]  //-126,-266
+			FireTrigger = ShootLeftTriggerProxy
+			ResourceStorage = BatteryStorage
+		}
+		WeaponEmitter4 : WeaponEmitter
+		{
+			Location = [4.21875, 3.109375]  //-199,-266
+			FireTrigger = ShootRightTriggerProxy
+			ResourceStorage = BatteryStorage
+		}
+		WeaponEmitter5 : WeaponEmitter
+		{
+			Location = [4.21875, -1.40625]  //90,-266
+			FireTrigger = ShootLeftTriggerProxy
+			ResourceStorage = BatteryStorage
+		}
+		WeaponEmitter6 : WeaponEmitter
+		{
+			Location = [4.21875, -1.96875]  //126,-266
+			FireTrigger = ShootLeftTriggerProxy
+			ResourceStorage = BatteryStorage
+		}
+		WeaponEmitter7 : WeaponEmitter
+		{
+			Location = [4.21875, -2.5]  //160,-266
+			FireTrigger = ShootRightTriggerProxy
+			ResourceStorage = BatteryStorage
+		}
+		WeaponEmitter8 : WeaponEmitter
+		{
+			Location = [4.21875, -3.109375]  //199,-266
+			FireTrigger = ShootRightTriggerProxy
+			ResourceStorage = BatteryStorage
+		}
+
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = WeaponEmitter
+			Trigger = WeaponEmitter
+			AnchorMediaEffects = true
+
+			MediaEffects
+
+			[
+				&/SW_SOUNDS/TurbolaserSFX
+				&/SW_PARTICLES/Shot/Laser/Shoot/Small/Green
+			] 
+		}
+		FireEffect2 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = WeaponEmitter2
+		}
+		FireEffect3 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter3
+			Trigger = WeaponEmitter3
+		}
+		FireEffect4 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter4
+			Trigger = WeaponEmitter4
+		}
+		FireEffect5 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter5
+			Trigger = WeaponEmitter5
+		}
+		FireEffect6 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter6
+			Trigger = WeaponEmitter6
+		}
+		FireEffect7 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter7
+			Trigger = WeaponEmitter7
+		}
+		FireEffect8 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter8
+			Trigger = WeaponEmitter8
+		}
+		BarrelGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			//Location = [0, 0]
+			Rotation = 90d
+			Floor
+			{
+				Layer = "roof_turrets"
+				Offset = [-143/64, -123/64] //-143,-123
+				DamageLevels
+				[
+					{
+						File = "barrels01[3,5]10quad.png"
+						Size = [3, 5]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "roof_turrets"
+				Offset = [143/64, -123/64] //-143,-123
+				DamageLevels
+				[
+					{
+						File = "barrels01[3,5]10quad.png"
+						Size = [3, 5]
+						MirrorU = true
+					}
+				]
+			}
+		}
+
+}

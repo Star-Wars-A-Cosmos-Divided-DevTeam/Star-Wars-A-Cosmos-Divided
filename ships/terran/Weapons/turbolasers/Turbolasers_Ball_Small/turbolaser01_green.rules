@@ -1,0 +1,223 @@
+Components
+	{
+
+		SwitchTimerTrigger
+		{
+			Type = Timer
+			Duration = 4
+			AutoStart = true
+			Repeats = false
+		}
+		SwitchTimerProgressBar
+		{
+			Type = ProgressBar
+			ShowProgressFor = SwitchTimerTrigger
+			Invert = true
+			OperationalToggle = SwitchCooldownToggle
+			InvertOperationalToggle = true
+		}
+		SwitchCooldownToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = SwitchTimerTrigger
+			StartsOn = false
+		}
+		WeaponIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, SwitchCooldownToggle]
+			Mode = All
+		}
+
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [1, 1]
+			Rotation = -90d// Relative to unrotated part.
+			OperationalToggle = WeaponIsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = .6
+			FiringArc = 140d
+			RotateSpeed = 90d
+			FireThresholdAngle = 1d
+			TargetSearchTriesPerFrame = 1
+			AIFirepowerRating = 1600
+			FirePermissionToggle = FireModeToggle
+			Emitter = BulletEmitter
+			IgnoreSourceShipLOSChecks = true
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = WeaponIsOperational
+			ShowProgressFor = Turret
+		}
+
+		BulletEmitter
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = Turret
+			GetTargetFrom = Turret
+			Location = [85/64, 0]
+			OperationalToggle = IsOperational
+			Bullet = &/SW_SHOTS/greenlightlasershot
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 100
+		}
+
+		ChargeEffectBase
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitter
+			Trigger = Turret
+			AnchorMediaEffects = true
+		
+			MediaEffects
+			[
+				&/SW_SOUNDS/LaserReCharge
+			]
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitter
+			Trigger = BulletEmitter
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/SW_SOUNDS/TurbolaserSFX
+				&/SW_PARTICLES/Shot/Laser/Shoot/Small/Green
+			]
+		}
+		TurretBaseGraphics
+		{
+			Type = Graphics
+			Location = [1, 1]
+			Floor
+			{
+				Layer = "roofs"
+				//Offset = [-1, 0]
+				DamageLevels
+				[
+					{
+						File = "turret_cone.png"
+						Size = [2, 2]
+					}
+/*
+					{
+						File = "turret_cone_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "turret_cone_66.png"
+						Size = [2, 2]
+					}
+*/
+				]
+			}
+		}
+
+		TurretBaseGraphics2
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			//Location = [0, 0]
+			Rotation = 90d
+			Floor
+			{
+				Layer = "roof_doodads"
+				//Offset = [-1, 0]
+				DamageLevels
+				[
+					{
+						File = "ball_turret_tiny01.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+		BarrelGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			//Location = [0, 0]
+			Rotation = 90d
+			Floor
+			{
+				Layer = "roof_turrets"
+				Offset = [0, -50/64]
+				DamageLevels
+				[
+					{
+						File = "../barrel[1,1]01.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+
+/*
+		WeaponSprite
+		{
+			Type = Sprite
+			ChainedTo = Turret
+			Location = [50/64, 0]
+			Rotation = 90d
+			Layer = "roof_turrets"
+			ResetAnimationTrigger = Turret
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"../barrel[1,1]01.png"
+				]
+				Size = [1, 1]
+				AnimationInterval = 0.0625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}	
+*/
+	}
+
+LaserStats
+{
+	NameKey = "StatCategories/LightGreenTurbolasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Components/BulletEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * 1 / (&~/Components/Turret/FireInterval)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}

@@ -1,0 +1,674 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{	
+	//IDs
+	ID = SW.turbolaser_tiny_02
+	OtherIDs = [SW.swturretb]
+
+    //StringKeys
+	NameKey = "Parts/TurbolaserTiny02"
+	IconNameKey = "Parts/TurbolaserTiny02Icon"
+	DescriptionKey = "Parts/TurbolaserTiny02Desc"
+
+    //Groups&Categories
+	EditorGroups = ["WeaponsEnergy", "SWTechI", "SWTechII"]
+	TypeCategories = [weapon, uses_power, is_crewed]
+
+    //Resources&Size&Health
+	Resources
+	[
+		[steel, 42]
+		[coil, 18]
+	]
+	Size = [1, 2]
+	MaxHealth = 6000
+
+    //Rects
+
+    //Selections
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+
+    //PartSpecific
+
+    //ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	//ProhibitedBy : ^/0/ProhibitedBy [tall]
+
+    //Doors&Etc
+	AllowedDoorLocations
+	[
+		[1,1]
+		[-1,1]
+		[0,2]
+	]
+
+    //Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "turret02.png"
+			SampleMode = Linear
+		}
+		Size = [32, 48]
+	}
+
+    //Components&Inheritance
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 2
+		}
+
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+
+		MunitionType
+		{
+			Type = UIToggle
+			ToggleID = "SW.munition_type"
+			Default = 2
+			AvailableChoices= [0, 1, 2]
+			ToggledOnChoices = [0, 1, 2]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		RedMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 0
+		}
+		RedMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedMunitionToggle
+			IncludeInBlueprints = true
+			Components = &<small_laser_cannon_redB.rules>/Components
+		}
+		
+		BlueMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 1
+		}
+		BlueMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueMunitionToggle
+			IncludeInBlueprints = true
+			Components = &<small_laser_cannon_blueB.rules>/Components
+		}
+        
+		GreenMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 2
+		}
+		GreenMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreenMunitionToggle
+			IncludeInBlueprints = true
+			Components = &<small_laser_cannon_greenB.rules>/Components
+		}
+
+		CommonReloadTimer
+		{
+			Type = Timer
+			Duration = 0.8
+			AutoStart = true
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+		CommonOnShootEffectTimer
+		{
+			Type = Timer
+			Duration = 0.32
+			AutoStart = true
+			StartsOn = 0
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+		CommonReloadResetTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = CommonReloadResetTrigger
+		}
+
+		SwitchWeaponCooldownProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = SwitchWeaponCooldownTimer
+			InvertOperationalToggle = true
+			ShowProgressFor = SwitchWeaponCooldownTimer
+			Invert = true
+			LowColor = [255, 0, 0]
+			HighColor = [0, 255, 0]
+		}
+		SwitchWeaponCooldownTimer
+		{
+			Type = Timer
+			Duration = 3.6
+			AutoStart = true
+			Repeats = false
+			StartsOn = 0
+			StartTrigger = SwitchWeaponCooldownTrigger
+		}
+		SwitchWeaponCooldownTrigger
+		{
+			Type = ModeTrigger
+			Mode = MunitionType
+			TriggerInModes = [0, 1, 2]
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 4000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 400
+			OperationalToggle = PowerToggle
+		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 1]
+			OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "../common_graphics_2/floor.png"
+						Size = [1, 2]
+					}
+					{
+						File = "../common_graphics_2/floor_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "../common_graphics_2/floor_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../common_graphics_2/doodads_on1.png"
+							"../common_graphics_2/doodads_on2.png"
+							"../common_graphics_2/doodads_on3.png"
+							"../common_graphics_2/doodads_on4.png"
+							"../common_graphics_2/doodads_on5.png"
+							"../common_graphics_2/doodads_on6.png"
+							"../common_graphics_2/doodads_on7.png"
+							"../common_graphics_2/doodads_on8.png"
+						]
+						Size = [1, 1]
+						Offset = [0, -.5]
+						AnimationInterval = 0.1
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "../common_graphics_2/lights.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "../common_graphics_2/walls.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "../common_graphics_2/roof.png"
+						NormalsFile = "../common_graphics_2/roof_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "../common_graphics_2/roof_33.png"
+						NormalsFile = "../common_graphics_2/roof_normals_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "../common_graphics_2/roof_66.png"
+						NormalsFile = "../common_graphics_2/roof_normals_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+}
+
+		FirePermissionToggle
+		{
+			Type = MultiToggle
+			Toggles = [CommonReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
+			Mode = All
+		}
+
+		Turret : &~/TurretBase
+		{
+
+		}
+
+		BulletEmitterBase : &~/BulletEmitterBase
+		{
+			FireTrigger 
+		}
+		
+		WeaponSprite : &~/WeaponSpriteBase
+		{
+
+		}
+
+		TurretCollider : &~/TurretColliderBase
+		{
+
+		}
+
+		ChargeEffect : &~/ChargeEffectBase
+		{
+			
+		}
+
+		CommonReloadResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [Turret]
+		}
+
+		TurretLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
+		}
+
+
+		
+
+
+		CrewLocation
+		{
+			Type = CrewLocation
+			Location = [.5, 0.6875]
+			Rotation = 0d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 1
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [BatteryStorage, PowerToggle]
+			CrewDestinations
+			[
+				&../../CrewLocation/Location
+			]
+			CrewLocations
+			[
+				CrewLocation
+			]
+		}
+
+		TurretGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [0, 0]
+			Rotation = 90d
+			OperationalToggle = IsOperational
+			OperationalDoodad
+			{
+				Layer = "roof_turrets"
+				DamageLevels
+				[
+					{
+						File = "turret02base.png"
+						NormalsFile = "turret02base_normals.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "roof_turrets"
+				DamageLevels
+				[
+					{
+						File = "turret02base.png"
+						NormalsFile = "turret02base_normals.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [.5, 1]
+			ResourceStorage = BatteryStorage
+			HasZeroResourceSprite = true
+			Layer = "doodads_high"
+						ResourceLevels
+			[
+				{
+					File = "../common_graphics_2/batteries0.png"
+					Size = [1, 2]
+				}
+				{
+					File = "../common_graphics_2/batteries1.png"
+					Size = [1, 2]
+				}
+				{
+					File = "../common_graphics_2/batteries2.png"
+					Size = [1, 2]
+				}
+			]
+		}
+
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Location = [.5, 1.5]
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [.5, 1.5]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [.5, 1.5]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1, 1]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "../common_graphics_2/blueprints.png"
+			Size = [1, 2]
+		}
+	}
+
+   //Stats
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+
+	StatsByCategory
+	[
+
+		&~/TurretStats
+		&<small_laser_cannon_redB.rules>/LaserStats
+		&<small_laser_cannon_blueB.rules>/LaserStats
+		&<small_laser_cannon_greenB.rules>/LaserStats
+	]
+}
+TurretStats
+{
+	NameKey = "StatCategories/Turret"
+	Stats
+	{
+		Barrels = 2
+		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
+		Salvo = [&../Barrels, &../ReloadTime]
+		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		Range = &~/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/TurretBase/FiringArc)
+		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
+		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
+	}
+}
+OperationalRoofLightingBase
+{
+	Size = [1.2, 1.2] //X(Desired Radius)+barrelspacing(Distance between Barrels)+X(Desired Radius)=Y 
+	Z = 1.32 // Controls the "height" of the light for the purposes of normal mapping.
+}
+BulletEmitterBase
+{
+	Type = BulletEmitter
+	OperationalToggle = IsOperational
+	ChainedTo = TurretLocationProxy
+	FireTrigger = CommonReloadResetTriggerProxy
+	GetTargetFrom = Turret
+	Location = [0.8, 0]
+	FireDelay = 0.03
+	ResourceStorage = BatteryStorage
+	ResourcesUsed = 50
+	MinResourcesUsed = 50
+	Bullet = &/SW_SHOTS/turretbasicsmalllaserredshot
+}
+ReloadProgressBarBase
+{
+	Type = ProgressBar
+	OperationalToggle = IsOperational
+	ShowProgressFor = CommonReloadTimer
+	Invert = true
+}
+FireEffectBase
+{
+	Type = TriggeredEffects
+	ChainedTo = BulletEmitter
+	Trigger = BulletEmitter
+	Location = [0, 0]
+	AnchorMediaEffects = true
+}
+ChargeEffectBase
+{
+	Type = TriggeredEffects
+	ChainedTo = TurretLocationProxy
+	Trigger = CommonReloadResetTriggerProxy
+	Location = [1.1, 0]
+	AnchorMediaEffects = true
+
+	MediaEffects
+	[
+		&/SW_SOUNDS/SmallLaserCharge
+	]
+}
+TurretColliderBase
+{
+	Type = CircleCollider
+	Location = &~/TurretBase/Location
+	Radius = 1.5
+	Density = .75
+}
+TurretBase
+		{
+			Type = TurretWeapon
+			Location = [0.5, 1]
+			Rotation = -90d
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 0
+			FiringArc = 365d
+			RotateSpeed = 60d
+			FireThresholdAngle = 3d
+			AIFirepowerRating = 1600
+			CanBeGivenExplicitTarget = true
+			TargetSearchesPerSecond = 4
+			Emitter = BulletEmitterBase
+			FirePermissionToggle = FirePermissionToggle
+			HoldTargetAfterCancel = 0.15
+			AutoTargetCrewSafetyDist = 8
+			IgnoreSourceShipLOSChecks = false
+			IgnoreSourceShipLowLOSChecks = true
+			AllowFireWithBlockedLOS = false
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+		WeaponSpriteBase
+		{
+			Type = Sprite
+			ChainedTo = TurretLocationProxy
+			Location = [0, 0]
+			Rotation = 90d
+			Layer = "roof_doodads"
+			ResetAnimationTrigger = CommonReloadResetTriggerProxy
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					"turret02_barrel_1.png"
+					"turret02_barrel_2.png"				
+					"turret02_barrel.png"// Loop back to beginning and clamp there.
+				]
+				NormalsAnimationFiles
+				[
+					"turret02_barrel_1_normals.png"
+					"turret02_barrel_2_normals.png"				
+					"turret02_barrel_normals.png"// Loop back to beginning and clamp there.
+				]
+				Size = [1, 2]
+				AnimationInterval = 0.0625
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
