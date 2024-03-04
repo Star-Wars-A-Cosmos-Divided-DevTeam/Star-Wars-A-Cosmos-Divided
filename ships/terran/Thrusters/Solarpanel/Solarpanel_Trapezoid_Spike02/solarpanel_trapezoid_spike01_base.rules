@@ -1,0 +1,428 @@
+/* ----------------------------------------------------------------------------
+
+Introduction: SW:ACD 0.3.7
+
+Author : Lafiel
+Description:
+Currently prototyping: No color changing atm but code is there for adding
+
+Base code part for the variants with different sides and weapons but same solar panel
+
+Versions:
+
+ o 1.0 Cosmoteer 0.15.14
+
+---------------------------------------------------------------------------- */ 
+Part : /BASE_PART_TERRAN
+{
+	NameKey = "Parts/SolarpanelTrapezoidSpike01LaserL"
+	IconNameKey = "Parts/SolarpanelTrapezoidSpike01LaserLIcon"
+	ID = "SW.solarpanel_trapezoid_spike01_base"
+	DescriptionKey = "Parts/SolarpanelTrapezoidSpike01LaserLDesc"
+	EditorGroups = ["Flight", "SWTechI"]
+	Resources
+	[
+		[steel, 8] //
+	]  //Cost = 700
+	AIValueFactor = 1
+
+	TypeCategories = [provides_power, weapon, thruster]
+	Size = [1, 1]
+
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+
+	MaxHealth = 7600 //1000 base + panel size * 500 = 1000+(54211/4096)*500=7617.5537109375
+	//HealthType = Structural
+	Flammable = false
+
+	InitialPenetrationResistance = 0.5
+
+	Density = 4.40729 //same as structure .333 * panel size since it's 1x1 real grid size = 0.333*(54211/4096)=4.407290771484375
+
+	ReceivableBuffs : ^/0/ReceivableBuffs [Engine]
+
+	//ProhibitLeft = 1
+
+	//AllowedDoorLocations
+	
+	Components : ^/0/Components
+	{
+		IsOperationalThruster
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle,ThrusterAmmoPrereq]
+			Mode = All
+		}
+		IsOperationalWeapon
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle,WeaponAmmoPrereq]
+			Mode = All
+		}
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			ToggledOnChoices = [1]
+		}
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+//-----------------------------------------------------------------------------
+/* all imperial so no needed?
+		LaserType
+		{
+			Type = UIToggle
+			ToggleID = "SW.blasterlaser_type"
+			Default = 0
+			AlwaysAllowInBuildMode = true
+		}
+
+		LaserRedToggle
+		{
+			Type = ModeToggle
+			Mode = LaserType
+			OnMode = 0
+		}
+		LaserRedComponents
+		{
+			Type = ToggledComponents
+			Toggle = LaserRedToggle
+			IncludeInBlueprints = true
+			Components = &<red_fixedlaserL.rules>/Components
+		}
+
+		LaserBlueToggle
+		{
+			Type = ModeToggle
+			Mode = LaserType
+			OnMode = 1
+		}
+		LaserBlueComponents
+		{
+			Type = ToggledComponents
+			Toggle = LaserBlueToggle
+			IncludeInBlueprints = true
+			Components = &<blue_fixedlaserL.rules>/Components
+		}
+
+		LaserGreenToggle
+		{
+			Type = ModeToggle
+			Mode = LaserType
+			OnMode = 2
+		}
+		LaserGreenComponents
+		{
+			Type = ToggledComponents
+			Toggle = LaserGreenToggle
+			IncludeInBlueprints = true
+			Components = &<green_fixedlaserL.rules>/Components
+		}
+*/
+//-----------------------------------------------------------------------------
+		AnchorLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = AnchorLocation
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperationalThruster
+			Location = [.5, .5]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalDoodad = &NonOperationalDoodad
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads off.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [1, 1]
+					}
+					{
+						File = "walls_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "walls_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/terran/corridor/roof.png"
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/corridor/roof_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "./Data/ships/terran/corridor/roof_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+/*
+			OperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "roof_windows_on.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+					{
+						File = "roof_windows_on_33.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+					{
+						File = "roof_windows_on_66.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+				]
+			}
+			NonOperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "roof_windows_off.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+					{
+						File = "roof_windows_off_33.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+					{
+						File = "roof_windows_off_66.png"
+						Size = [1, 1]
+						UVRotation = 3
+					}
+				]
+			}
+*/
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 8000
+			StartingAmmo = &MaxResources
+			SuppliesAmmo = true
+			MaxResourcesPickUp = 1000
+			ExpectedAmmoGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+			ToggleOnResources = 7001  //supply only 1 battery
+			ToggleOffResources = 7000
+		}
+		BatteryProducer
+		{
+			Type = ResourceConverter
+			ToStorage = BatteryStorage
+			ToQuantity = 460 //75 * solar panel size  (30% vanilla rate (Abh @5.5%)) = 75*(25124/4096)=460.0341796875
+			Interval = .6666
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [.5, .75]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			AmmoLevels
+			[
+				{
+					File = "batteries1.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries2.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries3.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries4.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries5.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries6.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries7.png"
+					Size = [1, 1]
+				}
+				{
+					File = "batteries8.png"
+					Size = [1, 1]
+				}
+			]
+		}
+		WeaponAmmoPrereq
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorage]
+			ToggleOnResources = 1001  // 6-7 batteries for use
+			ToggleOffResources = 1000
+		}
+		ThrusterAmmoPrereq //always available
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorage]
+			//ToggleOnResources = 22001
+			//ToggleOffResources = 3750
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperationalThruster
+			Location = [.5, .5]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [.5, .5]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [.5, .5]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		BlueprintsTileBox //do not remove
+		{
+			Type = BlueprintSprite
+			File = "blueprints_form[1,1].png"
+			Size = [1, 1]
+		}
+
+	}
+	Stats
+	{
+		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
+		BatteryFillTime = 0
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+	}
+/*
+	StatsByCategory
+	[
+		&<red_fixedlaserL.rules>/LaserStats
+		&<blue_fixedlaserL.rules>/LaserStats
+		&<green_fixedlaserL.rules>/LaserStats
+	]
+*/
+}
