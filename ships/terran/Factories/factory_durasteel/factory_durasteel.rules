@@ -1,0 +1,939 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	//IDs
+	ID = SW.factory_durasteel
+
+	//StringKeys
+	NameKey = "Parts/FactoryDuraSteel"
+	IconNameKey = "Parts/FactoryDuraSteelIcon"
+	DescriptionKey = "Parts/FactoryDuraSteelDesc"
+
+	//Groups&Categories
+	EditorGroups = ["Production"]
+	TypeCategories = [provides_SW.durasteel, uses_carbon, uses_SW.zersium, uses_steel, uses_power]
+	//RequiresCategories = []
+
+	//Resoures&Size&Health
+	Resources
+	[
+		[steel, 128]
+		[coil2, 64]
+		[processor, 12]
+	]
+	Size = [6, 4]
+	MaxHealth = 24000
+
+	//Selections
+	SelectionPriority = 1
+	//SelectionTypeID = "factory"
+
+	//PartSpecific
+	IsFlippable = true
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs [Factory]
+
+	//Doors&Etc
+	AllowedDoorLocations
+	[
+		[-1, 2]
+		[-1, 3]
+		[0, 4]
+		[1, 4]
+		[2, 4]
+		[3, 4]
+		[4, 4]
+		[5, 4]
+		[6, 2]
+		[6, 3]
+	]
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [64, 48]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, CarbonSplitter, ZersiumSplitter, SteelSplitter, BatteryStorage]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 1
+		}
+
+		SteelStorage
+		{
+			Type = TypedResourceGrid
+			ResourceType = steel
+			GridRect = [4, 2, 2, 2]
+			Layer = "doodads_low"
+			SpriteInset = [2/64, 6/64, 8/64, 9/64]
+			ToggleOnResources = &../ResourceConverter/From/0/Quantity
+			ToggleOffResources = (&ToggleOnResources) - 1
+			RandomSpriteRotation = true
+		}
+		SteelConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = steel
+			Storage = SteelStorage
+			DefaultPriority = &/PRIORITIES/Factory_Supply
+			OperationalToggle = PowerToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+		SteelSplitter
+		{
+			Type = InlineResourceConverter
+			ResourceType = steel
+			FromStorage = SteelStorage
+			FromQuantity = 1
+			ToQuantity = 2
+		}
+
+		CarbonStorage
+		{
+			Type = TypedResourceGrid
+			ResourceType = carbon
+			GridRect = [0, 2, 1, 2]
+			Layer = "doodads_low"
+			SpriteInset = [16/64, 6/64, 2/64, 9/64]
+			ToggleOnResources = &../ResourceConverter/From/1/Quantity
+			ToggleOffResources = (&ToggleOnResources) - 1
+			RandomSpriteRotation = true
+		}
+		CarbonConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = carbon
+			Storage = CarbonStorage
+			DefaultPriority = &/PRIORITIES/Factory_Supply
+			OperationalToggle = PowerToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+		CarbonSplitter
+		{
+			Type = InlineResourceConverter
+			ResourceType = carbon
+			FromStorage = CarbonStorage
+			FromQuantity = 1
+			ToQuantity = 2
+		}
+
+		ZersiumStorage
+		{
+			Type = TypedResourceGrid
+			ResourceType = SW.zersium
+			GridRect = [1, 2, 1, 2]
+			Layer = "doodads_low"
+			SpriteInset = [16/64, 6/64, 2/64, 9/64]
+			ToggleOnResources = &../ResourceConverter/From/2/Quantity
+			ToggleOffResources = (&ToggleOnResources) - 1
+			RandomSpriteRotation = true
+		}
+		ZersiumConsumer
+		{
+			Type = TypedResourceGridConsumer
+			ResourceType = SW.zersium
+			Storage = ZersiumStorage
+			DefaultPriority = &/PRIORITIES/Factory_Supply
+			OperationalToggle = PowerToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+		ZersiumSplitter
+		{
+			Type = InlineResourceConverter
+			ResourceType = SW.zersium
+			FromStorage = ZersiumStorage
+			FromQuantity = 1
+			ToQuantity = 2
+		}
+
+		DuraSteelStorage
+		{
+			Type = TypedResourceGrid
+			ResourceType = SW.durasteel
+			GridRect = [2, 2, 2, 2]
+			Layer = "doodads_low"
+			SpriteInset = [2/64, 6/64, 8/64, 9/64]
+			SuppliesResources = true
+			SupplyToggleButtonOffset = [0, -.4]
+			ToggleOnResources = 1
+			ToggleOffResources = 0
+			RandomSpriteRotation = true
+			InitToMaxResources = 0
+			//AllowExternalPickupAndDelivery = true
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 6000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Factory_Supply
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+		}
+
+		ResourceConverter
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			From
+			[
+				{
+					Storage = SteelStorage
+					Quantity = 2
+				}
+				{
+					Storage = CarbonSplitter
+					Quantity = 1
+				}
+				{
+					Storage = ZersiumSplitter
+					Quantity = 2
+				}
+				{
+					Storage = BatteryStorage
+					Quantity = 120
+					MinQuantityForConversion = 1
+				}
+			]
+			ToStorage = DuraSteelStorage
+			ToQuantity = 2
+			Interval = { BaseValue=0.5; BuffType=Factory; BuffMode=Divide; }
+			CheckResourceLimits = true
+		}
+
+		ConvertEffects
+		{
+			Type = TriggeredEffects
+			Trigger = ResourceConverter
+			Location = [2, 1.5]
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					Sound = "../bullet_create.wav"
+					Volume = .1
+					Speed = .5
+					SpeedVariation = .05
+				}
+			]
+		}
+
+		BuffProvider
+		{
+			Type = GridBuffProvider
+			BuffType = Factory
+			BuffAmount = 25%
+			GridDistance = 1
+			OperationalToggle = BatteryStorage
+		}
+
+		FloorSprite
+		{
+			Type = Sprite
+			OnlyWithFlip = false
+			Location = [3, 2]
+			Layer = "floors"
+			DamageLevels
+			[
+				{
+					File = "floor.png"
+					Size = [6, 4]
+				}
+				{
+					File = "floor_33.png"
+					Size = [6, 4]
+				}
+				{
+					File = "floor_66.png"
+					Size = [6, 4]
+				}
+			]
+		}
+
+		FloorSpriteFlipped
+		{
+			Type = Sprite
+			OnlyWithFlip = true
+			Location = [3, 2]
+			Layer = "floors"
+			DamageLevels
+			[
+				{
+					File = "floor_flipped.png"
+					Size = [6, 4]
+				}
+				{
+					File = "floor_flipped_33.png"
+					Size = [6, 4]
+				}
+				{
+					File = "floor_flipped_66.png"
+					Size = [6, 4]
+				}
+			]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [3, 2]
+			OperationalToggle = IsOperational
+			DoodadToggle = ResourceConverter
+			ToggleOnDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, 0]
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads_on1.png"
+							"doodads_on2.png"
+							"doodads_on3.png"
+							"doodads_on4.png"
+							"doodads_on5.png"
+							"doodads_on6.png"
+							"doodads_on7.png"
+							"doodads_on8.png"
+						]
+						Size = [6, 4]
+						AnimationInterval = 0.125
+					}
+					{
+						AnimationFiles
+						[
+							"doodads_on1.png"
+							"doodads_on2.png"
+							"doodads_on3.png"
+							"doodads_on4.png"
+							"doodads_on5.png"
+							"doodads_on6.png"
+							"doodads_on7.png"
+							"doodads_on8.png"
+						]
+						Size = [6, 4]
+						AnimationInterval = 0.125
+					}
+					{
+						AnimationFiles
+						[
+							"doodads_on1.png"
+							"doodads_on2.png"
+							"doodads_on3.png"
+							"doodads_on4.png"
+							"doodads_on5.png"
+							"doodads_on6.png"
+							"doodads_on7.png"
+							"doodads_on8.png"
+						]
+						Size = [6, 4]
+						AnimationInterval = 0.125
+					}
+				]
+			}
+			ToggleOffDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, 0]
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads_idle1.png"
+							"doodads_idle2.png"
+							"doodads_idle3.png"
+							"doodads_idle4.png"
+							"doodads_idle5.png"
+							"doodads_idle6.png"
+							"doodads_idle7.png"
+							"doodads_idle8.png"
+						]
+						Size = [6, 4]
+						AnimationInterval = 0.125
+						AnimationStartTime = WhenSpawned
+					}
+					{
+						AnimationFiles
+						[
+							"doodads_idle1.png"
+							"doodads_idle2.png"
+							"doodads_idle3.png"
+							"doodads_idle4.png"
+							"doodads_idle5.png"
+							"doodads_idle6.png"
+							"doodads_idle7.png"
+							"doodads_idle8.png"
+						]
+						Size = [6, 4]
+						AnimationInterval = 0.125
+						AnimationStartTime = WhenSpawned
+					}
+					{
+						AnimationFiles
+						[
+							"doodads_idle1.png"
+							"doodads_idle2.png"
+							"doodads_idle3.png"
+							"doodads_idle4.png"
+							"doodads_idle5.png"
+							"doodads_idle6.png"
+							"doodads_idle7.png"
+							"doodads_idle8.png"
+						]
+						Size = [6, 4]
+						AnimationInterval = 0.125
+						AnimationStartTime = WhenSpawned
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				Offset = [0, 0]
+				DamageLevels
+				[
+					{
+						File = "doodads_off.png"
+						Size = [6, 4]
+					}
+					{
+						File = "doodads_off.png"
+						Size = [6, 4]
+					}
+					{
+						File = "doodads_off.png"
+						Size = [6, 4]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [6, 4]
+					}
+					{
+						File = "walls_33.png"
+						Size = [6, 4]
+					}
+					{
+						File = "walls_66.png"
+						Size = [6, 4]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [6, 4]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [6, 4]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [6, 4]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [6, 4]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				Offset = [0, 1]
+				DamageLevels
+				[
+					{
+						File = "roof_glows.png"
+						Size = [4, 1]
+					}
+					{
+						File = "roof_glows_33.png"
+						Size = [4, 1]
+					}
+					{
+						File = "roof_glows_66.png"
+						Size = [4, 1]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				Offset = [-62/64, -43/64]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [5, 5]
+						Z = .5 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+						VertexColor = [255*1.4, 0, 0]
+					}
+				]
+			}
+		}
+
+		ExitBeltGraphics
+		{
+			Type = Graphics
+			Location = [2, 119/64]
+			OperationalToggle = IsOperational
+			DoodadToggle = ResourceConverter
+			ToggleOnDoodad
+			{
+				Layer = "walls"	 //Wall layer so the hyper_coil is show on top of the exit belt which use the doodad_low layer and under the crew sprite
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"./Data/ships/common/empty_sprite.png"
+							"./Data/ships/common/empty_sprite.png"
+							"./Data/ships/common/empty_sprite.png"
+							"./Data/ships/common/empty_sprite.png"
+							"./Data/ships/common/empty_sprite.png"
+							"./Data/ships/common/empty_sprite.png"
+							"./Data/ships/common/empty_sprite.png"
+							"./Data/ships/common/empty_sprite.png"
+							"./Data/ships/common/empty_sprite.png"
+							"./Data/ships/common/empty_sprite.png"
+							//"doodads_belt_on1.png"
+							//"doodads_belt_on2.png"
+							//"doodads_belt_on3.png"
+							//"doodads_belt_on4.png"
+							//"doodads_belt_on5.png"
+							//"doodads_belt_on6.png"
+						]
+						Size = [1, 1]
+						AnimationInterval = 0.125
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				Offset = [62/64, -60/64]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [5, 5]
+						Z = .5 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+						VertexColor = [255*1.4, 0, 0]
+					}
+				]
+			}
+		}
+/*
+		SteelBeltAndRoboticArmGraphics
+		{
+			Type = Graphics
+			Location = [.5, 1]
+			DoodadToggle = ResourceConverter
+			ToggleOnDoodad
+			{
+				Layer = "doodads_high"	//doodads_high layer so the robotic arm sprites are draw over the resources sprites and crew
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads_coilbelt_on1.png"
+							"doodads_coilbelt_on2.png"
+							"doodads_coilbelt_on3.png"
+							"doodads_coilbelt_on4.png"
+							"doodads_coilbelt_on5.png"
+							"doodads_coilbelt_on6.png"
+							"doodads_coilbelt_on7.png"
+							"doodads_coilbelt_on8.png"
+							"doodads_coilbelt_on9.png"
+							"doodads_coilbelt_on10.png"
+							"doodads_coilbelt_on11.png"
+							"doodads_coilbelt_on12.png"
+							"doodads_coilbelt_on13.png"
+							"doodads_coilbelt_on14.png"
+							"doodads_coilbelt_on15.png"
+							"doodads_coilbelt_on16.png"
+							"doodads_coilbelt_on17.png"
+							"doodads_coilbelt_on18.png"
+							"doodads_coilbelt_on19.png"
+							"doodads_coilbelt_on20.png"
+						]
+						Size = [1, 2]
+						AnimationInterval = 0.1
+					}
+					{
+						AnimationFiles
+						[
+							"doodads_coilbelt_on1_33.png"
+							"doodads_coilbelt_on2_33.png"
+							"doodads_coilbelt_on3_33.png"
+							"doodads_coilbelt_on4_33.png"
+							"doodads_coilbelt_on5_33.png"
+							"doodads_coilbelt_on6_33.png"
+							"doodads_coilbelt_on7_33.png"
+							"doodads_coilbelt_on8_33.png"
+							"doodads_coilbelt_on9_33.png"
+							"doodads_coilbelt_on10_33.png"
+							"doodads_coilbelt_on11_33.png"
+							"doodads_coilbelt_on12_33.png"
+							"doodads_coilbelt_on13_33.png"
+							"doodads_coilbelt_on14_33.png"
+							"doodads_coilbelt_on15_33.png"
+							"doodads_coilbelt_on16_33.png"
+							"doodads_coilbelt_on17_33.png"
+							"doodads_coilbelt_on18_33.png"
+							"doodads_coilbelt_on19_33.png"
+							"doodads_coilbelt_on20_33.png"
+						]
+						Size = [1, 2]
+						AnimationInterval = 0.1
+					}
+					{
+						AnimationFiles
+						[
+							"doodads_coilbelt_on1_66.png"
+							"doodads_coilbelt_on2_66.png"
+							"doodads_coilbelt_on3_66.png"
+							"doodads_coilbelt_on4_66.png"
+							"doodads_coilbelt_on5_66.png"
+							"doodads_coilbelt_on6_66.png"
+							"doodads_coilbelt_on7_66.png"
+							"doodads_coilbelt_on8_66.png"
+							"doodads_coilbelt_on9_66.png"
+							"doodads_coilbelt_on10_66.png"
+							"doodads_coilbelt_on11_66.png"
+							"doodads_coilbelt_on12_66.png"
+							"doodads_coilbelt_on13_66.png"
+							"doodads_coilbelt_on14_66.png"
+							"doodads_coilbelt_on15_66.png"
+							"doodads_coilbelt_on16_66.png"
+							"doodads_coilbelt_on17_66.png"
+							"doodads_coilbelt_on18_66.png"
+							"doodads_coilbelt_on19_66.png"
+							"doodads_coilbelt_on20_66.png"
+						]
+						Size = [1, 2]
+						AnimationInterval = 0.1
+					}
+				]
+			}
+			ToggleOffDoodad
+			{
+				Layer = "doodads_high"	//doodads_high layer so the robotic arm sprites are draw over the resources sprites and crew
+				DamageLevels
+				[
+					{
+						File = "doodads_coilbelt_on1.png"
+						Size = [1, 2]
+					}
+					{
+						File = "doodads_coilbelt_on1_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "doodads_coilbelt_on1_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+*/
+/*
+		NuggetGraphics
+		{
+			Type = Graphics
+			Location = [3.5+7/64, .5-2/64]
+			DoodadToggle = ResourceConverter
+			ToggleOnDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"./Data/ships/terran/factory_emp/copper20-2.png"
+							"./Data/ships/terran/factory_emp/copper20-1.png"
+							"./Data/ships/terran/factory_emp/copper19-2.png"
+							"./Data/ships/terran/factory_emp/copper19-1.png"
+							"./Data/ships/terran/factory_emp/copper18-2.png"
+							"./Data/ships/terran/factory_emp/copper18-1.png"
+							"./Data/ships/terran/factory_emp/copper17-2.png"
+							"./Data/ships/terran/factory_emp/copper17-1.png"
+							"./Data/ships/terran/factory_emp/copper16-2.png"
+							"./Data/ships/terran/factory_emp/copper16-1.png"
+							"./Data/ships/terran/factory_emp/copper15-2.png"
+							"./Data/ships/terran/factory_emp/copper15-1.png"
+							"./Data/ships/terran/factory_emp/copper14-2.png"
+							"./Data/ships/terran/factory_emp/copper14-1.png"
+							"./Data/ships/terran/factory_emp/copper13-2.png"
+							"./Data/ships/terran/factory_emp/copper13-1.png"
+							"./Data/ships/terran/factory_emp/copper12-2.png"
+							"./Data/ships/terran/factory_emp/copper12-1.png"
+							"./Data/ships/terran/factory_emp/copper11-2.png"
+							"./Data/ships/terran/factory_emp/copper11-1.png"
+							"./Data/ships/terran/factory_emp/copper10-2.png"
+							"./Data/ships/terran/factory_emp/copper10-1.png"
+							"./Data/ships/terran/factory_emp/copper9-2.png"
+							"./Data/ships/terran/factory_emp/copper9-1.png"
+							"./Data/ships/terran/factory_emp/copper8-2.png"
+							"./Data/ships/terran/factory_emp/copper8-1.png"
+							"./Data/ships/terran/factory_emp/copper7-2.png"
+							"./Data/ships/terran/factory_emp/copper7-1.png"
+							"./Data/ships/terran/factory_emp/copper6-2.png"
+							"./Data/ships/terran/factory_emp/copper6-1.png"
+							"./Data/ships/terran/factory_emp/copper5-2.png"
+							"./Data/ships/terran/factory_emp/copper5-1.png"
+							"./Data/ships/terran/factory_emp/copper4-2.png"
+							"./Data/ships/terran/factory_emp/copper4-1.png"
+							"./Data/ships/terran/factory_emp/copper3-2.png"
+							"./Data/ships/terran/factory_emp/copper3-1.png"
+							"./Data/ships/terran/factory_emp/copper2-2.png"
+							"./Data/ships/terran/factory_emp/copper2-1.png"
+							"./Data/ships/terran/factory_emp/copper1-2.png"
+							"./Data/ships/terran/factory_emp/copper1-1.png"
+						]
+						UVRotation = 1
+						Size = [1, 1]
+						AnimationInterval = 0.1
+					}
+				]
+			}
+		}
+*/
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [2, 80/64]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			ResourceLevels
+			[
+				{
+					File = "batteries1.png"
+					Size = [1, 1]
+					OffSet = [-1, 0]
+				}
+				{
+					File = "batteries2.png"
+					Size = [1, 1]
+					OffSet = [-1, 0]
+				}
+				{
+					File = "batteries3.png"
+					Size = [3, 1]
+				}
+				{
+					File = "batteries4.png"
+					Size = [3, 1]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Location = [2, 1.5]
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
+			Location = [2, 1.5]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [3, 2]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		IndicatorSteel
+		{
+			Type = IndicatorSprites
+			Location = [4.9, 3]
+			Layer = "indicators"
+			Indicators
+			[
+				// No steel.
+				{
+					Toggle = SteelSplitter
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoResource
+//						Offset = [1.5, 1.5]
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		IndicatorCarbon
+		{
+			Type = IndicatorSprites
+			Location = [0.6, 3]
+			Layer = "indicators"
+			Indicators
+			[
+				// No carbon.
+				{
+					Toggle = CarbonSplitter
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoResource
+//						Offset = [-2, 1.5]
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		IndicatorZersium
+		{
+			Type = IndicatorSprites
+			Location = [1.55, 3]
+			Layer = "indicators"
+			Indicators
+			[
+				// No SW.zersium.
+				{
+					Toggle = ZersiumSplitter
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoResource
+//						Offset = [3, -1.5]
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			OnlyWithFlip = false
+			File = "blueprints.png"
+			Size = [6, 4]
+		}
+
+		BlueprintsFlipped
+		{
+			Type = BlueprintSprite
+			OnlyWithFlip = true
+			File = "blueprints_flipped.png"
+			Size = [6, 4]
+		}
+	}
+
+	//Stats
+	Stats
+	{
+		DuraSteelProduction = (&~/Part/Components/ResourceConverter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+		DuraSteelCapacity = (&~/Part/Components/DuraSteelStorage/GridRect/2) * (&~/Part/Components/DuraSteelStorage/GridRect/3) * (&<../../../../Resources/durasteel/durasteel.rules>/MaxStackSize)
+		SteelCapacity = (&~/Part/Components/CarbonStorage/GridRect/2) * (&~/Part/Components/CarbonStorage/GridRect/3) * (&<./Data/resources/steel/steel.rules>/MaxStackSize)
+		SteelPerDuraSteel = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+		SteelPerSecond = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+		DuraSteelSteelUsage = [&../SteelPerDuraSteel, &../SteelPerSecond]
+		CarbonCapacity = (&~/Part/Components/CarbonStorage/GridRect/2) * (&~/Part/Components/CarbonStorage/GridRect/3) * (&<./Data/resources/carbon/carbon.rules>/MaxStackSize)
+		CarbonPerDuraSteel = (&~/Part/Components/CarbonSplitter/FromQuantity) / (&~/Part/Components/CarbonSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+		CarbonPerSecond = (&~/Part/Components/CarbonSplitter/FromQuantity) / (&~/Part/Components/CarbonSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+		DuraSteelCarbonUsage = [&../CarbonPerDuraSteel, &../CarbonPerSecond]
+		ZersiumCapacity = (&~/Part/Components/ZersiumStorage/GridRect/2) * (&~/Part/Components/ZersiumStorage/GridRect/3) * (&<../../../../Resources/zersium/zersium.rules>/MaxStackSize)
+		ZersiumPerDuraSteel = (&~/Part/Components/ZersiumSplitter/FromQuantity) / (&~/Part/Components/ZersiumSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+		ZersiumPerSecond = (&~/Part/Components/ZersiumSplitter/FromQuantity) / (&~/Part/Components/ZersiumSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+		DuraSteelZersiumUsage = [&../ZersiumPerDuraSteel, &../ZersiumPerSecond]
+		PowerPerDuraSteel = (&~/Part/Components/ResourceConverter/From/2/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity) / 1000
+		PowerPerSecond = (&~/Part/Components/ResourceConverter/From/2/Quantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue) / 1000
+		DuraSteelPowerUsage = [&../PowerPerDuraSteel, &../PowerPerSecond]
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		FactoryBuff = (&~/Part/Components/BuffProvider/BuffAmount) * 100
+
+		RecPower = &PowerPerSecond
+		RecCrew = (&RecPower) * 4
+	}
+}
