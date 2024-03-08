@@ -64,7 +64,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components, &<Components/toggles.rules>
+	Components : ^/0/Components, &<thruster_effect_toggles.rules>
 	{
 		IsOperational
 		{
@@ -119,9 +119,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle
+			Toggle = EngineBuffToggle //PowerDistributionBuffToggle
 			Invert = true
-			IncludeInBlueprints = true
+			//IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -263,7 +263,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2, 3, 4] //5
+			AvailableChoices = [0, 1, 2, 3, 4, 5] 
 			RequiresCommand = false
 		}
 
@@ -287,6 +287,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnModes = [2, 4]
 		}
 
+		RocketToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectAmountType
+			OnModes = [5]
+		}
+
 		GlowToggleProxy
 		{
 			Type = ToggleProxy
@@ -303,6 +310,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggleProxy
 			ComponentID = FullsetToggle
+		}
+
+		RocketToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = RocketToggle
 		}
 
 		MainThrusterLocationProxy
@@ -332,11 +345,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = Add
 		}
 
+		StaticScalerValue
+        {
+            Type = StaticValue
+            Value = 10
+        }
+		RocketEffectValue
+		{
+			Type = MultiValue
+			Values = [MainThrusterValueProxy, StaticScalerValue]
+			Mode = Multiply
+		}
+		RocketEffectValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = RocketEffectValue
+		}
+
 		ThrusterActivationBar
 		{
 			Type = ProgressBar
 			OperationalToggle = ThrusterIsFiringTriggeredToggle
-			ShowProgressFor = DoodadAnimationSpeedFactorValue
+			ShowProgressFor = MainThrusterValueProxy
 			LowColor = [0, 0, 0]
 			HighColor = [250, 250, 250]
 			FullColor = [255, 255, 255]
@@ -612,9 +642,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		MainThruster
 		{
 			Type = Thruster
+			OperationalToggle = IsOperational
 			Location = [1, 2.727]
 			Rotation = 90d// Relative to unrotated part.
-			OperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Overdrive; BuffMode=Multiply; }

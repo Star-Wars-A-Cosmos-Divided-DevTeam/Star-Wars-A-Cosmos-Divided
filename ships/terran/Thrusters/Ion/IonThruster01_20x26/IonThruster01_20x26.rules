@@ -123,7 +123,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
     //Components&Inheritance
-	Components : ^/0/Components, &<Components/toggles.rules>, &<toggles2.rules>, &<graphics.rules>, &<hyperdrive.rules>
+	Components : ^/0/Components, &<thruster_effect_toggles.rules>, &<toggles2.rules>, &<graphics.rules>, &<hyperdrive.rules>
 	{
 		IsOperational
 		{
@@ -178,13 +178,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = BuffToggle
 			BuffType = SW_Ion_Thruster_Accelerator
 		}
-/*
+
 		PowerDistributionBuffToggle
 		{
 			Type = BuffToggle
 			BuffType = EnginePowerDistribution
 		}
-*/
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -192,7 +192,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 225000 //15 secs sustained firing aka maybe ramp up once lmao
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperationalAndFtlDriveOff
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
@@ -211,15 +219,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					OperationalToggle = PowerToggle
 				}
 			}
-		}
-		BatteryStorageBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperationalAndFtlDriveOff
-			ShowProgressFor = BatteryStorage
-			LowColor = [64, 64, 0]
-			HighColor = [250, 250, 0]
-			FullColor = [255, 255, 0]
 		}
 
 		ThrusterEffectColorType
@@ -349,7 +348,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_amount_type"
 			Default = 0
-			AvailableChoices = [0, 1, 2, 3, 4] //5
+			AvailableChoices = [0, 1, 2, 3, 4, 5] 
 			RequiresCommand = false
 		}
 
@@ -373,6 +372,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnModes = [2, 4]
 		}
 
+		RocketToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectAmountType
+			OnModes = [5]
+		}
+
 		GlowToggleProxy
 		{
 			Type = ToggleProxy
@@ -389,6 +395,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggleProxy
 			ComponentID = FullsetToggle
+		}
+
+		RocketToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = RocketToggle
 		}
 
 		NozzleArtOptionToggle
@@ -443,6 +455,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = Add
 		}
 
+		StaticScalerValue
+        {
+            Type = StaticValue
+            Value = 10
+        }
+		RocketEffectValue
+		{
+			Type = MultiValue
+			Values = [MainThrusterValueProxy, StaticScalerValue]
+			Mode = Multiply
+		}
+		RocketEffectValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = RocketEffectValue
+		}
+
 		ThrusterActivationBar
 		{
 			Type = ProgressBar
@@ -463,27 +492,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ThresholdTrigger
 			AmountFrom = MainThrusterValueProxy
-			MinAmount = 4%
+			MinAmount = 10%
 		}
 		ThrusterOffThresholdTrigger
 		{
 			Type = ThresholdTrigger
 			AmountFrom = MainThrusterValueProxy	
-			MaxAmount = 4%
+			MaxAmount = 10%
 		}
 
 		ThrusterHasEngineRoomBuff
 		{
 			Type = SelfBuffProvider
 			BuffType = SW_Ion_Thruster_Accelerator
-			BuffAmount = 0.5
+			BuffAmount = 1
 			BuffMultiplier = ThrusterHasEngineRoomTween
 		}
 		ThrusterHasEngineRoomTween
 		{
 			Type = ValueTween
 			OffValue = 0
-			OnValue = 1
+			OnValue = 0.5
 			OnTweenDuration = 0
 			OffTweenDuration = 0
 			IsOnToggle = EngineBuffToggle
@@ -493,7 +522,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
-
 			Location = [10, 26.5]// Relative to upper-left corner of unrotated part.
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
@@ -509,9 +537,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		LateralThruster : MainThruster
 		{
 			Rotation = 0d
-			Force = (&../../ThrusterForce)/72
-			MinActivation = -0.01
-			MaxActivation = 0.01
+			MinActivation = -0.05
+			MaxActivation = 0.05
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			AllowAutoFire = false
@@ -519,6 +546,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
+			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = 0.10
 			MinUncommandedActivation = &MinActivation
@@ -533,7 +561,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ContinuousEffects
 			ChainedTo = MainThrusterLocationProxy
-			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
+			FactorMediaEffectsIntensityWith = DoodadAnimationSpeedFactorValue
 			MediaEffects
 			[
 				: /SW_SOUNDS/ThrusterRumble
