@@ -1,0 +1,114 @@
+ID = "cosmoteer.mine"
+Range = 150
+IdealRange = 50
+Speed = 100
+RandomRotation = true
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = .3
+		Density = 2
+		LinearDamping = 1.5
+		AngularDamping = 1
+		CollidesWithBullets = true
+		FrameOfReferenceDuration = 1
+	}
+
+	Repulsion
+	{
+		Type = ProximityAcceleration
+		Range = 15
+		Acceleration = -10
+		AccelerateTowardsShips = false
+		AccelerateTowardsBullets = true
+		AccelerateTowardsBulletCategories = [mine]
+		AccelerateTowardsFriendlies = true
+		AccelerateTowardsEnemies = true
+	}
+
+	UnarmedSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletMiddle1
+		Sprite
+		{
+			Texture
+			{
+				File = "mine_unarmed.png"
+				MipLevels = max
+			}
+			Size = [1, 1]
+		}
+
+		NormalsTexture
+		{
+			File = "mine_unarmed_normals.png"
+			MipLevels = max
+		}
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 3200
+		TargetCategory = "mine"
+		OnDeath = &~/Components/Hit/HitOperational
+	}
+
+	DeployDeath
+	{
+		Type = DeathBySpeed
+		MinSpeed = 30
+		FactorEffectsWith = Targetable
+
+		OnDeath
+		{
+			HitEffects
+			[
+				{
+					Type = SpawnBullets
+					Bullet = &<mine_deployed.rules>
+					Count = 1
+					InheritVelocity = true
+					ScaleHealth = true
+				}
+			]
+		}
+	}
+
+	Hit
+	{
+		Type = SimpleHit
+		SourcePartCollisionDelay = 1.5/30
+		ShieldCollisions = { Shields=false; }
+
+		HitShield {}
+
+		HitOperational
+		{
+			MediaEffects
+			[
+				&<../missile_he/particles/missile_he_hit.rules>
+				&<../missile_he/particles/missile_he_flash.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "../missile_he/missile_he_hit.wav"
+					Volume = .75
+					SpeedVariation = .4
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .1
+					Duration = .75
+				}
+			]
+		}
+
+		HitStructural = &HitOperational
+	}
+}
