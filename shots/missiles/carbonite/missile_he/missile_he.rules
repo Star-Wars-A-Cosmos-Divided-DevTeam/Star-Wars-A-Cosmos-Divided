@@ -1,0 +1,192 @@
+ID = "cosmoteer.missile_he"
+OtherIDs = ["missile", "cosmoteer.missile"]
+Range = 450
+IdealRange = 450
+Speed = 45
+
+Components
+{
+	Physics
+	{
+		Type = BoxPhysics
+		Size = [1.5, .5]
+		Density = 0.1
+	}
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 240d
+		Delay = .1
+		AvoidanceRaycastDistance = 250
+		VelocityCompensation = 60%
+	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+	Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 65
+	}
+
+	NegativeAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [-90, 0]
+		AccelerationOverTime = [0, .75]
+		Direction = FrameOfReferenceVelocity
+	}
+
+	DeathByLifetime
+	{
+		Type = DeathByLifetime
+		Lifetime = 15
+		HasTarget = true
+	}
+
+	DeathByDistanceTraveled
+	{
+		Type = DeathByDistanceTraveled
+		// Distance auto-computed from range.
+		HasTarget = false
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		IsLit = true
+		Sprite
+		{
+			Texture
+			{
+				File = "missile_he.png"
+				MipLevels = max
+			}
+			Size = [2, 1]
+		}
+
+		NormalsTexture
+		{
+			File = "missile_he_normals.png"
+			MipLevels = max
+		}
+	}
+
+	HELightsSprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper1
+		Offset = [24/64, 0]
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "missile_he_light.png"
+					MipLevels = max
+					SampleMode = Linear
+				}
+				Size = [1.5, 1.5]
+				TargetBlendMode = Add
+			}
+			FrameCount = 4
+			FrameSize = [98, 98]
+			FramesPerRow = 4
+			FramesPerSecond = 15
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		Offset = [-0.9, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&<particles/missile_he_thruster_fire.rules>
+			&<particles/missile_he_thruster_smoke.rules>
+			&<particles/missile_he_thruster_plume.rules>
+			&<particles/missile_he_thruster_plume_light.rules>
+		]
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 800
+		TargetCategory = "missile"
+
+		// No AOE damage when shot down.
+		OnDeath = &../Hit/HitFriendly
+	}
+
+	Hit
+	{
+		Type = SimpleHit
+		SourcePartCollisionDelay = 1.5/30
+
+		HitShield = &HitOperational
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 15000
+					Radius = 4
+					Filter
+					{
+						Friendlies = true
+					}
+				}
+				{
+					Type = Impulse;
+					Impulse = 100;
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/missile_he_hit.rules>
+				&<particles/missile_he_flash.rules>
+				&<particles/missile_he_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "missile_he_hit.wav"
+					Volume = .75
+					SpeedVariation = .4
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .15
+					Duration = .75
+				}
+			]
+		}
+		HitStructural = &HitOperational
+
+		HitFriendly
+		{
+			MediaEffects
+			[
+				&<particles/missile_he_hit.rules>
+				&<particles/missile_he_flash.rules>
+				&<particles/missile_he_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "missile_he_hit.wav"
+					Volume = .75
+					SpeedVariation = .4
+				}
+			]
+		}
+	}
+}

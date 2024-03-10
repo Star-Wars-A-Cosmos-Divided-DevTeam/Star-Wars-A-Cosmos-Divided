@@ -1,0 +1,208 @@
+ID = "cosmoteer.missile_nuke_stage1"
+Range = 250
+IdealRange = 240
+Speed = 100
+Stage2 = &<missile_nuke_stage2.rules>
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = .6
+		Density = 0.1
+		LinearDamping = 2.5
+		FrameOfReferenceDuration = 1
+	}
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 360d
+		Delay = .1
+	}
+
+	Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 25
+	}
+
+	DeployDeath
+	{
+		Type = DeathByLifetime
+		Lifetime = 1.25
+		FactorEffectsWith = Targetable
+
+		OnDeath
+		{
+			HitEffects
+			[
+				{
+					Type = SpawnBullets
+					Bullet = &~/Stage2
+					Count = 1
+					InheritVelocity = true
+					ScaleHealth = true
+				}
+			]
+		}
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		Sprite
+		{
+			Texture
+			{
+				File = "missile_nuke.png"
+				MipLevels = max
+			}
+			Size = [3, 1.5]
+		}
+
+		NormalsTexture
+		{
+			File = "missile_nuke_normals.png"
+			MipLevels = max
+		}
+	}
+
+	RadiationSpriteSmall
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper1
+		Spin = 360d
+		Sprite
+		{
+			Texture
+			{
+				File = "radiation_small.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [1, 1]
+			VertexColor = [255, 0, 0]
+			TargetBlendMode = Add
+		}
+	}
+
+	RadiationSpriteBig
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Spin = 360d
+		Z = .25
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "radiation.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [9, 9]
+			VertexColor = [255, 0, 0]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 10
+			_litAdditiveStrength = 0.25
+			_unlitAdditiveStrength = .4
+		}
+	}
+
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 7200
+		TargetCategory = "missile"
+
+		// No AOE damage when shot down.
+		OnDeath = &../Hit/HitFriendly
+	}
+
+	Hit
+	{
+		Type = SimpleHit
+		SourcePartCollisionDelay = 1.5/30
+
+		HitShield = &HitOperational
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 200000
+					Radius = 10
+					ExpandDuration = .8
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false
+						Friendlies = true
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 60000
+					Radius = 8
+					ExpandDuration = .8
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 5
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = true
+					}
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/missile_nuke_flash_light.rules>
+				&<particles/missile_nuke_flash.rules>
+				&<particles/missile_nuke_shockwave.rules>
+				&<particles/missile_nuke_hit.rules>
+				//&<particles/missile_nuke_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "missile_nuke_hit.wav"
+					Volume = 1
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .15
+					Duration = .75
+				}
+			]
+		}
+		HitStructural = &HitOperational
+
+		HitFriendly
+		{
+			MediaEffects
+			[
+				&<particles/missile_nuke_flash.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "missile_nuke_hit.wav"
+					Volume = 1
+				}
+			]
+		}
+	}
+}

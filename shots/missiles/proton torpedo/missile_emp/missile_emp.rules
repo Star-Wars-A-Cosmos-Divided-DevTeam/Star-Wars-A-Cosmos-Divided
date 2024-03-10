@@ -1,0 +1,249 @@
+ID = "cosmoteer.missile_emp"
+Range = 700
+IdealRange = 700
+Speed = 45
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.5
+		Density = 0.1
+	}
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 120d
+		Delay = .1
+		AvoidanceRaycastDistance = 150
+		VelocityCompensation = 80%
+	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+	Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 75
+	}
+
+	NegativeAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [-90, 0]
+		AccelerationOverTime = [0, .75]
+		Direction = FrameOfReferenceVelocity
+	}
+
+	DeathByLifetime
+	{
+		Type = DeathByLifetime
+		Lifetime = 12
+		HasTarget = true
+	}
+
+	DeathByDistanceTraveled
+	{
+		Type = DeathByDistanceTraveled
+		// Distance auto-computed from range.
+		HasTarget = false
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		Sprite
+		{
+			Texture
+			{
+				File = "missile_emp.png"
+				MipLevels = max
+			}
+			Size = [3, 1.5]
+		}
+
+		NormalsTexture
+		{
+			File = "missile_emp_normals.png"
+			MipLevels = max
+		}
+	}
+
+	SmallLightsSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper1
+		Sprite
+		{
+			Texture
+			{
+				File = "missile_emp_small_lights.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [3, 1.5]
+		}
+	}
+
+	EMPSphereLightsSprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper2
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "emp_sphere_lights.png"
+					MipLevels = max
+					SampleMode = Linear
+				}
+				Size = [2, 2]
+				TargetBlendMode = Add
+			}
+			FrameCount = 8
+			FrameSize = [128, 128]
+			FramesPerRow = 4
+			FramesPerSecond = 30
+		}
+	}
+
+	MediaEffects1
+	{
+		Type = MediaEffects
+		Offset = [-0.9, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&<particles/missile_emp_thruster_plume_light.rules>
+			&<particles/missile_emp_thruster_smoke.rules>
+		]
+	}
+
+	MediaEffects3
+	{
+		Type = MediaEffects
+		MediaEffects
+		[
+			&<particles/missile_emp_thruster_lightning.rules>
+		]
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 3200
+		TargetCategory = "missile"
+
+		// No AOE damage when shot down.
+		OnDeath = &../Hit/HitFriendly
+	}
+
+	Hit
+	{
+		Type = SimpleHit
+		SourcePartCollisionDelay = 1.5/30
+
+		HitShield = &HitOperational
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveResourceDrain
+					ResourceType = battery
+					TotalDrain = 18000
+					Radius = 18
+					Slices = 1
+					Filter
+					{
+						Ships = true
+						Shields = true
+						Friendlies = true
+					}
+
+					MediaEffectsOnDrainFactor = .0005
+					MediaEffectsOnDrain
+					[
+						&<particles/missile_emp_hit_sizzle.rules>
+						&<particles/missile_emp_lightning.rules>
+						&<particles/missile_emp_drain.rules>
+
+						: /BASE_SOUNDS/AudioExterior
+						{
+							Sound = "../disruptor_bolt/discharge.wav"
+							Volume = 1
+							SpeedVariation = .2
+						}
+					]
+				}
+				{
+					Type = Damage
+					Damage = 300
+					Filter
+					{
+						Friendlies = true
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 10000
+					Radius = 3
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = true
+					}
+				}
+				{
+					Type = Impulse;
+					Impulse = 100;
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/missile_emp_hit_orb.rules>
+				&<particles/missile_emp_hit_bolts.rules>
+				&<particles/missile_emp_hit_shockwave.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "missile_emp_hit.wav"
+					Volume = 1
+					SpeedVariation = .2
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .05
+					Duration = .75
+				}
+			]
+		}
+		HitStructural = &HitOperational
+
+		HitFriendly
+		{
+			MediaEffects
+			[
+				&<particles/missile_emp_hit_orb.rules>
+				&<particles/missile_emp_hit_bolts.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "missile_emp_hit.wav"
+					Volume = 1
+					SpeedVariation = .2
+				}
+			]
+		}
+	}
+}
