@@ -1,0 +1,55 @@
+ID = "cosmoteer.missile_nuke_stage2"
+Range = &<missile_nuke_stage1.rules>/Range
+IdealRange = &<missile_nuke_stage1.rules>/IdealRange
+Speed = 0
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = .6
+		Density = 0.1
+	}
+
+	BoostAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [500, 250]
+		AccelerationOverTime = [0, 0.25]
+	}
+
+	DeathByDistanceTraveled
+	{
+		Type = DeathByDistanceTraveled
+		// Distance auto-computed from range.
+		HasTarget = false
+	}
+	DeathByDistanceTraveledTargeted
+	{
+		Type = DeathByDistanceTraveled
+		Distance = (&~/Range) * 3
+		HasTarget = true
+	}
+
+	Sprite = &<missile_nuke_stage1.rules>/Components/Sprite
+	RadiationSpriteSmall = &<missile_nuke_stage1.rules>/Components/RadiationSpriteSmall
+	RadiationSpriteBig = &<missile_nuke_stage1.rules>/Components/RadiationSpriteBig
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		Offset = [-1.26, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&<particles/missile_nuke_thruster_plume.rules>
+			&<particles/missile_nuke_thruster_plume_light.rules>
+			&<particles/missile_nuke_thruster_smoke.rules>
+			&<particles/missile_nuke_thruster_fire.rules>
+		]
+	}
+
+	Targetable = &<missile_nuke_stage1.rules>/Components/Targetable
+	Hit = &<missile_nuke_stage1.rules>/Components/Hit
+}
