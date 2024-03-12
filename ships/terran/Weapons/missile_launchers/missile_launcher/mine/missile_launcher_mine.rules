@@ -1,0 +1,482 @@
+EditorIcon
+{
+	Texture
+	{
+		File = "icon_mine.png"
+		SampleMode = Linear
+	}
+	Size = [40, 100]
+}
+
+Components
+{
+	MineStorage
+	{
+		Type = ResourceStorage
+		ResourceType = mine_part
+		MaxResources = 6*4
+		UITileRect = [.5 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
+		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/HeavyDeliver
+        ToggleOnResources = 4
+        ToggleOffResources = 3
+		DropResourcesWhenDestroyed = true
+		DropResourcesWhenRemoved = true
+	}
+	Consumer
+	{
+		Type = ResourceConsumer
+		ResourceType = mine_part
+		Storage = MineStorage
+		DefaultPriority = &/PRIORITIES/Weapon_Supply
+		OperationalToggle = PowerToggle
+		ConsumptionToggleButtonOffset = [0, -.4]
+		OverridePriorityKey = MinesComponents // Hack to keep backwards-compatibility with old games/ships after fixing priority key ID bug.
+	}
+
+	MissilesPrereq
+	{
+		Type = MultiToggle
+		Toggles = [MineStorage]
+		Mode = Any
+	}
+
+	LaunchMinesToggle
+	{
+		Type = UIToggle
+		ToggleID = "launch_mines"
+		Default = 0
+		AutoOffTrigger = Weapon
+		OperationalToggle = LaunchMinesPermission
+	}
+	LaunchMinesPermission
+	{
+		Type = MultiToggle
+		Toggles = [IsOperational, MineStorage]
+		Mode = All
+	}
+	AutoLaunch
+	{
+		Type = MultiToggle
+		Toggles = [AutoFireToggle, LaunchMinesToggle]
+		Mode = Any
+	}
+
+	Weapon
+	{
+		Type = TurretWeapon // This has an arc of 0, but we don't want to use FixedWeapon because that will only shoot at things directly in the LOS.
+		Location = [1, 1]
+		Rotation = -90d
+		Emitter = Emitter1
+		OperationalToggle = IsOperational
+		AutoFireToggle = AutoLaunch
+		FireInterval = 0 // Uses common reload timer.
+		FiringArc = 0d;
+		ValidArc = 90d;
+		FireThresholdAngle = 45d;
+		RotateSpeed = 0d
+		AllowFireWithBlockedLOS = true
+		AIFirepowerRating = 3200
+		FirePermissionToggle = FirePermissionToggle
+		DefaultDirectControlBinding = 3
+
+		AutoTargets
+		[
+			{
+				TargetType = ShipParts
+				Toggle = AutoTargetToggle
+			}
+		]
+
+		BlueprintArcSprite
+		{
+			Texture = &/INDICATORS/WeaponArc
+			Size = [0, 1.5]
+			Color = [255, 0, 0, 63]
+		}
+		BlueprintArcRadius = 10
+		BlueprintArcSpriteSegments = 64
+
+		CoverageSectorArc
+		{
+			Texture = &/INDICATORS/VerticalGradient
+			VertexColor = [255, 255, 255, 51]
+			QuadCount = 64
+		}
+	}
+	FirePermissionToggle
+	{
+		Type = MultiToggle
+		Toggles = [CommonReloadTimerMed, FireModePermissionToggle]
+		Mode = All
+	}
+	FireModePermissionToggle
+	{
+		Type = MultiToggle
+		Toggles = [FireModeToggle, LaunchMinesToggle]
+		Mode = Any
+	}
+
+	ReloadProgressBar
+	{
+		Type = ProgressBar
+		OperationalToggle = IsOperational
+		ShowProgressFor = CommonReloadTimerMed
+		Invert = true
+	}
+
+	Emitter1
+	{
+		Type = BulletEmitter
+		ChainedTo = Weapon
+		OperationalToggle = IsOperational
+		FireTrigger = Weapon
+		GetTargetFrom = Weapon
+		ResourceStorage = MineStorage
+		Location = [1.25, -.5]
+		ResourcesUsed = 4
+		Bullet = &<./Data/shots/mine/mine.rules>
+		TargetLeadPrediction = false
+		Recoil = 50
+	}
+
+	Emitter2 : Emitter1
+	{
+		Location = [1.25, .5]
+	}
+
+	CommonReloadResetTrigger
+	{
+		Type = MultiTrigger
+		Triggers = [Weapon]
+	}
+
+	LaunchEffect1
+	{
+		Type = TriggeredEffects
+		ChainedTo = Weapon
+		Trigger = Weapon
+		Location = [0, -.4]
+
+		MediaEffects
+		[
+			&<../particles/missile_launcher_shoot.rules>
+
+			: /BASE_SOUNDS/AudioExterior
+			{
+				Sound = "../shoot.wav"
+				Speed = 0.5
+				SpeedVariation = .25
+			}
+		]
+	}
+	LaunchEffect2
+	{
+		Type = TriggeredEffects
+		ChainedTo = Weapon
+		Trigger = Weapon
+		Location = [0, .4]
+
+		MediaEffects
+		[
+			&<../particles/missile_launcher_shoot.rules>
+		]
+	}
+
+	External_Walls_Graphics
+	{
+		Type = Graphics
+		Location = [1, 1]
+		Walls
+		{
+			Layer = "external_walls"
+			DamageLevels
+			[
+				{
+					File = "external_walls.png"
+					NormalsFile = "external_walls_normals.png"
+					Size = [2, 3]
+				}
+				{
+					File = "external_walls_33.png"
+					NormalsFile = "external_walls_normals_33.png"
+					Size = [2, 3]
+				}
+				{
+					File = "external_walls_66.png"
+					NormalsFile = "external_walls_normals_66.png"
+					Size = [2, 3]
+				}
+			]
+		}
+	}
+
+	MineSprites
+	{
+		Type = ResourceSprites
+		Location = [1, 1.5]
+		ResourceStorage = MineStorage
+		Layer = "weapons"
+		HasZeroResourceSprite = true
+		ResourceLevels
+		[
+			{
+				File = "mine0.png"
+				Offset = [0, 1]
+				Size = [2, 1]
+			}
+			{
+				File = "mine1.png"
+				NormalsFile = "mine_normals1.png"
+				Offset = [0, 0.5]
+				Size = [2, 2]
+			}
+			{
+				File = "mine2.png"
+				NormalsFile = "mine_normals2.png"
+				Offset = [0, 0.5]
+				Size = [2, 2]
+			}
+			{
+				File = "mine3.png"
+				NormalsFile = "mine_normals3.png"
+				Offset = [0, 0.5]
+				Size = [2, 2]
+			}
+			{
+				File = "mine4.png"
+				NormalsFile = "mine_normals4.png"
+				Offset = [0, 0.5]
+				Size = [2, 2]
+			}
+			{
+				File = "mine5.png"
+				NormalsFile = "mine_normals5.png"
+				Offset = [0, 0.5]
+				Size = [2, 2]
+			}
+			{
+				File = "mine6.png"
+				NormalsFile = "mine_normals6.png"
+				Offset = [0, 0.5]
+				Size = [2, 2]
+			}
+			{
+				File = "mine7.png"
+				NormalsFile = "mine_normals7.png"
+				Offset = [0, 0.5]
+				Size = [2, 2]
+			}
+			{
+				File = "mine8.png"
+				NormalsFile = "mine_normals8.png"
+				Offset = [0, 0.5]
+				Size = [2, 2]
+			}
+			{
+				File = "mine9.png"
+				NormalsFile = "mine_normals9.png"
+				Size = [2, 3]
+			}
+			{
+				File = "mine10.png"
+				NormalsFile = "mine_normals10.png"
+				Size = [2, 3]
+			}
+			{
+				File = "mine11.png"
+				NormalsFile = "mine_normals11.png"
+				Size = [2, 3]
+			}
+			{
+				File = "mine12.png"
+				NormalsFile = "mine_normals12.png"
+				Size = [2, 3]
+			}
+			{
+				File = "mine13.png"
+				NormalsFile = "mine_normals13.png"
+				Size = [2, 3]
+			}
+			{
+				File = "mine14.png"
+				NormalsFile = "mine_normals14.png"
+				Size = [2, 3]
+			}
+			{
+				File = "mine15.png"
+				NormalsFile = "mine_normals15.png"
+				Size = [2, 3]
+			}
+			{
+				File = "mine16.png"
+				NormalsFile = "mine_normals16.png"
+				Size = [2, 3]
+			}
+			{
+				File = "mine17.png"
+				NormalsFile = "mine_normals17.png"
+				Offset = [0, -0.5]
+				Size = [2, 4]
+			}
+			{
+				File = "mine18.png"
+				NormalsFile = "mine_normals18.png"
+				Offset = [0, -0.5]
+				Size = [2, 4]
+			}
+			{
+				File = "mine19.png"
+				NormalsFile = "mine_normals19.png"
+				Offset = [0, -0.5]
+				Size = [2, 4]
+			}
+			{
+				File = "mine20.png"
+				NormalsFile = "mine_normals20.png"
+				Offset = [0, -0.5]
+				Size = [2, 4]
+			}
+			{
+				File = "mine21.png"
+				NormalsFile = "mine_normals21.png"
+				Offset = [0, -0.5]
+				Size = [2, 4]
+			}
+			{
+				File = "mine22.png"
+				NormalsFile = "mine_normals22.png"
+				Offset = [0, -0.5]
+				Size = [2, 4]
+			}
+			{
+				File = "mine23.png"
+				NormalsFile = "mine_normals23.png"
+				Offset = [0, -0.5]
+				Size = [2, 4]
+			}
+			{
+				File = "mine24.png"
+				NormalsFile = "mine_normals24.png"
+				Offset = [0, -0.5]
+				Size = [2, 3]
+			}
+		]
+	}
+
+	DestroyedEffects
+	{
+		Type = DeathEffects
+		Location = [1, 2]
+		FactorHitEffectsWith = MineStorage
+		HitEffects
+		[
+			{
+				Type = ExplosiveDamage
+				TotalDamage = 15000
+				Radius = 5
+				Delay = .05
+				FireChancePerNDamage = 50%
+				NDamage = 1000
+				CrewKillChance = 50%
+				Filter
+				{
+					OperationalHealth = true
+					StructuralHealth = false
+					Friendlies = true
+				}
+			}
+			{
+				Type = ExplosiveDamage
+				TotalDamage = 5000
+				Radius = 4
+				Delay = .05
+				Filter
+				{
+					OperationalHealth = false
+					StructuralHealth = true
+					Friendlies = true
+					Crew = false
+				}
+			}
+		]
+	}
+
+	DestroyedEffects2 // A separate destroyed effects for the base destruction that doesn't get scale with ammo.
+	{
+		Type = DeathEffects
+		Location = [1, 2]
+		MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+	}
+
+	Indicators
+	{
+		Type = IndicatorSprites
+		Location = [1, 2]
+		Layer = "indicators"
+		Indicators
+		[
+			// Turned off.
+			{
+				Toggle = PowerToggle
+				AtlasSprite
+				{
+					File = &/INDICATORS/PowerOff
+					Size = [1, 1]
+				}
+			}
+
+			// Out of missiles.
+			{
+				Toggle = MineStorage
+				Delay = &<../missile_launcher.rules>/Part/Components/CommonReloadTimerMed/Duration
+				AtlasSprite
+				{
+					File = &/INDICATORS/NoMines
+					Size = [1, 1]
+				}
+			}
+
+			// No crew.
+			{
+				Toggle = PartCrew
+				AtlasSprite
+				{
+					File = &/INDICATORS/NoCrew
+					Size = [1, 1]
+				}
+			}
+		]
+	}
+}
+
+MineStats
+{
+	NameKey = "StatCategories/Mine"
+	Stats
+	{
+		Salvo = [2, (&<../missile_launcher.rules>/Part/Components/CommonReloadTimerMed/Duration)]
+		ROF = 2 / (&<../missile_launcher.rules>/Part/Components/CommonReloadTimerMed/Duration)
+		Range = &<./Data/shots/mine/mine.rules>/Range
+		Arc = deg(&~/Components/Weapon/ValidArc)
+		ShotLaunchSpeed = &<./Data/shots/mine/mine.rules>/Speed
+		ShotDeploySpeed = &<./Data/shots/mine/mine.rules>/Components/DeployDeath/MinSpeed
+		ShotHP = &<./Data/shots/mine/mine_deployed.rules>/Components/Targetable/Health
+		SeparationRange = &<./Data/shots/mine/mine_deployed.rules>/Components/Repulsion/Range
+		DetonationRange = &<./Data/shots/mine/mine_deployed.rules>/Components/DeathByEnemyProximity/Range
+		Shrapnel = &<./Data/shots/mine/mine_deployed.rules>/Components/DeathByEnemyProximity/OnDeath/HitEffects/0/Count
+	}
+}
+
+ShrapnelStats
+{
+	NameKey = "StatCategories/MineShrapnel"
+	Stats
+	{
+		SimpleDamage = &<./Data/shots/mine/mine_shrapnel.rules>/Components/Hit/HitOperational/HitEffects/0/Damage
+		Penetration = &<./Data/shots/mine/mine_shrapnel.rules>/Components/Hit/Penetration
+		FireChance = (&<./Data/shots/mine/mine_shrapnel.rules>/Components/Hit/PenetratingOperational/HitEffects/1/FireChance) * 100
+		Range = &<./Data/shots/mine/mine_shrapnel.rules>/Range
+		ShotSpeed = &<./Data/shots/mine/mine_shrapnel.rules>/Speed
+		ShotHP = Infinity
+	}
+}
