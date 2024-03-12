@@ -1,0 +1,378 @@
+EditorIcon
+{
+	Texture
+	{
+		File = "icon_emp.png"
+		SampleMode = Linear
+	}
+	Size = [40, 100]
+}
+
+Components
+{
+	MissileStorage
+	{
+		Type = ResourceStorage
+		ResourceType = missile_part_emp
+		MaxResources = 9
+		ToggleOnResources = 9
+		ToggleOffResources = 8
+		DelayBeforeReadyToUse = .5
+		UITileRect = [.5 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
+		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
+		DropResourcesWhenDestroyed = true
+		DropResourcesWhenRemoved = true
+	}
+	Consumer
+	{
+		Type = ResourceConsumer
+		ResourceType = missile_part_emp
+		Storage = MissileStorage
+		DefaultPriority = &/PRIORITIES/Weapon_Supply
+		OperationalToggle = PowerToggle
+		ConsumptionToggleButtonOffset = [0, -.4]
+		OverridePriorityKey = EMPMissilesComponents // Hack to keep backwards-compatibility with old games/ships after fixing priority key ID bug.
+	}
+
+	MissilesPrereq
+	{
+		Type = MultiToggle
+		Toggles = [MissileStorage]
+		Mode = Any
+	}
+
+	Weapon
+	{
+		Type = TurretWeapon // This has an arc of 0, but we don't want to use FixedWeapon because that will only shoot at things directly in the LOS.
+		Location = [1, 1]
+		Rotation = -90d
+		Emitter = Emitter
+		OperationalToggle = IsOperational
+		AutoFireToggle = AutoFireToggle
+		FireInterval = 0 // Uses common reload timer.
+		FiringArc = 0d;
+		ValidArc = 360d;
+		FireThresholdAngle = 180d;
+		RotateSpeed = 0d
+		AllowFireWithBlockedLOS = true
+		AIFirepowerRating = 4800
+		FirePermissionToggle = FirePermissionToggle
+
+		AutoTargets
+		[
+			{
+				TargetType = ShipParts
+				Toggle = AutoTargetToggle
+				EnableInDirectControlMode = true
+			}
+		]
+
+		CoverageSectorArc
+		{
+			Texture = &/INDICATORS/VerticalGradient
+			VertexColor = [255, 255, 255, 51]
+			QuadCount = 64
+		}
+	}
+	FirePermissionToggle
+	{
+		Type = MultiToggle
+		Toggles = [CommonReloadTimerMed, FireModeToggle]
+		Mode = All
+	}
+
+	ReloadProgressBar
+	{
+		Type = ProgressBar
+		OperationalToggle = IsOperational
+		ShowProgressFor = CommonReloadTimerMed
+		Invert = true
+	}
+
+	Emitter
+	{
+		Type = BulletEmitter
+		ChainedTo = Weapon
+		OperationalToggle = IsOperational
+		FireTrigger = Weapon
+		GetTargetFrom = Weapon
+		ResourceStorage = MissileStorage
+		ResourcesUsed = 9
+		Bullet = &<./Data/shots/missile_emp/missile_emp.rules>
+		TargetLeadPrediction = false
+		Recoil = 150
+	}
+
+	CommonReloadResetTrigger
+	{
+		Type = MultiTrigger
+		Triggers = [Weapon]
+	}
+
+	LaunchEffect
+	{
+		Type = TriggeredEffects
+		ChainedTo = Weapon
+		Trigger = Weapon
+
+		MediaEffects
+		[
+			&<../particles/missile_launcher_shoot_large.rules>
+
+			: /BASE_SOUNDS/AudioExterior
+			{
+				Sound = "../shoot.wav"
+				Speed = 0.25
+				SpeedVariation = .1
+			}
+		]
+	}
+
+	External_Walls_Graphics
+	{
+		Type = Graphics
+		OperationalToggle = MissileStorage
+		Location = [1, 1]
+		Walls
+		{
+			Layer = "external_walls"
+			DamageLevels
+			[
+				{
+					File = "external_walls.png"
+					NormalsFile = "external_walls_normals.png"
+					Size = [2, 3]
+				}
+				{
+					File = "external_walls_33.png"
+					NormalsFile = "external_walls_normals_33.png"
+					Size = [2, 3]
+				}
+				{
+					File = "external_walls_66.png"
+					NormalsFile = "external_walls_normals_66.png"
+					Size = [2, 3]
+				}
+			]
+		}
+		OperationalLighting
+		{
+			Layer = "lights_add"
+			DamageLevels
+			[
+				{
+					AnimationFiles
+					[
+						"emp_sphere_lights1.png"
+						"emp_sphere_lights2.png"
+						"emp_sphere_lights3.png"
+						"emp_sphere_lights4.png"
+						"emp_sphere_lights5.png"
+						"emp_sphere_lights6.png"
+						"emp_sphere_lights7.png"
+						"emp_sphere_lights8.png"
+					]
+					Size = [2, 2]
+					AnimationInterval = 0.033
+				}
+			]
+		}
+		OperationalRoofLighting
+		{
+			Layer = "roof_lights_fancy"
+			Offset = [0, -0.06]
+			DamageLevels
+			[
+				{
+					File = "light_blob.png"
+					Size = [3, 3]
+					Z = 0.35 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+					VertexColor = [255, 248, 0]
+				}
+			]
+		}
+	}
+
+	MissileSprites
+	{
+		Type = ResourceSprites
+		Location = [1, 1.5]
+		ResourceStorage = MissileStorage
+		Layer = "weapons"
+		HasZeroResourceSprite = true
+		ResourceLevels
+		[
+			{
+				File = "emp0.png"
+				NormalsFile = "emp_normals0.png"
+				Offset = [0, -0.5]
+				Size = [2, 3]
+			}
+			{
+				File = "emp1.png"
+				NormalsFile = "emp_normals1.png"
+				Size = [2, 3]
+			}
+			{
+				File = "emp2.png"
+				NormalsFile = "emp_normals2.png"
+				Size = [2, 3]
+			}
+			{
+				File = "emp3.png"
+				NormalsFile = "emp_normals3.png"
+				Size = [2, 3]
+			}
+			{
+				File = "emp4.png"
+				NormalsFile = "emp_normals4.png"
+				Size = [2, 3]
+			}
+			{
+				File = "emp5.png"
+				NormalsFile = "emp_normals5.png"
+				Size = [2, 4]
+			}
+			{
+				File = "emp6.png"
+				NormalsFile = "emp_normals6.png"
+				Size = [2, 4]
+			}
+			{
+				File = "emp7.png"
+				NormalsFile = "emp_normals7.png"
+				Size = [2, 4]
+			}
+			{
+				File = "emp8.png"
+				NormalsFile = "emp_normals8.png"
+				Size = [2, 4]
+			}
+			{
+				File = "emp9.png"
+				NormalsFile = "emp_normals9.png"
+				Offset = [0, -0.5]
+				Size = [2, 3]
+			}
+		]
+	}
+
+	DestroyedEffects
+	{
+		Type = DeathEffects
+		Location = [1, 2]
+
+		FactorHitEffectsWith = MissileStorage
+		HitEffects
+		[
+			{
+				Type = ExplosiveResourceDrain
+				ResourceType = battery
+				TotalDrain = 24000
+				Radius = 12
+				Slices = 1
+				Delay = .05
+				RadiusEffectScaleExponent = 0.5
+				Filter
+				{
+					Ships = true
+					Shields = true
+					Friendlies = true
+				}
+
+				MediaEffectsOnDrainFactor = .00025
+				MediaEffectsOnDrain
+				[
+					&<./Data/shots/missile_emp/particles/missile_emp_hit_sizzle.rules>
+					&<./Data/shots/missile_emp/particles/missile_emp_lightning.rules>
+					&<./Data/shots/missile_emp/particles/missile_emp_drain.rules>
+
+					: /BASE_SOUNDS/AudioExterior
+					{
+						Sound = "./Data/shots/disruptor_bolt/discharge.wav"
+						Volume = 1
+						SpeedVariation = .2
+					}
+				]
+			}
+		]
+
+		FactorMediaEffectsWith = MissileStorage
+		MediaEffects
+		[
+			&<./Data/shots/missile_emp/particles/missile_emp_hit_orb.rules>
+			&<./Data/shots/missile_emp/particles/missile_emp_hit_bolts.rules>
+			&<./Data/shots/missile_emp/particles/missile_emp_hit_shockwave.rules>
+		]
+	}
+
+	DestroyedEffects2 // A separate destroyed effects for the base destruction that doesn't get scale with ammo.
+	{
+		Type = DeathEffects
+		Location = [1, 2]
+		MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+	}
+
+	Indicators
+	{
+		Type = IndicatorSprites
+		Location = [1, 2]
+		Layer = "indicators"
+		Indicators
+		[
+			// Turned off.
+			{
+				Toggle = PowerToggle
+				AtlasSprite
+				{
+					File = &/INDICATORS/PowerOff
+					Size = [1, 1]
+				}
+			}
+
+			// Out of missiles.
+			{
+				Toggle = MissileStorage
+				Delay = &<../missile_launcher.rules>/Part/Components/CommonReloadTimerMed/Duration
+				AtlasSprite
+				{
+					File = &/INDICATORS/NoEmp
+					Size = [1, 1]
+				}
+			}
+
+			// No crew.
+			{
+				Toggle = PartCrew
+				AtlasSprite
+				{
+					File = &/INDICATORS/NoCrew
+					Size = [1, 1]
+				}
+			}
+		]
+	}
+}
+
+MissileStats
+{
+	NameKey = "StatCategories/MissileEMP"
+	Stats
+	{
+		DamagePerShot = &~/Components/Emitter/Bullet/Components/Hit/HitOperational/HitEffects/1/Damage
+		DamagePerSecond = (&DamagePerShot) * (&ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		PowerDrainPerShot = (&~/Components/Emitter/Bullet/Components/Hit/HitShield/HitEffects/0/TotalDrain) / 1000
+		PowerDrainPerSecond = (&PowerDrainPerShot) * (&ROF)
+		PowerDrain = [&../PowerDrainPerShot, &../PowerDrainPerSecond]
+		PowerDrainArea = &~/Components/Emitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
+		ROF = 1 / (&<../missile_launcher.rules>/Part/Components/CommonReloadTimerMed/Duration)
+		Range = &~/Components/Emitter/Bullet/Range
+		Arc = deg(&~/Components/Weapon/ValidArc)
+		ShotLaunchSpeed = &~/Components/Emitter/Bullet/Speed
+		Acceleration = &~/Components/Emitter/Bullet/Components/Acceleration/Acceleration
+		ShotGuidance = deg(&~/Components/Emitter/Bullet/Components/Homing/TurnVelocity)
+		ShotHP = &~/Components/Emitter/Bullet/Components/Targetable/Health
+		MissileParts = &~/Components/Emitter/ResourcesUsed
+	}
+}

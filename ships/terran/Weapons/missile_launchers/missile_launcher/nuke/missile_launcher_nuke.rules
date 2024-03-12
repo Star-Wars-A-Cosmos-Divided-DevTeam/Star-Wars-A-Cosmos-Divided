@@ -1,0 +1,347 @@
+EditorIcon
+{
+	Texture
+	{
+		File = "icon_nuke.png"
+		SampleMode = Linear
+	}
+	Size = [40, 100]
+}
+
+Components
+{
+	MissileStorage
+	{
+		Type = ResourceStorage
+		ResourceType = missile_part_nuke
+		MaxResources = 12
+		ToggleOnResources = 12
+		ToggleOffResources = 11
+		DelayBeforeReadyToUse = .5
+		UITileRect = [.5 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
+		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
+		DropResourcesWhenDestroyed = true
+		DropResourcesWhenRemoved = true
+	}
+	Consumer
+	{
+		Type = ResourceConsumer
+		ResourceType = missile_part_nuke
+		Storage = MissileStorage
+		DefaultPriority = &/PRIORITIES/Weapon_Supply
+		OperationalToggle = PowerToggle
+		ConsumptionToggleButtonOffset = [0, -.4]
+		OverridePriorityKey = NukeMissilesComponents // Hack to keep backwards-compatibility with old games/ships after fixing priority key ID bug.
+	}
+
+	MissilesPrereq
+	{
+		Type = MultiToggle
+		Toggles = [MissileStorage]
+		Mode = Any
+	}
+
+	Weapon
+	{
+		Type = TurretWeapon
+		Location = [1, 1]
+		Rotation = -90d
+		Emitter = Emitter
+		OperationalToggle = IsOperational
+		AutoFireToggle = AutoFireToggle
+		FireInterval = 0 // Uses common reload timer.
+		FiringArc = 0d
+		TargetingArc = 200d
+		ValidArc = 200d
+		FireThresholdAngle = (&TargetingArc) / 2
+		RotateSpeed = 0d
+		AllowFireWithBlockedLOS = true
+		AIFirepowerRating = 4800
+		FirePermissionToggle = FirePermissionToggle
+
+		AutoTargets
+		[
+			{
+				TargetType = ShipParts
+				Toggle = AutoTargetToggle
+				EnableInDirectControlMode = true
+			}
+		]
+
+		BlueprintArcSprite
+		{
+			Texture = &/INDICATORS/WeaponArc
+			Size = [0, 1.5]
+			Color = [255, 0, 0, 63]
+		}
+		BlueprintArcRadius = 10
+		BlueprintArcSpriteSegments = 64
+
+		CoverageSectorArc
+		{
+			Texture = &/INDICATORS/VerticalGradient
+			VertexColor = [255, 255, 255, 51]
+			QuadCount = 64
+		}
+	}
+	FirePermissionToggle
+	{
+		Type = MultiToggle
+		Toggles = [CommonReloadTimerLong, FireModeToggle]
+		Mode = All
+	}
+
+	ReloadProgressBar
+	{
+		Type = ProgressBar
+		OperationalToggle = IsOperational
+		ShowProgressFor = CommonReloadTimerLong
+		Invert = true
+	}
+
+	CommonReloadResetTrigger
+	{
+		Type = MultiTrigger
+		Triggers = [Weapon]
+	}
+
+	Emitter
+	{
+		Type = BulletEmitter
+		ChainedTo = Weapon
+		OperationalToggle = IsOperational
+		FireTrigger = Weapon
+		GetTargetFrom = Weapon
+		ResourceStorage = MissileStorage
+		ResourcesUsed = 12
+		Bullet = &<./Data/shots/missile_nuke/missile_nuke_stage1.rules>
+		TargetLeadPrediction = false
+		Recoil = 300
+	}
+
+	LaunchEffect
+	{
+		Type = TriggeredEffects
+		ChainedTo = Weapon
+		Trigger = Weapon
+
+		MediaEffects
+		[
+			&<../particles/missile_launcher_shoot_large.rules>
+
+			: /BASE_SOUNDS/AudioExterior
+			{
+				Sound = "../shoot.wav"
+				Speed = 0.25
+				SpeedVariation = .1
+			}
+		]
+	}
+
+	External_Walls_Graphics
+	{
+		Type = Graphics
+		Location = [1, 1]
+		Walls
+		{
+			Layer = "external_walls"
+			DamageLevels
+			[
+				{
+					File = "external_walls.png"
+					NormalsFile = "external_walls_normals.png"
+					Size = [2, 3]
+				}
+				{
+					File = "external_walls_33.png"
+					NormalsFile = "external_walls_normals_33.png"
+					Size = [2, 3]
+				}
+				{
+					File = "external_walls_66.png"
+					NormalsFile = "external_walls_normals_66.png"
+					Size = [2, 3]
+				}
+			]
+		}
+	}
+
+	MissileSprites
+	{
+		Type = ResourceSprites
+		Location = [1, 1.5]
+		ResourceStorage = MissileStorage
+		Layer = "weapons"
+		HasZeroResourceSprite = true
+		ResourceLevels
+		[
+			{
+				File = "nuke0.png"
+				NormalsFile = "nuke_normals0.png"
+				Offset = [0, -0.5]
+				Size = [2, 3]
+			}
+			{
+				File = "nuke1.png"
+				NormalsFile = "nuke_normals1.png"
+				Size = [2, 3]
+			}
+			{
+				File = "nuke2.png"
+				NormalsFile = "nuke_normals2.png"
+				Size = [2, 3]
+			}
+			{
+				File = "nuke3.png"
+				NormalsFile = "nuke_normals3.png"
+				Size = [2, 3]
+			}
+			{
+				File = "nuke4.png"
+				NormalsFile = "nuke_normals4.png"
+				Size = [2, 3]
+			}
+			{
+				File = "nuke5.png"
+				NormalsFile = "nuke_normals5.png"
+				Size = [2, 3]
+			}
+			{
+				File = "nuke6.png"
+				NormalsFile = "nuke_normals6.png"
+				Size = [2, 3]
+			}
+			{
+				File = "nuke7.png"
+				NormalsFile = "nuke_normals7.png"
+				Size = [2, 3]
+			}
+			{
+				File = "nuke8.png"
+				NormalsFile = "nuke_normals8.png"
+				Size = [2, 3]
+			}
+			{
+				File = "nuke9.png"
+				NormalsFile = "nuke_normals9.png"
+				Size = [2, 4]
+			}
+			{
+				File = "nuke10.png"
+				NormalsFile = "nuke_normals10.png"
+				Size = [2, 4]
+			}
+			{
+				File = "nuke11.png"
+				NormalsFile = "nuke_normals11.png"
+				Size = [2, 4]
+			}
+			{
+				File = "nuke12.png"
+				NormalsFile = "nuke_normals12.png"
+				Offset = [0, -0.5]
+				Size = [2, 3]
+			}
+		]
+	}
+
+	DestroyedEffects
+	{
+		Type = DeathEffects
+		MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+		Location = [1, 2]
+
+		FactorHitEffectsWith = MissileStorage
+		HitEffects
+		[
+			{
+				Type = ExplosiveDamage
+				TotalDamage = 30000
+				Radius = 5
+				Delay = .05
+				FireChancePerNDamage = 50%
+				NDamage = 1000
+				CrewKillChance = 50%
+				Filter
+				{
+					OperationalHealth = true
+					StructuralHealth = false
+					Friendlies = true
+				}
+			}
+			{
+				Type = ExplosiveDamage
+				TotalDamage = 10000
+				Radius = 4
+				Delay = .05
+				Filter
+				{
+					OperationalHealth = false
+					StructuralHealth = true
+					Friendlies = true
+					Crew = false
+				}
+			}
+		]
+	}
+
+	Indicators
+	{
+		Type = IndicatorSprites
+		Location = [1, 2]
+		Layer = "indicators"
+		Indicators
+		[
+			// Turned off.
+			{
+				Toggle = PowerToggle
+				AtlasSprite
+				{
+					File = &/INDICATORS/PowerOff
+					Size = [1, 1]
+				}
+			}
+
+			// Out of missiles.
+			{
+				Toggle = MissileStorage
+				Delay = &<../missile_launcher.rules>/Part/Components/CommonReloadTimerLong/Duration
+				AtlasSprite
+				{
+					File = &/INDICATORS/NoNuke
+					Size = [1, 1]
+				}
+			}
+
+			// No crew.
+			{
+				Toggle = PartCrew
+				AtlasSprite
+				{
+					File = &/INDICATORS/NoCrew
+					Size = [1, 1]
+				}
+			}
+		]
+	}
+}
+
+MissileStats
+{
+	NameKey = "StatCategories/MissileNuke"
+	Stats
+	{
+		DamagePerShot = &~/Components/Emitter/Bullet/Stage2/Components/Hit/HitOperational/HitEffects/0/TotalDamage
+		DamagePerSecond = (&DamagePerShot) * (&ROF)
+		MaxDamage = [&../DamagePerShot, &../DamagePerSecond]
+		DamageArea = &~/Components/Emitter/Bullet/Stage2/Components/Hit/HitOperational/HitEffects/0/Radius
+		ROF = 1 / (&<../missile_launcher.rules>/Part/Components/CommonReloadTimerLong/Duration)
+		Range = &~/Components/Emitter/Bullet/Range
+		Arc = deg(&~/Components/Weapon/ValidArc)
+		ShotLaunchSpeed = &~/Components/Emitter/Bullet/Speed
+		Acceleration = &~/Components/Emitter/Bullet/Stage2/Components/BoostAcceleration/Acceleration
+		AccelerationDelay = &~/Components/Emitter/Bullet/Components/DeployDeath/Lifetime
+		ShotHP = &~/Components/Emitter/Bullet/Components/Targetable/Health
+		MissileParts = &~/Components/Emitter/ResourcesUsed
+	}
+}
