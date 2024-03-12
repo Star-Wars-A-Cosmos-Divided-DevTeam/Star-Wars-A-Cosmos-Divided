@@ -1,11 +1,18 @@
 Part : <../base_part_terran.rules>/Part
 {
+    //IDs
+	ID = SW.missile_launcher_tester
+    //StringKeys
 	NameKey = "Parts/MissileLauncher"
 	IconNameKey = "Parts/MissileLauncherIcon"
-	ID = cosmoteer.missile_launcher // Part IDs must always be in the form of "author_name.part_name". If making your own mod, do *not* use "cosmoteer" as your author name, because it may conflict with future vanilla parts.
-	OtherIDs = [missile_launcher]
-	EditorGroup = "WeaponsProjectile"
 	DescriptionKey = "Parts/MissileLauncherDesc"
+
+    //Groups&Categories
+	EditorGroups = ["WeaponsProjectile", "SWTechII"]
+	TypeCategories = [weapon, uses_clusters, uses_concussions, uses_hex, uses_intruder, uses_launcher_parts, is_crewed]
+	//RequiresCategories = []
+
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 60]
@@ -13,15 +20,24 @@ Part : <../base_part_terran.rules>/Part
 		[processor, 1]
 	]
 	Size = [2, 4]
+	MaxHealth = 6000
+
+    //Rects
 	PhysicalRect = [0, 1, 2, 3]
 	RectColliderRectType = Normal
 	SaveRect = &PhysicalRect
+
+
+    //Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	MaxHealth = 6000
-	TypeCategories = [weapon, uses_missiles, uses_emps, uses_nukes, uses_mines, uses_launcher_parts, is_crewed]
+
+    //ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
+	//ProhibitedBy : ^/0/ProhibitedBy [tall]
 	ProhibitAbove = 2
+
+    //Doors&Etc
 	AllowedDoorLocations
 	[
 		[-1, 2]
@@ -61,7 +77,11 @@ Part : <../base_part_terran.rules>/Part
 			Value = [Right, TopRight, Top, TopLeft]
 		}
 	]
-	EditorIcon = &<he/missile_launcher_he.rules>/EditorIcon
+
+    //Editor
+	EditorIcon = &<cluster/missile_launcher_cluster.rules>/EditorIcon
+
+    //Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -105,6 +125,13 @@ Part : <../base_part_terran.rules>/Part
 			Mode = FireModeToggle
 			OnMode = 2
 		}
+		FireAlternatingToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_alternating"
+			Default = 0
+			AvailableChoices = [0]
+		}
 
 		MissileType
 		{
@@ -114,60 +141,70 @@ Part : <../base_part_terran.rules>/Part
 			AlwaysAllowInBuildMode = true
 		}
 
-		HEMissilesToggle
+		SW_MissileType
+		{
+			Type = UIToggle
+			ToggleID = "SW.missile_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2, 3]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		ClusterMissilesToggle
 		{
 			Type = ModeToggle
-			Mode = MissileType
+			Mode = SW_MissileType
 			OnMode = 0
 		}
-		HEMissilesComponents
+		ClusterMissilesComponents
 		{
 			Type = ToggledComponents
-			Toggle = HEMissilesToggle
+			Toggle = ClusterMissilesToggle
 			IncludeInBlueprints = true
-			Components = &<he/missile_launcher_he.rules>/Components
+			Components = &<cluster/missile_launcher_cluster.rules>/Components
 		}
 
-		EMPMissilesToggle
+		IntruderMissilesToggle
 		{
 			Type = ModeToggle
-			Mode = MissileType
+			Mode = SW_MissileType
 			OnMode = 1
 		}
-		EMPMissilesComponents
+		IntruderMissilesComponents
 		{
 			Type = ToggledComponents
-			Toggle = EMPMissilesToggle
+			Toggle = IntruderMissilesToggle
 			IncludeInBlueprints = true
-			Components = &<emp/missile_launcher_emp.rules>/Components
+			Components = &<intruder/missile_launcher_intruder.rules>/Components
 		}
 
-		NukeMissilesToggle
+		ConcussionMissilesToggle
 		{
 			Type = ModeToggle
-			Mode = MissileType
+			Mode = SW_MissileType
 			OnMode = 2
 		}
-		NukeMissilesComponents
+		ConcussionMissilesComponents
 		{
 			Type = ToggledComponents
-			Toggle = NukeMissilesToggle
+			Toggle = ConcussionMissilesToggle
 			IncludeInBlueprints = true
-			Components = &<nuke/missile_launcher_nuke.rules>/Components
+			Components = &<concussion/missile_launcher_concussion.rules>/Components
 		}
 
-		MinesToggle
+		HEXMissilesToggle
 		{
 			Type = ModeToggle
-			Mode = MissileType
+			Mode = SW_MissileType
 			OnMode = 3
 		}
-		MinesComponents
+		HEXMissilesComponents
 		{
 			Type = ToggledComponents
-			Toggle = MinesToggle
+			Toggle = HEXMissilesToggle
 			IncludeInBlueprints = true
-			Components = &<mine/missile_launcher_mine.rules>/Components
+			Components = &<hex/missile_launcher_hex.rules>/Components
 		}
 
 		CommonReloadTimerShort
@@ -434,56 +471,57 @@ Part : <../base_part_terran.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
 
-		BlueprintsHE
+		BlueprintsCluster
 		{
 			Type = BlueprintSprite
-			File = "blueprints_he.png"
+			File = "blueprints_cluster.png"
 			Size = [2, 5]
 			Offset = [0, -.5]
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = missile_type
-				Mode = 0
+				ToggleID = SW.missile_type
+				Mode = 3
 			}
 		}
-		BlueprintsEmp
+		BlueprintsIntruder
 		{
 			Type = BlueprintSprite
-			File = "blueprints_emp.png"
+			File = "blueprints_intruder.png"
 			Size = [2, 5]
 			Offset = [0, -.5]
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = missile_type
+				ToggleID = SW.missile_type
 				Mode = 1
 			}
 		}
-		BlueprintsNuke
+		BlueprintsConcussion
 		{
 			Type = BlueprintSprite
-			File = "blueprints_nuke.png"
+			File = "blueprints_concussion.png"
 			Size = [2, 5]
 			Offset = [0, -.5]
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = missile_type
+				ToggleID = SW.missile_type
 				Mode = 2
 			}
 		}
-		BlueprintsMine
+
+		BlueprintsHEX
 		{
 			Type = BlueprintSprite
-			File = "blueprints_mine.png"
+			File = "blueprints_hex.png"
 			Size = [2, 5]
 			Offset = [0, -.5]
 
 			ShowOnlyInToggleMode
 			{
-				ToggleID = missile_type
-				Mode = 3
+				ToggleID = SW.missile_type
+				Mode = 0
 			}
 		}
 	}
@@ -491,10 +529,10 @@ Part : <../base_part_terran.rules>/Part
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
-		HEMissileCapacity = 3
-		EMPMissileCapacity = 1
-		NukeMissileCapacity = 1
-		MineCapacity = 6
+		ClusterCapacity = 6
+		IntruderMissileCapacity = 1
+		ConcussionMissileCapacity = 1
+		HEXMissileCapacity = 3
 
 		RecCrew = (&CrewRequired) + (&<he/missile_launcher_he.rules>/MissileStats/Stats/ROF) * (&<he/missile_launcher_he.rules>/MissileStats/Stats/MissileParts) * 4
 	}
