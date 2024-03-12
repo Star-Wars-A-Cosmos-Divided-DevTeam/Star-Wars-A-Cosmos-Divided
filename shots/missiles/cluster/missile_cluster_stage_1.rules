@@ -1,0 +1,87 @@
+ID = "SW.missile_cluster_stage_1"
+Range = &<missile_cluster.rules>/Range
+IdealRange = &<missile_cluster.rules>/IdealRange
+Speed = 0
+Stage2 = &<missile_cluster.rules>
+
+Components
+{
+	Physics = &<missile_cluster.rules>/Components/Physics
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 240d
+		Delay = .1
+		AvoidanceRaycastDistance = 250
+		VelocityCompensation = 60%
+	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+	Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 65
+	}
+
+	NegativeAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [-90, 0]
+		AccelerationOverTime = [0, 2.5]
+		Direction = FrameOfReferenceVelocity
+	}
+
+	DeployDeath
+	{
+		Type = DeathByLifetime
+		Lifetime = 2.5
+		FactorEffectsWith = Targetable
+
+		OnDeath
+		{
+			HitEffects
+			[
+				{
+					Type = SpawnBullets
+					Bullet = &~/Stage2
+					Count = 1
+					InheritVelocity = true
+					ScaleHealth = true
+				}
+			]
+		}
+	}
+
+	Sprite = &<missile_cluster.rules>/Components/Sprite
+	HELightsSprite = &<missile_cluster.rules>/Components/HELightsSprite
+	
+	FinSprite
+	{
+		Type = Sprite
+		IsLit = true
+		Sprite
+		{
+			Texture
+			{
+				File = "fins.png"
+				MipLevels = max
+			}
+			Size = [2, 1]
+		}
+
+		NormalsTexture
+		{
+			File = "fins_normals.png"
+			MipLevels = max
+		}
+	}
+
+	MediaEffects = &<missile_cluster.rules>/Components/HELightsSprite
+	Targetable = &<missile_cluster.rules>/Components/Targetable
+	Hit = &<missile_cluster.rules>/Components/Hit
+}
