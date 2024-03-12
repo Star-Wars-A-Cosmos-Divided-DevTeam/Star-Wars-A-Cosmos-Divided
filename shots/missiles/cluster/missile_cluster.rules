@@ -1,24 +1,22 @@
 ID = "SW.missile_cluster"
-Range = 450
+Range = 1250
 IdealRange = 450
-Speed = 45
+Speed = 0
 
 Components
 {
 	Physics
 	{
 		Type = BoxPhysics
-		Size = [1.5, .5]
+		Size = [1.96, .42]
 		Density = 0.1
 	}
 
-	Homing
+	BoostAcceleration
 	{
-		Type = TargetHoming
-		TurnVelocity = 240d
-		Delay = .1
-		AvoidanceRaycastDistance = 250
-		VelocityCompensation = 60%
+		Type = Acceleration
+		Acceleration = [160, 40]
+		AccelerationOverTime = [0, 15]
 	}
 
 	Retarget
@@ -26,32 +24,18 @@ Components
 		Type = SameShipRetarget
 	}
 
-	Acceleration
-	{
-		Type = Acceleration
-		Acceleration = 65
-	}
-
-	NegativeAcceleration
-	{
-		Type = Acceleration
-		Acceleration = [-90, 0]
-		AccelerationOverTime = [0, .75]
-		Direction = FrameOfReferenceVelocity
-	}
-
-	DeathByLifetime
-	{
-		Type = DeathByLifetime
-		Lifetime = 15
-		HasTarget = true
-	}
-
 	DeathByDistanceTraveled
 	{
 		Type = DeathByDistanceTraveled
 		// Distance auto-computed from range.
 		HasTarget = false
+	}
+
+	DeathByDistanceTraveledTargeted
+	{
+		Type = DeathByDistanceTraveled
+		Distance = (&~/Range) * 3
+		HasTarget = true
 	}
 
 	Sprite
@@ -111,6 +95,8 @@ Components
 			&<particles/missile_cluster_thruster_smoke.rules>
 			&<particles/missile_cluster_thruster_plume.rules>
 			&<particles/missile_cluster_thruster_plume_light.rules>
+			&/SW_PARTICLES/Thruster/Vanilla/PlumeLight/Small/Red
+			&/SW_PARTICLES/Thruster/Vanilla/PlumeLight/Med/Orange
 		]
 	}
 
@@ -129,14 +115,13 @@ Components
 		Type = SimpleHit
 		SourcePartCollisionDelay = 1.5/30
 
-		HitShield = &HitOperational
-		HitOperational
+		HitShield
 		{
 			HitEffects
 			[
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 15000
+					TotalDamage = 2000
 					Radius = 4
 					Filter
 					{
@@ -145,7 +130,41 @@ Components
 				}
 				{
 					Type = Impulse;
-					Impulse = 100;
+					Impulse = 6;
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/missile_cluster_hit.rules>
+				&<particles/missile_cluster_flash.rules>
+				&<particles/missile_cluster_smoke.rules>
+
+				&/SW_SOUNDS/SW_Missile_Cluster_Hit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .15
+					Duration = .75
+				}
+			]
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 6000
+					Radius = 4
+					Filter
+					{
+						Friendlies = true
+					}
+				}
+				{
+					Type = Impulse;
+					Impulse = 56;
 				}
 			]
 
