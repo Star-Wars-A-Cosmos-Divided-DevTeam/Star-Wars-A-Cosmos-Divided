@@ -1,0 +1,47 @@
+ID = "SW.missile_cluster_stage_0_a"
+Range = &<missile_cluster.rules>/Range
+IdealRange = &<missile_cluster.rules>/IdealRange
+Speed = 80
+Stage1 = &<missile_cluster_stage_1.rules>
+
+Components
+{
+	Physics = &<missile_cluster.rules>/Components/Physics
+
+	Homing = &<missile_cluster_stage_1.rules>/Components/Homing
+
+	BoostAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [240, 80]
+		AccelerationOverTime = [0, 0.21]
+	}
+
+	DeployDeath
+	{
+		Type = DeathByLifetime
+		Lifetime = 0.21
+		FactorEffectsWith = Targetable
+
+		OnDeath
+		{
+			HitEffects
+			[
+				{
+					Type = SpawnBullets
+					Bullet = &~/Stage1
+					Count = 1
+					InheritVelocity = true
+					ScaleHealth = true
+				}
+			]
+		}
+	}
+
+	Sprite = &<missile_cluster.rules>/Components/Sprite
+	HELightsSprite = &<missile_cluster.rules>/Components/HELightsSprite
+	FinSprite = &<missile_cluster_stage_1.rules>/Components/FinSprite
+	MediaEffects = &<missile_cluster.rules>/Components/HELightsSprite
+	Targetable = &<missile_cluster.rules>/Components/Targetable
+	Hit = &<missile_cluster.rules>/Components/Hit
+}
