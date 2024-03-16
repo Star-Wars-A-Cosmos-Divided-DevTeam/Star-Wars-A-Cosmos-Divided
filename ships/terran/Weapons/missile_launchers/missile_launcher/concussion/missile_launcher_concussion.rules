@@ -2,79 +2,97 @@ EditorIcon
 {
 	Texture
 	{
-		File = "icon_concussion.png"
+		File = "icon_he.png"
 		SampleMode = Linear
 	}
-	Size = [40, 100]
+	Size = [40, 80]
 }
 
 Components
 {
-	MissileStorage
+	MissileStorageA_HE : ~/MissileStorageBaseHE
 	{
-		Type = ResourceStorage
-		ResourceType = missile_part_nuke
-		MaxResources = 12
-		ToggleOnResources = 12
-		ToggleOffResources = 11
-		DelayBeforeReadyToUse = .5
-		UITileRect = [.5 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
-		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
-		DropResourcesWhenDestroyed = true
-		DropResourcesWhenRemoved = true
+		// Nothing different.
 	}
-	Consumer
+
+	MissileStorageB_HE : ~/MissileStorageBaseHE
+	{
+		// Nothing different.
+	}
+
+	MissileStorageA_EMP : ~/MissileStorageBaseEMP
+	{
+		// Nothing different.
+	}
+
+	MissileStorageB_EMP : ~/MissileStorageBaseEMP
+	{
+		// Nothing different.
+	}
+
+	CombinedMissileStorage_HE
+	{
+		Type = MultiResourceStorage
+		ResourceType = missile_part_he
+		ResourceStorages = [MissileStorageA_HE, MissileStorageB_HE]
+		AddMode = PrioritizeLeastEmptyCapacity
+		RemoveMode = PrioritizeMostEmptyCapacity
+		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
+		UITileRect = [.1 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
+	}
+
+	ConsumerHE
 	{
 		Type = ResourceConsumer
-		ResourceType = missile_part_nuke
-		Storage = MissileStorage
+		ResourceType = missile_part_he
+		Storage = CombinedMissileStorage_HE
 		DefaultPriority = &/PRIORITIES/Weapon_Supply
+		OverridePriorityKey = MissileStorage
 		OperationalToggle = PowerToggle
-		ConsumptionToggleButtonOffset = [0, -.4]
+		ConsumptionToggleButtonOffset = [0, -0.4]
+	}
+
+	CombinedMissileStorage_EMP
+	{
+		Type = MultiResourceStorage
+		ResourceType = missile_part_emp
+		ResourceStorages = [MissileStorageA_EMP, MissileStorageB_EMP]
+		AddMode = PrioritizeLeastEmptyCapacity
+		RemoveMode = PrioritizeMostEmptyCapacity
+		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
+		UITileRect = [.9 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
+	}
+
+	ConsumerEMP
+	{
+		Type = ResourceConsumer
+		ResourceType = missile_part_emp
+		Storage = CombinedMissileStorage_EMP
+		DefaultPriority = &/PRIORITIES/Weapon_Supply
+		OverridePriorityKey = MissileStorage
+		OperationalToggle = PowerToggle
+		ConsumptionToggleButtonOffset = [0, -0.4]
 	}
 
 	MissilesPrereq
 	{
 		Type = MultiToggle
-		Toggles = [MissileStorage]
+		Toggles = [MissileStorageA_HE, MissileStorageB_HE, MissileStorageA_EMP, MissileStorageB_EMP]
 		Mode = Any
 	}
 
-	Weapon
+	ReloadProgressBar
 	{
-		Type = TurretWeapon
-		Location = [1, 1]
-		Rotation = -90d
-		Emitter = Emitter
+		Type = ProgressBar
 		OperationalToggle = IsOperational
-		AutoFireToggle = AutoFireToggle
-		FireInterval = 0 // Uses common reload timer.
-		FiringArc = 0d
-		TargetingArc = 200d
-		ValidArc = 200d
-		FireThresholdAngle = (&TargetingArc) / 2
-		RotateSpeed = 0d
-		AllowFireWithBlockedLOS = true
-		AIFirepowerRating = 4800
-		FirePermissionToggle = FirePermissionToggle
+		ShowProgressFor = CommonReloadTimerShort
+		Invert = true
+	}
 
-		AutoTargets
-		[
-			{
-				TargetType = ShipParts
-				Toggle = AutoTargetToggle
-				EnableInDirectControlMode = true
-			}
-		]
-
-		BlueprintArcSprite
-		{
-			Texture = &/INDICATORS/WeaponArc
-			Size = [0, 1.5]
-			Color = [255, 0, 0, 63]
-		}
-		BlueprintArcRadius = 10
-		BlueprintArcSpriteSegments = 64
+	WeaponArc : ~/WeaponBase
+	{
+		Location = [1, 1]
+		Emitter = EmitterArc
 
 		CoverageSectorArc
 		{
@@ -83,64 +101,93 @@ Components
 			QuadCount = 64
 		}
 	}
+
+	EmitterArc : ~/EmitterBase
+	{
+		ChainedTo = WeaponArc
+		FireTrigger
+		GetTargetFrom = WeaponArc
+	}
+
+	WeaponA : ~/WeaponBase
+	{
+		Location = [38/64, - 16/64]
+		ShowExplicitTarget = false
+		Emitter = EmitterA
+	}
+
+	EmitterA : ~/EmitterBase
+	{
+		ChainedTo = WeaponA
+		FireTrigger = WeaponA
+		GetTargetFrom = WeaponA
+		ResourceUsage
+		[
+			{
+				ResourceStorage = MissileStorageA_HE
+				ResourcesUsed = 3
+			}
+			{
+				ResourceStorage = MissileStorageA_EMP
+				ResourcesUsed = 1
+			}
+		]
+	}
+
+	WeaponB : ~/WeaponBase
+	{
+		Location = [2- (&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)]
+		ShowExplicitTarget = false
+		Emitter = EmitterB
+	}
+
+	EmitterB : ~/EmitterBase
+	{
+		ChainedTo = WeaponB
+		FireTrigger = WeaponB
+		GetTargetFrom = WeaponB
+		ResourceUsage
+		[
+			{
+				ResourceStorage = MissileStorageB_HE
+				ResourcesUsed = 3
+			}
+			{
+				ResourceStorage = MissileStorageB_EMP
+				ResourcesUsed = 1
+			}
+		]
+	}
+
 	FirePermissionToggle
 	{
 		Type = MultiToggle
-		Toggles = [CommonReloadTimerLong, FireModeToggle]
+		Toggles = [CommonReloadTimerShort, FireModeToggle]
 		Mode = All
-	}
-
-	ReloadProgressBar
-	{
-		Type = ProgressBar
-		OperationalToggle = IsOperational
-		ShowProgressFor = CommonReloadTimerLong
-		Invert = true
 	}
 
 	CommonReloadResetTrigger
 	{
 		Type = MultiTrigger
-		Triggers = [Weapon]
+		Triggers = [WeaponA, WeaponB]
 	}
 
-	Emitter
+	LaunchEffectA : ~/LaunchEffectBase
 	{
-		Type = BulletEmitter
-		ChainedTo = Weapon
-		OperationalToggle = IsOperational
-		FireTrigger = Weapon
-		GetTargetFrom = Weapon
-		ResourceStorage = MissileStorage
-		ResourcesUsed = 4
-		Bullet = &/SW_SHOTS/Missiles/Concussion
-		TargetLeadPrediction = false
-		Recoil = 300
+		ChainedTo = WeaponA
+		Trigger = WeaponA
 	}
 
-	LaunchEffect
+	LaunchEffectB : ~/LaunchEffectBase
 	{
-		Type = TriggeredEffects
-		ChainedTo = Weapon
-		Trigger = Weapon
-
-		MediaEffects
-		[
-			&<../particles/missile_launcher_shoot_large.rules>
-
-			: /BASE_SOUNDS/AudioExterior
-			{
-				Sound = "../shoot.wav"
-				Speed = 0.25
-				SpeedVariation = .1
-			}
-		]
+		ChainedTo = WeaponB
+		Trigger = WeaponB
 	}
 
 	External_Walls_Graphics
 	{
 		Type = Graphics
-		Location = [1, 1]
+		Location = [1, 0.5]
 		Walls
 		{
 			Layer = "external_walls"
@@ -149,108 +196,112 @@ Components
 				{
 					File = "external_walls.png"
 					NormalsFile = "external_walls_normals.png"
-					Size = [2, 3]
+					Size = [2, 4]
 				}
 				{
 					File = "external_walls_33.png"
 					NormalsFile = "external_walls_normals_33.png"
-					Size = [2, 3]
+					Size = [2, 4]
 				}
 				{
 					File = "external_walls_66.png"
 					NormalsFile = "external_walls_normals_66.png"
-					Size = [2, 3]
+					Size = [2, 4]
 				}
 			]
 		}
 	}
 
-	MissileSprites
+	MissileSpritesA1
 	{
 		Type = ResourceSprites
-		Location = [1, 1.5]
-		ResourceStorage = MissileStorage
+		Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)+1.25]
+		ResourceStorage = MissileStorageA_HE
 		Layer = "weapons"
-		HasZeroResourceSprite = true
 		ResourceLevels
 		[
 			{
-				File = "concussion_0.png"
-				NormalsFile = "concussion_normals_0.png"
-				Offset = [0, -0.5]
-				Size = [2, 3]
-			}
-			{
-				File = "concussion_1.png"
-				NormalsFile = "concussion_normals_1.png"
-				Size = [2, 3]
-			}
-			{
 				File = "concussion_2.png"
 				NormalsFile = "concussion_normals_2.png"
-				Size = [2, 3]
+				Offset = [0, 0.5]
+				Size = [1, 1]
 			}
 			{
 				File = "concussion_3.png"
 				NormalsFile = "concussion_normals_3.png"
-				Size = [2, 3]
+				Size = [1, 2]
 			}
 			{
 				File = "concussion_4.png"
 				NormalsFile = "concussion_normals_4.png"
-				Size = [2, 3]
-			}
-			{
-				File = "concussion_5.png"
-				NormalsFile = "concussion_normals_5.png"
-				Size = [2, 3]
-			}
-			{
-				File = "concussion_6.png"
-				NormalsFile = "concussion_normals_6.png"
-				Size = [2, 3]
-			}
-			{
-				File = "concussion_7.png"
-				NormalsFile = "concussion_normals_7.png"
-				Size = [2, 3]
-			}
-			{
-				File = "concussion_8.png"
-				NormalsFile = "concussion_normals_8.png"
-				Size = [2, 3]
-			}
-			{
-				File = "concussion_9.png"
-				NormalsFile = "concussion_normals_9.png"
-				Size = [2, 4]
-			}
-			{
-				File = "concussion_10.png"
-				NormalsFile = "concussion_normals_10.png"
-				Size = [2, 4]
-			}
-			{
-				File = "concussion_11.png"
-				NormalsFile = "concussion_normals_11.png"
-				Size = [2, 4]
-			}
-			{
-				File = "concussion_12.png"
-				NormalsFile = "concussion_normals_12.png"
-				Offset = [0, -0.5]
-				Size = [2, 3]
+				Size = [1, 2]
 			}
 		]
 	}
 
-	DestroyedEffects
+	MissileSpritesB1 : MissileSpritesA1
+	{
+		Location = [2- (&~/Components/MissileSpritesA1/Location/0), (&~/Components/MissileSpritesA1/Location/1)]
+		ResourceStorage = MissileStorageB_HE
+	}
+
+	MissileSpritesA2
+	{
+		Type = ResourceSprites
+		Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)-0.25]
+		ResourceStorage = MissileStorageA_EMP
+		Layer = "weapons"
+		ResourceLevels
+		[
+			{
+				File = "concussion_1.png"
+				NormalsFile = "concussion_normals_1.png"
+				//Offset = [0, 0.5]
+				Size = [1, 1]
+			}
+		]
+	}
+
+	MissileSpritesB2 : MissileSpritesA2
+	{
+		Location = [2- (&~/Components/MissileSpritesA2/Location/0), (&~/Components/MissileSpritesA2/Location/1)]
+		ResourceStorage = MissileStorageB_EMP
+	}
+
+	MissileLightsA
+	{
+		Type = Graphics
+		OperationalToggle = MissileStorageA_HE
+		Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)+0.5]
+		OperationalRoofLighting
+		{
+			Layer = "roof_lights_fancy"
+			DamageLevels
+			[
+				{
+					File = "../sprites/light_blob.png"
+					Size = [3, 3]
+					Z = 0.35 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+					VertexColor = [248, 124, 0]
+				}
+			]
+		}
+	}
+
+	MissileLightsB : MissileLightsA
+	{
+		Type = Graphics
+		OperationalToggle = MissileStorageB_HE
+		Location = [2-(&~/Components/MissileLightsA/Location/0), (&~/Components/MissileLightsA/Location/1)]
+	}
+
+	DestroyedEffects_HE
 	{
 		Type = DeathEffects
 		MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
 		Location = [1, 2]
 
-		FactorHitEffectsWith = MissileStorage
+		FactorHitEffectsWith = CombinedMissileStorage_HE
 		HitEffects
 		[
 			{
@@ -284,6 +335,55 @@ Components
 		]
 	}
 
+	DestroyedEffects_EMP
+	{
+		Type = DeathEffects
+		Location = [1, 2]
+
+		FactorHitEffectsWith = CombinedMissileStorage_EMP
+		HitEffects
+		[
+			{
+				Type = ExplosiveResourceDrain
+				ResourceType = battery
+				TotalDrain = 4000
+				Radius = 12
+				Slices = 1
+				Delay = .05
+				RadiusEffectScaleExponent = 0.5
+				Filter
+				{
+					Ships = true
+					Shields = true
+					Friendlies = true
+				}
+
+				MediaEffectsOnDrainFactor = .00025
+				MediaEffectsOnDrain
+				[
+					&<./Data/shots/missile_emp/particles/missile_emp_hit_sizzle.rules>
+					&<./Data/shots/missile_emp/particles/missile_emp_lightning.rules>
+					&<./Data/shots/missile_emp/particles/missile_emp_drain.rules>
+
+					: /BASE_SOUNDS/AudioExterior
+					{
+						Sound = "./Data/shots/disruptor_bolt/discharge.wav"
+						Volume = 1
+						SpeedVariation = .2
+					}
+				]
+			}
+		]
+
+		FactorMediaEffectsWith = CombinedMissileStorage_EMP
+		MediaEffects
+		[
+			&<./Data/shots/missile_emp/particles/missile_emp_hit_orb.rules>
+			&<./Data/shots/missile_emp/particles/missile_emp_hit_bolts.rules>
+			&<./Data/shots/missile_emp/particles/missile_emp_hit_shockwave.rules>
+		]
+	}
+
 	Indicators
 	{
 		Type = IndicatorSprites
@@ -303,11 +403,22 @@ Components
 
 			// Out of missiles.
 			{
-				Toggle = MissileStorage
-				Delay = &<../missile_launcher.rules>/Part/Components/CommonReloadTimerLong/Duration
+				Toggle = CombinedMissileStorage_HE
+				Delay = &<../missile_launcher.rules>/Part/Components/CommonReloadTimerShort/Duration
 				AtlasSprite
 				{
-					File = &/INDICATORS/NoNuke
+					File = &/INDICATORS/NoMissiles
+					Size = [1, 1]
+				}
+			}
+
+			// Out of missiles.
+			{
+				Toggle = CombinedMissileStorage_EMP
+				Delay = &<../missile_launcher.rules>/Part/Components/CommonReloadTimerShort/Duration
+				AtlasSprite
+				{
+					File = &/INDICATORS/NoEmp
 					Size = [1, 1]
 				}
 			}
@@ -325,22 +436,109 @@ Components
 	}
 }
 
+MissileStorageBaseHE
+{
+	Type = ResourceStorage
+	ResourceType = missile_part_he
+	MaxResources = 3
+	ToggleOnResources = (&MaxResources)
+	ToggleOffResources = (&ToggleOnResources)-1
+	DelayBeforeReadyToUse = .5
+	DropResourcesWhenDestroyed = true
+	DropResourcesWhenRemoved = true
+}
+
+MissileStorageBaseEMP
+{
+	Type = ResourceStorage
+	ResourceType = missile_part_emp
+	MaxResources = 1
+	ToggleOnResources = (&MaxResources)
+	ToggleOffResources = (&ToggleOnResources)-1
+	DelayBeforeReadyToUse = .5
+	DropResourcesWhenDestroyed = true
+	DropResourcesWhenRemoved = true
+}
+
+WeaponBase
+{
+	Type = TurretWeapon // This has an arc of 0, but we don't want to use FixedWeapon because that will only shoot at things directly in the LOS.
+	Rotation = -90d
+	OperationalToggle = IsOperational
+	AutoFireToggle = AutoFireToggle
+	FireInterval = 0 // Uses common reload timer.
+	FiringArc = 0d;
+	ValidArc = 360d;
+	FireThresholdAngle = 180d;
+	RotateSpeed = 0d
+	AllowFireWithBlockedLOS = true
+	AIFirepowerRating = 1600
+	FirePermissionToggle = FirePermissionToggle
+
+	AutoTargets
+	[
+		{
+			TargetType = ShipParts
+			Toggle = AutoTargetToggle
+			EnableInDirectControlMode = true
+		}
+	]
+}
+
+EmitterBase
+{
+	Type = BulletEmitter
+	OperationalToggle = IsOperational
+	Location = [.5, 0]
+	Bullet = &/SW_SHOTS/Missiles/Concussion
+	TargetLeadPrediction = false
+	Recoil = 50
+	ResourceUsage
+	[
+		{
+			ResourceStorage = CombinedMissileStorage_HE
+			ResourcesUsed = 6
+		}
+		{
+			ResourceStorage = CombinedMissileStorage_EMP
+			ResourcesUsed = 2
+		}
+	]
+}
+
+LaunchEffectBase
+{
+	Type = TriggeredEffects
+
+	MediaEffects
+	[
+		&<../particles/missile_launcher_shoot.rules>
+		&<../particles/missile_launcher_shoot_flash.rules>
+
+		: /BASE_SOUNDS/AudioExterior
+		{
+			Sound = "../shoot.wav"
+			SpeedVariation = .25
+		}
+	]
+}
+
 MissileStats
 {
-	NameKey = "StatCategories/MissileNuke"
+	NameKey = "StatCategories/MissileConcussion"
 	Stats
 	{
-		DamagePerShot = &~/Components/Emitter/Bullet/Stage2/Components/Hit/HitOperational/HitEffects/0/TotalDamage
+		DamagePerShot = &~/EmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/TotalDamage
 		DamagePerSecond = (&DamagePerShot) * (&ROF)
 		MaxDamage = [&../DamagePerShot, &../DamagePerSecond]
-		DamageArea = &~/Components/Emitter/Bullet/Stage2/Components/Hit/HitOperational/HitEffects/0/Radius
-		ROF = 1 / (&<../missile_launcher.rules>/Part/Components/CommonReloadTimerLong/Duration)
-		Range = &~/Components/Emitter/Bullet/Range
-		Arc = deg(&~/Components/Weapon/ValidArc)
-		ShotLaunchSpeed = &~/Components/Emitter/Bullet/Speed
-		Acceleration = &~/Components/Emitter/Bullet/Stage2/Components/BoostAcceleration/Acceleration
-		AccelerationDelay = &~/Components/Emitter/Bullet/Components/DeployDeath/Lifetime
-		ShotHP = &~/Components/Emitter/Bullet/Components/Targetable/Health
-		MissileParts = &~/Components/Emitter/ResourcesUsed
+		DamageArea = &~/EmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
+		ROF = 1 / (&<../missile_launcher.rules>/Part/Components/CommonReloadTimerShort/Duration)
+		Range = &~/EmitterBase/Bullet/Range
+		Arc = deg(&~/WeaponBase/ValidArc)
+		ShotLaunchSpeed = &~/EmitterBase/Bullet/Speed
+		Acceleration = &~/EmitterBase/Bullet/Components/Acceleration/Acceleration
+		ShotGuidance = deg(&~/EmitterBase/Bullet/Components/Homing/TurnVelocity)
+		ShotHP = &~/EmitterBase/Bullet/Components/Targetable/Health
+		MissileParts = &~/EmitterBase/ResourcesUsed
 	}
 }
