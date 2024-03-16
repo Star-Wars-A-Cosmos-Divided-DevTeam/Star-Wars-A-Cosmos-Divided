@@ -1,14 +1,14 @@
 ID = "SW.missile_intruder"
-Range = 700
-IdealRange = 700
+Range = 1250 //720
+IdealRange = 450 //640
 Speed = 45
 
 Components
 {
 	Physics
 	{
-		Type = CirclePhysics
-		Radius = 0.5
+		Type = BoxPhysics
+		Size = [2.1, .75]
 		Density = 0.1
 	}
 
@@ -52,6 +52,13 @@ Components
 		Type = DeathByDistanceTraveled
 		// Distance auto-computed from range.
 		HasTarget = false
+	}
+
+	DeathByDistanceTraveledTargeted
+	{
+		Type = DeathByDistanceTraveled
+		Distance = (&~/Range) * 3
+		HasTarget = true
 	}
 
 	Sprite
@@ -105,9 +112,11 @@ Components
 	MediaEffects3
 	{
 		Type = MediaEffects
+		Offset = [45/64, 0]
 		MediaEffects
 		[
-			&<particles/missile_intruder_thruster_lightning.rules>
+			//&<particles/missile_intruder_thruster_lightning.rules>
+			&/SW_PARTICLES/Shot/Ion/Trail/Med/Cyan
 		]
 	}
 
