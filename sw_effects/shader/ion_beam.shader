@@ -3,8 +3,8 @@
 struct VERT_OUTPUT_BEAM
 {
 	float4 location : SV_POSITION;
-    float length : POSITION3;
-    float intensity : COLOR1;
+	float length : POSITION3;
+	float intensity : COLOR1;
 	float fadeAlpha : COLOR2;
 	float2 uv : TEXCOORD0;
 	float2 largeNoise1UVs : TEXCOORD2;
@@ -19,12 +19,12 @@ float _extraEndLength;
 
 VERT_OUTPUT_BEAM vert(in VERT_INPUT_BEAM input)
 {
-    input.intensity = clamp(pow(input.intensity, 0.75), 0, 100);
-    input.vertexOffset.y *= input.intensity;
+	input.intensity = clamp(pow(input.intensity, 0.75), 0, 100);
+	input.vertexOffset.y *= input.intensity;
 	VERT_OUTPUT_BEAM output;
-    float4 vertexLoc = calculateWorldVertexLoc(input, _extraBeginLength, _extraEndLength);
+	float4 vertexLoc = calculateWorldVertexLoc(input, _extraBeginLength, _extraEndLength);
 	output.location = mul(vertexLoc, _transform);
-    output.intensity = input.intensity;
+	output.intensity = input.intensity;
 	output.fadeAlpha = pow(input.fadeAlpha, 2);
 	output.uv = input.uv;
 	float2 scaledUVs = input.uv * float2(1/input.intensity, 1);

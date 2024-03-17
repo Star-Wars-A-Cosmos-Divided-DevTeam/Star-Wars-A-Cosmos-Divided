@@ -7,7 +7,7 @@ struct VERT_OUTPUT_BEAM
 	float4 lineStart : POSITION2;
 	float4 lineEnd : POSITION3;
 	float4 color : COLOR0;
-    float intensity : COLOR1;
+	float intensity : COLOR1;
 	float2 uv : TEXCOORD0;
 	float2 screenUV : TEXCOORD1;
 	float flickerMod : TEXCOORD2;
@@ -18,22 +18,22 @@ float _lightLength;
 
 VERT_OUTPUT_BEAM vert(in VERT_INPUT_BEAM input)
 {
-    input.intensity *= input.fadeAlpha;
-    input.length *= input.intensity;
+	input.intensity *= input.fadeAlpha;
+	input.length *= input.intensity;
 
-    float2 beamEnd;
-    float4 vertexLoc = calculateWorldVertexLoc(input, beamEnd);
-    float2 pivot = (beamEnd - input.beamStart.xy) * _pivot;
-    vertexLoc.xy -= pivot;
+	float2 beamEnd;
+	float4 vertexLoc = calculateWorldVertexLoc(input, beamEnd);
+	float2 pivot = (beamEnd - input.beamStart.xy) * _pivot;
+	vertexLoc.xy -= pivot;
 
 	VERT_OUTPUT_BEAM output;
 	output.location = mul(vertexLoc, _transform);
 	output.screenLoc = output.location;
 	output.lineStart = mul(input.beamStart, _transform);
-    float lightEndT = _lightLength * input.intensity / input.length;
+	float lightEndT = _lightLength * input.intensity / input.length;
 	output.lineEnd = mul(float4(lerp(input.beamStart.xy, beamEnd, lightEndT), input.beamStart.zw), _transform);
 	output.color = input.color * _color;
-    output.intensity = input.intensity;
+	output.intensity = input.intensity;
 	output.uv = input.uv;
 	output.screenUV.x = (output.location.x + 1) / 2;
 	output.screenUV.y = (output.location.y - 1) / -2;
@@ -51,7 +51,7 @@ float4 _coldColor = 255;
 
 PIX_OUTPUT pix(in VERT_OUTPUT_BEAM input) : SV_TARGET
 {
-    float4 tex = _texture.Sample(_texture_SS, input.uv);
+	float4 tex = _texture.Sample(_texture_SS, input.uv);
 	if (tex.b <= 0)
 		discard;
 
@@ -69,10 +69,10 @@ PIX_OUTPUT pix(in VERT_OUTPUT_BEAM input) : SV_TARGET
 	float3 lightPos = float3((input.lineStart.xy + t2 * b), _z);
 
 	float3 nrml = multiplyAdditiveLightValue(reflectColor, input.screenUV, lightPos, input.screenLoc.xyz, _nrmlStrengthLimit);
-    float t = length(nrml);
+	float t = length(nrml);
 
 	float3 litColor = _litReflectiveStrength * reflectColor + (_litAdditiveStrength * light);
 	float3 unlitColor = _unlitAdditiveStrength * emissive;
 	float3 ret = t * litColor + (1 - t) * unlitColor;
-    return float4(ret * tex.b * saturate(input.intensity), 1);
+	return float4(ret * tex.b * saturate(input.intensity), 1);
 }
