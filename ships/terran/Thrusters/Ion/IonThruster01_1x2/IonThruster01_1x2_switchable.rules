@@ -118,9 +118,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle //PowerDistributionBuffToggle
+			Toggle = PowerDistributionBuffToggle
 			Invert = true
-			//IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -169,13 +168,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectColorType
 			OnMode = 3
 		}
-		CyanToggle
+		OrangeToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 4
 		}
-		OrangeToggle
+		CyanToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
@@ -226,15 +225,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = PurpleToggle
 		}
-		CyanToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = CyanToggle
-		}
 		OrangeToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = OrangeToggle
+		}
+		CyanToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = CyanToggle
 		}
 		GreenToggleProxy
 		{
@@ -347,7 +346,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		StaticScalerValue
         {
             Type = StaticValue
-            Value = 10
+            Value = 2.1
         }
 		RocketEffectValue
 		{
@@ -419,8 +418,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ValueTween
 			OffValue = 1
 			OnValue = 1.6 //160% Boost if on for OnTweenDuration
-			OnTweenDuration = 15 //target is to reward continous flight and NOT provide burst buffing
-			OffTweenDuration = (&OnTweenDuration) / 5 //cooldown is sixth the ramp up
+			OnTweenDuration = 12 //target is to reward continous flight and NOT provide burst buffing
+			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
 			IsOnToggle = ThrusterIsFiringTriggeredToggle
 		}
 		OverdriveActivationBar
@@ -459,8 +458,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RandomUVRotation = true
 			Layer = "floors"
 		}
-
-		EngineFloorGraphics
+/*
+		EngineGhostGraphics //Activate When Using +7/64 offset
 		{
 			Type = Sprite
 			Location = [.5, 2.5]
@@ -472,11 +471,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				Size = [1, 1]
 			}
 		}
-
+*/
 		Graphics
 		{
 			Type = Graphics
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			OperationalToggle = IsOperational
 
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
@@ -507,7 +506,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 			NonOperationalDoodad
 			{
-				Layer = "doodads_high"
+				Layer = "doodads_low"
 				Offset = [0, .5]
 				DamageLevels
 				[
@@ -578,7 +577,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "./Data/ships/common/light_blob.png"
-						Size = [2.0, 3.5]
+						Size = [2.1, 3.6]
 						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
 						VertexColor = [16, 120, 255] // [6, 57, 113]
 					}
@@ -601,29 +600,41 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		NozzleGraphics
 		{
 			Type = Graphics
-			Location = [.5, 2.5+0.5/64]//exactpixelcoords
+			Location = [0.5, 2.5]// +7/64 //exactpixelcoords
 			Floor
 			{
-				Layer = "weapons"
+				Layer = "structure"
 				DamageLevels
 				[
 					{
 						File = "nozzle.png"
 						NormalsFile = "nozzle_normals.png"
-						Size = [0.8, 0.8]
-					}/*
-					{
+						Size = [1.0, 1.0]
+					}
+					/*{
 						File = "nozzle_33.png"
-						NormalsFile = "nozzle_normals.png"
-						Size = [1, 1]
+						NormalsFile = "nozzle_normals_33.png"
+						Size = [1.0, 1.0]
 					}
 					{
 						File = "nozzle_66.png"
-						NormalsFile = "nozzle_normals.png"
-						Size = [1, 1]
+						NormalsFile = "nozzle_normals_66.png"
+						Size = [1.0, 1.0]
 					}*/
 				]
 			}
+			/*
+			WallsStencil
+			{
+				Layer = "walls_stencil"
+				DamageLevels
+				[
+					{
+						File = "nozzle_stencil.png"
+						Size = [0.8, 0.8]
+					}
+				]
+			} */
 		}
 
 		MainThruster
@@ -709,7 +720,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterHum
 		{
 			Type = ContinuousEffects
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			OperationalToggle = IsOperational
 			MediaEffects
 			[
@@ -725,9 +736,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, 0.5]
+			Location = [0.5, 0.5]
 			ResourceStorage = BatteryStorage
-			Layer = "doodads_high"
+			Layer = "doodads_low"
 			HasZeroResourceSprite = false
 			ResourceLevels
 			[
@@ -746,7 +757,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggleEffects
 			Toggle = IsOperational
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
@@ -754,7 +765,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyed
 		}
 
