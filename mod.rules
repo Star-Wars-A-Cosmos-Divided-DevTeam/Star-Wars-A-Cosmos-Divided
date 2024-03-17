@@ -25,7 +25,7 @@
 ID = SW.1.StarWars
 Name = "Star Wars: A Cosmos Divided - GIT"
 Version = 1.0.rc3
-CompatibleGameVersions = ["0.25.0","0.24.0","0.26.0"]
+CompatibleGameVersions = ["0.26.0"]
 Author = "ClassicJam, Lafiel, Skipper_Wraith, Roasted(Art), Rojamahorse(Art)"
 Logo = "ModLogo.png"
 Description = "Star Wars: A Cosmos Divided is the definitive Star Wars experience for Cosmoteer." //It introduces new weapons from the Star Wars universe into the game, new technology tiers and superweapons.It includes new types of parts, such as droids, new armor classes, and now all types of shapes from Kroom's New Armor Expanded. You can also download the Ships Pack add-on, which will add dozens of ships from the Star Wars universe into your game."
@@ -34,240 +34,94 @@ ModifiesGameplay = true
 
 Actions
 [
-	//rc compatibility workaround
-	{	//0
-		Action = Add
-		AddTo = "<buffs/buffs.rules>"
-		Name = "EnginePowerDistribution"
-		OnlyIfNotExisting = true
-		ToAdd
-		{
-			// Only exists to piggyback engine room power distribution off the buff system.
-		}
-    }
+	// Adding Buffs
+	{ 	//0
+		Action = Overrides
+		OverrideIn = "<./Data/buffs/buffs.rules>"
+		Overrides = &<buffs/buffs.rules>
+	}
 
-	//Adding EditorGroups 1by1 because yes.
+	//Adding EditorGroups
 	{	//1
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWHypermatter"
-		ToAdd
-		{
-			NameKey = "Resource/Hypermatter"
-			Icon
-			{
-				Texture = &<Resources/hypermatter/hypermatter.rules>/Overlay/Texture
-				VertexColor = [0, 183, 255]
-			}
-		}
-    }
-	{	//2	
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWZersium"
-		ToAdd
-		{
-			NameKey = "Resource/Zersium"
-			Icon
-			{
-				Texture = &<Resources/zersium/zersium.rules>/Overlay/Texture
-				VertexColor = [0, 183, 255]
-			}
-			SortOrder = 150
-		}
-    }
-	{	//3
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWDurasteel"
-		ToAdd
-		{
-			NameKey = "EditorGroups/Durasteel"
-			Icon
-			{
-				Texture 
-				{
-					File = "gui/game/designer/group_durasteel.png"
-					MipLevels = 2
-					SampleMode = Linear
-				}
-			}
-			SortOrder = 1280
-		}
-    }
-	{	//4	
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWDoonium"
-		ToAdd
-		{
-			NameKey = "EditorGroups/Doonium"
-			Icon
-			{
-				Texture 
-				{
-					File = "gui/game/designer/group_doonium.png"
-					MipLevels = 2
-					SampleMode = Linear
-				}
-			}
-			SortOrder = 1290
-		}
-    }
-	{	//5
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWDroids"
-		ToAdd
-		{
-			NameKey = "EditorGroups/SWDroids"
-			Icon
-			{
-				Texture 
-				{
-					File = "gui/game/designer/group_droid.png"
-					MipLevels = 2
-					SampleMode = Linear
-				}
-			}
-			SortOrder = 1210
-		} 
+		Action = Overrides
+		OverrideIn = "<./Data/gui/game/designer/build_gui.rules>/EditorGroups"
+		Overrides = &<gui/game/designer/editor_groups.rules>  // /EditorGroups
 	}
-	{	//6
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWTIE"
-		ToAdd
-		{
-			NameKey = "EditorGroups/TIE"
-			Icon
-			{
-				Texture = "gui/game/designer/group_tie.png"
-				VertexColor = [0, 183, 255]
-			}
-			SortOrder = 1220
-		}
+
+	// Adding StatBars
+	{	//2
+		Action = AddMany
+		AddTo = "<./data/gui/game/designer/build_gui.rules>/StatBars"
+		ManyToAdd = &<gui/game/designer/stat_bars.rules>/StatBars
 	}
-	{	//7
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWTechI"
-		ToAdd
-		{
-			NameKey = "EditorGroups/TechI"
-			Icon
-			{
-				Texture 
-				{
-					File = "gui/game/designer/group_tech1.png"
-					MipLevels = 2
-					SampleMode = Linear
-				}
-			}
-			SortOrder = 1230
-		}
-	}
-	{	//8
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWTechII"
-		ToAdd
-		{
-			NameKey = "EditorGroups/TechII"
-			Icon
-			{
-				Texture 
-				{
-					File = "gui/game/designer/group_tech2.png"
-					MipLevels = 2
-					SampleMode = Linear
-				}
-			}
-			SortOrder = 1240
-		}
-	}
-	{	//9
-		Action = Add
-		AddTo = "<gui/game/designer/editor_groups.rules>"
-		Name = "SWTechIII"
-		ToAdd
-		{
-			NameKey = "EditorGroups/TechIII"
-			Icon
-			{
-				Texture 
-				{
-					File = "gui/game/designer/group_tech3.png"
-					MipLevels = 2
-					SampleMode = Linear
-				}
-			}
-			SortOrder = 1250
-		}
-    }
 
 	//CUSTOM EFFECTS / MAGIC / STUFF I NEED TO GET MY STUFF TO WORK
-	{	//10
+	{	//3
 		Action = Add
 		AddTo = <cosmoteer.rules>
 		Name = SW_PARTICLES
 		OnlyIfNotExisting = true
 		ToAdd = &<SW_effects/mod_fix.rules>
 	}
-	{	//11
+	{	//4
 		Action = Add
 		AddTo = <cosmoteer.rules>
 		Name = SW_SHOTS
 		OnlyIfNotExisting = true
 		ToAdd = &<SW_effects/mod_fix.rules>
 	}
-	{	//12
+	{	//5
 		Action = Add
 		AddTo = <cosmoteer.rules>
 		Name = SW_SOUNDS
 		OnlyIfNotExisting = true
 		ToAdd = &<SW_effects/mod_fix.rules>
 	}
-	{	//13
+	{	//6
 		Action = Add
 		AddTo = <cosmoteer.rules>
 		Name = SW_WEAPON_BASES
 		OnlyIfNotExisting = true
 		ToAdd = &<SW_effects/mod_fix.rules>
 	}
-	{	//14
+	{	//7
 		Action = Overrides
 		OverrideIn = <cosmoteer.rules>/SW_PARTICLES
 		Overrides = &<SW_effects/mod_particles.rules>
 	}
-	{	//15
+	{	//8
+		Action = Overrides
+		OverrideIn = <cosmoteer.rules>/SW_PARTICLES
+		Overrides = &<common_effects/mod_particles.rules>
+	}
+	{	//9
 		Action = Overrides
 		OverrideIn = <cosmoteer.rules>/SW_SHOTS
 		Overrides = &<SW_effects/mod_shots.rules>
 	}
-	{	//15
+	{	//10
 		Action = Overrides
 		OverrideIn = <cosmoteer.rules>/SW_SHOTS
 		Overrides = &<shots/sw_shots.rules>
 	}
-	{	//16
+	{	//11
 		Action = Overrides
 		OverrideIn = <cosmoteer.rules>/SW_SOUNDS
 		Overrides = &<common_effects/mod_sounds.rules>
 	}
-	{	//17
+	{	//12
 		Action = Overrides
 		OverrideIn = <cosmoteer.rules>/SW_WEAPON_BASES
 		Overrides = &<ships/terran/Weapons/bases/weapon_bases.rules>
 	}
 	// GUI TOGGLES 
-	{	//18
+	{	//13
 		Action = AddMany
 		AddTo = "<gui/game/parts/part_toggles.rules>/PartToggles"
 		ManyToAdd = &<gui/game/parts/SW_part_toggles.rules>/PartToggles
 	}
-	// ADDING ROOF DECALS / OLD SET / COMPATIBILITY
-	{	//19
+	// Adding ROOF DECALS / OLD SET / COMPATIBILITY
+	{	//14
 		Action = AddMany
 		AddTo = "<roof_decals/roof_decals.rules>/Groups/0/Folders"
 		ManyToAdd
@@ -275,120 +129,121 @@ Actions
 			"roof_decals"
 		]
 	}
-	// ADDING RESOURCES 
-	{ 	//20
+	// Adding RESOURCES 
+	{ 	//15
 		Action = AddMany
 		AddTo = "<resources/resources.rules>/Resources"
 		ManyToAdd = &<Resources/resources.rules>/Resources
 	}
-	// ADDING RESOURCES DOODAD 
-	{	//21
+	// Adding RESOURCES DOODAD 
+	{	//16
 		Action = AddMany
 		AddTo = "<doodads/doodads.rules>/Doodads"
 		ManyToAdd = &<Doodads/doodads.rules>/Doodads
 	}
-	// ADDING Hard_Conversion of Asteriod RESOURCES 
-	{	//22
+	// Adding Hard_Conversion of Asteriod RESOURCES 
+	{	//17
 		Action = AddMany
 		AddTo = "<doodads/asteroids/hard_conversions.rules>/Conversions"
 		ManyToAdd = &<Doodads/asteroids/hard_conversions.rules>/Conversions
 	}
-	// ADDING ASTEROIDS PARTS
-	{	//23
+	// Adding ASTEROIDS PARTS
+	{	//18
 		Action = AddMany
 		AddTo = "<ships/asteroid/asteroid.rules>/asteroid/parts"
 		ManyToAdd = &<ships/asteroid/Asteroids.rules>/Parts
 	}
-	// ADDING ZERSIUM & DOONIUM (ASTEROIDS) TO CAREER 
-	{	//24
+	// Adding ZERSIUM & DOONIUM (ASTEROIDS) TO CAREER 
+	{	//19
 		Action = AddMany
 		AddTo = "<./Data/modes/career/sysgen_asteroids.rules>/CommonAsteroidTypes"
-		ManyToAdd = &<career/sysgen_asteroids.rules>/CommonAsteroidTypes
+		ManyToAdd = &<modes/career/sysgen_asteroids.rules>/CommonAsteroidTypes
 	}
-	{	//25
+	{	//20
 		Action = AddMany
 		AddTo = "<./Data/modes/career/sysgen_asteroids.rules>/RareAsteroidTypes"
-		ManyToAdd = &<career/sysgen_asteroids.rules>/RareAsteroidTypes
+		ManyToAdd = &<modes/career/sysgen_asteroids.rules>/RareAsteroidTypes
 	}
-	{	//26
+	{	//21
 		Action = AddMany
 		AddTo = "<./Data/modes/career/sysgen_asteroids.rules>/SunAsteroidTypes"
-		ManyToAdd = &<career/sysgen_asteroids.rules>/SunAsteroidTypes
+		ManyToAdd = &<modes/career/sysgen_asteroids.rules>/SunAsteroidTypes
 	}
-	// ADDING ZERSIUM & DOONIUM & DOONIUM_INGOTS & DURASTEEL (Resources as Tradeables) TO CAREER 
-	{	//27
+	// Adding ZERSIUM & DOONIUM & DOONIUM_INGOTS & DURASTEEL (Resources as Tradeables) TO CAREER 
+	{	//22
 		Action = AddMany
 		AddTo = "<./Data/modes/career/career.rules>/ResourceDeliveryMissions/DeliveryTypes"
-		ManyToAdd = &<career/career.rules>/ResourceDeliveryMissions/DeliveryTypes
+		ManyToAdd = &<modes/career/career.rules>/ResourceDeliveryMissions/DeliveryTypes
 	}
-	{	//28
+	{	//23
 		Action = AddMany
 		AddTo = "<./Data/modes/career/career.rules>/TradeRoutes/StationResourceTradeDeltas"
-		ManyToAdd = &<career/career.rules>/TradeRoutes/StationResourceTradeDeltas
+		ManyToAdd = &<modes/career/career.rules>/TradeRoutes/StationResourceTradeDeltas
 	}
-	{	//29
+	{	//24
 		Action = AddMany
 		AddTo = "<./Data/modes/career/career.rules>/BaseTradeShip/ResourcesCarried"
-		ManyToAdd = &<career/career.rules>/BaseTradeShip/ResourcesCarried
+		ManyToAdd = &<modes/career/career.rules>/BaseTradeShip/ResourcesCarried
 	}
-	// ADDING TECHS TO CAREER 
-	{	//30
+	// Adding TECHS TO CAREER 
+	{	//25
 		Action = AddMany
 		AddTo = "<./Data/modes/career/techs.rules>/Techs"
-		ManyToAdd = &<career/techs.rules>/Techs
+		ManyToAdd = &<modes/career/techs.rules>/Techs
 	}
-	{	//31
+	// Adding Techs TO PVP:BuildBattleMode Techs
+	{	//25
+		Action = AddMany
+		AddTo = "<./Data/modes/pvp/pvp_buildbattle/pvp_buildbattle.rules>/Mode/Techs"
+		ManyToAdd = &<modes/pvp/pvp_buildbattle/pvp_buildbattle.rules>/Mode/Techs
+	}
+	// Adding PARTS TO PVP:BuildBattleMode PartsWhitelist
+	{	//25
+		Action = AddMany
+		AddTo = "<./Data/modes/pvp/pvp_buildbattle/pvp_buildbattle.rules>/Mode/PartsWhitelist"
+		ManyToAdd = &<modes/pvp/pvp_buildbattle/pvp_buildbattle.rules>/Mode/PartsWhitelist
+	}
+	{	//26
 		Action = AddMany
 		AddTo = "<./Data/ships/terran/terran.rules>/Terran/RenderLayers"
 		ManyToAdd = &<ships/terran/terran.rules>/Terran/RenderLayers
 	}
-	// ADDING SHIP PARTS 
-	{ 	//32
+	// Adding SHIP PARTS 
+	{ 	//27
 		Action = AddMany
 		AddTo = "<ships/terran/terran.rules>/terran/parts"
 		ManyToAdd = &<ships/terran/terran.rules>/Terran/Parts
 	}
-	// ADDING LOGO SCREEN SHIP 
-	{ 	//33
+	// Adding LOGO SCREEN SHIP 
+	{ 	//28
 		Action = Replace
 		Replace = "<gui/menus.rules>/LogoShip"
 		With = &<gui/menus.rules>/LogoShip
 	}
-	// add buffs
-	{ 	//34
-		Action = Overrides
-		OverrideIn = "<./Data/buffs/buffs.rules>"
-		Overrides = &<buffs/buffs.rules>
-	}
 	// add targeters
-	{ 	//35
+	{ 	//30
 		Action = AddMany
 		AddTo = "<./Data/gui/game/parts/part_targeters.rules>/PartTargeters"
 		ManyToAdd = &<gui/game/parts/SW_part_targeters.rules>/PartTargeters
 	}
-
 	// add indicators
-	{ 	//36
+	{ 	//31
 		Action = Overrides
 		OverrideIn = "<./Data/gui/game/indicators/indicators.rules>"
 		Overrides = &<gui/game/indicators/indicators.rules>
 	}
-
 	//CategoryLimits - Parts sharing the same categorytype will share the limit, create new categories as needed in section below
-	{ 	//37
+	{ 	//32
 		Action = Add
 		AddTo = "<ships/terran/terran.rules>/Terran"
 		Name = CategoryLimits
 		OnlyIfNotExisting = true
 		ToAdd = []
 	}
-
-	{ 	//38
+	{ 	//33
 		Action = AddMany
 		AddTo = "<ships/terran/terran.rules>/Terran/CategoryLimits"
-
-//ADD NEW CATEGORIES HERE
-
+		//ADD NEW CATEGORIES HERE
 		ManyToAdd
 		[
 			{
@@ -443,7 +298,7 @@ Actions
 		]
 	}
 
-	{ 	//39
+	{ 	//34
 		Action = AddMany
 		AddTo = "<ships/terran/terran.rules>/Terran/CategoryNouns"
 
@@ -477,11 +332,46 @@ Actions
 		]
 	}
 
+	// Compatiblity Fix/Add
+	{ 	//35
+		Action = Add
+		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/OtherIDs"
+		CreateIfNotExisting = true
+		ToAdd = "SW.structure1x3_wedge_L"
+	}
+	{ 	//36
+		Action = Add
+		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/OtherIDs"
+		CreateIfNotExisting = true
+		ToAdd = "SW.structure1x3_wedge_R"
+	}
+	{ 	//37
+		Action = Add
+		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/FlipWhenLoadingIDs"
+		CreateIfNotExisting = true
+		ToAdd = "SW.structure1x3_wedge_R"
+	}
+	// Adding A STRUCTURE TRIANGLE TO THE VANILLA ARMOR TRIANGLE WHEN DESTROYED 
+	{ 	//38
+		Action = Overrides
+		OverrideIn = "<ships/terran/armor_tri/armor_tri.rules>/Part"
+		Overrides
+		{
+			CreatePartWhenDestroyed = cosmoteer.structure_tri			
+		}
+	}
+	{ 	//49
+		Action = Add
+		AddTo = "<./Data/ships/terran/structure_tri/structure_tri.rules>/Part/OtherIDs"
+		CreateIfNotExisting = true
+		ToAdd = "SW.Structure1x1_Triangle"
+	}
+
 	{ 	//40
-        Action = AddMany
-        AddTo = "<post_shaders/post_shaders.rules>/Shaders"
-        ManyToAdd
-        [
+		Action = AddMany
+		AddTo = "<post_shaders/post_shaders.rules>/Shaders"
+		ManyToAdd
+		[
 			{
 				NameKey = "PostShaders/BilinearXCombined"
 				Material
@@ -491,43 +381,13 @@ Actions
 			}
 		]
 	}
-
-	// Compatiblity Fix/Add
-	{ 	//41
-		Action = Add
-		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/OtherIDs"
-		CreateIfNotExisting = true
-		ToAdd = "SW.structure1x3_wedge_L"
-	}
-	{ 	//42
-		Action = Add
-		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/OtherIDs"
-		CreateIfNotExisting = true
-		ToAdd = "SW.structure1x3_wedge_R"
-	}
-	{ 	//43
-		Action = Add
-		AddTo = "<./Data/ships/terran/structure_1x3_wedge/structure_1x3_wedge.rules>/Part/FlipWhenLoadingIDs"
-		CreateIfNotExisting = true
-		ToAdd = "SW.structure1x3_wedge_R"
-	}
-	// ADDING A STRUCTURE TRIANGLE TO THE VANILLA ARMOR TRIANGLE WHEN DESTROYED 
-	{ 	//44
-		Action = Overrides
-		OverrideIn = "<ships/terran/armor_tri/armor_tri.rules>/Part"
-		Overrides
-		{
-			CreatePartWhenDestroyed = cosmoteer.structure_tri			
-		}
-	}
-	{ 	//45
-		Action = Add
-		AddTo = "<./Data/ships/terran/structure_tri/structure_tri.rules>/Part/OtherIDs"
-		CreateIfNotExisting = true
-		ToAdd = "SW.Structure1x1_Triangle"
-	}
 ]
-
+/*	// Adding Backgrounds //Empty rn, but keep for possible future use
+	{ 	//0
+		Action = AddMany
+		AddTo = "<./Data/backgrounds/backgrounds.rules>/Styles"
+		ManyToAdd = &<backgrounds/backgrounds.rules>/Styles
+	} */
 //WIP Code
 /*
 {
@@ -659,7 +519,7 @@ Actions
 				VertexColor = [0, 183, 255]
 			}
 		}
-    }
+	}
 	*/
 	/*
 	{	
@@ -675,11 +535,11 @@ Actions
 				VertexColor = [0, 183, 255]
 			}
 		}
-    }
+	}
 	*/
 
 	/*
-	// ADDING DOOR PARTS 
+	// Adding DOOR PARTS 
 	{ 
 		Action = AddMany
 		AddTo = "<ships/terran/terran.rules>/terran/doors"
