@@ -42,7 +42,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ProhibitBelow = 8 // 11 //17
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator, Engine, EnginePowerDistribution]  
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Accelerator, Engine, EnginePowerDistribution]  
 
     //Doors&Etc
 	AllowedDoorLocations
@@ -90,21 +90,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Toggles = [PowerToggle, BatteryStorage]
 			Mode = All
 		}
-/*  //For Hyperdrive
-		IsOperationalAndHypernodeConnectedToggle
-		{
-			Type = MultiToggle
-			Toggles = [IsOperational, HypernodeConnectedToggle]
-			Mode = All
-		}
 
-		IsOperationalAndFtlDriveOff
-		{
-			Type = MultiToggle
-			Toggles = [IsOperational, {Toggle = FtlDrive, Invert = true}]
-			Mode = All
-		}
-*/
 		PowerToggle
 		{
 			Type = UIToggle
@@ -120,6 +106,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			CommandPoints = 70 //1 per tile
 		}
 /*  //For Hyperdrive
+		IsOperationalAndHypernodeConnectedToggle
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, HypernodeConnectedToggle]
+			Mode = All
+		}
+
+		IsOperationalAndFtlDriveOff
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, {Toggle = FtlDrive, Invert = true}]
+			Mode = All
+		}
 		HypernodeConnectedToggle
 		{
 			Type = BuffToggle
@@ -132,23 +131,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			BuffType = Engine
 		}
 
-		SWIonAcceleratorBuffToggle
-		{
-			Type = BuffToggle
-			BuffType = SW_Ion_Thruster_Accelerator
-		}
-
 		PowerDistributionBuffToggle
 		{
 			Type = BuffToggle
 			BuffType = EnginePowerDistribution
 		}
 
+		SWIonAcceleratorBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Ion_Thruster_Accelerator
+		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 30000 //15 secs sustained firing aka maybe ramp up once lmao
+			MaxResources = 70000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryStorageBar
@@ -163,9 +162,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle //PowerDistributionBuffToggle
+			Toggle = PowerDistributionBuffToggle
 			Invert = true
-			//IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -174,7 +172,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					ResourceType = battery
 					Storage = BatteryStorage
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
-					ResupplyThreshold = 1000
+					ResupplyThreshold = 35000
 					OperationalToggle = PowerToggle
 				}
 			}
@@ -214,13 +212,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectColorType
 			OnMode = 3
 		}
-		CyanToggle
+		OrangeToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 4
 		}
-		OrangeToggle
+		CyanToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
@@ -271,15 +269,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = PurpleToggle
 		}
-		CyanToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = CyanToggle
-		}
 		OrangeToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = OrangeToggle
+		}
+		CyanToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = CyanToggle
 		}
 		GreenToggleProxy
 		{
@@ -404,7 +402,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		NozzleLocationProxy
 		{
 			Type = ChainableProxy
-			ComponentID = NozzlePosition
+			ComponentID = NozzleOutputPosition
 		}
 
 		DoodadAnimationSpeedFactorValue
@@ -417,7 +415,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		StaticScalerValue
         {
             Type = StaticValue
-            Value = 10
+            Value = 2.1
         }
 		RocketEffectValue
 		{
