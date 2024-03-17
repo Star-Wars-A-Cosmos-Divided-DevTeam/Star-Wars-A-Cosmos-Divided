@@ -132,6 +132,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = All
 		}
 
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 260 //1 per tile
+		}
+
 		IsOperationalAndHypernodeConnectedToggle
 		{
 			Type = MultiToggle
@@ -146,21 +161,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = All
 		}
 
-		PowerToggle
-		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-			RequiresCommand = false
-		}
-
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 260 //520 //1 per tile
-		}
-
 		HypernodeConnectedToggle
 		{
 			Type = BuffToggle
@@ -173,23 +173,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			BuffType = Engine
 		}
 
-		SWIonAcceleratorBuffToggle
-		{
-			Type = BuffToggle
-			BuffType = SW_Ion_Thruster_Accelerator
-		}
-
 		PowerDistributionBuffToggle
 		{
 			Type = BuffToggle
 			BuffType = EnginePowerDistribution
 		}
 
+		SWIonAcceleratorBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Ion_Thruster_Accelerator
+		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 225000 //15 secs sustained firing aka maybe ramp up once lmao
+			MaxResources = 520000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryStorageBar
@@ -204,9 +204,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = EngineBuffToggle //PowerDistributionBuffToggle
+			Toggle = PowerDistributionBuffToggle
 			Invert = true
-			//IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -215,7 +214,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					ResourceType = battery
 					Storage = BatteryStorage
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
-					ResupplyThreshold = 1000
+					ResupplyThreshold = 100000
 					OperationalToggle = PowerToggle
 				}
 			}
@@ -255,13 +254,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectColorType
 			OnMode = 3
 		}
-		CyanToggle
+		OrangeToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
 			OnMode = 4
 		}
-		OrangeToggle
+		CyanToggle
 		{
 			Type = ModeToggle
 			Mode = ThrusterEffectColorType
@@ -312,15 +311,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = PurpleToggle
 		}
-		CyanToggleProxy
-		{
-			Type = ToggleProxy
-			ComponentID = CyanToggle
-		}
 		OrangeToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = OrangeToggle
+		}
+		CyanToggleProxy
+		{
+			Type = ToggleProxy
+			ComponentID = CyanToggle
 		}
 		GreenToggleProxy
 		{
@@ -445,7 +444,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		NozzleLocationProxy
 		{
 			Type = ChainableProxy
-			ComponentID = NozzlePosition
+			ComponentID = NozzleOutputPosition
 		}
 
 		DoodadAnimationSpeedFactorValue
@@ -458,7 +457,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		StaticScalerValue
         {
             Type = StaticValue
-            Value = 10
+            Value = 2.1
         }
 		RocketEffectValue
 		{
