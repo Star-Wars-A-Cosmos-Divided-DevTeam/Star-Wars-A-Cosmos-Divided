@@ -418,17 +418,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		StaticScalerValue
         {
             Type = StaticValue
+			OperationalToggle = RocketToggle
             Value = 2.1
         }
 		RocketEffectValue
 		{
 			Type = MultiValue
+			OperationalToggle = RocketToggle
 			Values = [MainThrusterValueProxy, StaticScalerValue]
 			Mode = Multiply
 		}
 		RocketEffectValueProxy
 		{
 			Type = ValueProxy
+			OperationalToggle = RocketToggle
 			ComponentID = RocketEffectValue
 		}
 
@@ -476,6 +479,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnTweenDuration = 0
 			OffTweenDuration = 0
 			IsOnToggle = EngineBuffToggle
+		}
+
+		RampUpFinalBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = SW_Ion_Thruster_Accelerator_Reverse
+			BuffAmount = 1
+			BuffArea = [-11, -30, 30, 30]
+			//ShowBuffRange = true //for debug only
+			BuffMultiplier = MainThrusterValueProxy
 		}
 
 		MainThruster
