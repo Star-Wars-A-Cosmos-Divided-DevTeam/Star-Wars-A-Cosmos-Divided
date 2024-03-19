@@ -53,7 +53,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
 	//Components
-	Components : ^/0/Components, &<siege12x12green.rules>, &<../SW_weapon_fire_alternate_2.rules>, &<graphics.rules>
+	Components : ^/0/Components, /*&<siege12x12green.rules>,*/ &<../SW_weapon_fire_alternate_2.rules>, &<graphics.rules>
 	{
 		IsOperational
 		{
@@ -94,6 +94,58 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ModeToggle
 			Mode = FireModeToggle
 			OnMode = 2
+		}
+
+		MunitionType
+		{
+			Type = UIToggle
+			ToggleID = "SW.munition_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		RedMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 0
+		}
+		RedMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedMunitionToggle
+			IncludeInBlueprints = false
+			Components = &<siege12x12red.rules>/Components
+		}
+
+		BlueMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 1
+		}
+		BlueMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueMunitionToggle
+			IncludeInBlueprints = false
+			Components = &<siege12x12blue.rules>/Components
+		}
+
+		GreenMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 2
+		}
+		GreenMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreenMunitionToggle
+			IncludeInBlueprints = false
+			Components = &<siege12x12green.rules>/Components
 		}
 
 		ExteriorType
@@ -177,11 +229,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FiringArc = 45d //180d
 			RotateSpeed = 2d
 			FireThresholdAngle = 1d
-			IgnoreSourceShipLOSChecks = true
 			HoldTargetAfterCancel = 0.5
 			AIFirepowerRating = 10000
 			FirePermissionToggle = FirePermissionToggle //FireModeToggle //FirePermissionToggle
-
+			IgnoreSourceShipLOSChecks = true
+			IgnoreSourceShipLowLOSChecks = true
+			AllowFireWithBlockedLOS = false
 			Emitter = WeaponEmitterBase
 
 			AutoTargets
@@ -226,6 +279,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			FireDelay = .6
 			Bullet = &/SW_SHOTS/greenmedlasershot
+			SourceShipCollisions = false
 			ResourceStorage = BatteryStorage
 			ResourcesUsed = 500
 		}
@@ -410,6 +464,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
+   //Stats
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -418,31 +473,62 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-		ROF = 2 / (&~/Part/Components/WeaponTimerBuffProvider/BuffAmount)
-		Range = &~/Part/Components/WeaponEmitter/Bullet/Range
-		Arc = deg(&~/Part/Components/Turret/FiringArc)
-		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+//		ROF = 2 / (&~/Part/Components/WeaponTimerBuffProvider/BuffAmount)
+//		Range = &~/Part/Components/WeaponEmitter/Bullet/Range
+//		Arc = deg(&~/Part/Components/Turret/FiringArc)
+//		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 	}
 
    //Stats 
 	StatsByCategory
 	[
+		&~/TurretStats
+		&<siege12x12red.rules>/LaserStats
+		&<siege12x12blue.rules>/LaserStats
+		&<siege12x12green.rules>/LaserStats
+	]
+/*
+	StatsByCategory
+	[
+		&~/TurretStats
 		{
-			NameKey = "StatCategories/SiegeGreenTurbolaserLasershot"
+			NameKey = "StatCategories/HeavyGreenConcussiveBlastLasershot"
 			Stats
 			{
 				ShieldDamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/Part/Stats/ROF)
+				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/TurretStats/Stats/ROF)
 				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-				DamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-				DamagePerSecond = (&DamagePerShot) * (&~/Part/Stats/ROF)
-				Damage = [&../DamagePerShot, &../DamagePerSecond]
+//				DamagePerShot = &~/Part/Components/WeaponEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+//				DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
+//				Damage = [&../DamagePerShot, &../DamagePerSecond]
+//				Spread = deg(&~/Part/Components/WeaponEmitter/Spread/1)
 				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
 				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
-				PowerPerShot = (&~/Part/Components/WeaponEmitter/ResourcesUsed) / 1000
-				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
-				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+//				PowerPerShot = (&~/Part/Components/WeaponEmitter/ResourcesUsed) / 1000
+//				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
+//				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 			}
 		}
 	]
+	*/
+}
+
+TurretStats
+{
+	NameKey = "StatCategories/Turret"
+	Stats
+	{
+		Barrels = 2
+		ReloadTime = &~/Part/Components/WeaponTimerBuffProvider/BuffAmount
+		Salvo = [&../Barrels, &../ReloadTime]
+		ROF = (&Barrels) / (&~/Part/Components/WeaponTimerBuffProvider/BuffAmount)
+		Range = &~/Part/Components/WeaponEmitterBase/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		PowerPerShot = (&~/Part/Components/WeaponEmitterBase/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+		//Spread = deg(&~/BulletEmitterBase/Spread/1)
+		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
+	}
 }
