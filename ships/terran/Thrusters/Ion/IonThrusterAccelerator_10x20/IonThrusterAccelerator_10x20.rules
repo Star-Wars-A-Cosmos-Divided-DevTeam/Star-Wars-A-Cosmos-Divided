@@ -33,7 +33,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Density = 4 //WHY BUFF THEN; TO BE HEAVIER???
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [EnginePowerDistribution] //grants SW_Ion_Thruster_Accelerator Buff & EnginePowerDistribution Buff
+	ReceivableBuffs : ^/0/ReceivableBuffs [EnginePowerDistribution, SW_Ion_Thruster_Accelerator_Reverse] //grants SW_Ion_Thruster_Accelerator Buff & EnginePowerDistribution Buff
 
 	AllowedDoorLocations
 	[
@@ -115,16 +115,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			CommandPoints = 200 //1 per tile
 		}
 
-		IonAcceleratorBuffProvider
-		{
-			Type = AreaBuffProvider
-			BuffType = SW_Ion_Thruster_Accelerator
-			BuffAmount = 60%
-			BuffArea = [-10, 20, 30, 30]
-			ShowBuffRange = true
-			OperationalToggle = IsOperational
-		}
-
 		DistributePowerUIToggle
 		{
 			Type = UIToggle
@@ -150,7 +140,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 400000
+			MaxResources = 200000
 		}
 		CombinedBatteryStorage
 		{
@@ -159,7 +149,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceStorages = [BatteryStorage]
 			ViaBuffs
 			{
-				OutgoingBuffProviders = [PowerDistributionBuffProvider] //IonAcceleratorBuffProvider
+				OutgoingBuffProviders = [PowerDistributionBuffProvider]
 				ComponentID = BatteryStorage
 			}
 			AddMode = PrioritizeLeastResources
@@ -192,167 +182,39 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MinFromQuantityForConversion = 1
 			Interval = 1
 		}
-/*
-		CrewLocation1
+
+		IonAcceleratorBuffProvider
 		{
-			Type = CrewLocation
-			Location = [0.47, 1.5]
-			Rotation = 90d
-		}
-		CrewLocation2
-		{
-			Type = CrewLocation
-			Location = [2.53, 1.5]
-			Rotation = -90d
-		}
-		CrewLocation3
-		{
-			Type = CrewLocation
-			Location = [1.5, 0.47]
-			Rotation = 180d
-		}
-		CrewLocation4
-		{
-			Type = CrewLocation
-			Location = [1.5, 2.53]
-			Rotation = 0d
-		}
-		PartCrew
-		{
-			Type = PartCrew
-			Crew = 2
-			DefaultPriority = &/PRIORITIES/Thruster_Supply // Needs to be at least as high as the supply priority.
-			PrerequisitesBeforeCrewing = [PowerToggle]
-			HighPriorityPrerequisites = [BatteryStorage]
-			CrewDestinations
-			[
-				[0.4, 1.5]
-				[2.6, 1.5]
-				[1.5, 0.4]
-				[1.5, 2.6]
-			]
-			CrewLocations
-			[
-				CrewLocation1
-				CrewLocation2
-				CrewLocation3
-				CrewLocation4
-			]
-			SwitchLocationInterval = [5, 10]
-		}
-*/
-/*
-		DirectionOptionToggle
-		{
-			Type = UIToggle
-			ToggleID = "accelerator_orientation_options"
-			Default = 0
-			//AvailableChoices = [0,1] //needed to adjust when using community mod
-			//ToggledOnChoices = [0,1] //needed to adjust when using community mod
-			RequiresCommand = false
-			AlwaysAllowInBuildMode = true
-			RememberValue = true
+			Type = AreaBuffProvider
+			BuffType = SW_Ion_Thruster_Accelerator
+			BuffAmount = 60%
+			BuffArea = [-10, 20, 30, 30]
+			ShowBuffRange = true
+			OperationalToggle = IsOperational
 		}
 
-		DirectionOptionToggle0
+		DoodadAnimationSpeedFactorValue
 		{
-			Type = ModeToggle
-			Mode = DirectionOptionToggle
-			OnMode = 0 //needs to adjust when using community mod
+			Type = BuffableValue
+			Value = { BaseValue=1; BuffType=SW_Ion_Thruster_Accelerator_Reverse; BuffMode=Multiply; }
 		}
-		DirectionOptionToggle1
+
+		MainThruster
 		{
-			Type = ModeToggle
-			Mode = DirectionOptionToggle
-			OnMode = 1 //needs to adjust when using community mod
-		}
-		VerticalComponents
-		{
-			Type = ToggledComponents
-			Toggle = DirectionOptionToggle0
-			IncludeInBlueprints = true
-			Components : <graphics10x20V.rules>,<buffs_V.rules>
+			Type = ValueProxy
+			PartLocation = [0, 20]
+			ComponentID = MainThruster
+			PartCriteria
 			{
+				IDs = [SW.IonThruster01_7x10_switchable, SW.IonThruster01_8x16_switchable, SW.IonThruster01_10x14_switchable, SW.IonThruster01_20x26_switchable]
+				Rot = 0
+				Left = 10
+				Right = 20
+				Top = 30
 			}
-		}
-		HorizontalComponents
-		{
-			Type = ToggledComponents
-			Toggle = DirectionOptionToggle1
-			IncludeInBlueprints = true
-			Components : <graphics10x20H.rules>,<buffs_H.rules>
-			{
-			}
+			ValueWhenNotConnected = 0
 		}
 
-		IsConnectedProxy
-		{
-			Type = ToggleProxy
-			ComponentID = IsConnected
-			IsOnWhenNotConnected = false
-		}
-*/
-
-/*
-		BatterySprites
-		{
-			Type = ResourceSprites
-			Location = [1, 2.5]
-			ResourceStorage = BatteryStorage
-			Layer = "doodads_low"
-			AmmoLevels
-			[
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-				{
-					File = "batteries1.png"
-					Size = [2, 1]
-				}
-			]
-		}
-*/
 		OperationEffects
 		{
 			Type = ToggleEffects
@@ -396,17 +258,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [5, 5]
 					}
 				}
-/*
-				// No crew.
-				{
-					Toggle = PartCrew
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
-					}
-				}
-*/
 			]
 		}
 
@@ -424,33 +275,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Size = [30, 30]
 			Offset = [0, 25]
 		}
-
-		/*
-		BlueprintsV
-		{
-			Type = BlueprintSprite
-			File = "blueprints_v.png"
-			Size = [10, 20]
-
-			ShowOnlyInToggleMode
-			{
-				ToggleID = "accelerator_orientation_options"
-				Mode = 0
-			}
-		}
-		BlueprintsH
-		{
-			Type = BlueprintSprite
-			File = "blueprints_h.png"
-			Size = [10, 20]
-
-			ShowOnlyInToggleMode
-			{
-				ToggleID = "accelerator_orientation_options"
-				Mode = 1
-			}
-		}
-		*/
 	}
 
 	//Stats
@@ -462,53 +286,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = &PowerUsageContinuous
-		RecCrew = /*(&CrewRequired) + */(&RecPower) * 4
+		RecCrew = (&RecPower) * 4 /*+ (&CrewRequired)*/
 	}
 }
-
-/*
-	StatsByCategory
-	[
-		{
-			NameKey = "StatCategories/RailgunBuff"
-			Stats
-			{
-				BaseMultiplier = (&<./Data/buffs/buffs.rules>/RailgunShot/Multiplier) * 100
-				Exponent = (&<./Data/buffs/buffs.rules>/RailgunShot/Exponent)
-				RailgunBuff
-				[
-					(&../BaseMultiplier) * (1 ^ (&../Exponent))
-					(&../BaseMultiplier) * (2 ^ (&../Exponent))
-					(&../BaseMultiplier) * (3 ^ (&../Exponent))
-					(&../BaseMultiplier) * (4 ^ (&../Exponent))
-					(&../BaseMultiplier) * (5 ^ (&../Exponent))
-					(&../BaseMultiplier) * (6 ^ (&../Exponent))
-					(&../BaseMultiplier) * (7 ^ (&../Exponent))
-					(&../BaseMultiplier) * (8 ^ (&../Exponent))
-					(&../BaseMultiplier) * (9 ^ (&../Exponent))
-					(&../BaseMultiplier) * (10 ^ (&../Exponent))
-					(&../BaseMultiplier) * (11 ^ (&../Exponent))
-					(&../BaseMultiplier) * (12 ^ (&../Exponent))
-					(&../BaseMultiplier) * (13 ^ (&../Exponent))
-					(&../BaseMultiplier) * (14 ^ (&../Exponent))
-					(&../BaseMultiplier) * (15 ^ (&../Exponent))
-					(&../BaseMultiplier) * (16 ^ (&../Exponent))
-					(&../BaseMultiplier) * (17 ^ (&../Exponent))
-					(&../BaseMultiplier) * (18 ^ (&../Exponent))
-					(&../BaseMultiplier) * (19 ^ (&../Exponent))
-					(&../BaseMultiplier) * (20 ^ (&../Exponent))
-					(&../BaseMultiplier) * (21 ^ (&../Exponent))
-					(&../BaseMultiplier) * (22 ^ (&../Exponent))
-					(&../BaseMultiplier) * (23 ^ (&../Exponent))
-					(&../BaseMultiplier) * (24 ^ (&../Exponent))
-					(&../BaseMultiplier) * (25 ^ (&../Exponent))
-					(&../BaseMultiplier) * (26 ^ (&../Exponent))
-					(&../BaseMultiplier) * (27 ^ (&../Exponent))
-					(&../BaseMultiplier) * (28 ^ (&../Exponent))
-					(&../BaseMultiplier) * (29 ^ (&../Exponent))
-					(&../BaseMultiplier) * (30 ^ (&../Exponent))
-				]
-			}
-		}
-	]
-*/
