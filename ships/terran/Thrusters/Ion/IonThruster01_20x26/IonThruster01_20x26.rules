@@ -11,7 +11,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechIII"]
-	TypeCategories = [ftl, thruster, ion_thruster, uses_power, SW_Tech_III]
+	TypeCategories = [ftl, thruster, ion_thruster, uses_power, SW_Tech_III] //
 	RequiresCategories = [SW_Bridge]
 
 	//Resources&Size&Health
@@ -42,7 +42,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ProhibitBelow = 21 // 32
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator, SW_Hypernode_Large, Engine, EnginePowerDistribution] 
+	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Reverse, SW_Hypernode_Large] 
 
     //Doors&Etc
 	AllowedDoorLocations
@@ -457,17 +457,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		StaticScalerValue
         {
             Type = StaticValue
+			OperationalToggle = RocketToggle
             Value = 2.1
         }
 		RocketEffectValue
 		{
 			Type = MultiValue
+			OperationalToggle = RocketToggle
 			Values = [MainThrusterValueProxy, StaticScalerValue]
 			Mode = Multiply
 		}
 		RocketEffectValueProxy
 		{
 			Type = ValueProxy
+			OperationalToggle = RocketToggle
 			ComponentID = RocketEffectValue
 		}
 
@@ -515,6 +518,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnTweenDuration = 0
 			OffTweenDuration = 0
 			IsOnToggle = EngineBuffToggle
+		}
+
+		RampUpFinalBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = SW_Ion_Thruster_Accelerator_Reverse
+			BuffAmount = 1
+			BuffArea = [-5, -30, 30, 30]
+			//ShowBuffRange = true //for debug only
+			BuffMultiplier = MainThrusterValueProxy
 		}
 
 		MainThruster
