@@ -14,28 +14,9 @@ Def
 			UpdateAfterInit = false
 		}
 		{
-			Type = SetRandom
-			DataOut = rot
-			ValueType = Angle
-			FromValue = 0d
-			ToValue = 360d
-			Name = "Random Rotation"
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
 			Type = AddFrameOfReference
 			VelocityInOut = velocity
 			Name = "Add frame of reference"
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = ScaleFromIntensity
-			ScaleOut = scale
-			ScaleFactor = 2
-			IntensityExponent = 0.5
-			Name = "Scale from intensity"
 			Enabled = true
 			UpdateAfterInit = false
 		}
@@ -51,8 +32,8 @@ Def
 			Type = SetRandom
 			DataOut = lifetime
 			ValueType = Float
-			FromValue = 1.2
-			ToValue = 2
+			FromValue = 1
+			ToValue = 1.75
 			Name = "random lifetime"
 			Enabled = true
 			UpdateAfterInit = false
@@ -73,17 +54,17 @@ Def
 			LifeInOut = life
 			Lifetime = 1
 			Name = Lifetime
-			Enabled = true//false
+			Enabled = false
 			UpdateAfterInit = false
 		}
-//		{
-//			Type = VariableLifetime
-//			LifeInOut = life
-//			LifetimeIn = lifetime
-//			Name = ""
-//			Enabled = true
-//			UpdateAfterInit = false
-//		}
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
 		{
 			Type = Operator
 			DataType = Vector2
@@ -99,19 +80,19 @@ Def
 			Type = UvAnimation
 			TimeIn = life
 			UvRectOut = uv_rect
-			Framerate = 25
+			Framerate = 64
 			TextureSize
 			{
-				X = 960
-				Y = 960
+				X = 2048
+				Y = 2048
 			}
 			FrameSize
 			{
-				X = 192
-				Y = 192
+				X = 256
+				Y = 256
 			}
-			FrameCount = 25
-			FramesPerRow = 5
+			FrameCount = 64
+			FramesPerRow = 8
 			PixelOffset
 			{
 				X = 0
@@ -122,36 +103,6 @@ Def
 			Enabled = true
 			UpdateAfterInit = true
 		}
-		{
-			Type = ColorRamp
-			LerpIn = life
-			ColorOut = color
-			Invert = false
-			Colors
-			[
-				{
-					Rf = 1
-					Gf = 0.39215687
-					Bf = 1
-					Af = 0.78431374
-				}
-				{
-					Rf = 1
-					Gf = 1
-					Bf = 1
-					Af = 1
-				}
-				{
-					Rf = 1
-					Gf = 1
-					Bf = 1
-					Af = 0.78431374
-				}
-			]
-			Name = ""
-			Enabled = true
-			UpdateAfterInit = false
-		}
 	]
 	Renderer
 	{
@@ -160,12 +111,12 @@ Def
 		ScaleIn = scale
 		Scale2In
 		RotationIn = rot
-		ColorIn = color
+		ColorIn
 		UvRectIn = uv_rect
 		BaseSize
 		{
-			X = 5
-			Y = 5
+			X = 6.5
+			Y = 6.5
 		}
 		//Offset
 		//{
@@ -178,22 +129,22 @@ Def
 	{
 		Texture
 		{
-			File = "ion_explosion_hit.png" // ./Data/shots/bullet_large/particles/bullet_hit_large.png
+			File = "ion_hit_large_purple.png" // ./Data/shots/bullet_large/particles/bullet_hit_large.png
 			MipLevels = 8
 			SampleMode = Linear
 		}
 	}
 	DeleteMode = Fast
 	EnableMultithreading = false
-	InitCapacity = 192
+	InitCapacity = 256
 }
 EmitterDef
 {
 	EmitPerSecond = 0
 	EmitPerOneShot
 	{
-		Min = 1//4
-		Max = 1//8
+		Min = 1
+		Max = 1
 	}
 	PreInitializers
 	[
@@ -211,8 +162,8 @@ EmitterDef
 			Type = SetRandom
 			DataOut = scale
 			ValueType = Float
-			FromValue = 0.8
-			ToValue = 1.2
+			FromValue = 1
+			ToValue = 1.75
 			Name = "Random scale"
 			Enabled = true
 			UpdateAfterInit = false
