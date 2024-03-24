@@ -14,9 +14,28 @@ Def
 			UpdateAfterInit = false
 		}
 		{
+			Type = SetRandom
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 0d
+			ToValue = 360d
+			Name = "Random Rotation"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
 			Type = AddFrameOfReference
 			VelocityInOut = velocity
 			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleFromIntensity
+			ScaleOut = scale
+			ScaleFactor = 2
+			IntensityExponent = 0.5
+			Name = "Scale from intensity"
 			Enabled = true
 			UpdateAfterInit = false
 		}
@@ -54,17 +73,17 @@ Def
 			LifeInOut = life
 			Lifetime = 0.5
 			Name = Lifetime
-			Enabled = false
+			Enabled = true//false
 			UpdateAfterInit = false
 		}
-		{
-			Type = VariableLifetime
-			LifeInOut = life
-			LifetimeIn = lifetime
-			Name = ""
-			Enabled = true
-			UpdateAfterInit = false
-		}
+//		{
+//			Type = VariableLifetime
+//			LifeInOut = life
+//			LifetimeIn = lifetime
+//			Name = ""
+//			Enabled = true
+//			UpdateAfterInit = false
+//		}
 		{
 			Type = Operator
 			DataType = Vector2
@@ -103,6 +122,36 @@ Def
 			Enabled = true
 			UpdateAfterInit = true
 		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 1
+					Gf = 0.39215687
+					Bf = 1
+					Af = 0.78431374
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.78431374
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
 	]
 	Renderer
 	{
@@ -111,18 +160,18 @@ Def
 		ScaleIn = scale
 		Scale2In
 		RotationIn = rot
-		ColorIn
+		ColorIn = color
 		UvRectIn = uv_rect
 		BaseSize
 		{
-			X = 3
-			Y = 3
+			X = 6
+			Y = 6
 		}
-		Offset
-		{
-			X = -0.45
-			Y = 0
-		}
+		//Offset
+		//{
+		//	X = -0.45
+		//	Y = 0
+		//}
 		Name = ""
 	}
 	Material
@@ -143,8 +192,8 @@ EmitterDef
 	EmitPerSecond = 0
 	EmitPerOneShot
 	{
-		Min = 4
-		Max = 8
+		Min = 1//4
+		Max = 1//8
 	}
 	PreInitializers
 	[
