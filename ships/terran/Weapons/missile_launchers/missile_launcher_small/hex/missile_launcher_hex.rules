@@ -2,7 +2,7 @@ EditorIcon
 {
 	Texture
 	{
-		File = "icon_cluster.png"
+		File = "icon_hex.png"
 		SampleMode = Linear
 	}
 	Size = [40, 80]
@@ -25,28 +25,11 @@ Components
 		// Nothing different.
 	}
 
-	MissileStorageD : ~/MissileStorageBase
-	{
-		// Nothing different.
-	}
-
-	MissileStorageE : ~/MissileStorageBase
-	{
-		// Nothing different.
-	}
-
-	MissileStorageF : ~/MissileStorageBase
-	{
-		// Nothing different.
-	}
-
 	CombinedMissileStorage
 	{
 		Type = MultiResourceStorage
 		ResourceType = missile_part_he
-		ToggleOnResources = 12
-		ToggleOffResources = (&ToggleOnResources)-1
-		ResourceStorages = [MissileStorageA, MissileStorageB, MissileStorageC, MissileStorageD, MissileStorageE, MissileStorageF]
+		ResourceStorages = [MissileStorageA, MissileStorageB, MissileStorageC]
 		AddMode = PrioritizeLeastEmptyCapacity
 		RemoveMode = PrioritizeMostEmptyCapacity
 		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
@@ -67,51 +50,8 @@ Components
 	MissilesPrereq
 	{
 		Type = MultiToggle
-		Toggles = [CombinedMissileStorage]
-		Mode = All
-	}
-
-	MissileStorageAIsOnTrigger : ~/MissileStorageIsOnTriggerBase
-	{
-		AmountFrom = MissileStorageA
-	}
-
-	MissileStorageBIsOnTrigger : ~/MissileStorageIsOnTriggerBase
-	{
-		AmountFrom = MissileStorageB
-	}
-
-	MissileStorageCIsOnTrigger : ~/MissileStorageIsOnTriggerBase
-	{
-		AmountFrom = MissileStorageC
-	}
-
-	MissileStorageDIsOnTrigger : ~/MissileStorageIsOnTriggerBase
-	{
-		AmountFrom = MissileStorageD
-	}
-
-	MissileStorageEIsOnTrigger : ~/MissileStorageIsOnTriggerBase
-	{
-		AmountFrom = MissileStorageE
-	}
-
-	MissileStorageFIsOnTrigger : ~/MissileStorageIsOnTriggerBase
-	{
-		AmountFrom = MissileStorageF
-	}
-
-	CommonLoadedTrigger
-	{
-		Type = MultiTrigger
-		Triggers = [MissileStorageAIsOnTrigger, MissileStorageBIsOnTrigger, MissileStorageCIsOnTrigger, MissileStorageDIsOnTrigger, MissileStorageEIsOnTrigger, MissileStorageFIsOnTrigger]
-	}
-
-	MissilesReadyToggle
-	{
-		Type = MultiToggle
-		Toggles = [MissilesPrereq, CommonDelayTimerShort]
-		Mode = All
+		Toggles = [MissileStorageA, MissileStorageB, MissileStorageC]
+		Mode = Any
 	}
 
 	ReloadProgressBar
@@ -122,10 +62,25 @@ Components
 		Invert = true
 	}
 
-	WeaponE : ~/WeaponBase
+	WeaponA : ~/WeaponBase
 	{
-		Location = [1.0, 0.5]
-		Emitter = EmitterE
+		Location = [.5, 1]
+		ShowExplicitTarget = false
+		Emitter = EmitterA
+	}
+
+	EmitterA : ~/EmitterBase
+	{
+		ChainedTo = WeaponA
+		FireTrigger = WeaponA
+		GetTargetFrom = WeaponA
+		ResourceStorage = MissileStorageA
+	}
+
+	WeaponB : ~/WeaponBase
+	{
+		Location = [1, 1]
+		Emitter = EmitterB
 
 		CoverageSectorArc
 		{
@@ -135,71 +90,64 @@ Components
 		}
 	}
 
-	EmitterA : ~/EmitterBase
-	{
-		ResourceStorage = MissileStorageA
-		Location = [1.5, 0.5]
-		Spread = [-1.0d, 4.2d]
-	}
-
 	EmitterB : ~/EmitterBase
 	{
+		ChainedTo = WeaponB
+		FireTrigger = WeaponB
+		GetTargetFrom = WeaponB
 		ResourceStorage = MissileStorageB
-		Location = [1.5, 0]
-		Spread = [-2.1d, 2.1d]
+	}
+
+	WeaponC : ~/WeaponBase
+	{
+		Location = [1.5, 1]
+		ShowExplicitTarget = false
+		Emitter = EmitterC
 	}
 
 	EmitterC : ~/EmitterBase
 	{
+		ChainedTo = WeaponC
+		FireTrigger = WeaponC
+		GetTargetFrom = WeaponC
 		ResourceStorage = MissileStorageC
-		Location = [1.5, -0.5]
-		Spread = [-4.2d, 1.0d]
-	}
-
-	EmitterD : ~/EmitterBase
-	{
-		ResourceStorage = MissileStorageD
-		Location = [0, 0.5]
-		Spread = [-0.0d, 2.1d]
-	}
-
-	EmitterE : ~/EmitterBase
-	{
-		ResourceStorage = MissileStorageE
-		Location = [0, 0]
-		Spread = [-0.81d, 0.81d]
-	}
-
-	EmitterF : ~/EmitterBase
-	{
-		ResourceStorage = MissileStorageF
-		Location = [0, -0.5]
-		Spread = [-2.1d, 0d]
 	}
 
 	FirePermissionToggle
 	{
 		Type = MultiToggle
-		Toggles = [CommonReloadTimerShort, FireModeToggle, MissilesReadyToggle]
+		Toggles = [CommonReloadTimerShort, FireModeToggle]
 		Mode = All
 	}
 
 	CommonReloadResetTrigger
 	{
 		Type = MultiTrigger
-		Triggers = [WeaponE]
+		Triggers = [WeaponA, WeaponB, WeaponC]
 	}
 
-	LaunchEffect : ~/LaunchEffectBase
+	LaunchEffectA : ~/LaunchEffectBase
 	{
-		ChainedTo = WeaponE
-		Trigger = WeaponE
+		ChainedTo = WeaponA
+		Trigger = WeaponA
+	}
+
+	LaunchEffectB : ~/LaunchEffectBase
+	{
+		ChainedTo = WeaponB
+		Trigger = WeaponB
+	}
+
+	LaunchEffectC : ~/LaunchEffectBase
+	{
+		ChainedTo = WeaponC
+		Trigger = WeaponC
 	}
 
 	External_Walls_Graphics
 	{
 		Type = Graphics
-		Location = [1, 0.5]
+		Location = [0.5, 0.5]
 		Walls
 		{
 			Layer = "external_walls"
@@ -208,17 +156,17 @@ Components
 				{
 					File = "external_walls.png"
 					NormalsFile = "external_walls_normals.png"
-					Size = [2, 4]
+					Size = [1, 3]
 				}
 				{
 					File = "external_walls_33.png"
 					NormalsFile = "external_walls_normals_33.png"
-					Size = [2, 4]
+					Size = [1, 3]
 				}
 				{
 					File = "external_walls_66.png"
 					NormalsFile = "external_walls_normals_66.png"
-					Size = [2, 4]
+					Size = [1, 3]
 				}
 			]
 		}
@@ -227,53 +175,52 @@ Components
 	MissileSpritesA
 	{
 		Type = ResourceSprites
-		Location = [.5 + 2/64, 0.6]
+		Location = [.5 + 2/64, 1.5]
 		ResourceStorage = MissileStorageA
 		Layer = "weapons"
+		HasZeroResourceSprite = true
 		ResourceLevels
 		[
 			{
-				File = "cluster_1.png"
-				NormalsFile = "cluster_normals_1.png"
+				File = "hex_0.png"
+				Offset = [0, 1]
 				Size = [1, 1]
 			}
 			{
-				File = "cluster_2.png"
-				NormalsFile = "cluster_normals_2.png"
-				Offset = [0, -0.3]
+				File = "hex_1.png"
+				NormalsFile = "hex_normals_1.png"
+				Offset = [0, 0.5]
 				Size = [1, 2]
+			}
+			{
+				File = "hex_2.png"
+				NormalsFile = "hex_normals_2.png"
+				Offset = [0, 0.5]
+				Size = [1, 2]
+			}
+			{
+				File = "hex_3.png"
+				NormalsFile = "hex_normals_3.png"
+				Size = [1, 3]
+			}
+			{
+				File = "hex_4.png"
+				NormalsFile = "hex_normals_4.png"
+				Size = [1, 3]
 			}
 		]
 	}
 
 	MissileSpritesB : MissileSpritesA
 	{
-		Location = [1, (&~/Components/MissileSpritesA/Location/1)]
+		Location = [1, 1.5]
 		ResourceStorage = MissileStorageB
 	}
 
-	MissileSpritesC : MissileSpritesA
+	MissileSpritesC : MissileSpritesB
 	{
-		Location = [1.5 - 2/64, (&~/Components/MissileSpritesA/Location/1)]
+		Location = [1.5 - 2/64, 1.5]
 		ResourceStorage = MissileStorageC
-	}
-
-	MissileSpritesD : MissileSpritesA
-	{
-		Location = [.5 + 2/64, (&~/Components/MissileSpritesA/Location/1)+0.81]
-		ResourceStorage = MissileStorageD
-	}
-
-	MissileSpritesE : MissileSpritesA
-	{
-		Location = [1, (&~/Components/MissileSpritesD/Location/1)]
-		ResourceStorage = MissileStorageE
-	}
-
-	MissileSpritesF : MissileSpritesA
-	{
-		Location = [1.5 - 2/64, (&~/Components/MissileSpritesD/Location/1)]
-		ResourceStorage = MissileStorageF
 	}
 
 	DestroyedEffects
@@ -319,7 +266,7 @@ Components
 	Indicators
 	{
 		Type = IndicatorSprites
-		Location = [1, 2]
+		Location = [0.5, 2.5]
 		Layer = "indicators"
 		Indicators
 		[
@@ -336,7 +283,7 @@ Components
 			// Out of missiles.
 			{
 				Toggle = MissilesPrereq
-				Delay = &<../missile_launcher.rules>/Part/Components/CommonReloadTimerShort/Duration
+				Delay = &<../missile_launcher_small.rules>/Part/Components/CommonReloadTimerShort/Duration
 				AtlasSprite
 				{
 					File = &/INDICATORS/NoMissiles
@@ -361,16 +308,17 @@ MissileStorageBase
 {
 	Type = ResourceStorage
 	ResourceType = missile_part_he
-	MaxResources = 2
-	ToggleOnResources = 2
-	ToggleOffResources = (&ToggleOnResources)-1
+	MaxResources = 4
+	ToggleOnResources = 4
+	ToggleOffResources = 3
+	DelayBeforeReadyToUse = .5
 	DropResourcesWhenDestroyed = true
 	DropResourcesWhenRemoved = true
 }
 
 WeaponBase
 {
-	Type = TurretWeapon // This has an arc of 0, but we don't want to use FixedWeaponA because that will only shoot at things directly in the LOS.
+	Type = TurretWeapon // This has an arc of 0, but we don't want to use FixedWeapon because that will only shoot at things directly in the LOS.
 	Rotation = -90d
 	OperationalToggle = IsOperational
 	AutoFireToggle = AutoFireToggle
@@ -380,6 +328,7 @@ WeaponBase
 	FireThresholdAngle = 180d;
 	RotateSpeed = 0d
 	AllowFireWithBlockedLOS = true
+	IgnoreSourceShipLowLOSChecks = true
 	AIFirepowerRating = 1600
 	FirePermissionToggle = FirePermissionToggle
 
@@ -397,15 +346,11 @@ EmitterBase
 {
 	Type = BulletEmitter
 	OperationalToggle = IsOperational
-	Location = [0, 0]
-	ResourcesUsed = 2
-	Bullet = &/SW_SHOTS/Missiles/Cluster/Medium/Launch_Stage_A
+	Location = [.5, 0]
+	ResourcesUsed = 4
+	Bullet = &/SW_SHOTS/Missiles/HEX
 	TargetLeadPrediction = false
 	Recoil = 50
-	Spread = [-1.0d, 1.0d]
-	FireTrigger = WeaponE
-	GetTargetFrom = WeaponE
-	ChainedTo = WeaponE
 }
 
 LaunchEffectBase
@@ -425,23 +370,16 @@ LaunchEffectBase
 	]
 }
 
-MissileStorageIsOnTriggerBase
-{
-	Type = ThresholdTrigger
-	AmountFrom = CombinedMissileStorage
-	MinAmount = 100%
-}
-
 MissileStats
 {
-	NameKey = "StatCategories/MissileCluster"
+	NameKey = "StatCategories/MissileHE"
 	Stats
 	{
 		DamagePerShot = &~/EmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/TotalDamage
 		DamagePerSecond = (&DamagePerShot) * (&ROF)
 		MaxDamage = [&../DamagePerShot, &../DamagePerSecond]
 		DamageArea = &~/EmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
-		ROF = 6 / (&<../missile_launcher.rules>/Part/Components/CommonReloadTimerShort/Duration)
+		ROF = 1 / (&<../missile_launcher_small.rules>/Part/Components/CommonReloadTimerShort/Duration)
 		Range = &~/EmitterBase/Bullet/Range
 		Arc = deg(&~/WeaponBase/ValidArc)
 		ShotLaunchSpeed = &~/EmitterBase/Bullet/Speed
