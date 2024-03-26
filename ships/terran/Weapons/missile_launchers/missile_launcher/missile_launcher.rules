@@ -1,7 +1,8 @@
 Part : <./Data/ships/terran/base_part_terran.rules>/Part
 {
 	//IDs
-	ID = SW.missile_launcher_tester
+	ID = SW.missile_launcher_tester //_medium?
+	//OtherIDs = [SW.missile_launcher_tester]
 	//StringKeys
 	NameKey = "Parts/MissileLauncher"
 	IconNameKey = "Parts/MissileLauncherIcon"
@@ -9,7 +10,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["WeaponsProjectile", "SWTechII"]
-	TypeCategories = [weapon, uses_clusters, uses_concussions, uses_hexs, uses_intruders, uses_launcher_parts, is_crewed]
+	TypeCategories = [weapon, uses_clusters, uses_concussions, uses_hexs, uses_intruders, uses_launcher_parts, is_crewed, SW_TECH_II]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -27,9 +28,9 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 	RectColliderRectType = Normal
 	SaveRect = &PhysicalRect
 
-
 	//Selections
 	SelectionPriority = 1
+	SelectionTypeID = "SW_missile_launcher" //_medium?
 	SelectionTypeByRotation = true
 
 	//ReceivableBuffs&Prohibits
@@ -246,7 +247,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			ComponentID = CommonLoadedTrigger
 		}
 
-		MissilesPrereqProxy
+		MissilesPrereqToggleProxy
 		{
 			Type = ToggleProxy
 			ComponentID = MissilesPrereq
@@ -270,7 +271,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			Crew = 2
 			DefaultPriority = &/PRIORITIES/Weapon_Crew
 			PrerequisitesBeforeCrewing = [PowerToggle]
-			HighPriorityPrerequisites = [MissilesPrereqProxy]
+			HighPriorityPrerequisites = [MissilesPrereqToggleProxy]
 			CrewDestinations
 			[
 				[ .5, 3.44]
@@ -542,8 +543,8 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		ClusterCapacity = 6
-		IntruderMissileCapacity = 1
-		ConcussionMissileCapacity = 1
+		IntruderMissileCapacity = 2
+		ConcussionMissileCapacity = 2
 		HEXMissileCapacity = 3
 
 		RecCrew = (&CrewRequired) + (&<hex/missile_launcher_hex.rules>/MissileStats/Stats/ROF) * (&<hex/missile_launcher_hex.rules>/MissileStats/Stats/MissileParts) * 4

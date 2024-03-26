@@ -124,7 +124,7 @@ Components
 
 	WeaponE : ~/WeaponBase
 	{
-		Location = [1.0, 0.5]
+		Location = [0.5, 0.5]
 		Emitter = EmitterE
 
 		CoverageSectorArc
@@ -138,28 +138,28 @@ Components
 	EmitterA : ~/EmitterBase
 	{
 		ResourceStorage = MissileStorageA
-		Location = [1.5, 0.5]
+		Location = [1.0, 0.25]
 		Spread = [-1.0d, 4.2d]
 	}
 
 	EmitterB : ~/EmitterBase
 	{
 		ResourceStorage = MissileStorageB
-		Location = [1.5, 0]
+		Location = [1.0, 0]
 		Spread = [-2.1d, 2.1d]
 	}
 
 	EmitterC : ~/EmitterBase
 	{
 		ResourceStorage = MissileStorageC
-		Location = [1.5, -0.5]
+		Location = [1.0, -0.25]
 		Spread = [-4.2d, 1.0d]
 	}
 
 	EmitterD : ~/EmitterBase
 	{
 		ResourceStorage = MissileStorageD
-		Location = [0, 0.5]
+		Location = [0, 0.25]
 		Spread = [-0.0d, 2.1d]
 	}
 
@@ -173,7 +173,7 @@ Components
 	EmitterF : ~/EmitterBase
 	{
 		ResourceStorage = MissileStorageF
-		Location = [0, -0.5]
+		Location = [0, -0.25]
 		Spread = [-2.1d, 0d]
 	}
 
@@ -199,7 +199,7 @@ Components
 	External_Walls_Graphics
 	{
 		Type = Graphics
-		Location = [1, 0.5]
+		Location = [0.5, 0.5]
 		Walls
 		{
 			Layer = "external_walls"
@@ -208,17 +208,17 @@ Components
 				{
 					File = "external_walls.png"
 					NormalsFile = "external_walls_normals.png"
-					Size = [2, 4]
+					Size = [1, 3]
 				}
 				{
 					File = "external_walls_33.png"
 					NormalsFile = "external_walls_normals_33.png"
-					Size = [2, 4]
+					Size = [1, 3]
 				}
 				{
 					File = "external_walls_66.png"
 					NormalsFile = "external_walls_normals_66.png"
-					Size = [2, 4]
+					Size = [1, 3]
 				}
 			]
 		}
@@ -227,7 +227,7 @@ Components
 	MissileSpritesA
 	{
 		Type = ResourceSprites
-		Location = [.5 + 2/64, 0.6]
+		Location = [0.25 + 2/64, 0.6]
 		ResourceStorage = MissileStorageA
 		Layer = "weapons"
 		ResourceLevels
@@ -235,44 +235,44 @@ Components
 			{
 				File = "cluster_1.png"
 				NormalsFile = "cluster_normals_1.png"
-				Size = [1, 1]
+				Size = [0.5, 0.5]
 			}
 			{
 				File = "cluster_2.png"
 				NormalsFile = "cluster_normals_2.png"
-				Offset = [0, -0.3]
-				Size = [1, 2]
+				Offset = [0, -0.15]
+				Size = [0.5, 1]
 			}
 		]
 	}
 
 	MissileSpritesB : MissileSpritesA
 	{
-		Location = [1, (&~/Components/MissileSpritesA/Location/1)]
+		Location = [0.5, (&~/Components/MissileSpritesA/Location/1)]
 		ResourceStorage = MissileStorageB
 	}
 
 	MissileSpritesC : MissileSpritesA
 	{
-		Location = [1.5 - 2/64, (&~/Components/MissileSpritesA/Location/1)]
+		Location = [0.75 - 2/64, (&~/Components/MissileSpritesA/Location/1)]
 		ResourceStorage = MissileStorageC
 	}
 
 	MissileSpritesD : MissileSpritesA
 	{
-		Location = [.5 + 2/64, (&~/Components/MissileSpritesA/Location/1)+0.81]
+		Location = [0.25 + 2/64, (&~/Components/MissileSpritesA/Location/1)+0.81]
 		ResourceStorage = MissileStorageD
 	}
 
 	MissileSpritesE : MissileSpritesA
 	{
-		Location = [1, (&~/Components/MissileSpritesD/Location/1)]
+		Location = [0.5, (&~/Components/MissileSpritesD/Location/1)]
 		ResourceStorage = MissileStorageE
 	}
 
 	MissileSpritesF : MissileSpritesA
 	{
-		Location = [1.5 - 2/64, (&~/Components/MissileSpritesD/Location/1)]
+		Location = [0.75 - 2/64, (&~/Components/MissileSpritesD/Location/1)]
 		ResourceStorage = MissileStorageF
 	}
 
@@ -319,7 +319,7 @@ Components
 	Indicators
 	{
 		Type = IndicatorSprites
-		Location = [1, 2]
+		Location = [0.5, 2.5]
 		Layer = "indicators"
 		Indicators
 		[
@@ -336,7 +336,7 @@ Components
 			// Out of missiles.
 			{
 				Toggle = MissilesPrereq
-				Delay = &<../missile_launcher.rules>/Part/Components/CommonReloadTimerShort/Duration
+				Delay = &<../missile_launcher_small.rules>/Part/Components/CommonReloadTimerShort/Duration
 				AtlasSprite
 				{
 					File = &/INDICATORS/NoMissiles
@@ -375,13 +375,18 @@ WeaponBase
 	OperationalToggle = IsOperational
 	AutoFireToggle = AutoFireToggle
 	FireInterval = 0 // Uses common reload timer.
-	FiringArc = 0d;
-	ValidArc = 360d;
-	FireThresholdAngle = 180d;
+	FiringArc = 0d
+	ValidArc = 360d
+	FireThresholdAngle = 180d
 	RotateSpeed = 0d
-	AllowFireWithBlockedLOS = true
 	AIFirepowerRating = 1600
+	CanBeGivenExplicitTarget = true
 	FirePermissionToggle = FirePermissionToggle
+	HoldTargetAfterCancel = 0.15
+	AutoTargetCrewSafetyDist = 8
+	IgnoreSourceShipLOSChecks = false
+	IgnoreSourceShipLowLOSChecks = true
+	AllowFireWithBlockedLOS = true
 
 	AutoTargets
 	[
@@ -399,7 +404,7 @@ EmitterBase
 	OperationalToggle = IsOperational
 	Location = [0, 0]
 	ResourcesUsed = 2
-	Bullet = &/SW_SHOTS/Missiles/Cluster/Medium/Launch_Stage_A
+	Bullet = &/SW_SHOTS/Missiles/Cluster/Mini/Launch_Stage_A
 	TargetLeadPrediction = false
 	Recoil = 50
 	Spread = [-1.0d, 1.0d]
@@ -441,7 +446,7 @@ MissileStats
 		DamagePerSecond = (&DamagePerShot) * (&ROF)
 		MaxDamage = [&../DamagePerShot, &../DamagePerSecond]
 		DamageArea = &~/EmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
-		ROF = 6 / (&<../missile_launcher.rules>/Part/Components/CommonReloadTimerShort/Duration)
+		ROF = 6 / (&<../missile_launcher_small.rules>/Part/Components/CommonReloadTimerShort/Duration)
 		Range = &~/EmitterBase/Bullet/Range
 		Arc = deg(&~/WeaponBase/ValidArc)
 		ShotLaunchSpeed = &~/EmitterBase/Bullet/Speed
