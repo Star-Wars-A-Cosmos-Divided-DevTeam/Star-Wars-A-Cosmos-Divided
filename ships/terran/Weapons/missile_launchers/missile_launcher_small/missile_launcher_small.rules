@@ -19,11 +19,11 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		[coil2, 20]
 		[processor, 1]
 	]
-	Size = [1, 3]
+	Size = [1, 4]
 	MaxHealth = 1000
 
 	//Rects
-	PhysicalRect = [0, 2, 1, 1]
+	PhysicalRect = [0, 3, 1, 1]
 	RectColliderRectType = Normal
 	SaveRect = &PhysicalRect
 
@@ -37,18 +37,48 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 	ProhibitedBy : ^/0/ProhibitedBy [tall, SW_tall]
 	ProhibitRects
 	[
-		[default, [-1, -10, 3, 5]]
-		[tall, [-1, -5, 3, 5]]
-		[SW_tall, [-2, -1, 2, 5]]
-		[SW_tall, [1, -1, 2, 5]]
+		[default, [-1, -12, 3, 6]]
+		[tall, [-1, -6, 3, 6]]
+		[SW_tall, [-2, -1, 2, 6]]
+		[SW_tall, [1, -1, 2, 6]]
 	]
 
 	//Doors&Etc
 	AllowedDoorLocations
 	[
-		[-1, 2] //left
- 		[0, 3]	//bottom
-		[1, 2]	//right
+		[-1, 3] //left
+ 		[0, 4]	//bottom
+		[1, 3]	//right
+	]
+	ExternalWallsByCell
+	[
+		{
+			Key = [0, 2]
+			Value = [TopLeft, TopRight, Right, Left]
+		}
+		/*
+		{
+			Key = [1, 1]
+			Value = [TopRight, Right, BottomRight, Bottom]
+		}
+		*/
+	]
+	InternalWallsByCell
+	[
+		{
+			Key = [0, 0]
+			Value = [BottomLeft, Left, TopLeft, Top, TopRight, Right, BottomRight]
+		}
+		{
+			Key = [0, 1]
+			Value = [Left, TopLeft, TopRight, Right]
+		}
+		/*
+		{
+			Key = [1, 0]
+			Value = [Right, TopRight, Top, TopLeft]
+		}
+		*/
 	]
 
 	//Editor
@@ -220,7 +250,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [0.5, 2.5]
+			Location = [0.5, 3.5]
 			Rotation = 0d
 		}
 		PartCrew
@@ -232,7 +262,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			HighPriorityPrerequisites = [MissilesPrereqToggleProxy]
 			CrewDestinations
 			[
-				[ 0.5, 2.5]
+				[0.5, 3.5]
 			]
 			CrewLocations
 			[
@@ -240,10 +270,80 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 2]
+			OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "floors"
+				Offset = [0, 1.5]
+				DamageLevels
+				[
+					{
+						File = "sprites/floor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "sprites/floor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "sprites/floor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				Offset = [0, 1.5]
+				DamageLevels
+				[
+					{
+						File = "sprites/walls.png"
+						Size = [1, 1]
+					}
+					{
+						File = "sprites/walls_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "sprites/walls_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				Offset = [0, 1.0]
+				DamageLevels
+				[
+					{
+						File = "sprites/roof.png"
+						NormalsFile = "sprites/roof_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "sprites/roof_33.png"
+						NormalsFile = "sprites/roof_normals_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "sprites/roof_66.png"
+						NormalsFile = "sprites/roof_normals_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [1, 3]
+			Location = [1, 4]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
@@ -253,7 +353,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_cluster.png"
-			Size = [1, 3]
+			Size = [1, 4]
 			//Offset = [0, -.5]
 
 			ShowOnlyInToggleMode
@@ -266,7 +366,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_intruder.png"
-			Size = [1, 3]
+			Size = [1, 4]
 
 			ShowOnlyInToggleMode
 			{
@@ -278,7 +378,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_concussion.png"
-			Size = [1, 3]
+			Size = [1, 4]
 
 			ShowOnlyInToggleMode
 			{
@@ -291,7 +391,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_hex.png"
-			Size = [1, 3]
+			Size = [1, 4]
 
 			ShowOnlyInToggleMode
 			{
