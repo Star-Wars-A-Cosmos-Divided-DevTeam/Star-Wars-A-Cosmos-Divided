@@ -115,7 +115,6 @@ Components
 		Offset = [45/64, 0]
 		MediaEffects
 		[
-			//&<particles/missile_intruder_thruster_lightning.rules>
 			&/SW_PARTICLES/Shot/Ion/Trail/Med/Cyan
 		]
 	}
@@ -135,8 +134,7 @@ Components
 		Type = SimpleHit
 		SourcePartCollisionDelay = 1.5/30
 
-		HitShield = &HitOperational
-		HitOperational
+		HitShield
 		{
 			HitEffects
 			[
@@ -156,16 +154,99 @@ Components
 					MediaEffectsOnDrainFactor = .0005
 					MediaEffectsOnDrain
 					[
-						&<particles/missile_intruder_hit_sizzle.rules>
-						&<particles/missile_intruder_lightning.rules>
-						&<particles/missile_intruder_drain.rules>
+						&/SW_PARTICLES/Shot/Ion/Drain/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Sizzle/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+						&/SW_SOUNDS/IonDischarge
+					]
+				}
+				{
+					Type = ExplosiveResourceDrain
+					ResourceType = SW.fake
+					TotalDrain = -1000
+					Radius = 18
+					Slices = 1
+					Filter
+					{
+						Ships = true
+						Shields = true
+						Friendlies = true
+					}
 
-						: /BASE_SOUNDS/AudioExterior
-						{
-							Sound = "discharge.wav"
-							Volume = 1
-							SpeedVariation = .2
-						}
+					/*MediaEffectsOnDrainFactor = .0005
+					MediaEffectsOnDrain
+					[
+						&/SW_PARTICLES/Shot/Ion/Drain/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Sizzle/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+						&/SW_SOUNDS/IonDischarge
+					]*/
+				}
+				{
+					Type = Damage
+					Damage = 300
+					Filter
+					{
+						Friendlies = true
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 10000
+					Radius = 3
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = true
+					}
+				}
+				{
+					Type = Impulse;
+					Impulse = 100;
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Ion/Hit/Med/Cyan
+				&/SW_PARTICLES/Shot/Ion/Flash/Med/Cyan
+				&/SW_PARTICLES/Shot/Ion/Sparks/Med/Cyan
+
+				&/SW_SOUNDS/IonDischarge
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveResourceDrain
+					ResourceType = battery
+					TotalDrain = 18000
+					Radius = 18
+					Slices = 4
+					Filter
+					{
+						Ships = true
+						Shields = true
+						Friendlies = true
+					}
+
+					MediaEffectsOnDrainFactor = .0005
+					MediaEffectsOnDrain
+					[
+						&/SW_PARTICLES/Shot/Ion/Drain/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Sizzle/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+						&/SW_SOUNDS/IonDischarge
 					]
 				}
 				{
@@ -195,21 +276,16 @@ Components
 
 			MediaEffects
 			[
-				&<particles/missile_intruder_hit_orb.rules>
-				&<particles/missile_intruder_hit_bolts.rules>
-				&<particles/missile_intruder_hit_shockwave.rules>
+				&/SW_PARTICLES/Shot/Ion/Hit/Med/Cyan
+				&/SW_PARTICLES/Shot/Ion/Flash/Med/Cyan
+				&/SW_PARTICLES/Shot/Ion/Sparks/Med/Cyan
 
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "missile_intruder_hit.wav"
-					Volume = 1
-					SpeedVariation = .2
-				}
+				&/SW_SOUNDS/IonDischarge
 
 				: /BASE_SHAKE
 				{
-					ShakeAmount = .05
-					Duration = .75
+					ShakeAmount = .03
+					Duration = .3
 				}
 			]
 		}
@@ -221,6 +297,8 @@ Components
 			[
 				&<particles/missile_intruder_hit_orb.rules>
 				&<particles/missile_intruder_hit_bolts.rules>
+				&/SW_PARTICLES/Shot/Ion/Sizzle/Med/Cyan
+				&/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
 
 				: /BASE_SOUNDS/AudioExterior
 				{

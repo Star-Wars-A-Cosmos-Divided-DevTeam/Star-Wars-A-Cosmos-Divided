@@ -131,6 +131,94 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Interval = (4/3)
 		}
 */
+
+		OverloadStorage
+		{
+			Type = ResourceStorage
+			ResourceType = SW.fake
+			MaxResources = 2000
+			ToggleOnResources = 1000
+			ToggleOffResources = 0
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		OverloadStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = OverloadStorage
+			ShowProgressFor = OverloadStorage
+			LowColor = [48, 0, 64]
+			HighColor = [192, 0, 255]
+			Full = [192, 0, 255]
+			Height = 10
+		}
+		OverloadCooler
+		{
+			Type = ResourceConverter
+			FromStorage = OverloadStorage
+			OperationalToggle = OverloadStorage
+			FromQuantity = 100
+			MinFromQuantityForConversion = 100
+			Interval = (10/9)
+		}
+		/*OverloadCoolerToggle
+		{
+			Type = TriggeredToggle
+			OnTrigger = OverloadStorageIsOverloadingTrigger
+			OffTrigger = OverloadStorageIsCooledOffTrigger
+		}*/
+
+		IsOverloadedToggle
+		{
+			Type = MultiToggle
+			Toggles = [OverloadStorage]
+			Mode = Any
+		}
+
+		OverloadTimer
+		{
+			Type = Timer
+			Duration = 10
+			AutoStart = true
+			StartTrigger = OverloadStorageIsOverloadingTrigger
+		}
+		
+		OverloadStorageIsOverloadingTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = OverloadStorage
+			MinAmount = 49%
+		}
+		OverloadStorageIsCooledOffTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = OverloadStorage
+			MaxAmount = 0%
+		}
+
+		IsOverloadedAndShouldExplode
+		{
+			Type = MultiToggle
+			Toggles = [IsOverloadedToggle, {Toggle = OverloadTimer, Invert = true}]
+			Mode = All
+		}
+
+		IsOverloadedAndShouldExplodeTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = IsOverloadedAndShouldExplode
+			TriggerWhenOn = true
+			TriggerWhenOff = false
+			OperationalToggle = OverloadTimer
+			InvertOperationalToggle = true
+		}
+
+		OverloadDmgMultiplierValue
+		{
+			Type = MultiValue
+			Values = [BatteryStorage, OverloadStorage]
+			Mode = Add
+		}
+
 		ShieldColorType
 		{
 			Type = UIToggle
@@ -507,6 +595,53 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 			Location = [0.5, 0.5]
+		}
+
+		DestroyedEffects_Overload
+		{
+			Type = TriggeredEffects
+			ChainedTo = DestroyedEffects
+			Trigger = IsOverloadedAndShouldExplodeTrigger
+			IncludeWhenUnderConstruction = false
+
+			MediaEffects
+			[
+
+			]
+
+			FactorHitEffectsWith = OverloadDmgMultiplierValue
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 32000
+					Radius = 3
+					Delay = .05
+					FireChancePerNDamage = 50%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false
+						Friendlies = true
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 6400
+					Radius = 1
+					Delay = .05
+					ImpulsePerNDamage = 5
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = true
+					}
+				}
+			]
 		}
 
 		Indicators

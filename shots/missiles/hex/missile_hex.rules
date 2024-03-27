@@ -1,5 +1,5 @@
-ID = "SW.missile_hexx"
-Range = 450
+ID = "SW.missile_hex"
+Range = 1250 //666
 IdealRange = 450
 Speed = 45
 
@@ -111,6 +111,8 @@ Components
 			&<particles/missile_hex_thruster_smoke.rules>
 			&<particles/missile_hex_thruster_plume.rules>
 			&<particles/missile_hex_thruster_plume_light.rules>
+			&/SW_PARTICLES/Thruster/Vanilla/PlumeLight/Small/Orange
+			&/SW_PARTICLES/Thruster/Vanilla/PlumeLight/Med/Green
 		]
 	}
 
@@ -127,31 +129,36 @@ Components
 	Hit
 	{
 		Type = SimpleHit
+		ShieldCollisions = { Shields=true; }
 		SourcePartCollisionDelay = 1.5/30
+		FriendlyShipLowCollisions = false
 
-		HitShield = &HitOperational
+		HitShield {}
+
 		HitOperational
 		{
 			HitEffects
 			[
 				{
-					Type = ExplosiveDamage
-					TotalDamage = 15000
-					Radius = 4
-					Filter
-					{
-						Friendlies = true
-					}
+					Type = SpawnBullets
+					Bullet = &<missile_hex_shrapnel.rules>
+					Count = 4
+					Distance = .4
+					Spread = [-1d, 1d]
+					InheritVelocity = false
 				}
 				{
-					Type = Impulse;
-					Impulse = 100;
+					Type = Fire
+					FireChance = 2
+				}
+				{
+					Type = Impulse
+					Impulse = 32
 				}
 			]
 
 			MediaEffects
 			[
-				&<particles/missile_hex_hit.rules>
 				&<particles/missile_hex_flash.rules>
 				&<particles/missile_hex_smoke.rules>
 
@@ -175,7 +182,6 @@ Components
 		{
 			MediaEffects
 			[
-				&<particles/missile_hex_hit.rules>
 				&<particles/missile_hex_flash.rules>
 				&<particles/missile_hex_smoke.rules>
 
