@@ -44,7 +44,7 @@ Components
 	{
 		Type = MultiResourceStorage
 		ResourceType = missile_part_he
-		ToggleOnResources = 12
+		ToggleOnResources = ((&~/MissileStorageBase/ToggleOnResources)*6)
 		ToggleOffResources = (&ToggleOnResources)-1
 		ResourceStorages = [MissileStorageA, MissileStorageB, MissileStorageC, MissileStorageD, MissileStorageE, MissileStorageF]
 		AddMode = PrioritizeLeastEmptyCapacity
@@ -124,7 +124,7 @@ Components
 
 	WeaponE : ~/WeaponBase
 	{
-		Location = [0.5, 0.5]
+		Location = [0.5, 2.5]
 		Emitter = EmitterE
 
 		CoverageSectorArc
@@ -138,28 +138,28 @@ Components
 	EmitterA : ~/EmitterBase
 	{
 		ResourceStorage = MissileStorageA
-		Location = [1.0, 0.25]
+		Location = [0.42, 0.25 + 1/64]
 		Spread = [-1.0d, 4.2d]
 	}
 
 	EmitterB : ~/EmitterBase
 	{
 		ResourceStorage = MissileStorageB
-		Location = [1.0, 0]
+		Location = [0.42, 0]
 		Spread = [-2.1d, 2.1d]
 	}
 
 	EmitterC : ~/EmitterBase
 	{
 		ResourceStorage = MissileStorageC
-		Location = [1.0, -0.25]
+		Location = [0.42, -0.25 - 1/64]
 		Spread = [-4.2d, 1.0d]
 	}
 
 	EmitterD : ~/EmitterBase
 	{
 		ResourceStorage = MissileStorageD
-		Location = [0, 0.25]
+		Location = [0, 0.25 + 1/64]
 		Spread = [-0.0d, 2.1d]
 	}
 
@@ -173,7 +173,7 @@ Components
 	EmitterF : ~/EmitterBase
 	{
 		ResourceStorage = MissileStorageF
-		Location = [0, -0.25]
+		Location = [0, -0.25 - 1/64]
 		Spread = [-2.1d, 0d]
 	}
 
@@ -227,8 +227,11 @@ Components
 	MissileSpritesA
 	{
 		Type = ResourceSprites
-		Location = [0.25 + 2/64, 0.6]
+		//Location = [0.25 + 1/64, 0.6]
+		//Location = [-0.5, 0]
 		ResourceStorage = MissileStorageA
+		ChainedTo = EmitterA
+		Rotation = 90d
 		Layer = "weapons"
 		ResourceLevels
 		[
@@ -248,32 +251,37 @@ Components
 
 	MissileSpritesB : MissileSpritesA
 	{
-		Location = [0.5, (&~/Components/MissileSpritesA/Location/1)]
+		//Location = [0.5, (&~/Components/MissileSpritesA/Location/1)]
 		ResourceStorage = MissileStorageB
+		ChainedTo = EmitterB
 	}
 
 	MissileSpritesC : MissileSpritesA
 	{
-		Location = [0.75 - 2/64, (&~/Components/MissileSpritesA/Location/1)]
+		//Location = [0.75 - 1/64, (&~/Components/MissileSpritesA/Location/1)]
 		ResourceStorage = MissileStorageC
+		ChainedTo = EmitterC
 	}
 
 	MissileSpritesD : MissileSpritesA
 	{
-		Location = [0.25 + 2/64, (&~/Components/MissileSpritesA/Location/1)+0.81]
+		//Location = [0.25 + 1/64, (&~/Components/MissileSpritesA/Location/1)+0.81]
 		ResourceStorage = MissileStorageD
+		ChainedTo = EmitterD
 	}
 
 	MissileSpritesE : MissileSpritesA
 	{
-		Location = [0.5, (&~/Components/MissileSpritesD/Location/1)]
+		//Location = [0.5, (&~/Components/MissileSpritesD/Location/1)]
 		ResourceStorage = MissileStorageE
+		ChainedTo = EmitterE
 	}
 
 	MissileSpritesF : MissileSpritesA
 	{
-		Location = [0.75 - 2/64, (&~/Components/MissileSpritesD/Location/1)]
+		//Location = [0.75 - 1/64, (&~/Components/MissileSpritesD/Location/1)]
 		ResourceStorage = MissileStorageF
+		ChainedTo = EmitterF
 	}
 
 	DestroyedEffects
@@ -361,8 +369,8 @@ MissileStorageBase
 {
 	Type = ResourceStorage
 	ResourceType = missile_part_he
-	MaxResources = 2
-	ToggleOnResources = 2
+	MaxResources = 1
+	ToggleOnResources = 1
 	ToggleOffResources = (&ToggleOnResources)-1
 	DropResourcesWhenDestroyed = true
 	DropResourcesWhenRemoved = true
@@ -403,7 +411,7 @@ EmitterBase
 	Type = BulletEmitter
 	OperationalToggle = IsOperational
 	Location = [0, 0]
-	ResourcesUsed = 2
+	ResourcesUsed = 1
 	Bullet = &/SW_SHOTS/Missiles/Cluster/Mini/Launch_Stage_A
 	TargetLeadPrediction = false
 	Recoil = 50
