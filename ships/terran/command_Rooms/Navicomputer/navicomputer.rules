@@ -1,16 +1,20 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
+    //IDs
 	ID = SW.navicomputer
 	OtherIDs = ["navicomputer"]
 
+    //StringKeys
 	NameKey = "Parts/Navicomputer"
 	IconNameKey = "Parts/NavicomputerIcon"
 	DescriptionKey = "Parts/NavicomputerDesc"
 
+    //Groups&Categories
 	EditorGroups = ["Flight", "SWTechII"]
-	TypeCategories = [navicomputer, uses_power, is_crewed]
+	TypeCategories = [navicomputer, uses_power, is_crewed, SW_Navicomputer, SW_Tech_II]
 	RequiresCategories = []
 
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 32]
@@ -21,11 +25,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Size = [2, 2]
 	MaxHealth = 4000
 
+    //Selections
 	SelectionPriority = 0
-	SelectionTypeID = "navicomputer"
+	SelectionTypeID = "SW_navicomputer"
 
+    //PartSpecific
+	AIValueFactor = 2
 	AutoDoorMaxPathLength = 5
 
+    //ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Radar]
+
+	//Doors&Etc
 	AllowedDoorLocations
 	[
 		[-1, 1]
@@ -34,6 +45,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
         [0, 2]
 	]
 
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -44,6 +56,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Size = [48, 48]
 	}
 
+    //Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -51,6 +64,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = MultiToggle
 			Toggles = [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
+		}
+
+		IsOperationalAndCommandToggle
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, CommandToggle]
+			Mode = All
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
 		}
 		
 		PowerToggle
@@ -71,9 +96,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Sensor
 		{
 			Type = Sensor
-			OperationalToggle = IsOperational
-			SightRadius = 640 //400
-			RadarRadius = 2100 //1800
+			OperationalToggle = IsOperationalAndCommandToggle
+			SightRadius = { BaseValue=640; BuffType=SW_Radar; BuffMode=Multiply; } //400
+			RadarRadius = { BaseValue=2100; BuffType=SW_Radar; BuffMode=Multiply; } //1800
 		}
 
 		BatteryStorage
@@ -163,15 +188,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "../walls_02.png"
+						File = "walls.png"
 						Size = [2, 2]
 					}
 					{
-						File = "../walls_02_33.png"
+						File = "walls_33.png"
 						Size = [2, 2]
 					}
 					{
-						File = "../walls_02_66.png"
+						File = "walls_66.png"
 						Size = [2, 2]
 					}
 				]
@@ -314,8 +339,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		SightRange = &~/Part/Components/Sensor/SightRadius
-		RadarRange = &~/Part/Components/Sensor/RadarRadius
+		//SightRange = &~/Part/Components/Sensor/SightRadius
+		//RadarRange = &~/Part/Components/Sensor/RadarRadius
 
 		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
