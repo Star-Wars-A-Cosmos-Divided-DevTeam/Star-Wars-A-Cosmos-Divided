@@ -34,7 +34,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	AutoDoorMaxPathLength = 5
 
     //ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Radar]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor]
 
 	//Doors&Etc
 	AllowedDoorLocations
@@ -93,12 +93,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			CommandPoints = 0
 		}
 
+		BuffProvider
+		{
+			Type = GridBuffProvider
+			BuffType = SW_Sensor
+			BuffAmount = 50%
+			GridDistance = 1000
+			OperationalToggle = IsOperational
+		}
+
 		Sensor
 		{
 			Type = Sensor
 			OperationalToggle = IsOperationalAndCommandToggle
-			SightRadius = { BaseValue=640; BuffType=SW_Radar; BuffMode=Add; } //640
-			RadarRadius = { BaseValue=2100; BuffType=SW_Radar; BuffMode=Add; } //2100
+			SightRadius = { BaseValue=480; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 960 } //640
+			RadarRadius = { BaseValue=1600; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 3200} //2100
 		}
 
 		BatteryStorage
@@ -124,9 +133,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceConverter
 			OperationalToggle = IsOperational
 			FromStorage = BatteryStorage
-			FromQuantity = 100
+			FromQuantity = 1000
 			MinFromQuantityForConversion = 1
-			Interval = 6 // Drains 1 power every minute.
+			Interval = 60 // Drains 1 power every minute.
 		}
 
 		Graphics

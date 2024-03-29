@@ -36,7 +36,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//ContiguityOriginPriority = 2
 
     //ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Radar]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor]
 
 	//SpecialCells
 	ForceManhattenPathInPart = true
@@ -208,18 +208,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			CommandPoints = 3600 // Remember to update tooltip.
 		}
 
+		BuffProvider
+		{
+			Type = GridBuffProvider
+			BuffType = SW_Sensor
+			BuffAmount = 50%
+			GridDistance = 100
+			OperationalToggle = IsOperational
+		}
+
 		Sensor
 		{
 			Type = Sensor
-			SightRadius = { BaseValue=1500; BuffType=SW_Radar; BuffMode=Add; MaxValue=3000; } //2500
-			RadarRadius = { BaseValue=2500; BuffType=SW_Radar; BuffMode=Add; MaxValue=5000; } //4500
+			SightRadius = { BaseValue=1500; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=3000; } //was 2500
+			RadarRadius = { BaseValue=2500; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=5000; } //was 4500
 		}
 
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 6000
+			MaxResources = 8000
 		}
 		BatteryConsumer
 		{
@@ -231,6 +240,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+		PowerDrain
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
+			FromQuantity = 1000
+			MinFromQuantityForConversion = 1
+			Interval = 10 // Drains 1 power every 10 seconds.
+		}
 
 		//temp fixi remove in 2,3 months started 16.01.2024
 		FtlBeaconBatteryStorage
@@ -239,14 +257,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			MaxResources = 0
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-		}
-
-		PowerDrain
-		{
-			Type = ResourceConverter
-			FromStorage = BatteryStorage
-			FromQuantity = 150 // 100 + 50 for Beacon
-			Interval = 3
 		}
 
 		CrewLocation1 //CircleTop
