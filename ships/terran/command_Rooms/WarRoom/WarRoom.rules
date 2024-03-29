@@ -184,12 +184,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ContinuousEffects
 			Location = [3, 3.5]
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalAndCommandToggle
 			FactorMediaEffectsIntensityWith = RoofOpacity
 			MediaEffects
 			[
 				&<hyperdrive_beacon_pulse.rules>
-				//&<hyperdrive_beacon_pulse_simple.rules>
 			]
 		}
 		RoofOpacity
@@ -212,8 +211,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Sensor
 		{
 			Type = Sensor
-			SightRadius = 2500
-			RadarRadius = ceil(500*9)
+			SightRadius = { BaseValue=1500; BuffType=SW_Radar; BuffMode=Add; MaxValue=3000; } //2500
+			RadarRadius = { BaseValue=2500; BuffType=SW_Radar; BuffMode=Add; MaxValue=5000; } //4500
 		}
 
 		BatteryStorage
@@ -531,8 +530,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		SightRange = &~/Part/Components/Sensor/SightRadius
-		RadarRange = &~/Part/Components/Sensor/RadarRadius
+		SightRange = &~/Part/Components/Sensor/SightRadius/BaseValue
+		RadarRange = &~/Part/Components/Sensor/RadarRadius/BaseValue
 		CommandPoints =  &~/Part/Components/CommandProvider/CommandPoints
 
 		RecPower = (&PowerUsageContinuousMinutes) / 60
