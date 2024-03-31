@@ -3,7 +3,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
     //IDs
 	ID = SW.CommandBridge
 	OtherIDs = [commandbridge1, SW.commandbridge1, commandbridge2, SW.commandbridge2,SW.commandbridge_test,SW.commandbridge_test2]
-	
+
     //StringKeys
 	NameKey = "Parts/CommandBridge"
 	IconNameKey = "Parts/CommandBridgeIcon"
@@ -65,8 +65,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles = [PowerToggle, BatteryStorage, PartCrewCaptian, PartCrewNavigatorsL, PartCrewNavigatorsR, PartCrewOfficers]
 			Mode = All
+		}
+
+		CommandProvider
+		{
+			Type = CommandProvider
+			OperationalToggle = IsOperational
+			CommandPoints = 1200 // Remember to update tooltip.
 		}
 
 		IsOperationalAndCommandToggle
@@ -116,13 +123,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Interval = 10 // Drains 1 power every 10 seconds.
 		}
 
-		CommandProvider
-		{
-			Type = CommandProvider
-			OperationalToggle = IsOperational
-			CommandPoints = 1200 // Remember to update tooltip.
-		}
-
 		BuffProvider
 		{
 			Type = GridBuffProvider
@@ -138,13 +138,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperationalAndCommandToggle
 			SightRadius = { BaseValue=1200; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=2400; } //was 1500
 			RadarRadius = { BaseValue=2100; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=4200;  } //was 6750
-		}
-
-		PartCrew
-		{
-			Type = MultiToggle
-			Toogles = [PartCrewCaptian, PartCrewNavigatorsL, PartCrewNavigatorsR, PartCrewOfficers]
-			Mode = All
 		}
 
 		CrewLocation1 //Front "Captian"

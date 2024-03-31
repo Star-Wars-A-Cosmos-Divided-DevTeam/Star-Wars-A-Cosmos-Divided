@@ -1,0 +1,739 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+    //IDs
+	ID = SW.bubble_generator_giga_switchable
+	OtherIDs = [SW.bubble_generator_omega_switchable]
+
+	//StringKeys
+	NameKey = "Parts/BubbleGeneratorGiga"
+	IconNameKey = "Parts/BubbleGeneratorGigaIcon"
+	DescriptionKey = "Parts/BubbleGeneratorGigaDesc"
+
+	//Groups&Categories
+	EditorGroups = ["Defenses", "SWTechIII"]
+	TypeCategories = [defense, uses_power, SW_Shield, SW_Tech_III]
+	//RequiresCategories = []
+
+    //Resources&Size&Health
+	Resources
+	[
+		[steel, 1024]
+		[coil, 256]
+		[coil2, 128]
+		[carbon, 90]
+		[diamond, 32]
+		[processor, 12]
+	]
+	Size = [8, 8]
+	MaxHealth = 64000
+
+    //Selections
+	SelectionPriority = 1
+	SelectionTypeID = "bubble_shield_gen"
+	SelectionTypeByRotation = true
+
+	//PartSpecific
+	AIValueFactor = 3.75		//equals ~1mil ai value
+
+    //ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Doors&Etc
+	ForceManhattanPathInPart = true
+	BlockedTravelCells = &<shield_8/shield_8_additional.rules>/Part/BlockedTravelCells
+	BlockedTravelCellDirections = &<shield_8/shield_8_additional.rules>/Part/BlockedTravelCellDirections
+	MaxDoors = 12
+	AllowedDoorLocations
+	[
+		[-1, 5]
+		[-1, 6]
+		[-1, 7]
+		[0, 8]
+		[1, 8]
+		[2, 8]
+		[3, 8]
+		[4, 8]
+		[5, 8]
+		[6, 8]
+		[7, 8]
+		[8, 7]
+		[8, 6]
+		[8, 5]
+	]
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "Shield_Roasted_4x4/icon.png"
+			SampleMode = Linear
+		}
+		Size = [80, 80]
+	}
+
+    //Components&Inheritance
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, CombinedBatteryStorage]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 96
+			//Requires 0 Stationary Crew so
+		}
+
+		ShieldEmitterEffectToggle
+		{
+			Type = UIToggle
+			ToggleID = "SW.shield_emitter_effect_on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		ShieldEmitterEffectToggleAndIsOperational
+		{
+			Type = MultiToggle
+			Toggles = [ShieldEmitterEffectToggle, IsOperational]
+			Mode = All
+		}
+
+		BatteryStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			MaxResources = 0
+			ResourceStorages = [CombinedBatteryStorage]
+		}
+		CombinedBatteryStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			MaxResources = (&~/MaxResources)
+			ToggleOnResources = (&~/MaxResources)/4
+			ToggleOffResources = 0
+			DrainOnFtlJump = true
+			ResourceStorages = [BatteryStorageLeft, BatteryStorageRight]
+			AddMode = PrioritizeMostResources
+			RemoveMode = PrioritizeLeastResources
+		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = CombinedBatteryStorage
+			ShowProgressFor = CombinedBatteryStorage
+			LowColor = [0, 0, 255]
+			HighColor = [0, 0, 255]
+			FullColor = [0, 0, 255]
+			Height = 10
+		}
+		LoadingStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = CombinedBatteryStorage
+			InvertOperationalToggle = true
+			ShowProgressFor = CombinedBatteryStorage
+			LowColor = [255, 192, 0]
+			HighColor = [255, 192, 0]
+			FullColor = [255, 192, 0]
+			LerpRange = [0, (&~/MaxResources)/4]
+			Height = 10
+		}
+
+		BatteryStorageLeftAndPowerToggle
+		{
+			Type = MultiToggle
+			Toggles = [BatteryStorageLeft, PowerToggle]
+			Mode = All
+		}
+		BatteryStorageRightAndCombinedStorage
+		{
+			Type = MultiToggle
+			Toggles = [BatteryStorageRight, {Toggle = CombinedBatteryStorage; Invert = true}]
+			Mode = Any
+		}
+
+		BatteryStorageLeft
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = (&~/MaxResources)/2
+			ToggleOnResources = (&~/MaxResources)/4
+			ToggleOffResources = 0
+			DrainOnFtlJump = true
+			DeliveryLocation = [2.5, 5.5]
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		BatteryStorageRight : BatteryStorageLeft
+		{
+			ToggleOnResources = 1
+			ToggleOffResources = 0
+			DeliveryLocation = [8-(&~/Part/Components/BatteryStorageLeft/DeliveryLocation/0), &~/Part/Components/BatteryStorageLeft/DeliveryLocation/1]
+		}
+
+		BatteryConsumerLeft
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorageLeft
+			DefaultPriority = &/PRIORITIES/Defense_Supply
+			OperationalToggle = PowerToggle
+			ResupplyThreshold = 0
+		}
+		BatteryConsumerRight : BatteryConsumerLeft
+		{
+			Storage = BatteryStorageRight
+			OperationalToggle = BatteryStorageLeftAndPowerToggle
+		}
+
+		PowerDrainLeft
+		{
+			Type = ResourceConverter
+			FromStorage = BatteryStorageLeft
+			OperationalToggle = BatteryStorageRightAndCombinedStorage
+			InvertOperationalToggle = true
+			FromQuantity = 400
+			MinFromQuantityForConversion = 1
+			Interval = 1
+		}
+		PowerDrainRight : PowerDrainLeft
+		{
+			FromStorage = BatteryStorageRight
+			OperationalToggle = BatteryStorageRight
+			InvertOperationalToggle = false
+		}
+
+		ShieldColorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.shield_color_type"
+			Default = 7
+			AvailableChoices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+			AlwaysAllowInBuildMode = true
+		}
+
+		WhiteShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 0
+		}
+		WhiteShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield_8/shield_8_white.rules>/Components
+		}
+
+		InvisShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 1
+		}
+		InvisShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = InvisShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield_8/shield_8_invis.rules>/Components
+		}
+
+		RedShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 2
+		}
+		RedShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield_8/shield_8_red.rules>/Components
+		}
+
+		OrangeShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 3
+		}
+		OrangeShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = OrangeShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield_8/shield_8_orange.rules>/Components
+		}
+
+		YellowShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 4
+		}
+		YellowShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = YellowShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield_8/shield_8_yellow.rules>/Components
+		}
+
+		GreenShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 5
+		}
+		GreenShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreenShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield_8/shield_8_green.rules>/Components
+		}
+
+		CyanShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 6
+		}
+		CyanShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = CyanShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield_8/shield_8_cyan.rules>/Components
+		}
+
+		BlueShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 7
+		}
+		BlueShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield_8/shield_8_blue.rules>/Components
+		}
+
+		PurpleShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 8
+		}
+		PurpleShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = PurpleShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield_8/shield_8_purple.rules>/Components
+		}
+
+		PinkShieldColorToggle
+		{
+			Type = ModeToggle
+			Mode = ShieldColorType
+			OnMode = 9
+		}
+		PinkShieldColorComponents
+		{
+			Type = ToggledComponents
+			Toggle = PinkShieldColorToggle
+			IncludeInBlueprints = true
+			Components = &<shield_8/shield_8_pink.rules>/Components
+		}
+
+		ShieldEmitterLoop
+		{
+			Type = ContinuousEffects
+			Location = [4, 4]
+			OperationalToggle = IsOperational
+			FactorMediaEffectsIntensityWith = CombinedBatteryStorage
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExteriorDetail
+				{
+					Sound = "./Data/Ships/terran/shield_gen_small/shield_emitter_loop.wav"
+					Volume = .2
+					Speed = 1
+					MaxConcurrent = 1
+					MaxConcurrentVolume = .4
+					IgnoreIntensity = true
+				}
+			]
+		}
+
+		ShieldOperationEffects
+		{
+			Type = ToggleEffects
+			Location = [4, 4]
+			Toggle = IsOperational
+			ToggledOnMediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/Ships/terran/shield_gen_small/activate.wav"
+					Volume = .5
+					Speed = 1.2
+					IgnoreIntensity = true
+				}
+			]
+			ToggledOffMediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/Ships/terran/shield_gen_small/deactivate.wav"
+					Volume = .5
+					Speed = 1.2
+					IgnoreIntensity = true
+				}
+			]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [4, 4]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_8x8/floor.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_8x8/floor_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_8x8/floor_66.png"
+						Size = [8, 8]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_4x4/lights.png"
+						Size = [8, 8]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_4x4/roof_glows.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/roof_glows_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/roof_glows_66.png"
+						Size = [8, 8]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_8x8/walls.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_8x8/walls_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_8x8/walls_66.png"
+						Size = [8, 8]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_4x4/roof.png"
+						NormalsFile = "Shield_Roasted_4x4/roof_normals.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/roof_33.png"
+						NormalsFile = "Shield_Roasted_4x4/roof_normals_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "Shield_Roasted_4x4/roof_66.png"
+						NormalsFile = "Shield_Roasted_4x4/roof_normals_66.png"
+						Size = [8, 8]
+					}
+				]
+			}
+		}
+
+		DoodadGraphics
+		{
+			Type = Graphics
+			OperationalToggle = PowerToggle
+			DoodadToggle = PowerToggle
+			Location = [4, 4]
+
+			AnimationSpeedFactor = CombinedBatteryStorage
+			AnimationSpeedFactorRenormalize = [0, 10.0]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"Shield_Roasted_4x4/doodads_on1.png"
+							"Shield_Roasted_4x4/doodads_on2.png"
+							"Shield_Roasted_4x4/doodads_on3.png"
+							"Shield_Roasted_4x4/doodads_on4.png"
+							"Shield_Roasted_4x4/doodads_on5.png"
+							"Shield_Roasted_4x4/doodads_on6.png"
+							"Shield_Roasted_4x4/doodads_on7.png"
+							"Shield_Roasted_4x4/doodads_on8.png"
+							"Shield_Roasted_4x4/doodads_on9.png"
+							"Shield_Roasted_4x4/doodads_on10.png"
+							"Shield_Roasted_4x4/doodads_on11.png"
+							"Shield_Roasted_4x4/doodads_on12.png"
+							"Shield_Roasted_4x4/doodads_on13.png"
+							"Shield_Roasted_4x4/doodads_on14.png"
+							"Shield_Roasted_4x4/doodads_on15.png"
+							"Shield_Roasted_4x4/doodads_on16.png"
+							"Shield_Roasted_4x4/doodads_on17.png"
+							"Shield_Roasted_4x4/doodads_on18.png"
+							"Shield_Roasted_4x4/doodads_on19.png"
+							"Shield_Roasted_4x4/doodads_on20.png"
+							"Shield_Roasted_4x4/doodads_on21.png"
+							"Shield_Roasted_4x4/doodads_on22.png"
+							"Shield_Roasted_4x4/doodads_on23.png"
+							"Shield_Roasted_4x4/doodads_on24.png"
+							"Shield_Roasted_4x4/doodads_on25.png"
+							"Shield_Roasted_4x4/doodads_on26.png"
+							"Shield_Roasted_4x4/doodads_on27.png"
+							"Shield_Roasted_4x4/doodads_on28.png"
+							"Shield_Roasted_4x4/doodads_on29.png"
+							"Shield_Roasted_4x4/doodads_on30.png"
+							"Shield_Roasted_4x4/doodads_on31.png"
+							"Shield_Roasted_4x4/doodads_on32.png"
+							"Shield_Roasted_4x4/doodads_on33.png"
+							"Shield_Roasted_4x4/doodads_on34.png"
+							"Shield_Roasted_4x4/doodads_on35.png"
+							"Shield_Roasted_4x4/doodads_on36.png"
+							"Shield_Roasted_4x4/doodads_on37.png"
+							"Shield_Roasted_4x4/doodads_on38.png"
+							"Shield_Roasted_4x4/doodads_on39.png"
+							"Shield_Roasted_4x4/doodads_on40.png"
+							"Shield_Roasted_4x4/doodads_on41.png"
+							"Shield_Roasted_4x4/doodads_on42.png"
+							"Shield_Roasted_4x4/doodads_on43.png"
+							"Shield_Roasted_4x4/doodads_on44.png"
+							"Shield_Roasted_4x4/doodads_on45.png"
+							"Shield_Roasted_4x4/doodads_on46.png"
+							"Shield_Roasted_4x4/doodads_on47.png"
+							"Shield_Roasted_4x4/doodads_on48.png"
+							"Shield_Roasted_4x4/doodads_on49.png"
+							"Shield_Roasted_4x4/doodads_on50.png"
+							"Shield_Roasted_4x4/doodads_on51.png"
+							"Shield_Roasted_4x4/doodads_on52.png"
+						]
+						Size = [8, 8]
+						AnimationInterval = 0.1923 //= 1/52
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "Shield_Roasted_4x4/doodads_off.png"
+						Size = [8, 8]
+					}
+				]
+			}
+		}
+		
+		BatterySpritesLeft : &<shield_4.rules>/Part/Components/BatterySpritesLeft
+		{
+			//Type = ResourceSprites
+			Location = [2.5, 5.5]
+			ResourceStorage = BatteryStorageLeft
+			//Layer = "doodads_low"
+			//HasZeroResourceSprite = false
+		}
+		
+		BatterySpritesRight : BatterySpritesLeft
+		{
+			//Type = ResourceSprites
+			Location = [8- (&~/Part/Components/BatterySpritesLeft/Location/0), &~/Part/Components/BatterySpritesLeft/Location/1]
+			ResourceStorage = BatteryStorageRight
+		}
+
+		BatterySpritesMid : &<shield_4.rules>/Part/Components/BatterySpritesMid
+		{
+			//Type = ResourceSprites
+			Location = [4, 4 + 35/64]
+			ResourceStorage = CombinedBatteryStorage
+			//Layer = "doodads_low"
+			//HasZeroResourceSprite = true
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [4, 4]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [4, 4]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [4, 4]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = CombinedBatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [4, 4]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "Shield_Roasted_4x4/blueprints.png"
+			Size = [8, 8]
+		}
+	}
+
+	//Stats
+	Stats
+	{
+		ShieldHP = ((&~/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage))
+		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
+		ShieldArc = deg(360d)
+		ShieldDist = (&~/ShieldStatBase/Radius)
+		PowerUsageContinuous = (&~/Part/Components/PowerDrainLeft/FromQuantity) / (&~/Part/Components/PowerDrainLeft/Interval) / 1000
+		PowerCapacity = (&~/MaxResources) / 1000
+
+		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
+		RecCrew = (&RecPower)
+	}
+}
+ShieldStatBase
+{
+	Type = ArcShield
+	OperationalToggle = IsOperational
+	BlockedByOperationalParts = false
+	Radius = 80
+	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
+	DrainResourcesFrom = CombinedBatteryStorage
+	Location = [4, 2.5]
+	PenetrationResistance = [256, 0]
+	ResourceDrainPerDamage = 0.4
+
+	BlueprintArcSprite
+	{
+		Texture
+		{
+			File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		_xScale = &<ShieldTuner.rules>/Giga/_xScale
+		Size = &<ShieldTuner.rules>/Giga/Size
+		UVRect = [0, 1, 2, 1]
+		Color = [50, 50, 255, 127]
+	}
+	BlueprintArcSpriteSegments = 64
+
+	CoverageArcSprite
+	{
+		Texture
+		{
+			File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+			UVMode = Wrap
+			SampleMode = Linear
+			MipLevels = 1
+		}
+		_xScale = &<ShieldTuner.rules>/Giga/_xScale
+		Size = &<ShieldTuner.rules>/Giga/Size
+		UVRect = [0, 1, 2, 1]
+		Color = [255, 255, 255, 127]
+	}
+	CoverageArcSpriteSegments = 64
+}
+Size = Giga
+MaxResources = 128000
