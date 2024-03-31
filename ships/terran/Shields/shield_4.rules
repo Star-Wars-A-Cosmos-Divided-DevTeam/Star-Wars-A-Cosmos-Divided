@@ -1,46 +1,70 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/BubbleGeneratorGiga"
-	IconNameKey = "Parts/BubbleGeneratorGigaIcon"
-	ID = SW.bubble_generator_giga_switchable
-	OtherIDs = [SW.bubble_generator_omega_switchable]
-	EditorGroups = ["Defenses", "SWTechIII"]
-	DescriptionKey = "Parts/BubbleGeneratorGigaDesc"
+    //IDs
+	ID = SW.bubble_generator_large_switchable
+	OtherIDs = ["bubble_generator_large1","SW.bubble_generator_large1","SW.bubble_generator_large2","SW.bubble_generator_huge_switchable"]
+
+	//StringKeys
+	NameKey = "Parts/BubbleGeneratorLarge"
+	IconNameKey = "Parts/BubbleGeneratorLargeIcon"
+	DescriptionKey = "Parts/BubbleGeneratorLargeDesc"
+
+	//Groups&Categories
+	EditorGroups = ["Defenses", "SWTechII", "SWTechIII"]
+	TypeCategories = [defense, uses_power, SW_Shield, SW_Tech_II, SW_Tech_III]
+	//RequiresCategories = []
+
+    //Resources&Size&Health
 	Resources
 	[
-		[steel, 1024]
-		[coil, 256]
-		[coil2, 128]
-		[carbon, 90]
-		[diamond, 32]
-		[processor, 12]
-	]	//Cost = 262000
-	AIValueFactor = 3.75		//equals ~1mil ai value
-	Size = [8, 8]
+		[steel, 256]
+		[coil, 130]
+		[coil2, 64]
+		[carbon, 65]
+		[diamond, 8]
+		[processor, 6]
+	]
+	Size = [4, 4]
+	MaxHealth = 16000
+
+    //Selections
 	SelectionPriority = 1
 	SelectionTypeID = "bubble_shield_gen"
 	SelectionTypeByRotation = true
-	MaxHealth = 64000
-	TypeCategories = [defense, uses_power]
-	MaxDoors = 12
+
+	//PartSpecific
+	AIValueFactor = 3		//equals ~0.3mil ai value
+
+    //ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Doors&Etc
 	ForceManhattanPathInPart = true
+	BlockedTravelCells
+	[
+		[0, 0]
+		[1, 0]
+		[2, 0]
+		[3, 0]
+		[0, 1]
+		[1, 1]
+		[2, 1]
+		[3, 1]
+		[0, 2]
+		[3, 2]
+	]
+	MaxDoors = 4
 	AllowedDoorLocations
 	[
-		[-1, 5]
-		[-1, 6]
-		[-1, 7]
-		[0, 8]
-		[1, 8]
-		[2, 8]
-		[3, 8]
-		[4, 8]
-		[5, 8]
-		[6, 8]
-		[7, 8]
-		[8, 7]
-		[8, 6]
-		[8, 5]
+		[-1, 3]
+		[0, 4]
+		[1, 4]
+		[2, 4]
+		[3, 4]
+		[4, 3]
 	]
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -48,14 +72,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "Shield_Roasted_4x4/icon.png"
 			SampleMode = Linear
 		}
-		Size = [80, 80]
+		Size = [64, 64]
 	}
+
+    //Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, ShieldToggle]
+			Toggles = [PowerToggle, CombinedBatteryStorage]
 			Mode = All
 		}
 
@@ -65,6 +91,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 24
+			//Requires 0 Stationary Crew so
 		}
 
 		ShieldEmitterEffectToggle
@@ -82,37 +116,59 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = All
 		}
 
-		ShieldToggle
+		BatteryStorage
 		{
-			Type = TriggeredToggle
-			OnTrigger = BatteryStorageIsToggleOnTrigger
-			OffTrigger = BatteryStorageIsToggleOffTrigger
+			Type = MultiResourceStorage
+			ResourceType = battery
+			MaxResources = 0
+			ResourceStorages = [CombinedBatteryStorage]
 		}
-		BatteryStorageIsToggleOnTrigger
+		CombinedBatteryStorage
 		{
-			Type = ThresholdTrigger
-			AmountFrom = BatteryStorageValue
-			MinAmount = 50%
+			Type = MultiResourceStorage
+			ResourceType = battery
+			MaxResources = (&~/MaxResources)
+			ToggleOnResources = (&~/MaxResources)/4
+			ToggleOffResources = 0
+			DrainOnFtlJump = true
+			ResourceStorages = [BatteryStorageLeft, BatteryStorageRight]
+			AddMode = PrioritizeMostResources
+			RemoveMode = PrioritizeLeastResources
 		}
-		BatteryStorageIsToggleOffTrigger
+		BatteryStorageBar
 		{
-			Type = ThresholdTrigger
-			AmountFrom = BatteryStorageValue
-			MaxAmount = 0%
+			Type = ProgressBar
+			OperationalToggle = CombinedBatteryStorage
+			ShowProgressFor = CombinedBatteryStorage
+			LowColor = [0, 0, 255]
+			HighColor = [0, 0, 255]
+			FullColor = [0, 0, 255]
+			Height = 10
 		}
-		BatteryStorageValue
+		LoadingStorageBar
 		{
-			Type = MultiValue
-			Values = [BatteryStorageLeft, BatteryStorageRight]
-			Mode = Add
+			Type = ProgressBar
+			OperationalToggle = CombinedBatteryStorage
+			InvertOperationalToggle = true
+			ShowProgressFor = CombinedBatteryStorage
+			LowColor = [255, 192, 0]
+			HighColor = [255, 192, 0]
+			FullColor = [255, 192, 0]
+			LerpRange = [0, (&~/MaxResources)/4]
+			Height = 10
 		}
 
-		CommandConsumer
+		BatteryStorageLeftAndPowerToggle
 		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 96
-			//Requires 0 Stationary Crew so
+			Type = MultiToggle
+			Toggles = [BatteryStorageLeft, PowerToggle]
+			Mode = All
+		}
+		BatteryStorageRightAndCombinedStorage
+		{
+			Type = MultiToggle
+			Toggles = [BatteryStorageRight, {Toggle = CombinedBatteryStorage; Invert = true}]
+			Mode = Any
 		}
 
 		BatteryStorageLeft
@@ -123,15 +179,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleOnResources = (&~/MaxResources)/4
 			ToggleOffResources = 0
 			DrainOnFtlJump = true
-			DeliveryLocation = [2.5, 6]
+			DeliveryLocation = [1.25, 2.5]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryStorageRight : BatteryStorageLeft
 		{
-			Toggle = BatteryStorageLeftAndPowerToggle
 			ToggleOnResources = 1
 			ToggleOffResources = 0
-			DeliveryLocation = [8-(&~/Part/Components/BatteryStorageLeft/DeliveryLocation/0), &~/Part/Components/BatteryStorageLeft/DeliveryLocation/1]
+			DeliveryLocation = [4-(&~/Part/Components/BatteryStorageLeft/DeliveryLocation/0), &~/Part/Components/BatteryStorageLeft/DeliveryLocation/1]
 		}
 
 		BatteryConsumerLeft
@@ -148,61 +203,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Storage = BatteryStorageRight
 			OperationalToggle = BatteryStorageLeftAndPowerToggle
 		}
-		BatteryStorageLeftAndPowerToggle
-		{
-			Type = MultiToggle
-			Toggles = [BatteryStorageLeft, PowerToggle]
-			Mode = All
-		}
 
-		BatteryStorage
-		{
-			Type = MultiResourceStorage
-			ResourceType = battery
-			ResourceStorages = [BatteryStorageLeft, BatteryStorageRight]
-			AddMode = PrioritizeLeastResources
-			RemoveMode = PrioritizeMostResources
-		}
-		BatteryStorageBar
-		{
-			Type = ProgressBar
-			OperationalToggle = ShieldToggle
-			ShowProgressFor = BatteryStorage
-			LowColor = [0, 0, 255]
-			HighColor = [0, 0, 255]
-			FullColor = [0, 0, 255]
-			Height = 10
-		}
-		LoadingStorageBar
-		{
-			Type = ProgressBar
-			OperationalToggle = ShieldToggle
-			InvertOperationalToggle = true
-			ShowProgressFor = BatteryStorage
-			LowColor = [255, 192, 0]
-			HighColor = [255, 192, 0]
-			FullColor = [255, 192, 0]
-			LerpRange = [0, 32000]
-			Height = 10
-		}
-		PowerDrainRight
-		{
-			Type = ResourceConverter
-			FromStorage = BatteryStorageRight
-			OperationalToggle = BatteryStorageRight
-			FromQuantity = 400
-			MinFromQuantityForConversion = 1
-			Interval = 1
-		}
 		PowerDrainLeft
 		{
 			Type = ResourceConverter
 			FromStorage = BatteryStorageLeft
-			OperationalToggle = BatteryStorageRight
+			OperationalToggle = BatteryStorageRightAndCombinedStorage
 			InvertOperationalToggle = true
 			FromQuantity = 400
 			MinFromQuantityForConversion = 1
 			Interval = 1
+		}
+		PowerDrainRight : PowerDrainLeft
+		{
+			FromStorage = BatteryStorageRight
+			OperationalToggle = BatteryStorageRight
+			InvertOperationalToggle = false
 		}
 
 		ShieldColorType
@@ -225,7 +241,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = WhiteShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield8/shield8_white.rules>/Components
+			Components = &<shield_4/shield_4_white.rules>/Components
 		}
 
 		InvisShieldColorToggle
@@ -239,7 +255,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = InvisShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield8/shield8_invis.rules>/Components
+			Components = &<shield_4/shield_4_invis.rules>/Components
 		}
 
 		RedShieldColorToggle
@@ -253,7 +269,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = RedShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield8/shield8_red.rules>/Components
+			Components = &<shield_4/shield_4_red.rules>/Components
 		}
 
 		OrangeShieldColorToggle
@@ -267,7 +283,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = OrangeShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield8/shield8_orange.rules>/Components
+			Components = &<shield_4/shield_4_orange.rules>/Components
 		}
 
 		YellowShieldColorToggle
@@ -281,7 +297,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = YellowShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield8/shield8_yellow.rules>/Components
+			Components = &<shield_4/shield_4_yellow.rules>/Components
 		}
 
 		GreenShieldColorToggle
@@ -295,7 +311,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = GreenShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield8/shield8_green.rules>/Components
+			Components = &<shield_4/shield_4_green.rules>/Components
 		}
 
 		CyanShieldColorToggle
@@ -309,7 +325,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = CyanShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield8/shield8_cyan.rules>/Components
+			Components = &<shield_4/shield_4_cyan.rules>/Components
 		}
 
 		BlueShieldColorToggle
@@ -323,7 +339,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = BlueShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield8/shield8_blue.rules>/Components
+			Components = &<shield_4/shield_4_blue.rules>/Components
 		}
 
 		PurpleShieldColorToggle
@@ -337,7 +353,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = PurpleShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield8/shield8_purple.rules>/Components
+			Components = &<shield_4/shield_4_purple.rules>/Components
 		}
 
 		PinkShieldColorToggle
@@ -351,15 +367,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = PinkShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield8/shield8_pink.rules>/Components
+			Components = &<shield_4/shield_4_pink.rules>/Components
 		}
 
 		ShieldEmitterLoop
 		{
 			Type = ContinuousEffects
-			Location = [4, 4]
+			Location = [2, 2]
 			OperationalToggle = IsOperational
-			FactorMediaEffectsIntensityWith = BatteryStorage
+			FactorMediaEffectsIntensityWith = CombinedBatteryStorage
 			MediaEffects
 			[
 				: /BASE_SOUNDS/AudioExteriorDetail
@@ -377,7 +393,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ShieldOperationEffects
 		{
 			Type = ToggleEffects
-			Location = [4, 4]
+			Location = [2, 2]
 			Toggle = IsOperational
 			ToggledOnMediaEffects
 			[
@@ -405,23 +421,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [4, 4]
+			Location = [2, 2]
 			Floor
 			{
 				Layer = "floors"
 				DamageLevels
 				[
 					{
-						File = "Shield_Roasted_8x8/floor.png"
-						Size = [8, 8]
+						File = "Shield_Roasted_4x4/floor.png"
+						Size = [4, 4]
 					}
 					{
-						File = "Shield_Roasted_8x8/floor_33.png"
-						Size = [8, 8]
+						File = "Shield_Roasted_4x4/floor_33.png"
+						Size = [4, 4]
 					}
 					{
-						File = "Shield_Roasted_8x8/floor_66.png"
-						Size = [8, 8]
+						File = "Shield_Roasted_4x4/floor_66.png"
+						Size = [4, 4]
 					}
 				]
 			}
@@ -432,7 +448,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "Shield_Roasted_4x4/lights.png"
-						Size = [8, 8]
+						Size = [4, 4]
 					}
 				]
 			}
@@ -443,47 +459,34 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "Shield_Roasted_4x4/roof_glows.png"
-						Size = [8, 8]
+						Size = [4, 4]
 					}
 					{
 						File = "Shield_Roasted_4x4/roof_glows_33.png"
-						Size = [8, 8]
+						Size = [4, 4]
 					}
 					{
 						File = "Shield_Roasted_4x4/roof_glows_66.png"
-						Size = [8, 8]
+						Size = [4, 4]
 					}
 				]
-			}/*
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [13, 13]
-						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
-						VertexColor = [16, 120, 255]
-					}
-				]
-			}*/
+			}
 			Walls
 			{
 				Layer = "walls"
 				DamageLevels
 				[
 					{
-						File = "Shield_Roasted_8x8/walls.png"
-						Size = [8, 8]
+						File = "Shield_Roasted_4x4/walls.png"
+						Size = [4, 4]
 					}
 					{
-						File = "Shield_Roasted_8x8/walls_33.png"
-						Size = [8, 8]
+						File = "Shield_Roasted_4x4/walls_33.png"
+						Size = [4, 4]
 					}
 					{
-						File = "Shield_Roasted_8x8/walls_66.png"
-						Size = [8, 8]
+						File = "Shield_Roasted_4x4/walls_66.png"
+						Size = [4, 4]
 					}
 				]
 			}
@@ -495,17 +498,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "Shield_Roasted_4x4/roof.png"
 						NormalsFile = "Shield_Roasted_4x4/roof_normals.png"
-						Size = [8, 8]
+						Size = [4, 4]
 					}
 					{
 						File = "Shield_Roasted_4x4/roof_33.png"
 						NormalsFile = "Shield_Roasted_4x4/roof_normals_33.png"
-						Size = [8, 8]
+						Size = [4, 4]
 					}
 					{
 						File = "Shield_Roasted_4x4/roof_66.png"
 						NormalsFile = "Shield_Roasted_4x4/roof_normals_66.png"
-						Size = [8, 8]
+						Size = [4, 4]
 					}
 				]
 			}
@@ -516,9 +519,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = PowerToggle
 			DoodadToggle = PowerToggle
-			Location = [4, 4]
+			Location = [2, 2]
 
-			AnimationSpeedFactor = BatteryStorage
+			AnimationSpeedFactor = CombinedBatteryStorage
 			AnimationSpeedFactorRenormalize = [0, 10.0]
 
 			OperationalDoodad
@@ -582,8 +585,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"Shield_Roasted_4x4/doodads_on51.png"
 							"Shield_Roasted_4x4/doodads_on52.png"
 						]
-						Size = [8, 8]
-						AnimationInterval = 0.1923
+						Size = [4, 4]
+						AnimationInterval = 0.1923 //= 1/52
 					}
 				]
 			}
@@ -594,16 +597,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "Shield_Roasted_4x4/doodads_off.png"
-						Size = [8, 8]
+						Size = [4, 4]
 					}
 				]
 			}
 		}
-		
+
 		BatterySpritesLeft
 		{
 			Type = ResourceSprites
-			Location = [2.5, 5]
+			Location = [1, 2.5]
 			ResourceStorage = BatteryStorageLeft
 			Layer = "doodads_low"
 			HasZeroResourceSprite = false
@@ -611,35 +614,36 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				{
 					File = "Shield_Roasted_4x4/batteries_big_1.png"
-					Size = [2, 2]
+					Size = [1, 1]
+					Offset = [-0.5, 0]
 				}
 				{
 					File = "Shield_Roasted_4x4/batteries_big_2.png"
-					Size = [2, 2]
+					Size = [2, 1]
 				}
 				{
 					File = "Shield_Roasted_4x4/batteries_big_3.png"
-					Size = [2, 2]
+					Size = [2, 1]
 				}
 				{
 					File = "Shield_Roasted_4x4/batteries_big_4.png"
-					Size = [2, 2]
+					Size = [2, 1]
 				}
 				{
 					File = "Shield_Roasted_4x4/batteries_big_5.png"
-					Size = [2, 2]
+					Size = [2, 1]
 				}
 				{
 					File = "Shield_Roasted_4x4/batteries_big_6.png"
-					Size = [2, 2]
+					Size = [2, 1]
 				}
 				{
 					File = "Shield_Roasted_4x4/batteries_big_7.png"
-					Size = [2, 2]
+					Size = [2, 1]
 				}
 				{
 					File = "Shield_Roasted_4x4/batteries_big_8.png"
-					Size = [2, 2]
+					Size = [2, 1]
 				}
 			]
 		}
@@ -647,15 +651,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatterySpritesRight : BatterySpritesLeft
 		{
 			Type = ResourceSprites
-			Location = [5.5, 5]
+			Location = [4- (&~/Part/Components/BatterySpritesLeft/Location/0), &~/Part/Components/BatterySpritesLeft/Location/1]
 			ResourceStorage = BatteryStorageRight
 		}
 
-		BatterySprites
+		BatterySpritesMid
 		{
 			Type = ResourceSprites
-			Location = [4, 4 + 35/64]
-			ResourceStorage = BatteryStorage
+			Location = [2, 2]
+			ResourceStorage = CombinedBatteryStorage
 			Layer = "doodads_low"
 			HasZeroResourceSprite = true
 			ResourceLevels
@@ -1192,13 +1196,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [4, 4]
+			Location = [2, 2]
 		}
 
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [4, 4]
+			Location = [2, 2]
 			Layer = "indicators"
 			Indicators
 			[
@@ -1208,7 +1212,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [4, 4]
+						Size = [2, 2]
 					}
 				}
 
@@ -1218,7 +1222,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [4, 4]
+						Size = [2, 2]
 					}
 				}
 			]
@@ -1228,13 +1232,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "Shield_Roasted_4x4/blueprints.png"
-			Size = [8, 8]
+			Size = [4, 4]
 		}
 	}
 
+	//Stats
 	Stats
 	{
-		ShieldHP = (((&~/Part/Components/BatteryStorageLeft/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)) + ((&~/Part/Components/BatteryStorageRight/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)))
+		ShieldHP = (&~/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
 		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
 		ShieldArc = deg(360d)
 		ShieldDist = (&~/ShieldStatBase/Radius)
@@ -1247,13 +1252,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 }
 ShieldStatBase
 {
+	Type = ArcShield
 	OperationalToggle = IsOperational
 	BlockedByOperationalParts = false
-	Radius = 80
+	Radius = 40
 	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
-	DrainResourcesFrom = BatteryStorage
-	Location = [4, 2.5]
-	PenetrationResistance = [256, 0]
+	DrainResourcesFrom = CombinedBatteryStorage
+	Location = [2, 1.25]
+	PenetrationResistance = [64, 0]
 	ResourceDrainPerDamage = 0.4
 
 	BlueprintArcSprite
@@ -1265,8 +1271,8 @@ ShieldStatBase
 			SampleMode = Linear
 			MipLevels = 1
 		}
-		_xScale = &<ShieldTuner.rules>/Giga/_xScale
-		Size = &<ShieldTuner.rules>/Giga/Size
+		_xScale = &<ShieldTuner.rules>/Huge/_xScale
+		Size = &<ShieldTuner.rules>/Huge/Size
 		UVRect = [0, 1, 2, 1]
 		Color = [50, 50, 255, 127]
 	}
@@ -1281,12 +1287,12 @@ ShieldStatBase
 			SampleMode = Linear
 			MipLevels = 1
 		}
-		_xScale = &<ShieldTuner.rules>/Giga/_xScale
-		Size = &<ShieldTuner.rules>/Giga/Size
+		_xScale = &<ShieldTuner.rules>/Huge/_xScale
+		Size = &<ShieldTuner.rules>/Huge/Size
 		UVRect = [0, 1, 2, 1]
 		Color = [255, 255, 255, 127]
 	}
 	CoverageArcSpriteSegments = 64
 }
-Size = Giga
-MaxResources = 128000
+Size = Large
+MaxResources = 32000

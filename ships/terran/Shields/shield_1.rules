@@ -1,11 +1,20 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/BubbleGeneratorSmall"
-	IconNameKey = "Parts/BubbleGeneratorSmall"
+    //IDs
 	ID = SW.bubble_generator_small_switchable
 	OtherIDs = ["bubble_generator_small1","SW.bubble_generator_small1"]
-	EditorGroups = ["Defenses", "SWTechI"]
+
+	//StringKeys
+	NameKey = "Parts/BubbleGeneratorSmall"
+	IconNameKey = "Parts/BubbleGeneratorSmall"
 	DescriptionKey = "Parts/BubbleGeneratorSmallDesc"
+
+	//Groups&Categories
+	EditorGroups = ["Defenses", "SWTechI"]
+	TypeCategories = [defense, uses_power, SW_Shield, SW_Tech_I]
+	//RequiresCategories = []
+
+    //Resources&Size&Health
 	Resources
 	[
 		[steel, 32]
@@ -13,15 +22,22 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[coil2, 8]
 		[carbon, 5]
 		[processor, 1]
-	]	//Cost = 11000 //was 13500
-	AIValueFactor = 4		//equals ~45k ai value
-
+	]
 	Size = [1, 1]
+	MaxHealth = 1000
+
+    //Selections
 	SelectionPriority = 1
 	SelectionTypeID = "bubble_shield_gen"
 	SelectionTypeByRotation = true
-	MaxHealth = 1000
-	TypeCategories = [defense, uses_power]
+
+	//PartSpecific
+	AIValueFactor = 4		//equals ~45k ai value
+
+    //ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Doors&Etc
 	MaxDoors = 3
 	AllowedDoorLocations
 	[
@@ -30,6 +46,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
  		[0, 1]	//bottom
 		[1, 0]	//right
 	]
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -39,6 +57,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [32, 32]
 	}
+
+    //Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational
@@ -56,6 +76,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 2
+			//Requires 0 Stationary Crew so
+		}
+
 		ShieldEmitterEffectToggle
 		{
 			Type = UIToggle
@@ -69,14 +97,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = MultiToggle
 			Toggles = [ShieldEmitterEffectToggle, IsOperational]
 			Mode = All
-		}
-
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 2
-			//Requires 0 Stationary Crew so
 		}
 
 		BatteryStorage
@@ -158,7 +178,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = OverloadStorage
 			FromQuantity = 100
 			MinFromQuantityForConversion = 100
-			Interval = (10/9)
+			Interval = 10/9
 		}
 		/*OverloadCoolerToggle
 		{
@@ -198,18 +218,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOverloadedAndShouldExplode
 		{
 			Type = MultiToggle
-			Toggles = [IsOverloadedToggle, {Toggle = OverloadTimer, Invert = true}]
+			Toggles = [OverloadTimer]
 			Mode = All
 		}
 
 		IsOverloadedAndShouldExplodeTrigger
 		{
 			Type = ToggleTrigger
-			Toggle = IsOverloadedAndShouldExplode
-			TriggerWhenOn = true
-			TriggerWhenOff = false
-			OperationalToggle = OverloadTimer
-			InvertOperationalToggle = true
+			Toggle = OverloadTimer
+			TriggerWhenOn = false
+			TriggerWhenOff = true
+			OperationalToggle = IsOverloadedToggle
+			//InvertOperationalToggle = true
 		}
 
 		OverloadDmgMultiplierValue
@@ -239,7 +259,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = WhiteShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield1/shield1_white.rules>/Components
+			Components = &<shield_1/shield_1_white.rules>/Components
 		}
 
 		InvisShieldColorToggle
@@ -253,7 +273,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = InvisShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield1/shield1_invis.rules>/Components
+			Components = &<shield_1/shield_1_invis.rules>/Components
 		}
 
 		RedShieldColorToggle
@@ -267,7 +287,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = RedShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield1/shield1_red.rules>/Components
+			Components = &<shield_1/shield_1_red.rules>/Components
 		}
 
 		OrangeShieldColorToggle
@@ -281,7 +301,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = OrangeShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield1/shield1_orange.rules>/Components
+			Components = &<shield_1/shield_1_orange.rules>/Components
 		}
 
 		YellowShieldColorToggle
@@ -295,7 +315,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = YellowShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield1/shield1_yellow.rules>/Components
+			Components = &<shield_1/shield_1_yellow.rules>/Components
 		}
 
 		GreenShieldColorToggle
@@ -309,7 +329,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = GreenShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield1/shield1_green.rules>/Components
+			Components = &<shield_1/shield_1_green.rules>/Components
 		}
 
 		CyanShieldColorToggle
@@ -323,7 +343,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = CyanShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield1/shield1_cyan.rules>/Components
+			Components = &<shield_1/shield_1_cyan.rules>/Components
 		}
 
 		BlueShieldColorToggle
@@ -337,7 +357,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = BlueShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield1/shield1_blue.rules>/Components
+			Components = &<shield_1/shield_1_blue.rules>/Components
 		}
 
 		PurpleShieldColorToggle
@@ -351,7 +371,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = PurpleShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield1/shield1_purple.rules>/Components
+			Components = &<shield_1/shield_1_purple.rules>/Components
 		}
 
 		PinkShieldColorToggle
@@ -365,7 +385,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggledComponents
 			Toggle = PinkShieldColorToggle
 			IncludeInBlueprints = true
-			Components = &<Shield1/shield1_pink.rules>/Components
+			Components = &<shield_1/shield_1_pink.rules>/Components
 		}
 
 		ShieldEmitterLoop
@@ -450,21 +470,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			/*
-			OperationalRoofLighting
+			OperationalRoofDoodad
 			{
-				Layer = "roof_lights_fancy"
+				Layer = "roof_doodads"
 				DamageLevels
 				[
 					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [2, 2]
-						Z = 2.1 // Controls the "height" of the light for the purposes of normal mapping.
-						VertexColor = [16, 120, 255]
+						File = "Shield_Roasted_1x1/roof_glows.png"
+						Size = [1, 1]
 					}
 				]
 			}
-			*/
 			Walls
 			{
 				Layer = "walls"
@@ -487,7 +503,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Roof
 			{
 				Layer = "roofs"
-				RandomUVRotation = true
 				DamageLevels
 				[
 					{
@@ -513,6 +528,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = PowerToggle
+			DoodadToggle = PowerToggle
 			Location = [0.5, 0.5]
 
 			AnimationSpeedFactor = BatteryStorage
@@ -590,6 +606,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
 
+		DetonateEffects
+		{
+			// This just destroys the part, which in turn will trigger the DeathEffects, causing the actual collateral damage.
+
+			Type = TriggeredEffects
+			Trigger = DetonateTrigger
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 999999
+					Filter
+					{
+						Friendlies = true
+						IgnoreInvulnerability = true
+					}
+				}
+			]
+		}
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
@@ -599,7 +635,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		DestroyedEffects_Overload
 		{
-			Type = TriggeredEffects
+			Type = DeathEffects
 			ChainedTo = DestroyedEffects
 			Trigger = IsOverloadedAndShouldExplodeTrigger
 			IncludeWhenUnderConstruction = false
@@ -697,10 +733,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 ShieldStatBase
 {
 	Type = ArcShield
-	Radius = 10
-	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
 	OperationalToggle = IsOperational
 	BlockedByOperationalParts = false
+	Radius = 10
+	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
 	DrainResourcesFrom = BatteryStorage
 	Location = [0.5, 7/64] //0.25
 	PenetrationResistance = [4, 0]
@@ -715,6 +751,7 @@ ShieldStatBase
 			SampleMode = Linear
 			MipLevels = 1
 		}
+		_xScale = &<ShieldTuner.rules>/Smal/_xScale
 		Size = &<ShieldTuner.rules>/Small/Size
 		Color = [0, 0, 255, 127]
 	}
@@ -729,8 +766,11 @@ ShieldStatBase
 			SampleMode = Linear
 			MipLevels = 1
 		}
+		_xScale = &<ShieldTuner.rules>/Small/_xScale
 		Size = &<ShieldTuner.rules>/Small/Size
 		Color = [255, 255, 255, 127]
 	}
 	CoverageArcSpriteSegments = 64
 }
+Size = Small
+MaxResources = 1000
