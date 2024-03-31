@@ -462,7 +462,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [7.8125, -60/64]
 			//Offset = [-60/64, -7.8125] //[7.8125, -1] //-64,-500 //midwidth42
 			Rotation = 90d
-			//ResetAnimationTrigger = WeaponEmitter
+			ResetAnimationTrigger = ShootTrigger1
 			//OperationalToggle = IsOperational
 
 			OperationalDoodad
@@ -494,7 +494,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"barrel_normals1.png"
 						]
 						Size = [1, 4]
-						AnimationInterval = 0.0825
+						AnimationInterval = 0.0625
 						AnimationStartTime = MinValue
 						ClampAnimation = true
 					}
@@ -505,7 +505,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Location = [7.8125, 60/64]
 			//Offset = [60/64, -7.8125] //[7.8125, 1]
-			//ResetAnimationTrigger = WeaponEmitter2
+			ResetAnimationTrigger = ShootTrigger2 
+		}
+
+		ChargeEffectLeft
+		{
+			Type = TriggeredEffects
+			ChainedTo = Barrel1Graphics
+			Trigger = ShootTrigger1
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/ships/terran/laser_blaster_small/charge.wav"
+					Volume = .9
+					Speed = .665
+				}
+			]
+		}
+
+		ChargeEffectRight : ChargeEffectLeft
+		{
+			ChainedTo = Barrel2Graphics
+			Trigger = ShootTrigger2
 		}
 
 		CrewLocation
