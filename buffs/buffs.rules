@@ -22,7 +22,7 @@ SW_Ion_Thruster_Overdrive //: Vanilla RateOfFire Buff
 	RectFillColor = [10, 212, 98, 64]
 }
 
-SW_Ion_Thruster_Accelerator : SW_Ion_Thruster_Accelerator_Thrust
+SW_Ion_Thruster_Accelerator
 {
 	CombineMode = Add
 
@@ -35,7 +35,6 @@ SW_Ion_Thruster_Accelerator_Thrust
 	CombineMode = Add
 	Exponent = 1.0
 	BaseValue = 0%
-	//Multiplier = 100%
 
 	Icon
 	{
@@ -50,9 +49,20 @@ SW_Ion_Thruster_Accelerator_Thrust
 	IconTextFormatKey = "BuildBox/BuffPercentageFmt"
 	IconTextMultiply = 100
 	IconTextAdd = -100
+	IconPriority = 1 // Override engine room buff icon.
+	ShowIconTextForZeroValue = false
+}
 
-	RectBorderColor = [10, 212, 98, 160]
-	RectFillColor = [10, 212, 98, 64]
+SW_Ion_Thruster_Accelerator_RampUp
+{
+	CombineMode = Add
+	Exponent = 0.5
+	BaseValue = 0%
+}
+SW_Ion_Thruster_Accelerator_RampUpFinal
+{
+	CombineMode = Add
+	BaseValue = 0%
 }
 
 SW_Ion_Thruster_Accelerator_Reverse
@@ -61,11 +71,19 @@ SW_Ion_Thruster_Accelerator_Reverse
 	BaseValue = 0%
 	Exponent = 1
 	Multiplier = 100%
+
+	RectBorderColor = [10, 212, 98, 160]
+	RectFillColor = [10, 212, 98, 64]
 }
 
 SW_EnginePowerDistribution
 {
 	// Only exists to piggyback engine room power distribution off the buff system.
+}
+
+SW_HypermatterDistribution
+{
+	// Distributes Hypermatter
 }
 
 SW_Hypernode_Large

@@ -11,7 +11,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechIII"]
-	TypeCategories = [SW_Ion_Accelerator, engine_room, uses_power] //, is_crewed
+	TypeCategories = [engine_room, uses_power, SW_Ion_Accelerator, SW_Tech_III] //, is_crewed
 	RequiresCategories = [SW_Bridge]
 
 	//Resources & Size & Health
@@ -33,19 +33,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Density = 4 //WHY BUFF THEN; TO BE HEAVIER???
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [EnginePowerDistribution, SW_Ion_Thruster_Accelerator_Reverse] //grants SW_Ion_Thruster_Accelerator Buff & EnginePowerDistribution Buff
+	ReceivableBuffs : ^/0/ReceivableBuffs [EnginePowerDistribution, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Reverse] //grants SW_Ion_Thruster_Accelerator Buff & EnginePowerDistribution Buff
 
 	AllowedDoorLocations
 	[
 		[0, -1]
 		[1, -1]
 		[2, -1]
+		//
+		//
+		//
+		//
 		[7, -1]
 		[8, -1]
 		[9, -1]
 		//[0, 20]
 		[1, 20]
 		[2, 20]
+		//
 		[7, 20]
 		[8, 20]
 		//[9, 20]
@@ -57,6 +62,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[-1, 5]
 		[-1, 6]
 		[-1, 7]
+		[-1, 8]
+		[-1, 9]
+		[-1, 10]
+		[-1, 11]
 		[-1, 12]
 		[-1, 13]
 		[-1, 14]
@@ -115,6 +124,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			CommandPoints = 200 //1 per tile
 		}
 
+		PowerDistributionBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = EnginePowerDistribution
+		}
+
+		SWIonThrusterAcceleratorBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Ion_Thruster_Accelerator
+		}
+
+		SWIonThrusterAcceleratorReverseBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Ion_Thruster_Accelerator_Reverse
+		}
+
 		DistributePowerUIToggle
 		{
 			Type = UIToggle
@@ -140,7 +167,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 200000
+			MaxResources = 100000
 		}
 		CombinedBatteryStorage
 		{
@@ -161,24 +188,37 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			Storage = CombinedBatteryStorage
 			DefaultPriority = &/PRIORITIES/Thruster_Supply
+			AdditionalStorageForJobPriority = [BatteryStorage]
 			ResupplyThreshold = 500
 			OperationalToggle = PowerToggle
+			OverrideExclusiveCrewAssignment = true
 		}
 		BatteryStorageBar
 		{
 			Type = ProgressBar
 			OperationalToggle = IsOperational
-			ShowProgressFor = CombinedBatteryStorage
+			ShowProgressFor = BatteryStorage
 			LowColor = [64, 64, 0]
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
 		}
-		PowerDrain
+		/*	PartCrew
 		{
 			Type = ResourceConverter
 			OperationalToggle = IsOperational
 			FromStorage = BatteryStorage
 			FromQuantity = 1000
+			ToStorage = CombinedBatteryStorage
+			ToQuantity = 1000
+			MinFromQuantityForConversion = 1000
+			Interval = { BaseValue=1; BuffType=SW_Ion_Thruster_Accelerator_Reverse; BuffMode=Divide; }
+		}	*/
+		PowerDrain
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
+			FromQuantity = 500
 			MinFromQuantityForConversion = 1
 			Interval = { BaseValue=1; BuffType=SW_Ion_Thruster_Accelerator_Reverse; BuffMode=Divide; }
 		}
@@ -187,10 +227,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = AreaBuffProvider
 			BuffType = SW_Ion_Thruster_Accelerator
-			BuffAmount = 60%
-			BuffArea = [-10, 20, 30, 30]
+			BuffAmount = { BaseValue=75%; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Add; }
+			BuffArea = [-10, 20, 30, 30] //[0, 20, 10, 20]
 			ShowBuffRange = true
 			OperationalToggle = IsOperational
+			ChainsFromBuffType = SW_Ion_Thruster_Accelerator
 		}
 
 		DoodadAnimationSpeedFactorValue
@@ -265,11 +306,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Stats
 	{
 		//CrewRequired = &~/Part/Components/PartCrew/Crew
-		ThrusterBuff = (&~/Part/Components/IonAcceleratorBuffProvider/BuffAmount) * 100
+		//ThrusterBuff = (&~/Part/Components/IonAcceleratorBuffProvider/BuffAmount/BaseValue) * 100
 		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval/BaseValue) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = &PowerUsageContinuous
-		RecCrew = (&RecPower) * 4 /*+ (&CrewRequired)*/
+		RecCrew = (&RecPower) * 4
 	}
 }

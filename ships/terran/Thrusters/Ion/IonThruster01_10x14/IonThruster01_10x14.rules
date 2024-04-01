@@ -36,13 +36,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//PartSpecific
 	ThrusterForce = 145000 //149.240 //75%sizedegrade*[normalized] 160% of vanilla 1000*8/9 per tile
-	ThrustIncreaseTime = (&ThrusterForce) / 10000
-	ThrustRecoveryTime = (&ThrusterForce) / 10000 / 3
+	ThrustIncreaseTime = { BaseValue=14.5; BuffType=SW_Ion_Thruster_Accelerator_RampUpFinal; BuffMode=Multiply; }
+	ThrustRecoveryTime = { BaseValue=4.81; BuffType=SW_Ion_Thruster_Accelerator_RampUpFinal; BuffMode=Multiply; }
 	FuelUsage = 4000 //3.982 //160%*40% of vanilla 50*8/9 per tile
 
 	//ReceivableBuffs&Prohibits
 	ProhibitBelow = 11 // 26
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Accelerator, Engine, EnginePowerDistribution]  
+	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Thrust, SW_Ion_Thruster_Accelerator_Reverse, SW_Ion_Thruster_Accelerator_RampUp, SW_Ion_Thruster_Accelerator_RampUpFinal]  
 
     //Doors&Etc
 	AllowedDoorLocations
@@ -57,6 +57,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[-1, 7]
 		[-1, 8]
 		[-1, 9]
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
 		[0, -1]
 		[1, -1]
 		[2, -1]
@@ -67,6 +78,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[7, -1]
 		[8, -1]
 		[9, -1]
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
 		[10, 0]
 		[10, 1]
 		[10, 2]
@@ -77,6 +98,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[10, 7]
 		[10, 8]
 		[10, 9]
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
 	]
 
     //Editor
@@ -470,6 +502,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxAmount = 10%
 		}
 
+		EngineBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Ion_Thruster_Accelerator
+			ChainsFromBuffType = Engine
+			BuffAmount = { BaseValue=100%; BuffType=Engine; BuffMode=Multiply; }
+			OperationalToggle = IsOperational
+		}
+/*
 		ThrusterHasEngineRoomBuff
 		{
 			Type = SelfBuffProvider
@@ -485,6 +526,36 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnTweenDuration = 0
 			OffTweenDuration = 0
 			IsOnToggle = EngineBuffToggle
+		}
+*/
+		ThrustBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType =	SW_Ion_Thruster_Accelerator_Thrust
+			ChainsFromBuffType = SW_Ion_Thruster_Accelerator
+			BuffAmount = { BaseValue=0; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Add; }
+		}
+
+		RampUpBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Ion_Thruster_Accelerator_RampUp
+			ChainsFromBuffType = SW_Ion_Thruster_Accelerator
+			BuffAmount = { BaseValue=0; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Add; }
+		}
+
+		InvSWIonThrusterAcceleratorThrustBuffValue
+		{
+			Type = BuffableValue
+			Value = { BaseValue=1; BuffType=SW_Ion_Thruster_Accelerator_Thrust; BuffMode=Divide; }
+		}
+		RampUpFinalBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Ion_Thruster_Accelerator_RampUpFinal
+			ChainsFromBuffType = SW_Ion_Thruster_Accelerator_RampUp
+			BuffAmount = { BaseValue=0; BuffType=SW_Ion_Thruster_Accelerator_RampUp; BuffMode=Add; }
+			BuffMultiplier = InvSWIonThrusterAcceleratorThrustBuffValue
 		}
 
 		DoodadAnimationSpeedFactorBuffProvider
@@ -506,7 +577,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Accelerator_Thrust; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -519,6 +590,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = 0d
 			MinActivation = -0.05
 			MaxActivation = 0.05
+			ActivationIncreaseTime = &../../ThrustIncreaseTime/BaseValue
+			ActivationRecoveryTime = &../../ThrustRecoveryTime/BaseValue
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			AllowAutoFire = false
@@ -696,12 +769,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce
-		ThrusterRampUp = &~/Part/ThrustIncreaseTime
+		ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = (&ThrusterPowerUsage)
+		RecPower = (&ThrusterPowerUsage) / 2
 		RecCrew = (&RecPower) * 4
 	}
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/EngineBuff"
+			Stats
+			{
+				ThrusterBuff = (&~/Part/Components/ThrusterHasEngineRoomBuff/BuffAmount) * 100
+			}
+		}
+	]
+	StatsNotesKey = "Stats/SWIonAccelerator_Notes"
 }
 Size = Giga
