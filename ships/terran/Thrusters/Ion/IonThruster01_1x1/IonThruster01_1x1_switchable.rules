@@ -19,6 +19,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	[
 		[steel, 10]//120%*8 of vanilla
 		[coil, 4]//133%*3 of vanilla
+		//[coil2, 0]
+		//[SW.durasteel, 0]
 	]
 	Size = [1, 2]
 	MaxHealth = 800 //80%*1000 of vanilla
@@ -44,11 +46,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine, EnginePowerDistribution]
 
 	//Doors&Etc
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
 	AllowedDoorLocations
 	[
-		[0, -1]
-		[1, 0]
+		//
 		[-1, 0]
+		[0, -1]
+		//
+		//
+		[1, 0]
+		//
 	]
 
 	//Editor
@@ -413,14 +427,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = SelfBuffProvider
 			BuffType = SW_Ion_Thruster_Overdrive
-			BuffAmount = 1
+			BuffAmount = 1.6
 			BuffMultiplier = ThrusterIsFiringTween
 		}
 		ThrusterIsFiringTween
 		{
 			Type = ValueTween
-			OffValue = 1
-			OnValue = 1.6 //160% Boost if on for OnTweenDuration
+			OffValue = 0.625
+			OnValue = 1 //160% Boost if on for OnTweenDuration
 			OnTweenDuration = 12 //target is to reward continous flight and NOT provide burst buffing
 			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
 			IsOnToggle = ThrusterIsFiringTriggeredToggle
@@ -461,20 +475,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RandomUVRotation = true
 			Layer = "floors"
 		}
-/*
-		EngineGhostGraphics //Activate When Using +7/64 offset
-		{
-			Type = Sprite
-			Location = [.5, 1.5]
-			Layer = "structure"
-			AtlasSprite
-			{
-				File = "engine_floor.png"
-				NormalsFile = "engine_floor.png"
-				Size = [1, 1]
-			}
-		}
-*/
+
 		Graphics
 		{
 			Type = Graphics
@@ -645,18 +646,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			/*
-			WallsStencil
-			{
-				Layer = "walls_stencil"
-				DamageLevels
-				[
-					{
-						File = "nozzle_stencil.png"
-						Size = [0.8, 0.8]
-					}
-				]
-			} */
 		}
 
 		MainThruster
@@ -772,6 +761,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					File = "batteries_1.png"
 					Size = [1, 1]
 				}
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
+				//
 			]
 		}
 
@@ -834,11 +847,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterForce = &~/Part/ThrusterForce
 		ThrusterRampUp = &~/Part/ThrustIncreaseTime
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
-		ThrusterBuff = (&~/Part/Components/ThrusterIsFiringTween/OnValue) * 100
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = (&ThrusterPowerUsage) / 2
 		RecCrew = (&RecPower) * 4
 	}
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/EngineBuff"
+			Stats
+			{
+				ThrusterBuff = (&~/Part/Components/ThrusterHasEngineRoomBuff/BuffAmount) * 100
+			}
+		}
+		{
+			NameKey = "StatCategories/SWOverdriveBuff"
+			Stats
+			{
+				ThrusterBuff = (&~/Part/Components/ThrusterIsFiringRampUpBuff/BuffAmount) * 100
+				RampUpTime = &~/Part/Components/ThrusterIsFiringTween/OnTweenDuration
+			}
+		}
+	]
 }
 Size = Small
