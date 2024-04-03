@@ -106,6 +106,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RequiresCommand = false
 		}
 
+		IsBatteryStorageLeftAndPowerToggle
+		{
+			Type = MultiToggle
+			Toggles = [BatteryStorageLeft, PowerToggle]
+			Mode = All
+		}
+		IsBatteryStorageRightAndNotCombinedStorage
+		{
+			Type = MultiToggle
+			Toggles = [BatteryStorageRight, {Toggle = CombinedBatteryStorage; Invert = true}]
+			Mode = Any
+		}
+
 		ShieldEmitterEffectToggleAndIsOperational
 		{
 			Type = MultiToggle
@@ -115,10 +128,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		BatteryStorage
 		{
-			Type = MultiResourceStorage
+			Type = ResourceStorageProxy
 			ResourceType = battery
-			MaxResources = 0
-			ResourceStorages = [CombinedBatteryStorage]
+			ComponentID = CombinedBatteryStorage
 		}
 		CombinedBatteryStorage
 		{
@@ -129,8 +141,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleOffResources = 0
 			DrainOnFtlJump = true
 			ResourceStorages = [BatteryStorageLeft, BatteryStorageRight]
-			AddMode = PrioritizeMostResources
-			RemoveMode = PrioritizeLeastResources
+			AddMode = InOrder
+			RemoveMode = InReverseOrder
 		}
 		BatteryStorageBar
 		{
@@ -153,19 +165,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 192, 0]
 			LerpRange = [0, (&~/MaxResources)/4]
 			Height = 10
-		}
-
-		BatteryStorageLeftAndPowerToggle
-		{
-			Type = MultiToggle
-			Toggles = [BatteryStorageLeft, PowerToggle]
-			Mode = All
-		}
-		BatteryStorageRightAndCombinedStorage
-		{
-			Type = MultiToggle
-			Toggles = [BatteryStorageRight, {Toggle = CombinedBatteryStorage; Invert = true}]
-			Mode = Any
 		}
 
 		BatteryStorageLeft
@@ -192,30 +191,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			Storage = BatteryStorageLeft
 			DefaultPriority = &/PRIORITIES/Defense_Supply
+			AdditionalStorageForJobPriority = [CombinedBatteryStorage]
 			OperationalToggle = PowerToggle
-			ResupplyThreshold = 0
+			ResupplyThreshold = 1
 		}
 		BatteryConsumerRight : BatteryConsumerLeft
 		{
 			Storage = BatteryStorageRight
-			OperationalToggle = BatteryStorageLeftAndPowerToggle
+			OperationalToggle = IsBatteryStorageLeftAndPowerToggle
 		}
 
-		PowerDrainLeft
+		PowerDrain
 		{
 			Type = ResourceConverter
-			FromStorage = BatteryStorageLeft
-			OperationalToggle = BatteryStorageRightAndCombinedStorage
-			InvertOperationalToggle = true
-			FromQuantity = 400
+			FromStorage = CombinedBatteryStorage
+			OperationalToggle = CombinedBatteryStorage
+			FromQuantity = 2000
 			MinFromQuantityForConversion = 1
 			Interval = 1
-		}
-		PowerDrainRight : PowerDrainLeft
-		{
-			FromStorage = BatteryStorageRight
-			OperationalToggle = BatteryStorageRight
-			InvertOperationalToggle = false
 		}
 
 		ShieldColorType
@@ -680,16 +673,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Stats
 	Stats
 	{
-		ShieldHP = ((&~/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage))
-		ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
-		ShieldArc = deg(360d)
-		ShieldDist = (&~/ShieldStatBase/Radius)
-		PowerUsageContinuous = (&~/Part/Components/PowerDrainLeft/FromQuantity) / (&~/Part/Components/PowerDrainLeft/Interval) / 1000
 		PowerCapacity = (&~/MaxResources) / 1000
 
-		RecPower = (&PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
+		RecPower = (&../StatsByCategory/0/Stats/PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
 		RecCrew = (&RecPower)
 	}
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/SWBubbleShield"
+			Stats
+			{
+				ShieldHP = (&~/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
+				ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
+				ShieldArc = deg(360d)
+				ShieldDist = (&~/ShieldStatBase/Radius)
+				PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
+			}
+		}
+	]
 }
 ShieldStatBase
 {
