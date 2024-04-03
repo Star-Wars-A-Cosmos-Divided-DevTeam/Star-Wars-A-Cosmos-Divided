@@ -485,21 +485,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		ThrusterIsFiringTriggeredToggle
 		{
-			Type = TriggeredToggle
-			OnTrigger = ThrusterOnThresholdTrigger
-			OffTrigger = ThrusterOffThresholdTrigger
-		}
-		ThrusterOnThresholdTrigger
-		{
-			Type = ThresholdTrigger
-			AmountFrom = MainThrusterValueProxy
+			Type = ThresholdToggle
+			ValueFrom = MainThrusterValueProxy
 			MinAmount = 10%
-		}
-		ThrusterOffThresholdTrigger
-		{
-			Type = ThresholdTrigger
-			AmountFrom = MainThrusterValueProxy	
-			MaxAmount = 10%
 		}
 
 		EngineBuffProvider
@@ -507,41 +495,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = SelfBuffProvider
 			BuffType = SW_Ion_Thruster_Accelerator
 			ChainsFromBuffType = Engine
-			BuffAmount = { BaseValue=100%; BuffType=Engine; BuffMode=Multiply; }
-			OperationalToggle = IsOperational
+			BuffAmount = { BaseValue=0%; BuffType=Engine; BuffMode=Add; }
+			OperationalToggle = EngineBuffToggle
 		}
-/*
-		ThrusterHasEngineRoomBuff
-		{
-			Type = SelfBuffProvider
-			BuffType = SW_Ion_Thruster_Accelerator
-			BuffAmount = 0.5
-			BuffMultiplier = ThrusterHasEngineRoomTween
-		}
-		ThrusterHasEngineRoomTween
-		{
-			Type = ValueTween
-			OffValue = 0
-			OnValue = 1
-			OnTweenDuration = 0
-			OffTweenDuration = 0
-			IsOnToggle = EngineBuffToggle
-		}
-*/
+
 		ThrustBuffProvider
 		{
 			Type = SelfBuffProvider
 			BuffType =	SW_Ion_Thruster_Accelerator_Thrust
 			ChainsFromBuffType = SW_Ion_Thruster_Accelerator
-			BuffAmount = { BaseValue=0; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Add; }
+			BuffAmount = { BaseValue=100%; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Add; }
 		}
 
 		RampUpBuffProvider
 		{
 			Type = SelfBuffProvider
 			BuffType = SW_Ion_Thruster_Accelerator_RampUp
-			ChainsFromBuffType = SW_Ion_Thruster_Accelerator
-			BuffAmount = { BaseValue=0; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Add; }
+			//ChainsFromBuffType = SW_Ion_Thruster_Accelerator_Thrust
+			BuffAmount = { BaseValue=0; BuffType=SW_Ion_Thruster_Accelerator_Thrust; BuffMode=Add; }
 		}
 
 		InvSWIonThrusterAcceleratorThrustBuffValue
@@ -644,7 +615,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				: /SW_SOUNDS/ThrusterBurst
 				{
-					Volume = .25
+					Volume = 1.16
 					Speed = 1.5
 					MaxConcurrentVolume = .5
 				}
@@ -660,7 +631,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				: /SW_SOUNDS/ThrusterHum
 				{
-					Volume = .1
+					Volume = .36
 					Speed = 1.25
 					MaxConcurrentVolume = 1
 				}
