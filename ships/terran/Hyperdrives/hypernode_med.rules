@@ -29,11 +29,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeID = "hyperdrives"
 
 	//PartSpecific
-	AutoDoorMaxPathLength = 5
+	//AutoDoorMaxPathLength = 5
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Hypernode_Medium]
 	//ProhibitedBy : ^/0/ProhibitedBy [tall]
+
+	//Doors&Etc
+	AllowedDoorLocations = []
 
 	//Editor
 	EditorIcon
@@ -79,7 +82,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 
-		//This Consumer is never Toggled On
+		// We need these resource consumers to always exist even though they don't do anything,
+		// because they are what keep resource assignments alive. If storage assignments thrash,
+		// then that causes resource AI issues.
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
@@ -88,13 +93,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = true
 			Components
 			{
-				BatteryConsumer
+				BatteryConsumer //For the crew to fill
 				{
 					Type = ResourceConsumer
 					ResourceType = battery
 					Storage = NodeBatteryStorage
 					DefaultPriority = &/PRIORITIES/Ftl_Supply
-					OperationalToggle = FtlDrive
+					OperationalToggle = HypernodeConnectedToggle // Will always be off!
 					AllowNonOperationalMinPriorityDelivery = false
 					OverrideExclusiveCrewAssignment = true
 				}
@@ -121,7 +126,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			DropResourcesWhenDestroyed = true
 		}
 
-		//This Consumer is never Toggled On
+		// We need these resource consumers to always exist even though they don't do anything,
+		// because they are what keep resource assignments alive. If storage assignments thrash,
+		// then that causes resource AI issues.
 		ToggledHyperiumConsumer
 		{
 			Type = ToggledComponents
@@ -130,16 +137,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			IncludeInBlueprints = true
 			Components
 			{
-				HyperiumConsumer
+				HyperiumConsumer //For the crew to fill
 				{
 					Type = ResourceConsumer
 					ResourceType = hyperium
 					Storage = NodeHyperiumStorage
 					DefaultPriority = &/PRIORITIES/Utility_Supply
-					OperationalToggle = PowerToggle
+					OperationalToggle = HypernodeConnectedToggle // Will always be off!
 					ConsumptionToggleButtonOffset = [0, -.4]
 				}
 			}
+		}
+		HyperiumStorageBar
+		{
+			Type = ProgressBar
+			ShowProgressFor = NodeHyperiumStorage
+			LowColor = [0, 64, 64]
+			HighColor = [0, 250, 250]
+			FullColor = [0, 255, 255]
 		}
 
 		FtlDrive
