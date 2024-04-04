@@ -23,7 +23,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		//[SW.durasteel, 0]
 	]
 	Size = [1, 2]
-	MaxHealth = 800 //80%*1000 of vanilla
+	MaxHealth = 800 //80%*1000 of vanilla 1000 per tile
 
 	//Rects
 	PhysicalRect = [0, 0, 1, 1]
@@ -43,7 +43,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ProhibitBelow = 2
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, Engine, EnginePowerDistribution]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust, Engine, EnginePowerDistribution]
 
 	//Doors&Etc
 	//
@@ -386,62 +386,63 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterActivationBar
 		{
 			Type = ProgressBar
-			OperationalToggle = ThrusterIsFiringTriggeredToggle
+			OperationalToggle = ThrusterIsFiringThresholdToggle
 			ShowProgressFor = MainThrusterValueProxy
 			LowColor = [0, 0, 0]
 			HighColor = [250, 250, 250]
 			FullColor = [255, 255, 255]
 		}
 
-		ThrusterIsFiringTriggeredToggle
+		ThrusterIsFiringThresholdToggle
 		{
 			Type = ThresholdToggle
 			ValueFrom = MainThrusterValueProxy
 			MinAmount = 10%
 		}
 
-		ThrusterHasEngineRoomBuff
+		EngineBuffProvider
 		{
 			Type = SelfBuffProvider
 			BuffType = SW_Ion_Thruster_Overdrive
-			BuffAmount = 0.5
-			BuffMultiplier = ThrusterHasEngineRoomTween
-		}
-		ThrusterHasEngineRoomTween
-		{
-			Type = ValueTween
-			OffValue = 0
-			OnValue = 1
-			OnTweenDuration = 0
-			OffTweenDuration = 0
-			IsOnToggle = EngineBuffToggle
+			ChainsFromBuffType = Engine
+			BuffAmount = { BaseValue=0%; BuffType=Engine; BuffMode=Add; }
+			OperationalToggle = EngineBuffToggle
 		}
 
 		ThrusterIsFiringRampUpBuff
 		{
 			Type = SelfBuffProvider
 			BuffType = SW_Ion_Thruster_Overdrive
-			BuffAmount = 1.6
+			BuffAmount = 60%
 			BuffMultiplier = ThrusterIsFiringTween
+			OperationalToggle = ThrusterIsFiringThresholdToggle
 		}
 		ThrusterIsFiringTween
 		{
 			Type = ValueTween
-			OffValue = 0.625
-			OnValue = 1 //160% Boost if on for OnTweenDuration
+			OffValue = 0
+			OnValue = 1 //+60% Boost if on for OnTweenDuration
 			OnTweenDuration = 12 //target is to reward continous flight and NOT provide burst buffing
 			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
-			IsOnToggle = ThrusterIsFiringTriggeredToggle
+			IsOnToggle = ThrusterIsFiringThresholdToggle
 		}
 		OverdriveActivationBar
 		{
 			Type = ProgressBar
-			OperationalToggle = ThrusterIsFiringTriggeredToggle
+			OperationalToggle = ThrusterIsFiringThresholdToggle
 			ShowProgressFor = ThrusterIsFiringTween
 			LowColor = [0, 0, 0]
 			HighColor = [0, 250, 0]
 			FullColor = [0, 255, 0]
 			ValueRange = [&~/Part/Components/ThrusterIsFiringTween/OffValue, &~/Part/Components/ThrusterIsFiringTween/OnValue]
+		}
+
+		ThrustBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType =	SW_Ion_Thruster_Overdrive_Thrust
+			ChainsFromBuffType = SW_Ion_Thruster_Overdrive
+			BuffAmount = { BaseValue=100%; BuffType=SW_Ion_Thruster_Overdrive; BuffMode=Add; }
 		}
 
 		FloorGrid
@@ -487,14 +488,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						AnimationFiles
 						[
-							"doodads on1.png"
-							"doodads on2.png"
-							"doodads on3.png"
-							"doodads on4.png"
-							"doodads on5.png"
-							"doodads on6.png"
-							"doodads on7.png"
-							"doodads on8.png"
+							"doodads_on_1.png"
+							"doodads_on_2.png"
+							"doodads_on_3.png"
+							"doodads_on_4.png"
+							"doodads_on_5.png"
+							"doodads_on_6.png"
+							"doodads_on_7.png"
+							"doodads_on_8.png"
 						]
 						Size = [1, 1]
 						AnimationInterval = 0.075
@@ -507,7 +508,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "doodads off.png"
+						File = "doodads_off_0.png"
 						Size = [1, 1]
 					}
 				]
@@ -654,7 +655,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Overdrive; BuffMode=Multiply; }
+			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Overdrive_Thrust; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
