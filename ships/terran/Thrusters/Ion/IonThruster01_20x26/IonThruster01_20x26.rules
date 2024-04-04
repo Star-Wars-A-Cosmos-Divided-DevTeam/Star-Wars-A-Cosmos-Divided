@@ -42,7 +42,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ProhibitBelow = 21 // 32
-	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Thrust, SW_Ion_Thruster_Accelerator_Reverse, SW_Ion_Thruster_Accelerator_RampUp, SW_Ion_Thruster_Accelerator_RampUpFinal, SW_Hypernode_Medium, SW_Hypernode_Large] 
+	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Thrust, SW_Ion_Thruster_Accelerator_Reverse, SW_Ion_Thruster_Accelerator_RampUp, SW_Ion_Thruster_Accelerator_RampUpFinal, SW_Hypernode_Medium, SW_Hypernode_Large, SW_Display] 
 
     //Doors&Etc
 	AllowedDoorLocations
@@ -125,6 +125,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
     //Components&Inheritance
 	Components : ^/0/Components, &<thruster_effect_toggles.rules>, &<toggles2.rules>, &<graphics.rules>, &<hyperdrive.rules>
 	{
+		RampUpFinalDisplayBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Display
+			ChainsFromBuffType = SW_Ion_Thruster_Accelerator_RampUpFinal
+			BuffAmount = { BaseValue=(&~/Part/ThrustIncreaseTime/BaseValue); BuffType=SW_Ion_Thruster_Accelerator_RampUpFinal; BuffMode=Multiply; }
+		}
+
 		IsOperational
 		{
 			Type = MultiToggle
@@ -150,7 +158,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperationalAndHypernodeConnectedToggle
 		{
 			Type = MultiToggle
-			Toggles = [IsOperational, HypernodeConnectedToggle]
+			Toggles = [IsOperational, HypernodeLargeConnectedToggle]
 			Mode = All
 		}
 
