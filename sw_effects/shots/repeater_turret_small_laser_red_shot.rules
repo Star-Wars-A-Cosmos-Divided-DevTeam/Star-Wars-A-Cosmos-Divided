@@ -1,9 +1,8 @@
-ID = SW.basic_turret_small_laser_red_shot
-//OtherIDs = ["red_small_laser_shot"]
-Range = 400
-IdealRange = [120, 400]
-IdealRadius = [5, 50]
-Speed = 200 //120
+ID = SW.repeater_turret_small_laser_red_shot
+Range = 325
+IdealRange = 275
+Speed = 350
+//HitEffectsScaleOverRange = [1, 1 - (&../Range) / 1000]
 
 Components
 {
@@ -17,54 +16,55 @@ Components
 	Death
 	{
 		Type = DeathByLifetime
-		// Lifetime will be auto-calculated based on range and speed.
 	}
-	
+
 	Targetable
 	{
 		Type = Targetable
-		Health = 750
+		Health = 210
 		TargetCategory = "laser"
 	}
 
 	Hit
 	{
 		Type = PenetratingHit
-		FactorEffectsWith = Targetable
-		
-		CrewCollisions = {Enemies=true; Junk=true}
-		SourceShipLowCollisions = false
 		FriendlyShipLowCollisions = false
-		
-		HitCrew = &HitOperational
-		HitShield = &HitOperational
+		SourceShipLowCollisions = false
+		FactorEffectsWith = Targetable
 
+		CrewCollisions = {Enemies=true; Junk=true}
+		HitCrew = &HitOperational
+
+		HitShield = &HitOperational
 		HitOperational
 		{
 			HitEffects
 			[
 				{
 					Type = Damage
-					Damage = 250
+					Damage = 100
 				}
 				{
 					Type = Impulse;
-					Impulse = 2.5;
+					Impulse = 1.5;
 				}
 			]
-
 			MediaEffects
 			[
 				&/SW_PARTICLES/Shot/Laser/Hit/Med/Red
 				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
 				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
-	
-				&/SW_SOUNDS/SmallLaserHit
 
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/laser_bolt_small/laser_bolt_small_hit.wav"
+					Volume = 0.4
+					SpeedVariation = 0.4
+				}
 				: /BASE_SHAKE
 				{
-					ShakeAmount = .03
-					Duration = .3
+					ShakeAmount = .01
+					Duration = .1
 				}
 			]
 		}
@@ -74,14 +74,13 @@ Components
 			[
 				{
 					Type = Damage
-					Damage = 125
+					Damage = 30
 				}
 				{
 					Type = Impulse;
-					Impulse = 1.25;
+					Impulse = 1.5;
 				}
 			]
-
 			MediaEffects
 			[
 				&/SW_PARTICLES/Shot/Laser/HitStruct/Med/Red
@@ -110,9 +109,8 @@ Components
 	Sprite
 	{
 		Type = AnimatedSprite
-		RenderBucket = BulletUpper3
-		//ReduceScaleWith = Hit
-		//ReduceScaleExponent = 0.5
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
 		Animation
 		{
 			AtlasSprite
@@ -123,23 +121,36 @@ Components
 					SampleMode = Linear
 					MipLevels = max
 				}
-				Size = [0.64, 0.64]
+				Size = [2.5, .5]
 			}
 			FrameCount = 8
 			FrameSize = [128, 128]
 			FramesPerRow = 2
-			FramesPerSecond = 32
+			FramesPerSecond = 60
 		}
 	}
 
-	MediaEffects
+	GlowSprite
 	{
-		Type = MediaEffects
-		FactorEffectsWith = Hit
-		FactorEffectsExponent = 0.5
-		MediaEffects
-		[
-			&/SW_PARTICLES/Shot/Laser/Glow/Med/Red
-		]
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [6, 6]
+			VertexColor = [255, 0, 0]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
 	}
 }
