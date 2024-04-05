@@ -1,6 +1,15 @@
 //SW Buffs
 
-SW_Ion_Thruster_Overdrive //: Vanilla RateOfFire Buff
+//Overdrive Buff
+SW_Ion_Thruster_Overdrive
+{
+	CombineMode = Add
+
+	RectBorderColor = [10, 212, 98, 160]
+	RectFillColor = [10, 212, 98, 64]
+}
+
+SW_Ion_Thruster_Overdrive_Thrust
 {
 	CombineMode = Add
 
@@ -18,10 +27,9 @@ SW_Ion_Thruster_Overdrive //: Vanilla RateOfFire Buff
 	IconTextMultiply = 100
 	IconTextAdd = -100
 
-	RectBorderColor = [10, 212, 98, 160]
-	RectFillColor = [10, 212, 98, 64]
 }
 
+//Accelerator Buffs
 SW_Ion_Thruster_Accelerator
 {
 	CombineMode = Add
@@ -65,33 +73,68 @@ SW_Ion_Thruster_Accelerator_RampUpFinal
 	BaseValue = 0%
 }
 
+SW_Ion_Thruster_To_Accelerator //Provides DoodadAnimationSpeedFactorValue to Attached Accelerators
+{
+	CombineMode = Add
+	BaseValue = 0%
+
+	RectBorderColor = [10, 212, 98, 160]
+	RectFillColor = [10, 212, 98, 64]
+}
+
+//Displays The Input BaseValue MODULATOR InputBuff
 SW_Display
 {
 	CombineMode = Add
 	BaseValue = 0%
 }
 
-SW_Ion_Thruster_Accelerator_Reverse
-{
-	CombineMode = Add
-	BaseValue = 0%
-	Exponent = 1
-	Multiplier = 100%
-
-	RectBorderColor = [10, 212, 98, 160]
-	RectFillColor = [10, 212, 98, 64]
-}
+//Connection/Transfer Buffs
 
 SW_EnginePowerDistribution
 {
 	// Only exists to piggyback engine room power distribution off the buff system.
 }
 
-SW_HypermatterDistribution
+SW_ReactorHypermatterDistribution
 {
 	// Distributes Hypermatter
 }
 
+SW_MissileMagConnection // Only used to show connection in blueprints.
+{
+	Icon
+	{
+		Texture
+		{
+			File = "buff_missiles.png"
+			MipLevels = 2
+			SampleMode = Linear
+		}
+		Size = [2, 2]
+	}
+
+	RectBorderColor = [10, 212, 98, 160]
+	RectFillColor = [10, 212, 98, 64]
+}
+
+//Sight&Radar Range Buff
+SW_Sensor
+{
+	CombineMode = Add
+	Icon
+	{
+		Texture
+		{
+			File = "buff_radar.png"
+			MipLevels = 2
+			SampleMode = Linear
+		}
+		Size = [1, 1]
+	}
+}
+
+//Hyperdrives Buffs
 SW_Hypernode_Large
 {
 	CombineMode = Add
@@ -122,36 +165,10 @@ SW_Hypernode_Medium
 	}
 }
 
-SW_Sensor
+SW_Hyperdrive_To_Thruster
 {
-	CombineMode = Add
-	Icon
-	{
-		Texture
-		{
-			File = "buff_radar.png"
-			MipLevels = 2
-			SampleMode = Linear
-		}
-		Size = [1, 1]
-	}
-}
-
-SW_MissileMagConnection // Only used to show connection in blueprints.
-{
-	Icon
-	{
-		Texture
-		{
-			File = "buff_missiles.png"
-			MipLevels = 2
-			SampleMode = Linear
-		}
-		Size = [2, 2]
-	}
-
-	RectBorderColor = [10, 212, 98, 160]
-	RectFillColor = [10, 212, 98, 64]
+	CombineMode = Max
+	BaseValue = 0%
 }
 
 //Weird Legacy Buffs Under this.
