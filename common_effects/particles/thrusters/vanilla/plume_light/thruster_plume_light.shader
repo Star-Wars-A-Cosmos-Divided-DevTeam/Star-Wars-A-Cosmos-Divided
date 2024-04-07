@@ -74,5 +74,5 @@ PIX_OUTPUT pix(in VERT_OUTPUT_BEAM input) : SV_TARGET
 	float3 litColor = _litReflectiveStrength * reflectColor + (_litAdditiveStrength * light);
 	float3 unlitColor = _unlitAdditiveStrength * emissive;
 	float3 ret = t * litColor + (1 - t) * unlitColor;
-    return float4(ret * tex.b * saturate(input.intensity), 1);
+    return float4(ret * tex.b * saturate(input.intensity), 1) * input.color;
 }
