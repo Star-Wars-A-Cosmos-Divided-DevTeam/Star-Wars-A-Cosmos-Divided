@@ -2,7 +2,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	//IDs
 	ID = SW.IonThruster01_3x4_switchable
-	//OtherIDs = []
+	//OtherIDs = [IonThruster01_3x4, SW.IonThruster01_3x4]
 
 	//StringKeys
 	NameKey = "Parts/IonThruster01_3x4"
@@ -11,7 +11,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechI", "SWTechII"]
-	TypeCategories = [thruster, ion_thruster, uses_power, SW_Tech_I, SW_Tech_II]
+	TypeCategories = [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_I, SW_Tech_II]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -47,11 +47,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust, Engine, EnginePowerDistribution]
 
 	//Doors&Etc
-	HasNonContiguousPathing = true
 	ForceManhattenPathInPart = true
 	BlockedTravelCells
 	[
 		[1, 1]
+		//
 		[1, 2]
 		[0, 3]
 		[1, 3]
@@ -85,7 +85,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components, &<../IonThruster01_3x3/thruster_effect_toggles.rules>//, &<thruster_effect_colors.rules>
+	Components : ^/0/Components, &<thruster_effect_toggles.rules>
 	{
 		IsOperational
 		{
@@ -317,7 +317,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ValueTween
 			OffValue = 0
-			OnValue = 1 //+60% Boost if on for OnTweenDuration
+			OnValue = 1 //+150% Boost if on for OnTweenDuration
 			OnTweenDuration = (12*2.5) //target is to reward continous flight and NOT provide burst buffing
 			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
 			IsOnToggle = ThrusterIsFiringThresholdToggle
@@ -366,6 +366,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			RandomUVRotation = true
 			Layer = "floors"
 		}
+		
+		LightGraphics
+		{
+			Type = Graphics
+			Location = [1.5, 3]
+			OperationalToggle = IsOperational
+			GetColorFrom = ColorPickerThruster
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"lights_1_bleached.png"
+							"lights_2_bleached.png"
+						]
+						Size = [3, 7]
+						AnimationInterval = 0.1
+					}
+				]
+			}
+		}
 
 		Graphics
 		{
@@ -375,6 +399,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
 			AnimationSpeedFactorRenormalize = [0.64, 2.7]
+
 			Floor
 			{
 				Layer = "doodads_low"
@@ -420,7 +445,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			OperationalLighting
+			/*OperationalLighting
 			{
 				Layer = "lights_add"
 				Offset = [0, 1.5]
@@ -437,7 +462,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						VertexColor = [255*0.21, 255*0.42, 255*0.42]
 					}
 				]
-			}
+			}*/
 			Walls
 			{
 				Layer = "walls"
@@ -561,7 +586,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [1.5, 5 + 5/64]
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
-			MinActivation = 0
+			MinActivation = -0.20
 			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Overdrive_Thrust; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
@@ -659,6 +684,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			HasZeroResourceSprite = false
 			ResourceLevels
 			[
+				//{
+				//	File = "batteries_0.png"
+				//	Size = [2, 1]
+				//}
 				{
 					File = "batteries_1.png"
 					Offset = [-0.5, 0]
