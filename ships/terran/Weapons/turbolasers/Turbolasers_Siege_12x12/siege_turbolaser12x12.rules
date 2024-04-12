@@ -53,7 +53,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
 	//Components
-	Components : ^/0/Components, /*&<siege12x12green.rules>,*/ /* &<../SW_weapon_fire_alternate_2.rules>,*/ &<graphics.rules>
+	Components : ^/0/Components
 	{
 		IsOperational
 		{
@@ -218,15 +218,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 
 		}
-/*
-		//for alternate fire 120% * 1 s = 1.20 s
-		WeaponTimerBuffProvider
-		{
-			Type = SelfBuffProvider
-			BuffType = SWWeaponTimerBuff
-			BuffAmount = 320%
-		}
-*/
+
 		Turret
 		{
 			Type = TurretWeapon
@@ -235,7 +227,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0 // Uses separate fire timer.
-			FiringArc = 45d //180d
+			FiringArc = 60d //180d
 			RotateSpeed = 2d
 			FireThresholdAngle = 1d
 			HoldTargetAfterCancel = 0.5
@@ -270,15 +262,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				QuadCount = 64
 			}
 		}
-
-/*
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = Turret
-		}
-*/
 
 		ShootSynchronizedComponents
 		{
@@ -397,7 +380,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			GetTargetFrom = Turret
 			Location = [0, 0]
 			OperationalToggle = IsOperational
-			FireDelay = .6
+			//FireDelay = .6
 			Bullet = &/SW_SHOTS/greenmedlasershot
 			SourceShipCollisions = false
 			TargetLeadPrediction = false
@@ -405,55 +388,162 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourcesUsed = 500
 			Recoil = 1240
 		}
-		/*
-		TurretGraphics
-		{
-			Type = Graphics
-			ChainedTo = Turret
-			Location = [0, 0]
-			Rotation = 90d
-			//OperationalToggle = IsOperational
+
+	
+	Graphics
+	{
+		Type = Graphics
+		Location = [6, 6]
 			Floor
 			{
-				Layer = "roof_doodads"
+				Layer = "floors"
+				//Offset = [-1, 0]
 				DamageLevels
 				[
 					{
-						File = "turret[12,12].png"
-						NormalsFile = "turret_normals.png"
-						Size = [9, 12]
+						File = "floor.png"
+						Size = [12, 12]
+					}
+					{
+						File = "floor_33.png"
+						Size = [12, 12]
+					}
+					{
+						File = "floor_66.png"
+						Size = [12, 12]
 					}
 				]
 			}
-		}
-		*/
-		/*
-		BarrelGraphics
-		{
-			Type = Graphics
-			ChainedTo = Turret
-			Location = [0, 0]
-			Rotation = 90d
-			//OperationalToggle = IsOperational
-			Floor
+			Walls
 			{
-				Layer = "roof_doodads"
-				Offset = [-60/64, -7.8125] //[7.8125, -1] //-64,-500 //midwidth42
+				Layer = "walls"
 				DamageLevels
 				[
 					{
-						File = "barrel[1,4]01.png"
-						NormalsFile = "barrel_normals.png"
-						Size = [1, 4]
+						File = "walls.png"
+						Size = [12, 12]
+					}
+					{
+						File = "walls_33.png"
+						Size = [12, 12]
+					}
+					{
+						File = "walls_66.png"
+						Size = [12, 12]
 					}
 				]
 			}
-			Walls : &Floor
+			Roof
 			{
-				Offset = [60/64, -7.8125] //[7.8125, 1]
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						//NormalsFile = "roof_normals.png"
+						Size = [12, 12]
+					}
+					{
+						File = "roof_33.png"
+						//NormalsFile = "roof_normals_33.png"
+						Size = [12, 12]
+					}
+					{
+						File = "roof_66.png"
+						//NormalsFile = "roof_normals_66.png"
+						Size = [12, 12]
+					}
+				]
 			}
+	}
+
+		ConsoleGraphics
+		{
+			Type = Graphics
+			//ChainedTo = Turret
+			Location = [6, 6]
+			OperationalToggle = IsOperational
+			DoodadToggle = IsOperational
+			ShowToggledDoodadsWhenNotOperational = true
+			ToggleOnDoodad
+			{
+			    //ChainedTo = Turret
+				Layer = "doodads_low"
+				//Offset = [-2, 0]
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"console_on1.png"//"../FalconLaser/console on1.png"
+							"console_on2.png"//"../FalconLaser/console on2.png"
+							"console_on3.png"//"../FalconLaser/console on3.png"
+						]
+						Size = [12, 12]
+						AnimationInterval = 0.5
+					}
+				]
+			}
+			ToggleOffDoodad
+			{
+			    //ChainedTo = Turret
+				Layer = "doodads_low"
+				//Offset = [-2, 0]
+				DamageLevels
+				[
+					{
+						File = "console_off.png"//"../FalconLaser/console off.png"
+						Size = [12, 12]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [12, 12]
+					}
+				]
+			}
+
 		}
-		*/
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [6, 6]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			RangeLow = 0
+			RangeHigh = 5000
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "batteries1.png"
+					Size = [12, 12]
+				}
+				{
+					File = "batteries2.png"
+					Size = [12, 12]
+				}
+				{
+					File = "batteries3.png"
+					Size = [12, 12]
+				}
+				{
+					File = "batteries4.png"
+					Size = [12, 12]
+				}
+				{
+					File = "batteries5.png"
+					Size = [12, 12]
+				}
+			]
+		}
+
 
 		Barrel1Graphics
 		{
@@ -700,10 +790,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 
-//		ROF = 2 / (&~/Part/Components/WeaponTimerBuffProvider/BuffAmount)
-//		Range = &~/Part/Components/WeaponEmitter/Bullet/Range
-//		Arc = deg(&~/Part/Components/Turret/FiringArc)
-//		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
 	}
 
    //Stats 
@@ -714,30 +800,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		&<siege12x12blue.rules>/LaserStats
 		&<siege12x12green.rules>/LaserStats
 	]
-/*
-	StatsByCategory
-	[
-		&~/TurretStats
-		{
-			NameKey = "StatCategories/HeavyGreenConcussiveBlastLasershot"
-			Stats
-			{
-				ShieldDamagePerShot = &~/Part/Components/WeaponEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-				ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/TurretStats/Stats/ROF)
-				ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-//				DamagePerShot = &~/Part/Components/WeaponEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-//				DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
-//				Damage = [&../DamagePerShot, &../DamagePerSecond]
-//				Spread = deg(&~/Part/Components/WeaponEmitter/Spread/1)
-				ShotSpeed = &~/Part/Components/WeaponEmitter/Bullet/Speed
-				ShotHP = &~/Part/Components/WeaponEmitter/Bullet/Components/Targetable/Health
-//				PowerPerShot = (&~/Part/Components/WeaponEmitter/ResourcesUsed) / 1000
-//				PowerPerSecond = (&PowerPerShot) * (&~/Part/Stats/ROF)
-//				ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
-			}
-		}
-	]
-	*/
 }
 
 TurretStats
