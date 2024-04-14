@@ -18,8 +18,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Resources
 	[
 		[steel, 3600] //80/9*20*26=4622*81%
+		//[coil, 0]//133%*0 of vanilla
 		[coil2, 920] //20/9*20*26=1155*81%
-		//[tristeel, 460] //10/9*20*26=577*81%
+		//[SW.durasteel, 692]//120%*577 of vanilla		//10/9*20*26=577*81%
 	]
 	Size = [20, 33]
 	MaxHealth = 420000 //421.200 //81% of vanilla 1000 per tile
@@ -41,10 +42,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	FuelUsage = 14800 //14.790 //160%*40% of vanilla 50*8/9 per tile
 
 	//ReceivableBuffs&Prohibits
+	//ProhibitRects
 	ProhibitBelow = 21 // 32
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Thrust, SW_Ion_Thruster_To_Accelerator, SW_Ion_Thruster_Accelerator_RampUp, SW_Ion_Thruster_Accelerator_RampUpFinal, SW_Hypernode_Interface, SW_Display] 
 
     //Doors&Etc
+	ForceManhattenPathInPart = true
+	BlockedTravelCells
+	[
+
+	]
 	AllowedDoorLocations
 	[
 		[-1, 0]
@@ -66,8 +73,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[-1, 16]
 		[-1, 17]
 		[-1, 18]
-		//[-1, 19]
-		//[-1, 20]
 		[0, -1]
 		[1, -1]
 		[2, -1]
@@ -107,11 +112,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[20, 16]
 		[20, 17]
 		[20, 18]
-		//[20, 19]
-		//[20, 20]
 	]
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -119,20 +122,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [56, 96]
+		Size = [50, 96]
 	}
 
-    //Components&Inheritance
-	Components : ^/0/Components, &<thruster_effect_toggles.rules>, &<toggles2.rules>, &<graphics.rules>, &<hyperdrive.rules>
+	//Components&Inheritance
+	Components : ^/0/Components, &<toggles2.rules>, &<graphics.rules>, &<hyperdrive.rules>
 	{
-		RampUpFinalDisplayBuffProvider
-		{
-			Type = SelfBuffProvider
-			BuffType = SW_Display
-			ChainsFromBuffType = SW_Ion_Thruster_Accelerator_RampUpFinal
-			BuffAmount = { BaseValue=(&~/Part/ThrustIncreaseTime/BaseValue); BuffType=SW_Ion_Thruster_Accelerator_RampUpFinal; BuffMode=Multiply; }
-		}
-
 		IsOperational
 		{
 			Type = MultiToggle
@@ -146,15 +141,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 			RequiresCommand = false
-		}
-		
-		ColorPickerThruster
-		{
-			Type = UIColor
-			ColorID = "SW_Part_ThrusterColor"
-			Default = [38, 38, 255, 255]//.85 saturation
-			RequiresCommand = true
-			AlwaysAllowInBuildMode = false
 		}
 
 		CommandConsumer
@@ -209,15 +195,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 520000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
-		BatteryStorageBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperationalAndFtlDriveOff
-			ShowProgressFor = BatteryStorage
-			LowColor = [64, 64, 0]
-			HighColor = [250, 250, 0]
-			FullColor = [255, 255, 0]
-		}
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
@@ -236,66 +213,88 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			}
 		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperationalAndFtlDriveOff
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+		
+		ColorPickerThruster
+		{
+			Type = UIColor
+			ColorID = "SW_Part_ThrusterColor"
+			Default = [38, 38, 255, 255]//.85 saturation
+			AlwaysAllowInBuildMode = false
+			RequiresCommand = true
+		}
 
-		ThrusterEffectAmountType
+		ThrusterEffectType
 		{
 			Type = UIToggle
-			ToggleID = "SW.thruster_effect_amount_type"
+			ToggleID = "SW.thruster_effect_type"
 			Default = 0
 			AvailableChoices = [0, 1, 2, 3, 4, 5]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
 
-		GlowToggle
+		ThrusterEffectGlowToggle
 		{
 			Type = ModeToggle
-			Mode = ThrusterEffectAmountType
+			Mode = ThrusterEffectType
 			OnModes = [0, 1, 2]
 		}
-		SparksToggle
+		ThrusterEffectSparksToggle
 		{
 			Type = ModeToggle
-			Mode = ThrusterEffectAmountType
+			Mode = ThrusterEffectType
 			OnModes = [1, 3]
 		}
 
-		FullsetToggle
+		ThrusterEffectFullsetToggle
 		{
 			Type = ModeToggle
-			Mode = ThrusterEffectAmountType
+			Mode = ThrusterEffectType
 			OnModes = [2, 4]
 		}
 
-		RocketToggle
+		ThrusterEffectRocketToggle
 		{
 			Type = ModeToggle
-			Mode = ThrusterEffectAmountType
+			Mode = ThrusterEffectType
 			OnModes = [5]
 		}
 
-		GlowToggleProxy
+		ThrusterEffectGlowComponents
 		{
-			Type = ToggleProxy
-			ComponentID = GlowToggle
+			Type = ToggledComponents
+			Toggle = ThrusterEffectGlowToggle
+			Components = &<particles/thruster_colorable_glow.rules>/Components
 		}
 
-		SparksToggleProxy
+		ThrusterEffectSparksComponents
 		{
-			Type = ToggleProxy
-			ComponentID = SparksToggle
+			Type = ToggledComponents
+			Toggle = ThrusterEffectSparksToggle
+			Components = &<particles/thruster_colorable_sparks.rules>/Components
 		}
 
-		FullsetToggleProxy
+		ThrusterEffectFullsetComponents
 		{
-			Type = ToggleProxy
-			ComponentID = FullsetToggle
+			Type = ToggledComponents
+			Toggle = ThrusterEffectFullsetToggle
+			Components = &<particles/thruster_colorable_fullset.rules>/Components
 		}
 
-		RocketToggleProxy
+		ThrusterEffectRocketsetComponents
 		{
-			Type = ToggleProxy
-			ComponentID = RocketToggle
+			Type = ToggledComponents
+			Toggle = ThrusterEffectRocketToggle
+			Components = &<particles/thruster_colorable_rocketset.rules>/Components
 		}
 
 		NozzleArtOptionToggle
@@ -350,37 +349,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = Add
 		}
 
-		StaticScalerValue
-        {
-            Type = StaticValue
-			OperationalToggle = RocketToggle
-            Value = 1.6
-        }
-		RocketEffectValue
-		{
-			Type = MultiValue
-			OperationalToggle = RocketToggle
-			Values = [MainThrusterValueProxy, StaticScalerValue]
-			Mode = Multiply
-		}
-		RocketEffectValueProxy
-		{
-			Type = ValueProxy
-			OperationalToggle = RocketToggle
-			ComponentID = RocketEffectValue
-		}
-
 		ThrusterActivationBar
 		{
 			Type = ProgressBar
-			OperationalToggle = ThrusterIsFiringTriggeredToggle
+			OperationalToggle = ThrusterIsFiringThresholdToggle
 			ShowProgressFor = MainThrusterValueProxy
 			LowColor = [0, 0, 0]
 			HighColor = [250, 250, 250]
 			FullColor = [255, 255, 255]
 		}
 
-		ThrusterIsFiringTriggeredToggle
+		ThrusterIsFiringThresholdToggle
 		{
 			Type = ThresholdToggle
 			ValueFrom = MainThrusterValueProxy
@@ -487,9 +466,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				: /SW_SOUNDS/ThrusterRumble
 				{
-					Volume = .125
+					Volume = 1.125
 					Speed = 1.5
-					MaxConcurrentVolume = .25
+					MaxConcurrentVolume = 1.25
 				}
 			]
 		}
@@ -534,7 +513,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-
+/*
 		BatterySpritesHolder
 		{
 			Type = Graphics
@@ -578,7 +557,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-
+*/
 		OperationEffects
 		{
 			Type = ToggleEffects
@@ -592,7 +571,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = DeathEffects
 			Location = [10, 13]
-			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
 		}
 
 		Indicators
@@ -633,11 +612,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
-	//Stats
+	//Stats&StatsByCategory&StatsNotes
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce
-		//ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
+		ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
