@@ -1,0 +1,341 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = SetRandom
+			LocationIn = location
+			LocationOut = location
+			Name = "Sprite Index"
+			Enabled = true
+			UpdateAfterInit = false
+			DataOut = sprite_index
+			ValueType = Int
+			FromValue = 0
+			ToValue = 6
+		}
+		{
+			Type = UvSprites
+			VelocityIn = velocity
+			VelocityOut = velocity
+			Name = "Sprite UV Rect"
+			Enabled = true
+			UpdateAfterInit = false
+			SpriteIndexIn = sprite_index
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 256
+				Y = 512
+			}
+			SpriteSize
+			{
+				X = 128
+				Y = 128
+			}
+			SpriteCount = 7
+			SpritesPerRow = 2
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+		}
+		{
+			Type = SetRandom
+			VelocityInOut = velocity
+			Name = Rotation
+			Enabled = true
+			UpdateAfterInit = false
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 0d
+			ToValue = 360d
+		}
+		{
+			Type = SetRandom
+			DataOut = rot_vel
+			ValueType = Angle
+			FromValue = -90d
+			ToValue = 90d
+			Name = "Rot Velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandomHsvColor
+			SpriteIndexIn = sprite_index
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 256
+				Y = 512
+			}
+			SpriteSize
+			{
+				X = 128
+				Y = 128
+			}
+			SpriteCount = 7
+			SpritesPerRow = 2
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Name = "Random base color"
+			Enabled = true
+			UpdateAfterInit = false
+			ColorOut = base_color
+			HueRange
+			{
+				Min = 0
+				Max = 0
+			}
+			SaturationRange
+			{
+				Min = 0
+				Max = 0
+			}
+			ValueRange
+			{
+				Min = 1
+				Max = 1
+			}
+			AlphaRange
+			{
+				Min = 0
+				Max = 0.15
+			}
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 1
+			Name = Lifetime
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2D
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Angle
+			AIn = rot
+			BIn = rot_vel
+			ResultOut = rot
+			Operator = AddDt
+			Name = "Apply rot velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.498039216
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0
+				}
+			]
+			Name = "Alpha ramp"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Color
+			AIn = color
+			BIn = base_color
+			ResultOut = color
+			Operator = Multiply
+			Name = "Multiply base color with alpha"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 1
+			ToValue = 1.75
+			Name = "Scale lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = scale
+			BIn = base_scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "Apply base scale"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn = uv_rect
+		BaseSize
+		{
+			X = 1
+			Y = 1
+		}
+		MaxScale = 1
+		Name = ""
+	}
+	Material
+	{
+		Texture
+		{
+			File = ../../../../common_effects/particles/smoke.png
+			MipLevels = 8
+			FixTransparentColors = false
+			PreMultiplyByAlpha = false
+			SampleMode = Linear
+		}
+		TargetBlendMode
+		{
+			SourceRgbFactor = SourceAlpha
+			DestRgbFactor = One
+			RgbOperator = Add
+			SourceAlphaFactor = InverseDestAlpha
+			DestAlphaFactor = One
+			AlphaOperator = Add
+		}
+		Color
+		{
+			Rf = 0.8509804
+			Gf = 1
+			Bf = 0.0117647061
+			Af = 1
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 150
+	EmitPerOneShot = 0
+	PreInitializers
+	[
+		{
+			Type = SetRandomVelocity
+			VelocityOut = velocity
+			Speed
+			{
+				Min = 0
+				Max = 1.5
+			}
+			Direction
+			{
+				Min = 0d
+				Max = 360d
+			}
+			Name = "Initial velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetValue
+			LocationOut = location
+			Circle
+			{
+				Center
+				{
+					X = 0
+					Y = 0
+				}
+				Radius = 0.5
+			}
+			Perimeter = false
+			Name = "Base scale"
+			Enabled = true
+			UpdateAfterInit = false
+			DataOut = base_scale
+			ValueType = Float
+			Value = 1
+		}
+		{
+			Type = SetRandomCircle
+			LocationOut = location
+			Circle
+			{
+				Center
+				{
+					X = 0
+					Y = 0
+				}
+				Radius = 1
+			}
+			Perimeter = false
+			Name = "Init Location"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = Upper2
+PenetratingBucket
+MinIntensity = 0
+IsFancy = true
+Sharing = None
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 3
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.40282347E+38
+ScaleEmissionWithIntensity = false
+Delay = 0
+IgnoreIntensity = false
+ScaleEmissionWithBeamLength = false
