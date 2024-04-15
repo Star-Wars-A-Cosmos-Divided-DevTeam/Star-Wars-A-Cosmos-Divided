@@ -1,0 +1,1012 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	//IDs
+	ID = SW.IonThruster01_2x3_switchable
+	//OtherIDs = [IonThruster01_2x3, SW.IonThruster01_2x3]
+
+	//StringKeys
+	NameKey = "Parts/IonThruster01_2x3"
+	IconNameKey = "Parts/IonThruster01_2x3_Icon"
+	DescriptionKey = "Parts/IonThruster01_2x3_Desc"
+
+	//Groups&Categories
+	EditorGroups = ["Flight", "SWTechII"]
+	TypeCategories = [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_II]
+	//RequiresCategories = []
+
+	//Resources&Size&Health
+	Resources
+	[
+		[steel, 70]//125%*56 of vanilla
+		//[coil, 0]//133%*0 of vanilla
+		[coil2, 12]//120%*10 of vanilla
+		[SW.durasteel, 10]//120%*8 of vanilla
+	]
+	Size = [2, 5]
+	MaxHealth = 4900 //4860 //81% of vanilla 1000 per tile
+
+	//Rects
+	PhysicalRect = [0, 0, 2, 3]
+	SaveRect = &PhysicalRect
+	BoundingRectType = Physical
+
+	//Selections
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "ion_thrusters"
+
+	//PartSpecific
+	ThrusterForce = 5000 //12800 managed thru ramping buff //160%*8000 of vanilla
+	ThrustIncreaseTime = { BaseValue=5.6; BuffType=SW_Ion_Thruster_Boost_RampUpFinal; BuffMode=Divide; }
+	ThrustRecoveryTime = { BaseValue=3.0; BuffType=SW_Ion_Thruster_Boost_RampUpFinal; BuffMode=Divide; }
+	FuelUsage = 128 //160%*40%*200 of vanilla
+    
+    //Boosted
+	BoostedThrusterForce = 15000		//ONLY HERE FOR STAT DISPLAY
+	BoostedThrustIncreaseTime = 0		//ONLY HERE FOR STAT DISPLAY
+	BoostedThrustRecoveryTime = 0		//ONLY HERE FOR STAT DISPLAY
+	BoostedFuelUsage = 384				//ONLY HERE FOR STAT DISPLAY
+	BoostedPowerDrain = { BaseValue=-20; BuffType=Engine; BuffMode=Multiply; }
+	BoostedPowerDrainInterval = 0.1
+	
+    //ReceivableBuffs&Prohibits
+	//
+	ProhibitBelow = 18
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Boost, SW_Ion_Thruster_Boost_Thrust, SW_Ion_Thruster_Boost_RampUp, SW_Ion_Thruster_Boost_RampUpFinal, Engine, EnginePowerDistribution]
+
+	//Doors&Etc
+	ForceManhattenPathInPart = true
+	BlockedTravelCells
+	[
+		[0, 1]
+		[1, 1]
+		//
+		[0, 2]
+		[1, 2]
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+	]
+	AllowedDoorLocations
+	[
+		[-1, 0]
+		//
+		//
+		[0, -1]
+		[1, -1]
+		//
+		//
+		[2, 0]
+		//
+		//
+		//
+	]
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [42.66, 106.66]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, RealBatteryStorage]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 6
+		}
+
+		EngineBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = Engine
+		}
+
+		PowerDistributionBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = EnginePowerDistribution
+		}
+
+		RealBatteryStorage // Can't call this "BatteryStorage" because we don't want it fillable via the engine room when in boost mode. We define a proxy to it below.
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 8000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		BoostOffComponents
+		{
+			Type = ToggledComponents
+			Toggle = BoostToggle
+			Invert = true
+			IncludeInBlueprints = true
+			Components
+			{
+				BatteryStorage
+				{
+					Type = ResourceStorageProxy
+					ResourceType = battery
+					ComponentID = RealBatteryStorage
+				}
+				ToggledBatteryConsumer
+				{
+					Type = ToggledComponents
+					Toggle = PowerDistributionBuffToggle
+					Invert = true
+					Components
+					{
+						BatteryConsumer
+						{
+							Type = ResourceConsumer
+							ResourceType = battery
+							Storage = RealBatteryStorage
+							DefaultPriority = &/PRIORITIES/Thruster_Supply
+							ResupplyThreshold = 500
+							OperationalToggle = PowerToggle
+						}
+					}
+				}
+			}
+		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperationalAndNotBoostToggle
+			ShowProgressFor = RealBatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+		
+		ColorPickerThruster
+		{
+			Type = UIColor
+			ColorID = "SW_Part_ThrusterColor"
+			Default = [38, 38, 255, 255]//.85 saturation
+			AlwaysAllowInBuildMode = false
+			RequiresCommand = true
+		}
+
+		ThrusterEffectType
+		{
+			Type = UIToggle
+			ToggleID = "SW.thruster_effect_type"
+			Default = 5
+			AvailableChoices = [0, 1, 3, 5]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		ThrusterEffectGlowToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectType
+			OnModes = [0, 1, 2]
+		}
+
+		ThrusterEffectSparksToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectType
+			OnModes = [1, 3]
+		}
+
+		ThrusterEffectFullsetToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectType
+			OnModes = [2, 4]
+		}
+
+		ThrusterEffectRocketToggle
+		{
+			Type = ModeToggle
+			Mode = ThrusterEffectType
+			OnModes = [5]
+		}
+
+		IsThrusterEffectGlowToggleAndNotBoostToggle
+		{
+			Type = MultiToggle
+			Toggles = [ThrusterEffectGlowToggle,  {Toggle = BoostToggle; Invert = true},]
+			Mode = All
+		}
+
+		IsThrusterEffectSparksToggleAndNotBoostToggle
+		{
+			Type = MultiToggle
+			Toggles = [ThrusterEffectSparksToggle,  {Toggle = BoostToggle; Invert = true},]
+			Mode = All
+		}
+
+		IsThrusterEffectFullsetToggleAndNotBoostToggle
+		{
+			Type = MultiToggle
+			Toggles = [ThrusterEffectFullsetToggle,  {Toggle = BoostToggle; Invert = true},]
+			Mode = All
+		}
+
+		IsThrusterEffectRocketToggleAndNotBoostToggle
+		{
+			Type = MultiToggle
+			Toggles = [ThrusterEffectRocketToggle,  {Toggle = BoostToggle; Invert = true},]
+			Mode = All
+		}
+
+		ThrusterEffectGlowComponents
+		{
+			Type = ToggledComponents
+			Toggle = IsThrusterEffectGlowToggleAndNotBoostToggle
+			Components = &<particles/thruster_colorable_glow.rules>/Components
+		}
+
+		ThrusterEffectSparksComponents
+		{
+			Type = ToggledComponents
+			Toggle = IsThrusterEffectSparksToggleAndNotBoostToggle
+			Components = &<particles/thruster_colorable_sparks.rules>/Components
+		}
+
+		ThrusterEffectFullsetComponents
+		{
+			Type = ToggledComponents
+			Toggle = IsThrusterEffectFullsetToggleAndNotBoostToggle
+			Components = &<particles/thruster_colorable_fullset.rules>/Components
+		}
+
+		ThrusterEffectRocketsetComponents
+		{
+			Type = ToggledComponents
+			Toggle = IsThrusterEffectRocketToggleAndNotBoostToggle
+			Components = &<particles/thruster_colorable_rocketset.rules>/Components
+		}
+
+		ThrusterEffectBoostsetComponents
+		{
+			Type = ToggledComponents
+			Toggle = BoostToggle
+			Components = &<particles/thruster_colorable_boostset.rules>/Components
+		}
+
+		BoostToggle
+		{
+			Type = UIToggle
+			ToggleID = "thruster_boost"
+			Default = 0
+			AutoOffTrigger = AutoBoostOffTrigger
+			OperationalToggle = IsOperational
+			RememberValue = false
+		}
+
+		IsOperationalAndNotBoostToggle
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational,  {Toggle = BoostToggle; Invert = true},]
+			Mode = All
+		}
+
+		BoostProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = BoostToggle
+			ShowProgressFor = RealBatteryStorage
+			LowColor = [64, 0, 64]
+			HighColor = [0, 0, 255]
+			FullColor = [0, 0, 255]
+		}
+
+		FullAmmoToggle
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [RealBatteryStorage]
+			ToggleOnResources = &../RealBatteryStorage/MaxResources
+			ToggleOffResources = (&ToggleOnResources) - 1
+		}
+
+		BoostOffInstantDrainToggles
+		{
+			Type = MultiToggle
+			Toggles = [BoostToggle, PowerToggle]
+			Mode = All
+		}
+
+		BoostOffInstantDrainTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = BoostOffInstantDrainToggles
+			TriggerWhenOn = false
+			TriggerWhenOff = true
+			OperationalToggle = FullAmmoToggle
+			InvertOperationalToggle = true
+		}
+
+		BoostOffInstantDrain
+		{
+			Type = ResourceChange
+			Trigger = BoostOffInstantDrainTrigger
+			ResourceStorage = RealBatteryStorage
+			Amount = -999999
+		}
+
+		AutoBoostOffTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = RealBatteryStorage
+			TriggerWhenOn = false
+			TriggerWhenOff = true
+		}
+
+		PowerDrainTimer
+		{
+			Type = Timer
+			OperationalToggle = BoostToggle
+			Duration = &~/Part/BoostedPowerDrainInterval
+			AutoStart = true
+			Repeats = true
+		}
+		PowerDrain
+		{
+			Type = ResourceChange
+			Trigger = PowerDrainTimer
+			ResourceStorage = RealBatteryStorage
+			Amount = &~/Part/BoostedPowerDrain
+			InitialDelay = 0
+		}
+
+		MainThrusterLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = MainThruster
+		}
+
+		MainThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = MainThruster
+			ValueWhenNotConnected = 0
+		}
+
+		ReverseThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = ReverseThruster
+			ValueWhenNotConnected = 0
+		}
+
+		BurstTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = BurstTrigger
+		}
+
+		DoodadAnimationSpeedFactorValue
+		{
+			Type = MultiValue
+			Values = [MainThrusterValueProxy, ReverseThrusterValueProxy]
+			Mode = Add
+		}
+
+		ThrusterActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ThrusterIsFiringThresholdToggle
+			ShowProgressFor = MainThrusterValueProxy
+			LowColor = [0, 0, 0]
+			HighColor = [250, 250, 250]
+			FullColor = [255, 255, 255]
+		}
+
+		ThrusterIsFiringThresholdToggle
+		{
+			Type = ThresholdToggle
+			ValueFrom = MainThrusterValueProxy
+			MinAmount = 10%
+		}
+
+		BoostTween
+		{
+			Type = ValueTween
+			OffValue = 1
+			OnValue = 3
+			OnTweenDuration = 0
+			OffTweenDuration = 0
+			IsOnToggle = BoostToggle
+		}
+
+		EngineBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Ion_Thruster_Boost
+			ChainsFromBuffType = Engine
+			BuffAmount = { BaseValue=0%; BuffType=Engine; BuffMode=Add; }
+			OperationalToggle = EngineBuffToggle
+		}
+
+		ThrustBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType =	SW_Ion_Thruster_Boost_Thrust
+			ChainsFromBuffType = SW_Ion_Thruster_Boost
+			BuffAmount = { BaseValue=100%; BuffType=SW_Ion_Thruster_Boost; BuffMode=Add; }
+			BuffMultiplier = BoostTween
+		}
+
+		RampUpBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType =	SW_Ion_Thruster_Boost_RampUp
+			ChainsFromBuffType = SW_Ion_Thruster_Boost_Thrust
+			BuffAmount = { BaseValue=0%; BuffType=SW_Ion_Thruster_Boost_Thrust; BuffMode=Add; }
+			OperationalToggle = BoostToggle
+		}
+
+		RampUpFinalBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType =	SW_Ion_Thruster_Boost_RampUpFinal
+			ChainsFromBuffType = SW_Ion_Thruster_Boost_RampUp
+			BuffAmount = { BaseValue=100%; BuffType=SW_Ion_Thruster_Boost_RampUp; BuffMode=Multiply; }
+		}
+
+		FloorGrid
+		{
+			Type = SpriteGrid
+			Location = [0.5, 0.5]
+			GridSize = [2, 3]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Ion_Common/floor01.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../Ion_Common/floor01_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../Ion_Common/floor01_66.png"
+						Size = [1, 1]
+					}
+				]
+			]
+			RandomUVRotation = true
+			Layer = "floors"
+		}
+		
+		LightGraphics
+		{
+			Type = Graphics
+			Location = [1, 2.5]
+			OperationalToggle = IsOperationalAndNotBoostToggle
+			GetColorFrom = ColorPickerThruster
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0.64, 2.7]
+
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"lights_1_bleached.png"
+							"lights_2_bleached.png"
+						]
+						Size = [2, 5]
+						AnimationInterval = 0.1
+					}
+				]
+			}
+		/*	OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				Offset = [0, -1.0]
+				DamageLevels
+				[
+					{
+						File = "roof_glows_bleached.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_glows_bleached_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_glows_bleached_66.png"
+						Size = [1, 2]
+					}
+				]
+			}	*/
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [2.0, 5.0]
+						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
+						//VertexColor = [16, 120, 255] // [6, 57, 113]
+					}
+				]
+			}
+		}
+		
+		BoostLightGraphics
+		{
+			Type = Graphics
+			Location = [1, 2.5]
+			OperationalToggle = BoostToggle
+			GetColorFrom = ColorPickerThruster
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0.64, 2.7]
+
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"lights_boosted_1_bleached.png"
+							"lights_boosted_2_bleached.png"
+						]
+						Size = [2, 5]
+						AnimationInterval = 0.1
+					}
+				]
+			}
+		/*	OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				Offset = [0, -1.0]
+				DamageLevels
+				[
+					{
+						File = "roof_glows_bleached.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_glows_bleached_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_glows_bleached_66.png"
+						Size = [1, 2]
+					}
+				]
+			}	*/
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [2.0*1.5, 5.0*1.5]
+						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
+						//VertexColor = [16, 120, 255] // [6, 57, 113]
+					}
+				]
+			}
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [1, 1.5]
+			OperationalToggle = IsOperational
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0.64, 2.7]
+
+			Floor
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads_base.png"
+						Size = [2, 3]
+					}
+				]
+			}
+
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				//
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads_on_1.png"
+							"doodads_on_2.png"
+							"doodads_on_3.png"
+							"doodads_on_4.png"
+							"doodads_on_5.png"
+							"doodads_on_6.png"
+							"doodads_on_7.png"
+							"doodads_on_8.png"
+						]
+						Size = [2, 3]
+						AnimationInterval = 0.075
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				//
+				DamageLevels
+				[
+					{
+						File = "doodads_off_0.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [2, 3]
+					}
+					{
+						File = "walls_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "walls_66.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [2, 3]
+					}
+					/*{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [2, 3]
+					}*/
+				]
+			}
+		}
+
+		CircleCollider
+		{
+			Type = CircleCollider
+			Location = [1, 3.39]
+			Radius = 50/64
+			Density = 1.35
+		}
+		NozzleCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0 + 32/64  , 4         ]
+				[1 + 32/64  , 4         ]
+				//
+				[1 + 56/64  , 4 + 0.7   ]
+				[0 +  8/64  , 4 + 0.7   ]
+				//
+			]
+			Density = 1.35
+		}
+		NozzleGraphics
+		{
+			Type = Graphics
+			Location = [1, 4]
+			Floor
+			{
+				Layer = "weapons"
+				DamageLevels
+				[
+					{
+						File = "nozzle.png"
+						NormalsFile = "nozzle_normals.png"
+						Size = [2, 2]
+					}
+					{
+						File = "nozzle_33.png"
+						NormalsFile = "nozzle_normals.png"
+						Size = [2, 2]
+					}
+					{
+						File = "nozzle_66.png"
+						NormalsFile = "nozzle_normals.png"
+						Size = [2, 2]
+					}
+				]
+			}
+		}
+
+        MainThruster
+        {
+            Type = Thruster
+            OperationalToggle = IsOperational
+            Location = [1, 4.5]// Relative to upper-left corner of unrotated part.
+            Rotation = 90d// Relative to unrotated part.
+            Force = &../../ThrusterForce
+            MinActivation = 0
+            MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Boost_Thrust; BuffMode=Multiply; }
+            MinUncommandedActivation = &MinActivation
+            MaxUncommandedActivation = &MaxActivation
+            ActivationIncreaseTime = &../../ThrustIncreaseTime
+            ActivationRecoveryTime = &../../ThrustRecoveryTime
+            FuelStorage = RealBatteryStorage
+            FuelUsagePerSecond = &../../FuelUsage
+        }
+        LateralThruster : MainThruster
+        {
+            Rotation = 0d
+            MinActivation = -0.05
+            MaxActivation = 0.05
+            MinUncommandedActivation = &MinActivation
+            MaxUncommandedActivation = &MaxActivation
+            AllowAutoFire = false
+        }
+		ReverseThruster : MainThruster
+		{
+			Rotation = -90d
+			Force = &../../ThrusterForce
+			MinActivation = 0
+			MaxActivation = 0.20
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = &../../ThrustIncreaseTime/BaseValue
+			ActivationRecoveryTime = &../../ThrustRecoveryTime/BaseValue
+			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
+			AllowAutoFire = false
+		}
+
+		ThrustEffectsSounds
+		{
+			Type = ContinuousEffects
+			ChainedTo = MainThrusterLocationProxy
+			FactorMediaEffectsIntensityWith = DoodadAnimationSpeedFactorValue
+			MediaEffects
+			[
+				: /SW_SOUNDS/ThrusterRumble
+				{
+					Volume = 0.5
+					Speed = 1.5
+					MaxConcurrentVolume = 0.64
+				}
+			]
+		}
+
+		BurstTrigger
+		{
+			Type = ThresholdTrigger
+			AmountFrom = MainThrusterValueProxy
+			MinAmount = 0.5
+		}
+
+		BurstEffects
+		{
+			Type = TriggeredEffects
+			ChainedTo = MainThrusterLocationProxy
+			Trigger = BurstTrigger
+			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
+			AnchorMediaEffects = true
+			MediaEffects
+			[
+				: /SW_SOUNDS/ThrusterBurst
+				{
+					Volume = .25
+					Speed = 1.5
+					MaxConcurrentVolume = .5
+				}
+			]
+		}
+
+		ThrusterHum
+		{
+			Type = ContinuousEffects
+			Location = [1, 1.5]
+			OperationalToggle = IsOperational
+			MediaEffects
+			[
+				: /SW_SOUNDS/ThrusterHum
+				{
+					Volume = .2
+					Speed = 1
+					MaxConcurrentVolume = 1
+				}
+			]
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [1.0, 1.0]
+			ResourceStorage = RealBatteryStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "batteries_1.png"
+					Offset = [-0.5, 0.5]
+					Size = [1, 1]
+				}
+				{
+					File = "batteries_2.png"
+					Offset = [0, 0.5]
+					Size = [2, 1]
+				}
+				{
+					File = "batteries_3.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_4.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_5.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_6.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_7.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_8.png"
+					Size = [2, 2]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational
+			Location = [1, 1.5]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			Location = [1, 1.5]
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [1, 1.5]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = RealBatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 5]
+		}
+	}
+
+	//Stats
+	Stats
+	{
+		//
+		//
+		//
+		PowerCapacity = (&~/Part/Components/RealBatteryStorage/MaxResources) / 1000
+
+		RecPower = ((&../StatsByCategory/1/Stats/ThrusterPowerUsage) + (&../StatsByCategory/1/Stats/BoostedPowerUsageContinuous)) / 2
+		RecCrew = (&RecPower) * 4
+	}
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/BoostOff"
+			Stats
+			{
+				ThrusterForce = &~/Part/ThrusterForce
+				ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
+				ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
+			}
+		}
+		{
+			NameKey = "StatCategories/BoostOn"
+			Stats
+			{
+				ThrusterForce = &~/Part/BoostedThrusterForce
+				ThrusterRampUp = &~/Part/BoostedThrustIncreaseTime
+				ThrusterPowerUsage = (&~/Part/BoostedFuelUsage) / 1000
+				BoostedPowerUsageContinuous = -(&~/Part/BoostedPowerDrain/BaseValue) / (&~/Part/BoostedPowerDrainInterval) / 1000
+			}
+		}
+		{
+			NameKey = "StatCategories/EngineBuff"
+			Stats
+			{
+				ThrusterBuff =  (&<./Data/ships/terran/engine_room/engine_room.rules>/Part/Components/BuffProvider/BuffAmount) * 100
+			}
+		}
+	]
+}
+Size = Large
