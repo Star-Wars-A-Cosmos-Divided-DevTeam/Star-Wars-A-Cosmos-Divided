@@ -1,22 +1,41 @@
-Part : <../base_part_terran.rules>/Part
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/ResourceCollector"
-	IconNameKey = "Parts/ResourceCollectorIcon"
-	ID = cosmoteer.resource_collector // Part IDs must always be in the form of "author_name.part_name". If making your own mod, do *not* use "cosmoteer" as your author name, because it may conflict with future vanilla parts.
-	EditorGroups = ["Storage", "Utilities"]
-	DescriptionKey = "Parts/ResourceCollectorDesc"
+    //IDs
+	ID = sw.resource_collector_compact // Part IDs must always be in the form of "author_name.part_name". If making your own mod, do *not* use "cosmoteer" as your author name, because it may conflict with future vanilla parts.
+
+    //StringKeys
+	NameKey = "Parts/SWResourceCollectorCompact"
+	IconNameKey = "Parts/SWResourceCollectorCompactIcon"
+	DescriptionKey = "Parts/SWResourceCollectorCompactDesc"
+
+    //Groups&Categories
+	TypeCategories = [uses_power]
+	EditorGroups = ["Storage", "Utilities", "SWTechI"]
+
+    //Resources&Size&Health
 	Resources
 	[
-		[steel, 40]
-		[coil, 20]
+		[steel, 10]
+		[coil, 5]
 	]
-	Size = [2, 2]
-	IsRotateable = false
-	MaxHealth = 4000
-	TypeCategories = [uses_power, is_crewed]
+	Size = [1, 1]
+	MaxHealth = 1000
+
+    //Rects
+
+    //Selections
+
+    //PartSpecific
+	//IsRotateable = false
+	//IgnoreRotationForMirroredSelection = true
+	//ForceManhattanPathInPart = true
+
+    //ReceivableBuffs&ProhibitedBy
 	ReceivableBuffs : ^/0/ReceivableBuffs []
-	IgnoreRotationForMirroredSelection = true
-	ForceManhattanPathInPart = true
+
+    //Doors&Etc
+
+    //Editor
 	EditorIcon
 	{
 		Texture
@@ -24,39 +43,19 @@ Part : <../base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [64, 64]
+		Size = [32, 32]
 	}
+
+    //Components
 	Components : ^/0/Components
 	{
-		IsBeam1Operational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew1]
-			Mode = All
-		}
-		IsBeam2Operational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew2]
-			Mode = All
-		}
-		IsBeam3Operational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew3]
-			Mode = All
-		}
-		IsBeam4Operational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew4]
-			Mode = All
-		}
+
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [IsBeam1Operational, IsBeam2Operational, IsBeam3Operational, IsBeam4Operational]
-			Mode = Any
+			//Toggles = [IsBeam1Operational, IsBeam2Operational, IsBeam3Operational, IsBeam4Operational]
+			Toggles = [PowerToggle, BatteryStorage]
+			Mode = All
 		}
 
 		PowerToggle
@@ -71,14 +70,14 @@ Part : <../base_part_terran.rules>/Part
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
-			CommandPoints = 4
+			CommandPoints = 1
 		}
 
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 4000
+			MaxResources = 2500
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
@@ -91,89 +90,10 @@ Part : <../base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 		}
 
-		CrewLocation1
-		{
-			Type = CrewLocation
-			Location = [41/64, 41/64]
-			Rotation = 135d
-		}
-		CrewLocation2
-		{
-			Type = CrewLocation
-			Location = [87/64, 41/64]
-			Rotation = -135d
-		}
-		CrewLocation3
-		{
-			Type = CrewLocation
-			Location = [41/64, 87/64]
-			Rotation = 45d
-		}
-		CrewLocation4
-		{
-			Type = CrewLocation
-			Location = [87/64, 87/64]
-			Rotation = -45d
-		}
-		PartCrew1
-		{
-			Type = PartCrew
-			Crew = 1
-			DefaultPriority = &/PRIORITIES/ResourceCollector_Crew
-			PrerequisitesBeforeCrewing = [PartCrew1Prereq]
-			HighPriorityPrerequisites = [BatteryStorage]
-			CrewDestinations [ &../../CrewLocation1/Location ]
-			CrewLocations [ CrewLocation1 ]
-			OverridePriorityKey = PartCrew // All PartCrew components should share the same priority.
-		}
-		PartCrew2 : PartCrew1
-		{
-			PrerequisitesBeforeCrewing = [PartCrew2Prereq]
-			CrewDestinations [ &../../CrewLocation2/Location ]
-			CrewLocations [ CrewLocation2 ]
-		}
-		PartCrew3 : PartCrew1
-		{
-			PrerequisitesBeforeCrewing = [PartCrew3Prereq]
-			CrewDestinations [ &../../CrewLocation3/Location ]
-			CrewLocations [ CrewLocation3 ]
-		}
-		PartCrew4 : PartCrew1
-		{
-			PrerequisitesBeforeCrewing = [PartCrew4Prereq]
-			CrewDestinations [ &../../CrewLocation4/Location ]
-			CrewLocations [ CrewLocation4 ]
-		}
-
-		PartCrew1Prereq
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, Turret1]
-			Mode = All
-		}
-		PartCrew2Prereq
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, Turret2]
-			Mode = All
-		}
-		PartCrew3Prereq
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, Turret3]
-			Mode = All
-		}
-		PartCrew4Prereq
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, Turret4]
-			Mode = All
-		}
-
 		Graphics
 		{
 			Type = Graphics
-			Location = [1, 1]
+			Location = [0.5, 0.5]
 			OperationalToggle = IsOperational
 			Floor
 			{
@@ -182,18 +102,19 @@ Part : <../base_part_terran.rules>/Part
 				[
 					{
 						File = "floor.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "floor_33.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "floor_66.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				]
 			}
+/*
 			OperationalDoodad
 			{
 				Layer = "doodads_low"
@@ -201,19 +122,20 @@ Part : <../base_part_terran.rules>/Part
 				[
 					{
 						File = "doodads_on.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "doodads_on_33.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "doodads_on_66.png"
 						Size = [1, 1]
-						Offset = [-0.5, 0.5]
+						//Offset = [-0.5, 0.5]
 					}
 				]
 			}
+*/
 			OperationalLighting
 			{
 				Layer = "lights_add"
@@ -221,7 +143,7 @@ Part : <../base_part_terran.rules>/Part
 				[
 					{
 						File = "lights.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				]
 			}
@@ -232,15 +154,15 @@ Part : <../base_part_terran.rules>/Part
 				[
 					{
 						File = "walls.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "walls_33.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "walls_66.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				]
 			}
@@ -252,17 +174,17 @@ Part : <../base_part_terran.rules>/Part
 					{
 						File = "roof.png"
 						NormalsFile = "roof_normals.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "roof_33.png"
 						NormalsFile = "roof_normals_33.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "roof_66.png"
 						NormalsFile = "roof_normals_66.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				]
 			}
@@ -273,15 +195,15 @@ Part : <../base_part_terran.rules>/Part
 				[
 					{
 						File = "roof_glows.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "roof_glows_33.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					{
 						File = "roof_glows_66.png"
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				]
 			}
@@ -292,7 +214,7 @@ Part : <../base_part_terran.rules>/Part
 				[
 					{
 						File = "./Data/ships/common/light_blob.png"
-						Size = [1.5, 1.5]
+						Size = [.75, .75]
 						Z = 0.1 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
 						VertexColor = [58*1.5, 159*1.5, 255*1.5]
 					}
@@ -303,8 +225,9 @@ Part : <../base_part_terran.rules>/Part
 		Console1_Graphics
 		{
 			Type = Graphics
-			Location = [1, 1]
-			OperationalToggle = IsBeam1Operational
+			Location = [0.5, 0.5]
+			OperationalToggle = IsOperational
+
 			OperationalDoodad
 			{
 				Layer = "doodads_low"
@@ -326,24 +249,45 @@ Part : <../base_part_terran.rules>/Part
 		}
 		Console2_Graphics : Console1_Graphics
 		{
-			OperationalToggle = IsBeam2Operational
+			//OperationalToggle = IsBeam2Operational
 			Rotation = 90d
 		}
 		Console3_Graphics : Console1_Graphics
 		{
-			OperationalToggle = IsBeam3Operational
+			//OperationalToggle = IsBeam3Operational
 			Rotation = 270d
 		}
 		Console4_Graphics : Console1_Graphics
 		{
-			OperationalToggle = IsBeam4Operational
+			//OperationalToggle = IsBeam4Operational
 			Rotation = 180d
 		}
 
+/*
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads.png"
+						Size = [1, 1]
+					}
+					{
+						File = "doodads_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "doodads_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+*/
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [1, 1]
+			Location = [0.5, 0.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"//low"
 			ResourceLevels
@@ -351,21 +295,21 @@ Part : <../base_part_terran.rules>/Part
 				{
 					File = "batteries1.png"
 					Size = [1, 1]
-					Offset = [13/64, -12/64]
+					//Offset = [13/64, -12/64]
 				}
 				{
 					File = "batteries2.png"
 					Size = [1, 1]
-					Offset = [13/64, -12/64]
+					//Offset = [13/64, -12/64]
 				}
 				{
 					File = "batteries3.png"
-					Size = [1, 2]
-					Offset = [13/64, 0]
+					Size = [1, 1]
+					//Offset = [13/64, 0]
 				}
 				{
 					File = "batteries4.png"
-					Size = [2, 2]
+					Size = [1, 1]
 				}
 			]
 		}
@@ -375,7 +319,7 @@ Part : <../base_part_terran.rules>/Part
 			Type = TurretWeapon
 			OperationalToggle = PowerToggle
 			Location = [0.55, 0.55] //Relative to upper-left corner of unrotated part.
-			Rotation = -135d // Relative to unrotated part.
+			Rotation = -90d // Relative to unrotated part.
 			FireInterval = &../BeamEmitter1/Duration
 			FiringArc = 360d
 			RotateSpeed = 360d
@@ -389,7 +333,7 @@ Part : <../base_part_terran.rules>/Part
 			IgnoreFriendlyShipHighLOSChecks = true
 			IgnoreJunkLOSChecks = true
 			PreventOverlappingTargets = true
-			AllowRotationToggle = IsBeam1Operational
+			AllowRotationToggle = IsOperational
 			ToggleOnMode = HasTarget
 			Emitter = BeamEmitter1
 
@@ -399,27 +343,6 @@ Part : <../base_part_terran.rules>/Part
 					TargetType = CollectNuggets
 				}
 			]
-		}
-		Turret2 : Turret1
-		{
-			Location = [1.45, 0.55]
-			Rotation = -45d
-			Emitter = BeamEmitter2
-			AllowRotationToggle = IsBeam2Operational
-		}
-		Turret3 : Turret1
-		{
-			Location = [0.55, 1.45]
-			Rotation = 135d
-			Emitter = BeamEmitter3
-			AllowRotationToggle = IsBeam3Operational
-		}
-		Turret4 : Turret1
-		{
-			Location = [1.45, 1.45]
-			Rotation = 45d
-			Emitter = BeamEmitter4
-			AllowRotationToggle = IsBeam4Operational
 		}
 
 		BeamEmitter1 : <./Data/shots/collector_beam/collector_beam.rules>
@@ -431,29 +354,8 @@ Part : <../base_part_terran.rules>/Part
 			ResourceStorage = BatteryStorage
 			ResourcesUsed = 3
 			MinResourcesUsed = 1
-			OperationalToggle = IsBeam1Operational
+			OperationalToggle = IsOperational
 			Location = [15/64, 0]
-		}
-		BeamEmitter2 : BeamEmitter1
-		{
-			ChainedTo = Turret2
-			FireTrigger = Turret2
-			GetTargetFrom = Turret2
-			OperationalToggle = IsBeam2Operational
-		}
-		BeamEmitter3 : BeamEmitter1
-		{
-			ChainedTo = Turret3
-			FireTrigger = Turret3
-			GetTargetFrom = Turret3
-			OperationalToggle = IsBeam3Operational
-		}
-		BeamEmitter4 : BeamEmitter1
-		{
-			ChainedTo = Turret4
-			FireTrigger = Turret4
-			GetTargetFrom = Turret4
-			OperationalToggle = IsBeam4Operational
 		}
 
 		TurretGraphics1
@@ -461,7 +363,7 @@ Part : <../base_part_terran.rules>/Part
 			Type = Graphics
 			ChainedTo = Turret1
 			Rotation = 90d
-			OperationalToggle = IsBeam1Operational
+			OperationalToggle = IsOperational
 			DoodadToggle = BeamEmitter1
 			ShowToggledDoodadsWhenNotOperational = false
 
@@ -605,36 +507,18 @@ Part : <../base_part_terran.rules>/Part
 				]
 			}
 		}
-		TurretGraphics2 : TurretGraphics1
-		{
-			ChainedTo = Turret2
-			OperationalToggle = IsBeam2Operational
-			DoodadToggle = BeamEmitter2
-		}
-		TurretGraphics3 : TurretGraphics1
-		{
-			ChainedTo = Turret3
-			OperationalToggle = IsBeam3Operational
-			DoodadToggle = BeamEmitter3
-		}
-		TurretGraphics4 : TurretGraphics1
-		{
-			ChainedTo = Turret4
-			OperationalToggle = IsBeam4Operational
-			DoodadToggle = BeamEmitter4
-		}
 
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [1, 1]
+			Location = [0.5, 0.5]
 		}
 
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [1, 1]
+			Location = [0.5, 0.5]
 			Layer = "indicators"
 			Indicators
 			[
@@ -658,75 +542,18 @@ Part : <../base_part_terran.rules>/Part
 						Size = [1, 1]
 					}
 				}
-
-				// No crew.
-				{
-					Toggle = Crew1Indicator
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
-					}
-				}
-				{
-					Toggle = Crew2Indicator
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
-					}
-				}
-				{
-					Toggle = Crew3Indicator
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
-					}
-				}
-				{
-					Toggle = Crew4Indicator
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
-					}
-				}
 			]
-		}
-		Crew1Indicator
-		{
-			Type = MultiToggle
-			Toggles = [{Toggle=Turret1; Invert=true}, PartCrew1]
-			Mode = Any
-		}
-		Crew2Indicator
-		{
-			Type = MultiToggle
-			Toggles = [{Toggle=Turret2; Invert=true}, PartCrew2]
-			Mode = Any
-		}
-		Crew3Indicator
-		{
-			Type = MultiToggle
-			Toggles = [{Toggle=Turret3; Invert=true}, PartCrew3]
-			Mode = Any
-		}
-		Crew4Indicator
-		{
-			Type = MultiToggle
-			Toggles = [{Toggle=Turret4; Invert=true}, PartCrew4]
-			Mode = Any
 		}
 
 		Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [2, 2]
+			Size = [1, 1]
 		}
 	}
 
+    //Stats
 	Stats
 	{
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
@@ -738,7 +565,7 @@ Part : <../base_part_terran.rules>/Part
 			NameKey = "StatCategories/CollectorBeam"
 			Stats
 			{
-				CrewRequired = (&~/Part/Components/PartCrew1/Crew)
+				//CrewRequired = (&~/Part/Components/PartCrew1/Crew)
 				Range = &~/Part/Components/BeamEmitter1/Range
 				Arc = deg(&~/Part/Components/Turret1/FiringArc)
 				TurretSpeed = deg(&~/Part/Components/Turret1/RotateSpeed)
