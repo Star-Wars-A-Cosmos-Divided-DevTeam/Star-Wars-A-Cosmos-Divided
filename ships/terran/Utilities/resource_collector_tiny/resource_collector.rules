@@ -9,14 +9,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/SWResourceCollectorCompactDesc"
 
     //Groups&Categories
-	TypeCategories = [uses_power]
+	TypeCategories = [uses_power, tractor_beam]
 	EditorGroups = ["Storage", "Utilities", "SWTechI"]
 
     //Resources&Size&Health
 	Resources
 	[
-		[SW.durasteel, 10]
-		[steel, 5]
+		[SW.durasteel, 15]
+		[steel, 15]
 		[coil, 5]
 	]
 	Size = [1, 1]
@@ -73,6 +73,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = PowerToggle
 			CommandPoints = 1
 		}
+
+//Tractor Beam Fire Modes Starts Here
+
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+
+
+//Tractor Beam Ends Here
 
 		BatteryStorage
 		{
@@ -315,6 +340,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
+//Tractor Beam Targeter Start
+		Targeter
+		{
+			Type = UITargeter
+			TargeterID = tractor_beam
+			Weapon = Turret1
+		}
+//Tractor Beam Targeter End
+
 		Turret1
 		{
 			Type = TurretWeapon
@@ -342,11 +376,28 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				{
 					TargetType = CollectNuggets
+					Toggle = AutoTargetToggle //Tractor Beam
 				}
 			]
+		
+		//TractorBeam Recticle Sprite Start
+			OverrideReticleSprite
+			{
+				Texture
+				{
+					File = "./Data/gui/game/parts/tractor_beam_reticle.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [2, 2]
+				VertexColor = [102, 102, 255, 255]
+			}
+		//TractorBeam Recticle Sprite End
+	
+		
 		}
 
-		BeamEmitter1 : <./Data/shots/collector_beam/collector_beam.rules>
+		BeamEmitter1 :  &<collector_beam/collector_beam.rules>  // <./Data/shots/collector_beam/collector_beam.rules>
 		{
 			Type = BeamEmitter
 			ChainedTo = Turret1
@@ -356,8 +407,105 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourcesUsed = 3
 			MinResourcesUsed = 1
 			OperationalToggle = IsOperational
-			Location = [15/64, 0]
+			Location = [0, 0]
+			//TractorBeam Items Start
+			FriendlyShipLowCollisions = false
+			ValueOverRampUp = [.1, 1]
+			ResourceUsageScaleOverRampUp = [.1, 1]
+			EffectsScaleFactor = BeamRegulatorProxy
+			ResourceScaleFactor = AbsBeamRegulator
+			ValueScaleFactor = BeamRegulatorProxy
+			//TractorBeam Items End
 		}
+
+		//TractorBeam Mode Toggles Start
+		TractorModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "tractor_mode"
+			Default = 0
+			ToggledOnChoices = [0, 1]
+		}
+		TractorModeTetherToggle
+		{
+			Type = ModeToggle
+			Mode = TractorModeToggle
+			OnMode = 0
+		}
+		TractorModeTetherComponents
+		{
+			Type = ToggledComponents
+			Toggle = TractorModeTetherToggle
+			Components
+			{
+				BeamRegulator
+				{
+					Type = BeamRegulator
+					Emitter = BeamEmitter1
+					BeamLengthRange = [-(&~/Part/Components/BeamEmitter1/Range), &~/Part/Components/BeamEmitter1/Range]
+					RelativeToInitHitLength = true
+					OutputValueRange = [-1, 1]
+				}
+			}
+		}
+
+		TractorModePullToggle
+		{
+			Type = ModeToggle
+			Mode = TractorModeToggle
+			OnMode = 1
+		}
+		TractorModePullComponents
+		{
+			Type = ToggledComponents
+			Toggle = TractorModePullToggle
+			Components
+			{
+				BeamRegulator
+				{
+					Type = BeamRegulator
+					Emitter = BeamEmitter1
+					BeamLengthRange = [0, 600]
+					OutputValueRange = [.1, 1]
+				}
+			}
+		}
+
+		TractorModePushToggle
+		{
+			Type = ModeToggle
+			Mode = TractorModeToggle
+			OnMode = 2
+		}
+		TractorModePushComponents
+		{
+			Type = ToggledComponents
+			Toggle = TractorModePushToggle
+			Components
+			{
+				BeamRegulator
+				{
+					Type = BeamRegulator
+					Emitter = BeamEmitter1
+					BeamLengthRange = [0, &~/Part/Components/BeamEmitter1/Range]
+					OutputValueRange = [-1, -.1]
+				}
+			}
+		}
+
+		BeamRegulatorProxy
+		{
+			Type = ValueProxy
+			ComponentID = BeamRegulator
+		}
+		AbsBeamRegulator
+		{
+			Type = MultiValue
+			Values = [BeamRegulatorProxy]
+			Mode = Add
+			Abs = true
+		}
+		//TractorBeam Mode Toggles End
 
 		TurretGraphics1
 		{
@@ -575,4 +723,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 	]
+
 }
+
