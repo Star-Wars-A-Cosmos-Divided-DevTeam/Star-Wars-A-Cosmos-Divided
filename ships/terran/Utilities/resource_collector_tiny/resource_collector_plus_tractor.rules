@@ -1,0 +1,727 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+    //IDs
+	ID = sw.resource_collector_compact // Part IDs must always be in the form of "author_name.part_name". If making your own mod, do *not* use "cosmoteer" as your author name, because it may conflict with future vanilla parts.
+
+    //StringKeys
+	NameKey = "Parts/SWResourceCollectorCompact"
+	IconNameKey = "Parts/SWResourceCollectorCompactIcon"
+	DescriptionKey = "Parts/SWResourceCollectorCompactDesc"
+
+    //Groups&Categories
+	TypeCategories = [uses_power, tractor_beam]
+	EditorGroups = ["Storage", "Utilities", "SWTechI"]
+
+    //Resources&Size&Health
+	Resources
+	[
+		[SW.durasteel, 10]
+		[steel, 5]
+		[coil, 5]
+	]
+	Size = [1, 1]
+	MaxHealth = 1200
+
+    //Rects
+
+    //Selections
+
+    //PartSpecific
+	//IsRotateable = false
+	//IgnoreRotationForMirroredSelection = true
+	//ForceManhattanPathInPart = true
+
+    //ReceivableBuffs&ProhibitedBy
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+    //Doors&Etc
+
+    //Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+
+    //Components
+	Components : ^/0/Components
+	{
+
+		IsOperational
+		{
+			Type = MultiToggle
+			//Toggles = [IsBeam1Operational, IsBeam2Operational, IsBeam3Operational, IsBeam4Operational]
+			Toggles = [PowerToggle, BatteryStorage]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 1
+		}
+
+//Tractor Beam Fire Modes Starts Here
+
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 0
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+
+
+//Tractor Beam Ends Here
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 2500
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/ResourceCollector_Supply
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+/*
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads_on.png"
+						Size = [1, 1]
+					}
+					{
+						File = "doodads_on_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "doodads_on_66.png"
+						Size = [1, 1]
+						//Offset = [-0.5, 0.5]
+					}
+				]
+			}
+*/
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [1, 1]
+					}
+					{
+						File = "walls_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "walls_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "roof_glows.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_glows_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_glows_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [.75, .75]
+						Z = 0.1 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+						VertexColor = [58*1.5, 159*1.5, 255*1.5]
+					}
+				]
+			}
+		}
+
+		Console1_Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			OperationalToggle = IsOperational
+
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"console_on1.png"
+							"console_on2.png"
+							"console_on3.png"
+							"console_on4.png"
+						]
+						Size = [1, 1]
+						AnimationInterval = 0.2
+					}
+				]
+			}
+		}
+		Console2_Graphics : Console1_Graphics
+		{
+			//OperationalToggle = IsBeam2Operational
+			Rotation = 90d
+		}
+		Console3_Graphics : Console1_Graphics
+		{
+			//OperationalToggle = IsBeam3Operational
+			Rotation = 270d
+		}
+		Console4_Graphics : Console1_Graphics
+		{
+			//OperationalToggle = IsBeam4Operational
+			Rotation = 180d
+		}
+
+/*
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads.png"
+						Size = [1, 1]
+					}
+					{
+						File = "doodads_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "doodads_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+*/
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [0.5, 0.5]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"//low"
+			ResourceLevels
+			[
+				{
+					File = "batteries1.png"
+					Size = [1, 1]
+					//Offset = [13/64, -12/64]
+				}
+				{
+					File = "batteries2.png"
+					Size = [1, 1]
+					//Offset = [13/64, -12/64]
+				}
+				{
+					File = "batteries3.png"
+					Size = [1, 1]
+					//Offset = [13/64, 0]
+				}
+				{
+					File = "batteries4.png"
+					Size = [1, 1]
+				}
+			]
+		}
+
+//Tractor Beam Targeter Start
+		Targeter
+		{
+			Type = UITargeter
+			TargeterID = tractor_beam
+			Weapon = Turret1
+		}
+//Tractor Beam Targeter End
+
+		Turret1
+		{
+			Type = TurretWeapon
+			OperationalToggle = PowerToggle
+			Location = [0.5, 0.5] //Relative to upper-left corner of unrotated part.
+			Rotation = -90d // Relative to unrotated part.
+			FireInterval = &../BeamEmitter1/Duration
+			FiringArc = 360d
+			RotateSpeed = 360d
+			FireThresholdAngle = 0.25d
+			AIFirepowerRating = 0
+			IncludeInFirepowerEstimation = false
+			CanBeGivenExplicitTarget = false
+			AllowDirectControl = false
+			ShowTargetButtons = false
+			IgnoreFriendlyShipLowLOSChecks = true
+			IgnoreFriendlyShipHighLOSChecks = true
+			IgnoreJunkLOSChecks = true
+			PreventOverlappingTargets = true
+			AllowRotationToggle = IsOperational
+			ToggleOnMode = HasTarget
+			Emitter = BeamEmitter1
+
+			AutoTargets
+			[
+				{
+					TargetType = CollectNuggets
+					Toggle = AutoTargetToggle //Tractor Beam
+				}
+			]
+		
+		//TractorBeam Recticle Sprite Start
+			OverrideReticleSprite
+			{
+				Texture
+				{
+					File = "./Data/gui/game/parts/tractor_beam_reticle.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [2, 2]
+				VertexColor = [102, 102, 255, 255]
+			}
+		//TractorBeam Recticle Sprite End
+	
+		
+		}
+
+		BeamEmitter1 : <./Data/shots/collector_beam/collector_beam.rules>
+		{
+			Type = BeamEmitter
+			ChainedTo = Turret1
+			FireTrigger = Turret1
+			GetTargetFrom = Turret1
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = 3
+			MinResourcesUsed = 1
+			OperationalToggle = IsOperational
+			Location = [0, 0]
+			//TractorBeam Items Start
+			FriendlyShipLowCollisions = false
+			ValueOverRampUp = [.1, 1]
+			ResourceUsageScaleOverRampUp = [.1, 1]
+			EffectsScaleFactor = BeamRegulatorProxy
+			ResourceScaleFactor = AbsBeamRegulator
+			ValueScaleFactor = BeamRegulatorProxy
+			//TractorBeam Items End
+		}
+
+		//TractorBeam Mode Toggles Start
+		TractorModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "tractor_mode"
+			Default = 0
+			ToggledOnChoices = [0, 1]
+		}
+		TractorModeTetherToggle
+		{
+			Type = ModeToggle
+			Mode = TractorModeToggle
+			OnMode = 0
+		}
+		TractorModeTetherComponents
+		{
+			Type = ToggledComponents
+			Toggle = TractorModeTetherToggle
+			Components
+			{
+				BeamRegulator
+				{
+					Type = BeamRegulator
+					Emitter = BeamEmitter1
+					BeamLengthRange = [-(&~/Part/Components/BeamEmitter1/Range), &~/Part/Components/BeamEmitter1/Range]
+					RelativeToInitHitLength = true
+					OutputValueRange = [-1, 1]
+				}
+			}
+		}
+
+		TractorModePullToggle
+		{
+			Type = ModeToggle
+			Mode = TractorModeToggle
+			OnMode = 1
+		}
+		TractorModePullComponents
+		{
+			Type = ToggledComponents
+			Toggle = TractorModePullToggle
+			Components
+			{
+				BeamRegulator
+				{
+					Type = BeamRegulator
+					Emitter = BeamEmitter1
+					BeamLengthRange = [0, 600]
+					OutputValueRange = [.1, 1]
+				}
+			}
+		}
+
+		TractorModePushToggle
+		{
+			Type = ModeToggle
+			Mode = TractorModeToggle
+			OnMode = 2
+		}
+		TractorModePushComponents
+		{
+			Type = ToggledComponents
+			Toggle = TractorModePushToggle
+			Components
+			{
+				BeamRegulator
+				{
+					Type = BeamRegulator
+					Emitter = BeamEmitter1
+					BeamLengthRange = [0, &~/Part/Components/BeamEmitter1/Range]
+					OutputValueRange = [-1, -.1]
+				}
+			}
+		}
+
+		BeamRegulatorProxy
+		{
+			Type = ValueProxy
+			ComponentID = BeamRegulator
+		}
+		AbsBeamRegulator
+		{
+			Type = MultiValue
+			Values = [BeamRegulatorProxy]
+			Mode = Add
+			Abs = true
+		}
+		//TractorBeam Mode Toggles End
+
+		TurretGraphics1
+		{
+			Type = Graphics
+			ChainedTo = Turret1
+			Rotation = 90d
+			OperationalToggle = IsOperational
+			DoodadToggle = BeamEmitter1
+			ShowToggledDoodadsWhenNotOperational = false
+
+			ToggleOnDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"turret_on1.png"
+							"turret_on2.png"
+							"turret_on3.png"
+							"turret_on4.png"
+							"turret_on5.png"
+							"turret_on6.png"
+						]
+						NormalsAnimationFiles
+						[
+							"turret_normals_on.png"
+							"turret_normals_on.png"
+							"turret_normals_on.png"
+							"turret_normals_on.png"
+							"turret_normals_on.png"
+							"turret_normals_on.png"
+						]
+						Size = [1, 1]
+						AnimationInterval = 0.0725
+						//Offset = [0, -6/64]
+					}
+					{
+						AnimationFiles
+						[
+							"turret_on1_33.png"
+							"turret_on2_33.png"
+							"turret_on3_33.png"
+							"turret_on4_33.png"
+							"turret_on5_33.png"
+							"turret_on6_33.png"
+						]
+						NormalsAnimationFiles
+						[
+							"turret_normals_on_33.png"
+							"turret_normals_on_33.png"
+							"turret_normals_on_33.png"
+							"turret_normals_on_33.png"
+							"turret_normals_on_33.png"
+							"turret_normals_on_33.png"
+						]
+						Size = [1, 1]
+						AnimationInterval = 0.0725
+						//Offset = [0, -6/64]
+					}
+					{
+						AnimationFiles
+						[
+							"turret_on1_66.png"
+							"turret_on2_66.png"
+							"turret_on3_66.png"
+							"turret_on4_66.png"
+							"turret_on5_66.png"
+							"turret_on6_66.png"
+						]
+						NormalsAnimationFiles
+						[
+							"turret_normals_on_66.png"
+							"turret_normals_on_66.png"
+							"turret_normals_on_66.png"
+							"turret_normals_on_66.png"
+							"turret_normals_on_66.png"
+							"turret_normals_on_66.png"
+						]
+						Size = [1, 1]
+						AnimationInterval = 0.0725
+						//Offset = [0, -6/64]
+					}
+				]
+			}
+			ToggleOffDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "turret_on.png"
+						NormalsFile = "turret_normals_on.png"
+						Size = [1, 1]
+						//Offset = [0, -6/64]
+					}
+					{
+						File = "turret_on_33.png"
+						NormalsFile = "turret_normals_on_33.png"
+						Size = [1, 1]
+						//Offset = [0, -6/64]
+					}
+					{
+						File = "turret_on_66.png"
+						NormalsFile = "turret_normals_on_66.png"
+						Size = [1, 1]
+						//Offset = [0, -6/64]
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "turret_off.png"
+						NormalsFile = "turret_normals_off.png"
+						Size = [1, 1]
+						//Offset = [0, -6/64]
+					}
+					{
+						File = "turret_off_33.png"
+						NormalsFile = "turret_normals_off_33.png"
+						Size = [1, 1]
+						//Offset = [0, -6/64]
+					}
+					{
+						File = "turret_off_66.png"
+						NormalsFile = "turret_normals_off_66.png"
+						Size = [1, 1]
+						//Offset = [0, -6/64]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "turret_fancy_light.png"
+						Size = [1, 1]
+						Z = 1 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [255*2.5,255*2.5,255*2.5]
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [0.5, 0.5]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [0.5, 0.5]
+			Layer = "indicators"
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					Delay = &~/Part/Components/Turret1/FireInterval
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+	}
+
+    //Stats
+	Stats
+	{
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+	}
+
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/CollectorBeam"
+			Stats
+			{
+				//CrewRequired = (&~/Part/Components/PartCrew1/Crew)
+				Range = &~/Part/Components/BeamEmitter1/Range
+				Arc = deg(&~/Part/Components/Turret1/FiringArc)
+				TurretSpeed = deg(&~/Part/Components/Turret1/RotateSpeed)
+				PowerPerShot = (&~/Part/Components/BeamEmitter1/ResourcesUsed) / 1000
+				PowerUsageContinuous = (&PowerPerShot) / (&~/Part/Components/Turret1/FireInterval)
+			}
+		}
+	]
+
+}
