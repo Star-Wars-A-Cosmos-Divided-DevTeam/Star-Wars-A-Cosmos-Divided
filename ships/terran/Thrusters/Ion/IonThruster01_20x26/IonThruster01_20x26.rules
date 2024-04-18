@@ -44,7 +44,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//ReceivableBuffs&Prohibits
 	//ProhibitRects
 	ProhibitBelow = 21 // 32
-	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Thrust, SW_Ion_Thruster_To_Accelerator, SW_Ion_Thruster_Accelerator_RampUp, SW_Ion_Thruster_Accelerator_RampUpFinal, SW_Display] 
+	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Thrust, SW_Ion_Thruster_To_Accelerator, SW_Ion_Thruster_Accelerator_RampUp, SW_Ion_Thruster_Accelerator_RampUpFinal, SW_Hypernode_Interface, SW_Display] 
 
     //Doors&Etc
 	ForceManhattenPathInPart = true
@@ -122,7 +122,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [56.25, 108]
+		Size = [50, 96]
 	}
 
 	//Components&Inheritance
@@ -193,7 +193,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 520000
-			//DeliveryLocation = [10, 2.5]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		ToggledBatteryConsumer
@@ -372,7 +371,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = SelfBuffProvider
 			BuffType = SW_Ion_Thruster_Accelerator
 			ChainsFromBuffType = Engine
-			BuffAmount = { BaseValue=-100%; BuffType=Engine; BuffMode=Add; }
+			BuffAmount = { BaseValue=0%; BuffType=Engine; BuffMode=Add; }
 			OperationalToggle = EngineBuffToggle
 		}
 
@@ -447,10 +446,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
+			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = 0.10
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
 			AllowAutoFire = false
 		}

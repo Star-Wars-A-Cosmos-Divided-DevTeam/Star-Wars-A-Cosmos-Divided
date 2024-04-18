@@ -44,7 +44,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//ReceivableBuffs&Prohibits
 	//
 	ProhibitBelow = 5
-	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust, Engine, EnginePowerDistribution]
 
 	//Doors&Etc
 	ForceManhattenPathInPart = true
@@ -71,7 +71,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[0, -1]
 		[1, -1]
 		//
-		//[2, -1]
+		//
 		[2, 0]
 		//
 		//
@@ -99,13 +99,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = All
 		}
 
-		IsOperationalAndHypernodeConnectedToggle
-		{
-			Type = MultiToggle
-			Toggles = [IsOperational, HypernodeConnectedToggle]
-			Mode = All
-		}
-
 		PowerToggle
 		{
 			Type = UIToggle
@@ -119,12 +112,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
 			CommandPoints = 4
-		}
-
-		HypernodeConnectedToggle
-		{
-			Type = BuffToggle
-			BuffType = SW_Hypernode_Interface
 		}
 
 		EngineBuffToggle
@@ -199,7 +186,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectType
 			OnModes = [0, 1, 2]
 		}
-
 		ThrusterEffectSparksToggle
 		{
 			Type = ModeToggle
@@ -249,13 +235,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Components = &<particles/thruster_colorable_rocketset.rules>/Components
 		}
 
-		HypernodeEffectComponents
-		{
-			Type = ToggledComponents
-			Toggle = IsOperationalAndHypernodeConnectedToggle
-			Components = &<particles/thruster_cyan_hypernodeset.rules>/Components
-		}
-
 		MainThrusterLocationProxy
 		{
 			Type = ChainableProxy
@@ -280,12 +259,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = TriggerProxy
 			ComponentID = BurstTrigger
-		}
-
-		HypernodeEffectValue
-		{
-			Type = BuffableValue
-			Value = { BaseValue=0; BuffType=SW_Hypernode_Interface; BuffMode=Add; }
 		}
 
 		DoodadAnimationSpeedFactorValue
@@ -409,7 +382,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-		/*	OperationalRoofDoodad
+			/*OperationalRoofDoodad
 			{
 				Layer = "roof_doodads"
 				DamageLevels
@@ -427,7 +400,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [1, 1]
 					}
 				]
-			}	*/
+			}*/
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -437,7 +410,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "./Data/ships/common/light_blob.png"
 						Size = [2.1, 3.2]
-						Z = 2.50 // Controls the "height" of the light for the purposes of normal mapping.
+						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
 						VertexColor = [16, 120, 255] // [6, 57, 113]
 					}
 				]
@@ -462,21 +435,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = "doodads_base.png"
 						Size = [2, 2]
 					}
-					/*{
-						File = "doodads_base_33.png"
-						Size = [2, 2]
-					}
-					{
-						File = "doodads_base_66.png"
-						Size = [2, 2]
-					}*/
 				]
 			}
 
 			OperationalDoodad
 			{
 				Layer = "doodads_high"
-				//
 				DamageLevels
 				[
 					{
@@ -499,7 +463,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			NonOperationalDoodad
 			{
 				Layer = "doodads_high"
-				//
 				DamageLevels
 				[
 					{
@@ -558,10 +521,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				[0 + 2/64	, 2			]
 				[2 - 2/64	, 2			]
-				//
 				[2 - 4/64	, 2 + 46/64	]
 				[0 + 4/64	, 2 + 46/64	]
-				//
 			]
 			Density = 1.35
 		}
@@ -705,7 +666,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 				{
 					File = "batteries_2.png"
-					//
 					Size = [2, 1]
 				}
 				{

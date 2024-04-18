@@ -44,7 +44,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//ReceivableBuffs&Prohibits
 	//
 	ProhibitBelow = 2
-	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust, Engine, EnginePowerDistribution]
 
 	//Doors&Etc
 	//ForceManhattenPathInPart = true
@@ -99,13 +99,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = All
 		}
 
-		IsOperationalAndHypernodeConnectedToggle
-		{
-			Type = MultiToggle
-			Toggles = [IsOperational, HypernodeConnectedToggle]
-			Mode = All
-		}
-
 		PowerToggle
 		{
 			Type = UIToggle
@@ -119,12 +112,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
 			CommandPoints = 1
-		}
-
-		HypernodeConnectedToggle
-		{
-			Type = BuffToggle
-			BuffType = SW_Hypernode_Interface
 		}
 
 		EngineBuffToggle
@@ -199,7 +186,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = ThrusterEffectType
 			OnModes = [0, 1, 2]
 		}
-
 		ThrusterEffectSparksToggle
 		{
 			Type = ModeToggle
@@ -249,13 +235,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Components = &<particles/thruster_colorable_rocketset.rules>/Components
 		}
 
-		HypernodeEffectComponents
-		{
-			Type = ToggledComponents
-			Toggle = IsOperationalAndHypernodeConnectedToggle
-			Components = &<particles/thruster_cyan_hypernodeset.rules>/Components
-		}
-
 		MainThrusterLocationProxy
 		{
 			Type = ChainableProxy
@@ -280,12 +259,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = TriggerProxy
 			ComponentID = BurstTrigger
-		}
-
-		HypernodeEffectValue
-		{
-			Type = BuffableValue
-			Value = { BaseValue=0; BuffType=SW_Hypernode_Interface; BuffMode=Add; }
 		}
 
 		DoodadAnimationSpeedFactorValue
@@ -450,6 +423,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			Location = [0.5, 0.5]
 			OperationalToggle = IsOperational
+			DoodadToggle = &OperationalToggle
+			AnimationToggle = &OperationalToggle
 
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
 			AnimationSpeedFactorRenormalize = [0.64, 2.7]
@@ -463,20 +438,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = "doodads_base.png"
 						Size = [1, 1]
 					}
-					/*{
-						File = "doodads_base_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "doodads_base_66.png"
-						Size = [1, 1]
-					}*/
 				]
 			}
 			OperationalDoodad
 			{
 				Layer = "doodads_high"
-				//
 				DamageLevels
 				[
 					{
@@ -499,7 +465,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			NonOperationalDoodad
 			{
 				Layer = "doodads_high"
-				//
 				DamageLevels
 				[
 					{
