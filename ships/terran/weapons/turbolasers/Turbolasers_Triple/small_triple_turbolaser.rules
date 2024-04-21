@@ -11,7 +11,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["WeaponsEnergy", "SWTechII"]
-	TypeCategories = [weapon, uses_power, is_crewed]
+	TypeCategories = [weapon, uses_power, is_crewed, SW_Tech_II]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -24,15 +24,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Size = [3, 3]
 	MaxHealth = 28000
 
-	//Rects
-	GenerateRectCollider = true
-	/*
-	ProhibitRects
-	[
-		[tall, [0, -1, 3, 1]]
-	]
-	*/
-
 	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
@@ -40,7 +31,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//PartSpecific
 	AIValueFactor = 2
-	InitialPenetrationResistance = 5
+	InitialPenetrationResistance = 6
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
@@ -63,12 +54,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		//[1, -1]
 		//[0, -1]
 	]
+
    	//Editor
 	EditorIcon
 	{
 		Texture
 		{
-			File = "3x3/icon.png"
+			File = "icon.png"
 			SampleMode = Linear
 		}
 		Size = [64, 64]
@@ -118,29 +110,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ModeToggle
 			Mode = FireModeToggle
 			OnMode = 2
-		}
-
-		FireAlternatingToggle
-		{
-			Type = UIToggle
-			ToggleID = "fire_alternating"
-			Default = 0
-			AvailableChoices = [0, 1]
-		}
-		ShootLeftTriggerProxy
-		{
-			Type = TriggerProxy
-			ComponentID = ShootLeftTrigger
-		}
-		ShootMidTriggerProxy
-		{
-			Type = TriggerProxy
-			ComponentID = ShootMidTrigger
-		}
-		ShootRightTriggerProxy
-		{
-			Type = TriggerProxy
-			ComponentID = ShootRightTrigger
 		}
 
 		CommonReloadTimer
@@ -304,37 +273,42 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 255, 0]
 		}
 
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/Size_1x1/Floor_01/RDL
+		{	
+            GridSize = [3, 3]
+		}
+
 		Graphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
 			Location = [1.5, 1.5]
-			Floor
+		/*	Floor
 			{
 				Layer = "floors"
 				DamageLevels
 				[
 					{
-						File = "3x3/floor.png"
+						File = "floor.png"
 						Size = [3, 3]
 					}
 					{
-						File = "3x3/floor_33.png"
+						File = "floor_33.png"
 						Size = [3, 3]
 					}
 					{
-						File = "3x3/floor_66.png"
+						File = "floor_66.png"
 						Size = [3, 3]
 					}
 				]
-			}
+			}	*/
 			OperationalLighting
 			{
 				Layer = "lights_add"
 				DamageLevels
 				[
 					{
-						File = "3x3/lights.png"
+						File = "lights.png"
 						Size = [3, 3]
 					}
 				]
@@ -347,9 +321,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						AnimationFiles
 						[
-							"3x3/console on1.png"
-							"3x3/console on2.png"
-							"3x3/console on3.png"
+							"console_on_1.png"
+							"console_on_2.png"
+							"console_on_3.png"
 						]
 						Size = [3, 3]
 						AnimationInterval = 0.50
@@ -362,7 +336,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "3x3/console off.png"
+						File = "console_off_0.png"
 						Size = [3, 3]
 					}
 				]
@@ -373,15 +347,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "3x3/walls.png"
+						File = "walls.png"
 						Size = [3, 3]
 					}
 					{
-						File = "3x3/walls_33.png"
+						File = "walls_33.png"
 						Size = [3, 3]
 					}
 					{
-						File = "3x3/walls_66.png"
+						File = "walls_66.png"
 						Size = [3, 3]
 					}
 				]
@@ -392,59 +366,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "3x3/roof.png"
-						NormalsFile = "3x3/roof_normals.png"
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
 						Size = [3, 3]
 					}
 					{
-						File = "3x3/roof_33.png"
-						NormalsFile = "3x3/roof_normals_33.png"
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
 						Size = [3, 3]
 					}
 					{
-						File = "3x3/roof_66.png"
-						NormalsFile = "3x3/roof_normals_66.png"
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
 						Size = [3, 3]
-					}
-				]
-			}
-			/*
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [3, 3]
-						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
-						VertexColor = [192, 192, 192] // [6, 57, 113]
-					}
-				]
-			}
-			*/
-		}
-/*
-		TurretGhostGraphics
-		{
-			Type = Graphics
-			ChainedTo = Turret
-			Location = [0.5, 0]
-			Rotation = 90d
-			OperationalToggle = IsOperational
-			Floor
-			{
-				Layer = "doodads_high"
-				DamageLevels
-				[
-					{
-						File = "WeaponSprite/barrel_shadow_5.png"
-						Size = [2.4, 3]
 					}
 				]
 			}
 		}
-*/
+
 		FirePermissionToggle
 		{
 			Type = MultiToggle
@@ -509,88 +448,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Triggers = [Turret]
 		}
 
-		ShootSynchronizedComponents
-		{
-			Type = ToggledComponents
-			Toggle = FireAlternatingToggle
-			Invert = true
-			Components
-			{
-				FireTimer
-				{
-					Type = Timer
-					OperationalToggle = IsOperational
-					Duration = (&../../../CommonReloadTimer/Duration)
-					AutoStart = true
-					StartTrigger = Turret
-				}
-
-				ShootLeftTrigger
-				{
-					Type = TriggerProxy
-					ComponentID = Turret
-				}
-
-				ShootMidTrigger
-				{
-					Type = TriggerProxy
-					ComponentID = Turret
-				}
-
-				ShootRightTrigger
-				{
-					Type = TriggerProxy
-					ComponentID = Turret
-				}
-			}
-		}
-
-		ShootAlternatingComponents
-		{
-			Type = ToggledComponents
-			Toggle = FireAlternatingToggle
-			Components
-			{
-				FireTimer
-				{
-					Type = Timer
-					OperationalToggle = IsOperational
-					Duration = (&../../../CommonReloadTimer/Duration)/3
-					AutoStart = true
-					StartTrigger = Turret
-				}
-
-				ShootCycle
-				{
-					Type = ModeCycle
-					ModeRange = [0, 2]
-					IncrementTrigger = Turret
-					StartingMode = 2 // First shot will switch to mode 0.
-				}
-
-				ShootLeftTrigger
-				{
-					Type = ModeTrigger
-					Mode = ShootCycle
-					TriggerInModes = [0]
-				}
-
-				ShootMidTrigger
-				{
-					Type = ModeTrigger
-					Mode = ShootCycle
-					TriggerInModes = [1]
-				}
-
-				ShootRightTrigger
-				{
-					Type = ModeTrigger
-					Mode = ShootCycle
-					TriggerInModes = [2]
-				}
-			}
-		}
-
 		TurretLocationProxy
 		{
 			Type = ChainableProxy
@@ -635,23 +492,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceLevels
 			[
 				{
-					File = "3x3/batteries1.png"
+					File = "batteries_1.png"
 					Size = [3, 3]
 				}
 				{
-					File = "3x3/batteries2.png"
+					File = "batteries_2.png"
 					Size = [3, 3]
 				}
 				{
-					File = "3x3/batteries3.png"
+					File = "batteries_3.png"
 					Size = [3, 3]
 				}
 				{
-					File = "3x3/batteries4.png"
+					File = "batteries_4.png"
 					Size = [3, 3]
 				}
 				{
-					File = "3x3/batteries5.png"
+					File = "batteries_5.png"
 					Size = [3, 3]
 				}
 			]
@@ -713,7 +570,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Blueprints
 		{
 			Type = BlueprintSprite
-			File = "3x3/blueprints.png"
+			File = "blueprints.png"
 			Size = [3, 3]
 		}
 	}
@@ -743,7 +600,7 @@ TurretStats
 		Barrels = 3
 		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
 		Salvo = [&../Barrels, &../ReloadTime]
-		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		ROF = (&Barrels) / (&ReloadTime)
 		Range = &~/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/TurretBase/FiringArc)
 		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
@@ -772,13 +629,13 @@ BulletEmitterBase
 	ResourcesUsed = 300
 	Bullet = &/SW_SHOTS/redtriplelasershot
 	Recoil = 8
-	Spread = [-5d, 5d]
+	Spread = [-2d, 2d]
 }
 ReloadProgressBarBase
 {
 	Type = ProgressBar
 	OperationalToggle = SwitchWeaponCooldownTimer
-	ShowProgressFor = FireTimer
+	ShowProgressFor = CommonReloadTimer
 	Invert = true
 }
 TurretBase
