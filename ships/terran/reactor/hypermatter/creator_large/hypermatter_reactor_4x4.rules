@@ -1,0 +1,442 @@
+<<<<<<< HEAD
+=======
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	//IDs
+	ID = SW.hypermatter_reactor_4x4
+	// OtherIDs = []
+
+	//StringKeys
+	NameKey = "Parts/HypermatterReactor4x4"
+	IconNameKey = "Parts/HypermatterReactor4x4Icon"
+	DescriptionKey = "Parts/HypermatterReactor4x4Desc"
+
+	//Groups&Categories
+	EditorGroups = ["Power", "SWTechIII"]
+	TypeCategories = [hypermatter_reactor, provides_hypermatter, SW_Reactor_Large, SW_Tech_III]
+	//RequiresCategories = []
+
+	//Resoures&Size&Health
+	Resources
+	[
+		[SW.durasteel, 128]
+		[coil, 24]
+		[coil2, 8]
+		[processor, 2]
+		[hyperium, 20]
+		[enriched_uranium, 64]
+	]
+	Size = [4, 4]
+	MaxHealth = 32000
+
+	//Selections
+	SelectionPriority = 0
+	//SelectionTypeByRotation = true
+	IgnoreRotationForMirroredSelection = true
+	SelectionTypeID = "hypermatter-reactors"
+
+	//PartSpecific
+	AIValueFactor = 5
+	IsRotateable = false
+	AutoDoorMaxPathLength = 5
+	CreateUnderlyingWhenDestroyed = false
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	BlockedTravelCells
+	[
+		[1, 1]
+		[1, 2]
+		[2, 1]
+		[2, 2]
+	]
+	ForceManhattanPathInPart = true
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "../creator_med/icon.png"
+			SampleMode = Linear
+		}
+		Size = [64, 64]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [True]
+			Mode = All
+		}
+		True
+		{
+			Type = StaticToggle
+			ToggleOn = "true"
+		}
+
+		HypermatterStorage
+		{
+			Type = ResourceStorage
+			ResourceType = SW.hypermatter
+			MaxResources = 24000
+			StartingResources = 0
+			SuppliesResources = true
+			MinResourcesPickUp = 1000
+			MaxResourcesPickUp = 3000
+			InitPickUp = 1000
+			PickUpRate = 1000
+			ExpectedResourceGenerationRate = (&../HypermatterProducer/ToQuantity) / (&../HypermatterProducer/Interval)
+			ToggleOnResources = 1000
+			ToggleOffResources = (&ToggleOnResources) -1
+		}
+		HypermatterProducer
+		{
+			Type = ResourceConverter
+			ToStorage = HypermatterStorage
+			ToQuantity = 1000
+			Interval = 1
+		}
+		HypermatterStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = HypermatterStorage
+			LowColor = [0, 32, 64]
+			HighColor = [0, 250, 250]
+			FullColor = [0, 255, 255]
+		}
+
+		FloorGrid
+		{
+			Type = SpriteGrid
+			Location = [1, 1]
+			GridSpacing = [2, 2]
+			GridSize = [2, 2]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../creator_med/floor.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../creator_med/floor_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../creator_med/floor_66.png"
+						Size = [2, 2]
+					}
+				]
+			]
+			RandomUVRotation = true
+			Layer = "floors"
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [2, 2]
+			Floor
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "reactor.png"
+						Size = [3, 3]
+					}
+					{
+						File = "reactor.png"
+						Size = [3, 3]
+					}
+					{
+						File = "reactor.png"
+						Size = [3, 3]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "reactor_core.png"
+						Size = [4, 4]
+						RotSpeed = 180d
+						AnimationStartTime = WhenSpawned
+					}
+					{
+						File = "reactor_core.png" //_33
+						Size = [4, 4]
+						RotSpeed = 180d
+						AnimationStartTime = WhenSpawned
+					}
+					{
+						File = "reactor_core.png" //_66
+						Size = [4, 4]
+						RotSpeed = 180d
+						AnimationStartTime = WhenSpawned
+					}
+				]
+			}
+			
+			OperationalLighting	//Disabled bcs a bit cluterring rn
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"lights_1.png"
+							"lights_2.png"
+							"lights_3.png"
+							"lights_4.png"
+							"lights_5.png"
+							"lights_6.png"
+							"lights_7.png"
+							"lights_8.png"
+						]
+						Size = [4, 4]
+						AnimationInterval = 0.075*(&~/Scale)
+					}
+				]
+			}
+				  
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [4, 4]
+					}
+					{
+						File = "walls_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "walls_66.png"
+						Size = [4, 4]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "../creator_med/roof.png"
+						NormalsFile = "../creator_med/roof_normals.png"
+						Size = [4, 4]
+					}
+					{
+						File = "../creator_med/roof_33.png"
+						NormalsFile = "../creator_med/roof_normals_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "../creator_med/roof_66.png"
+						NormalsFile = "../creator_med/roof_normals_66.png"
+						Size = [4, 4]
+					}
+				]
+			}
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [12, 12]
+						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [0, 240, 240]
+					}
+				]
+			}
+		}
+
+		HypermatterHum
+		{
+			Type = ContinuousEffects
+			Location = [2, 2]
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					Sound = "./Data/ships/terran/reactor_small/operating.wav"
+					Volume = .5
+					Speed = .75
+					MaxConcurrent = 1
+					DynamicVolume : ^/0/DynamicVolume
+					{
+						ExteriorVolume = .5
+					}
+				}
+			]
+		}
+
+		HypermatterSprites
+		{
+			Type = ResourceSprites
+			Location = [2, 2]
+			ResourceStorage = HypermatterStorage
+			Layer = "doodads_high"
+			Round = Down
+			ResourceLevels
+			[
+				{
+					File = "hypermatter_1.png"
+					//Offset = [0, -1.5]
+					Size = [4, 4]
+				}
+				{
+					File = "hypermatter_2.png"
+					//Offset = [1, -0.5]
+					Size = [4, 4]
+				}
+				{
+					File = "hypermatter_3.png"
+					//Offset = [0.5, -0.5]
+					Size = [4, 4]
+				}
+				{
+					File = "hypermatter_4.png"
+					//Offset = [0.5, 0]
+					Size = [4, 4]
+				}
+				{
+					File = "hypermatter_5.png"
+					//Offset = [0.5, 0]
+					Size = [4, 4]
+				}
+				{
+					File = "hypermatter_6.png"
+					Size = [4, 4]
+				}
+				{
+					File = "hypermatter_7.png"
+					Size = [4, 4]
+				}
+				{
+					File = "hypermatter_8.png"
+					Size = [4, 4]
+				}
+			]
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			Location = [2, 2]
+
+			MediaEffects
+			[
+				&<./Data/ships/terran/reactor_small/particles/reactor_explode_small.rules>
+				&<./Data/ships/terran/reactor_small/particles/reactor_explode_flash_small.rules>
+				&<./Data/ships/terran/reactor_small/particles/reactor_shockwave_small.rules>
+				&<./Data/common_effects/particles/explosions/med_part_explode_debris.rules>
+				&<./Data/common_effects/particles/explosions/big_part_explode_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/ships/terran/reactor_small/destroyed.wav"
+					Volume = 1
+					SpeedVariation = .25
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .25
+					Duration = 2
+				}
+			]
+
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 90000*(&~/Scale)
+					Radius = 6
+					Delay = .05
+					ExpandDuration = .1
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					FireChancePerNDamage = 50%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false
+						Friendlies = true
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 20000*(&~/Scale)
+					Radius = 4
+					Delay = .05
+					ExpandDuration = .05
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 5
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = true
+					}
+				}
+			]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [2, 2]
+			Layer = "indicators"
+			Indicators
+			[
+				// Out of power.
+				{
+					Toggle = HypermatterStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [2.5, 2.5]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "../creator_med/blueprints.png"
+			Size = [4, 4]
+		}
+	}
+
+	Stats
+	{
+		HypermatterGeneration = (&~/Part/Components/HypermatterProducer/ToQuantity) / (&~/Part/Components/HypermatterProducer/Interval) / 1000
+		HypermatterSize = (&~/Part/Components/HypermatterStorage/MaxResourcesPickUp) / 1000
+		HypermatterFillTime = 0 / (&~/Part/Components/HypermatterStorage/PickUpRate)
+		HypermatterCapacity = (&~/Part/Components/HypermatterStorage/MaxResources) / 1000
+	}
+}
+Size = Large
+Scale = (1/1*1)
+>>>>>>> parent of 8d4d045b (.)
