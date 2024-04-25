@@ -13,16 +13,16 @@ Def
 			Enabled = true
 			UpdateAfterInit = false
 		}
-		{
-			Type = SetRandom
-			DataOut = rot
-			ValueType = Angle
-			FromValue = 0d
-			ToValue = 360d
-			Name = "Random Rotation"
-			Enabled = true
-			UpdateAfterInit = false
-		}
+//		{
+//			Type = SetRandom
+//			DataOut = rot
+//			ValueType = Angle
+//			FromValue = 0d
+//			ToValue = 360d
+//			Name = "Random Rotation"
+//			Enabled = true
+//			UpdateAfterInit = false
+//		}
 		{
 			Type = AddFrameOfReference
 			VelocityInOut = velocity
@@ -31,49 +31,59 @@ Def
 			UpdateAfterInit = false
 		}
 		{
-			Type = ScaleFromIntensity
-			ScaleOut = scale
-			ScaleFactor = 2
-			IntensityExponent = 0.5
-			Name = "Scale from intensity"
+			Type = SetRandom
+			DataOut = base_scale
+			ValueType = Float
+			FromValue = 9
+			ToValue = 11
+			Name = "Random Scale"
 			Enabled = true
 			UpdateAfterInit = false
 		}
+//		{
+//			Type = ScaleFromIntensity
+//			ScaleOut = scale
+//			ScaleFactor = 2
+//			IntensityExponent = 0.5
+//			Name = "Scale from intensity"
+//			Enabled = true
+//			UpdateAfterInit = false
+//		}
 		{
 			Type = ScaleToWorldSpace
-			ScaleIn = scale
-			ScaleOut = scale
+			ScaleIn = base_scale
+			ScaleOut = base_scale
 			Name = ""
 			Enabled = true
 			UpdateAfterInit = false
 		}
-		{
-			Type = SetRandom
-			DataOut = lifetime
-			ValueType = Float
-			FromValue = 1.2
-			ToValue = 2
-			Name = "random lifetime"
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = RotationToWorldSpace
-			RotationIn = rot
-			RotationOut = rot
-			Name = ""
-			Enabled = true
-			UpdateAfterInit = false
-		}
+//		{
+//			Type = SetRandom
+//			DataOut = lifetime
+//			ValueType = Float
+//			FromValue = 1.2
+//			ToValue = 4
+//			Name = "random lifetime"
+//			Enabled = true
+//			UpdateAfterInit = false
+//		}
+//		{
+//			Type = RotationToWorldSpace
+//			RotationIn = rot
+//			RotationOut = rot
+//			Name = ""
+//			Enabled = true
+//			UpdateAfterInit = false
+//		}
 	]
 	Updaters
 	[
 		{
 			Type = Lifetime
 			LifeInOut = life
-			Lifetime = 1
+			Lifetime = 1.5
 			Name = Lifetime
-			Enabled = true//false
+			Enabled = true
 			UpdateAfterInit = false
 		}
 //		{
@@ -118,7 +128,7 @@ Def
 				Y = 0
 			}
 			Looping = false
-			Name = Animation
+			Name = ""//Animation
 			Enabled = true
 			UpdateAfterInit = true
 		}
@@ -131,9 +141,9 @@ Def
 			[
 				{
 					Rf = 1
-					Gf = 0.39215687
+					Gf = 1 // 0.39215687
 					Bf = 1
-					Af = 0.78431374
+					Af = 1 // 0.78431374
 				}
 				{
 					Rf = 1
@@ -145,17 +155,60 @@ Def
 					Rf = 1
 					Gf = 1
 					Bf = 1
-					Af = 0.78431374
+					Af = 1 //0.78431374
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0
 				}
 			]
-			Name = ""
+			Name = "Color ramp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 0.5
+			ToValue = 2.4
+			Name = "scale lerp"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = scale
+			BIn = base_scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "apply base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ParticleLightNormal
+			LocationIn = location
+			LightNormalOut = light_normal
+			Name = "Light normal"
 			Enabled = true
 			UpdateAfterInit = false
 		}
 	]
 	Renderer
 	{
-		Type = StandardQuadRenderer
+		Type = LitQuadRenderer
+		LightNormalIn = light_normal
+		DiffuseShader
+		NormalsShader
+		{
+			File = ./data/common_effects/particles/particle_normals.shader
+		}
 		LocationIn = location
 		ScaleIn = scale
 		Scale2In
@@ -164,26 +217,36 @@ Def
 		UvRectIn = uv_rect
 		BaseSize
 		{
-			X = 5
-			Y = 5
+			X = 1 //3//5
+			Y = 1 //3//5
 		}
-		//Offset
-		//{
-		//	X = -0.45
-		//	Y = 0
-		//}
+		Offset
+		{
+			X = 0
+			Y = 0
+		}
 		Name = ""
 	}
 	Material
 	{
+		Shader
+		{
+			File = ./data/common_effects/particles/particle_lit_additive.shader
+		}
+		_normalsTexture
+		{
+			File = ion_explosion_hit_normals.png
+			MipLevels = max
+			SampleMode = Linear
+		}
 		Texture
 		{
 			File = "ion_explosion_hit.png" // ./Data/shots/bullet_large/particles/bullet_hit_large.png
-			MipLevels = 8
+			MipLevels = 9
 			SampleMode = Linear
 		}
 	}
-	DeleteMode = Fast
+	DeleteMode = KeepOrder
 	EnableMultithreading = false
 	InitCapacity = 192
 }
@@ -198,29 +261,42 @@ EmitterDef
 	PreInitializers
 	[
 		{
-			Type = SetRandom
-			DataOut = rot
-			ValueType = Angle
-			FromValue = -90d
-			ToValue = 90d
-			Name = "Random rotation"
+			Type = AssignIndex
+			IndexOut = index
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RandomRotationByIndex
+			RotationInOut = rot
+			SafetyMargin = 15d
+			Name = ""
 			Enabled = true
 			UpdateAfterInit = false
 		}
 		{
 			Type = SetRandom
-			DataOut = scale
-			ValueType = Float
-			FromValue = 0.8
-			ToValue = 1.2
-			Name = "Random scale"
+			DataOut = location
+			ValueType = Vector2
+			FromValue
+			{
+				X = -0.1
+				Y = -0.1
+			}
+			ToValue
+			{
+				X = 0.1
+				Y = 0.1
+			}
+			Name = "Random Position"
 			Enabled = true
 			UpdateAfterInit = false
 		}
 	]
 	PostInitializers[]
 }
-Bucket = FlakHitSmoke
+Bucket = NukeHit
 UseRealTime = false
 PenetratingBucket = Middle2
 MinIntensity = 0
@@ -229,8 +305,8 @@ IsFancyLight = false
 IsSimple = false
 Sharing = Global
 UnsharedRenderInWorldSpace = false
-DontEmitWhenOffScreen = true
-DontEmitWhenOffScreenSizeInflate = 1
+DontEmitWhenOffScreen = false
+DontEmitWhenOffScreenSizeInflate = 3
 UseCustomShapeForOffScreenCheck = false
 MaxEmissionZoom = 3.4028235E+38
 ScaleEmissionWithIntensity = false
