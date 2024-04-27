@@ -1,0 +1,272 @@
+Part : &<../Cockpit/cockpit.rules>/Part
+{
+	//IDs
+	ID = SW.cockpitT85
+	OtherIDs = [] //Clears the array
+
+	//StringKeys
+	NameKey = "Parts/CockpitT85"
+	IconNameKey = "Parts/CockpitT85Icon"
+	DescriptionKey = "Parts/CockpitT85Desc"
+
+	//Groups&Categories
+	EditorGroups = ["Flight", "SWTechI"]
+	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits]
+
+	//Resources&Size&Health
+	Resources
+	[
+		[SW.durasteel, 40]
+		[steel, 20]
+		[coil2, 14]
+		[processor, 2]
+	]
+	MaxHealth = 5000
+	InitialPenetrationResistance = 5
+
+	//Rects
+
+	//Selections
+	SelectionTypeID = "control_room"
+
+	//PartSpecific
+
+	//ReceivableBuffs
+	ReceivableBuffs : ^/0/ReceivableBuffs [] 
+
+	//Doors&Etc
+	MaxDoors = 3
+	AllowedDoorLocations
+	[
+		[1,1]
+		[-1,1]
+		[0,2]
+	]
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 64]
+	}
+	//Components
+	Components : ^/0/Components
+	{
+		CommandProvider
+		{
+			Type = CommandProvider
+			OperationalToggle = IsOperational
+			CommandPoints = 50  //Remember to update tooltip.
+		}
+
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [.5,1]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 2]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads_on1.png"
+							"doodads_on2.png"
+							"doodads_on3.png"
+							"doodads_on4.png"
+							"doodads_on5.png"
+						]
+						Size = [1, 2]
+						AnimationInterval = 0.300
+					}
+					{
+						AnimationFiles
+						[
+							"doodads_on1_33.png"
+							"doodads_on2_33.png"
+							"doodads_on3_33.png"
+							"doodads_on4_33.png"
+							"doodads_on5_33.png"
+						]
+						Size = [1, 2]
+						AnimationInterval = 0.300
+					}
+					{
+						AnimationFiles
+						[
+							"doodads_on1_66.png"
+							"doodads_on2_66.png"
+							"doodads_on3_66.png"
+							"doodads_on4_66.png"
+							"doodads_on5_66.png"
+						]
+						Size = [1, 2]
+						AnimationInterval = 0.300
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads_off.png"
+						Size = [1, 2]
+					}
+					{
+						File = "doodads_off_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "doodads_off_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Consoles
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "consoles.png"
+						Size = [1, 2]
+					}
+					{
+						File = "consoles_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "consoles_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [1, 2]
+					}
+					{
+						File = "walls_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "walls_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+		RCSThruster
+		{
+			Type = Thruster
+			OperationalToggle = IsOperational
+			Location = [0.5, 1]
+			Rotation = 0d
+			Force = 120
+			MinActivation = -1
+			MaxActivation = 1
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = 1
+			ActivationRecoveryTime = 1
+			FuelStorage = BatteryStorage
+			FuelUsagePerSecond = 5
+			AllowAutoFire = false
+		}
+		// Extinguisher Graphics - Start
+		ExtinguisherSprite
+		{
+			Type = ResourceSprites
+			Location = [.5, 1.2]
+			ResourceStorage = ExtinguisherStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../extinguisher2.png"
+					Size = [1, 1]
+				}
+			]
+		}
+		// Extinguisher Graphics - End
+/*
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
+		}
+*/
+	}
+/*
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+
+		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		SightRange = &~/Part/Components/Sensor/SightRadius
+		RadarRange = &~/Part/Components/Sensor/RadarRadius
+
+		RecPower = (&PowerUsageContinuousMinutes) / 60
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+*/
+}
