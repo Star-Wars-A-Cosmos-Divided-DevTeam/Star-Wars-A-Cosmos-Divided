@@ -120,7 +120,7 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
-			CommandPoints = 14
+			CommandPoints = 16
 		}
 
 		FireModeToggle
@@ -153,7 +153,7 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 		CommonReloadTimer
 		{
 			Type = Timer
-			Duration = 2.1
+			Duration = 6.1
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
@@ -285,7 +285,7 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 10000 //7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
+			MaxResources = 20000 //7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
@@ -876,6 +876,7 @@ TurretStats
 	Stats
 	{
 		Barrels = 2
+		Burst = &~/BulletEmitterBase/Burst
 		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
 		Salvo = [&../Barrels, &../ReloadTime]
 		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
@@ -904,9 +905,12 @@ BulletEmitterBase
 	OperationalToggle = IsOperational
 	FireDelay = 0.6
 	ResourceStorage = BatteryStorage
-	ResourcesUsed = 620
+	ResourcesUsed = 420
 	Bullet = &/SW_SHOTS/turretturbolasermediumlaserredshot
 	Recoil = 250
+	UseResourcePerShotInBurst = true
+	Burst = 3
+	BurstDelay = 0.3
 	Spread = [-1d, 1d]
 	TargetLeadPrediction = false
 }

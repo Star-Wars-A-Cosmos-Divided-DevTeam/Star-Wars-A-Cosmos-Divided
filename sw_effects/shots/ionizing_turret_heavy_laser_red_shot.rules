@@ -1,4 +1,4 @@
-ID = SW.concussion_turret_heavy_laser_blue_shot //TURRET WEAPONSHOT
+ID = SW.ionizing_turret_heavy_laser_red_shot //TURRET WEAPONSHOT
 Range = 550
 IdealRange = [200, 550]
 IdealRadius = [5, 50]
@@ -12,7 +12,7 @@ At max range (300), the damage would be 1 - (300 / 1000) = 0.7
 */
 
 /* ExampleA: */ 
-//HitEffectsScaleOverRange = [1, 0.7]
+//HitEffectsScaleOverRange = [1, 0.1]
 /* ExampleB: */
 //HitEffectsScaleOverRange = [1, 1 - (range / 1000)]
 
@@ -34,7 +34,7 @@ Components
 	Targetable
 	{
 		Type = Targetable
-		Health = 20000
+		Health = 6000
 		TargetCategory = "laser"
 	}
 
@@ -58,7 +58,7 @@ Components
 			[
 				{
 					Type = Damage
-					Damage = 7000  // bad vs shield 1/5 of total part damage
+					Damage = 10000 
 				}
 				{
 					Type = Impulse
@@ -68,9 +68,9 @@ Components
 
 			MediaEffects
 			[
-				&/SW_PARTICLES/SWConcussionLaserHitBlue
-				&/SW_PARTICLES/Shot/Laser/Flash/Med/Blue
-				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Blue
+				&/SW_PARTICLES/SWConcussionLaserHitRed
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
 	
 				&/SW_SOUNDS/SmallLaserHit
 
@@ -85,9 +85,9 @@ Components
 		{
 			HitEffects
 			[
-				{
+				/*{
 					Type = ExplosiveDamage
-					TotalDamage = 45000
+					TotalDamage = 25000
 					Radius = 9
 					ExpandDuration = 0.2
 					ExpandStartRadius = 1
@@ -98,22 +98,22 @@ Components
 					// {
 					// 	Friendlies = true
 					// }
-				}
+				}*/
 				{
 					Type = Damage
-					Damage = 200
+					Damage = 10000
 				}
 				{
 					Type = Impulse
-					Impulse = 100
+					Impulse = 300
 				}
 			]
 
 			MediaEffects
 			[
-				&/SW_PARTICLES/SWConcussionLaserHitBlue
-				&/SW_PARTICLES/Shot/Laser/Flash/Med/Blue
-				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Blue
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/SWConcussionLaserHitRed
 				&/SW_PARTICLES/SWFlakLargeFlash
 				// &/SW_PARTICLES/SWFlakLargeSmoke
 	
@@ -140,14 +140,15 @@ Components
 			{
 				Texture
 				{
-					File = "lasershotblue.png"
+					File = "IonizingShotRed.png"
 					SampleMode = Linear
 					MipLevels = max
 				}
-				Size = [3, 1.5]//2.1, 1.05
+				Size = [2.5, 1]//2.1, 1.05
+				//Size = [3, 1.5]//2.1, 1.05
 			}
 			FrameCount = 2
-			FrameSize = [64, 32]
+			FrameSize = [320, 128]
 			FramesPerRow = 1
 			FramesPerSecond = 60
 		}
@@ -166,7 +167,7 @@ Components
 		{
 			Texture
 			{
-				File = "shot_blue.png"
+				File = "shot_red.png"
 				SampleMode = Linear
 				MipLevels = max
 			}
@@ -190,7 +191,7 @@ Components
 				SampleMode = Linear
 			}
 			Size = [18, 9]
-			VertexColor = [0, 0, 255] // VertexColor = [255, 100, 0]
+			VertexColor = [255, 0, 0] // VertexColor = [255, 100, 0]
 			TargetBlendMode = Add
 			Shader = "./Data/common_effects/fancy_light.shader"
 			_litReflectiveStrength = 24
@@ -201,11 +202,11 @@ Components
 	MediaEffects3
 	{
 		Type = MediaEffects
-		Offset = [45/64, 0]
+		Offset = [1, 0]
 		MediaEffects
 		[
-			&/SW_PARTICLES/Shot/Laser/Glow/Med/Blue
-			&/SW_PARTICLES/SWConcussionLaserTrailBlue //&/SW_PARTICLES/Shot/Ion/Trail/Med/Blue
+				///&/SW_PARTICLES/Shot/Laser/Glow/Med/Red
+				&/SW_PARTICLES/SWConcussionLaserTrailRed			// &/SW_PARTICLES/Shot/Ion/Trail/Med/Cyan
 		]
 	}	
 	/*
@@ -216,7 +217,7 @@ Components
 
 			MediaEffects
 			[
-				&/SW_PARTICLES/Shot/Laser/Glow/Med/Green
+				&/SW_PARTICLES/Shot/Laser/Glow/Med/Red
 				&/SW_PARTICLES/SWConcussionLaserTrail
 			]
 		}
