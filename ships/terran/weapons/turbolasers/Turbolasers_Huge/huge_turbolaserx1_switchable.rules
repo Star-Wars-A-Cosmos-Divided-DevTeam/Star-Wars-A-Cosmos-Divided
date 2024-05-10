@@ -430,28 +430,8 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 					}
 				]
 			}
-			}
-/*
-		TurretGhostGraphics
-		{
-			Type = Graphics
-			ChainedTo = Turret
-			Location = [0.5, 0]
-			Rotation = 90d
-			OperationalToggle = IsOperational
-			Floor
-			{
-				Layer = "doodads_high"
-				DamageLevels
-				[
-					{
-						File = "WeaponSprite/barrel_shadow_5.png"
-						Size = [2.4, 3]
-					}
-				]
-			}
 		}
-*/
+
 		FirePermissionToggle
 		{
 			Type = MultiToggle
@@ -522,6 +502,29 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 			Type = ChainableProxy
 			ComponentID = Turret
 		}
+
+		TurretGhostGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [0, 0]
+			Rotation = 90d
+			//OperationalToggle = IsOperational
+
+			Floor //Center
+			{
+				Layer = "roof_turrets"
+				Offset = [0.046875, -7.21875] //-3,-462
+				DamageLevels
+				[
+					{
+						File = "barrel_shadow.png"
+						Size = [1, 5]
+					}
+				]
+			}
+		}
+
 /*
 		CrewLocation1
 		{
@@ -897,7 +900,7 @@ OperationalRoofLightingBase
 	Size = [5.0, 5.6] //X+0,6(Distance between Barrels)=Y
 	Z = 1.65 // Controls the "height" of the light for the purposes of normal mapping.
 }
-BulletEmitterBase
+BulletEmitterBase : &<huge_turbolaser_switchable.rules>/BulletEmitterBase
 {
 	Type = BulletEmitter
 	ChainedTo = TurretLocationProxy
@@ -923,7 +926,7 @@ ReloadProgressBarBase
 	ShowProgressFor = CommonReloadTimer
 	Invert = true
 }
-TurretBase
+TurretBase : &<huge_turbolaser_switchable.rules>/TurretBase
 		{
 			Type = TurretWeapon
 			Location = [5, 5]
@@ -931,8 +934,8 @@ TurretBase
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
 			FireInterval = 0 // Uses separate common fire timer.
-			FiringArc = 160d
-			RotateSpeed = 8d
+			FiringArc = 180d
+			RotateSpeed = 10d
 			FireThresholdAngle = 2d
 			AIFirepowerRating = 6400
 			//CanBeGivenExplicitTarget = true
