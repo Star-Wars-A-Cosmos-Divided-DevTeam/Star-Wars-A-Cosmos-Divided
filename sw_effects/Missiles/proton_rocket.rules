@@ -1,9 +1,9 @@
 ID = SW.proton_rocket
 OtherIDs = ["proton_rocket"]
 
-Range = 450
-IdealRange = 400
-Speed = 55
+Range = 150
+IdealRange = 150
+Speed = 45
 
 Components
 {
@@ -32,13 +32,13 @@ Components
 	Acceleration
 	{
 		Type = Acceleration
-		Acceleration = 120
+		Acceleration = 65
 	}
 
 	NegativeAcceleration
 	{
 		Type = Acceleration
-		Acceleration = [-90, 0]
+		Acceleration = [-65, 0]
 		AccelerationOverTime = [0, .75]
 		Direction = FrameOfReferenceVelocity
 	}
@@ -60,7 +60,7 @@ Components
 	Targetable
 	{
 		Type = Targetable
-		Health = 3200
+		Health = 7200
 		TargetCategory = "missile"
 
 		// No AOE damage when shot down.
@@ -71,18 +71,28 @@ Components
 
 	Hit
 	{
-		Type = SimpleHit
+		Type = PenetratingHit
 		SourcePartCollisionDelay = 1.5/30
+		Penetration = 18.0
+		PenetrationSpeed = 40
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		FriendlyShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
 
 		HitShield = &HitOperational
 		HitOperational
 		{
+			ReduceEffectsByPenetration = true
+			Offset = [-0.15, 0]
+
 			HitEffects
 			[
 				{
 					Type = ExplosiveDamage
 					TotalDamage = 120000
-					Radius = 8
+					Radius = 9
 					ExpandDuration = .8
 					ExpandStartRadius = 2
 					ExpandLoss = 100%
@@ -97,8 +107,8 @@ Components
 				}
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 60000
-					Radius = 8
+					TotalDamage = 80000
+					Radius = 10
 					ExpandDuration = .8
 					ExpandStartRadius = 2
 					ExpandLoss = 100%
@@ -138,6 +148,8 @@ Components
 			[
 				&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_flash.rules>
 				//&/SW_PARTICLES/SWIonExplosionShockwave//&/SW_PARTICLES/SWIonExplosionHit //&<./Data/shots/missile_emp/particles/missile_emp_hit_bolts.rules>
+				&/SW_PARTICLES/SWIonExplosionShockwave //&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
+				&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
 
 				: /BASE_SOUNDS/AudioExterior
 				{
@@ -147,124 +159,7 @@ Components
 				}
 			]
 		}
-	}
 
-/* Skipperwraith
-	Hit
-	{
-		Type = PenetratingHit
-		SourcePartCollisionDelay = 1.5/30
-		Penetration = 12
-		PenetrationSpeed = &~/Speed
-
-		CrewCollisions = {Enemies=true; Junk=true}
-		PenetratesCrew = true
-		HitCrew = &HitOperational
-
-		HitShield
-		{
-			ReduceEffectsByPenetration = true
-			HitEffects
-			[
-				{
-					Type = Damage
-					Damage = 480
-				}
-				{
-					Type = Impulse;
-					Impulse = 20;
-				}
-			]
-
-			MediaEffects = &../HitOperational/MediaEffects
-		}
-		HitOperational
-		{
-			ReduceEffectsByPenetration = true
-			HitEffects
-			[
-				{
-					Type = AreaDamage
-					Damage = 0
-					DamagePool = DamagePool
-					Radius = 2.4
-				}
-				{
-					Type = Impulse;
-					Impulse = 20;
-				}
-			]
-
-			MediaEffectsScale = 0.3
-			MediaEffects
-			[
-				&<./Data/shots/missile_he/particles/missile_he_hit.rules>
-				//&<./Data/shots/missile_he/particles/missile_he_flash.rules>
-				//&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
-				//&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/bullet_med/bullet_med_hit.wav"
-					Volume = .4
-					SpeedVariation = .4
-				}
-
-				: /BASE_SHAKE
-				{
-					ShakeAmount = .05
-					Duration = .5
-				}
-			]
-		}
-		HitStructural
-		{
-			ReduceEffectsByPenetration = true
-			HitEffects
-			[
-				{
-					Type = AreaDamage
-					Damage = 40
-					Radius = 2.1
-				}
-				{
-					Type = Impulse;
-					Impulse = 20;
-				}
-			]
-
-			MediaEffectsScale = 0.1
-			MediaEffects
-			[
-				&<./Data/shots/missile_he/particles/missile_he_hit.rules>
-				//&<./Data/shots/missile_he/particles/missile_he_flash.rules>
-				//&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
-				//&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/bullet_med/bullet_med_hit_structure.wav"
-					Volume = .3
-					SpeedVariation = .4
-				}
-			]
-		}
-		HitFriendly
-		{
-			ReduceEffectsByPenetration = true
-			MediaEffects
-			[
-				&<./Data/shots/missile_he/particles/missile_he_flash.rules>
-				&<./Data/shots/missile_emp/particles/missile_emp_hit_bolts.rules>
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/missile_emp/missile_emp_hit.wav"
-					Volume = 1
-					SpeedVariation = .2
-				}
-			]
-		}
 		PenetratingOperational
 		{
 			ReduceEffectsByPenetration = true
@@ -272,19 +167,23 @@ Components
 			HitEffects
 			[
 				{
-					Type = AreaDamage
-					Damage = 40
-					Radius = 2.7
-					DamagePool = DamagePool
-					DoPooledDamageFirst = true
+					Type = Damage
+					Damage = 30000
+				}
+				{
+					Type = Fire
+					FireChance = .4
 				}
 				{
 					Type = Impulse
-					Impulse = 20
+					Impulse = 300
 				}
 			]
 
-			MediaEffects = &../HitOperational/MediaEffects
+			MediaEffects
+			[
+				&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+			]
 		}
 		PenetratingStructural
 		{
@@ -293,7 +192,7 @@ Components
 		FinishedPenetratingOperational = &PenetratingOperational
 		FinishedPenetratingStructural = &PenetratingStructural
 	}
-*/
+
 
 	Sprite
 	{
