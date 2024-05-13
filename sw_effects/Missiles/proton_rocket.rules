@@ -15,26 +15,36 @@ Components
 		LinearDamping = 1.1
 	}
 
+	DeathByDistanceTraveledTargeted
+	{
+		Type = DeathByDistanceTraveled
+		Distance = (&~/Range) * 2
+		HasTarget = true
+	}
+
 	Homing
 	{
 		Type = TargetHoming
-		TurnVelocity = 360d 
+		TurnVelocity = 36d 
 		Delay = .1
-		AvoidanceRaycastDistance = 10
+		//AvoidanceRaycastDistance = 10
 		VelocityCompensation = 80%
 	}
 
+/*
 	Retarget
 	{
 		Type = SameShipRetarget
 	}
+*/
 
 	Acceleration
 	{
 		Type = Acceleration
-		Acceleration = 65
+		Acceleration = 85
 	}
 
+/*
 	NegativeAcceleration
 	{
 		Type = Acceleration
@@ -42,18 +52,11 @@ Components
 		AccelerationOverTime = [0, .75]
 		Direction = FrameOfReferenceVelocity
 	}
-
+*/
 	DeathByLifetime
 	{
 		Type = DeathByLifetime
-		Lifetime = 30
-		HasTarget = true
-	}
-
-	DeathByDistanceTraveled
-	{
-		Type = DeathByDistanceTraveled
-		// Distance auto-computed from range.
+		Lifetime = 6
 		HasTarget = false
 	}
 	
@@ -72,7 +75,7 @@ Components
 	Hit
 	{
 		Type = PenetratingHit
-		SourcePartCollisionDelay = 1.5/30
+		//SourcePartCollisionDelay = 1.5/30
 		Penetration = 18.0
 		PenetrationSpeed = 40
 
@@ -81,7 +84,64 @@ Components
 		PenetratesCrew = true
 		HitCrew = &HitOperational
 
-		HitShield = &HitOperational
+		HitShield 
+		{
+			//ReduceEffectsByPenetration = true
+			//Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 60000
+					Radius = 10
+					ExpandDuration = 1
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = true 
+						Friendlies = false 
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 30000
+					Radius = 10
+					ExpandDuration = .8
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 5
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = false
+					}
+				}
+			]
+
+			MediaEffectsScale = 1.5 // 0.3
+			MediaEffects
+			[
+				//&/SW_PARTICLES/SWIonLargeHitPurple //&<./Data/shots/missile_he/particles/missile_he_hit.rules>
+				&/SW_PARTICLES/SWIonExplosionHit //&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				&/SW_PARTICLES/SWIonExplosionShockwave //&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
+				&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
+
+				&/SW_SOUNDS/SW_Proton_Missile_Hit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .05
+					Duration = .5
+				}
+			]
+		}
 		HitOperational
 		{
 			ReduceEffectsByPenetration = true
@@ -92,8 +152,8 @@ Components
 				{
 					Type = ExplosiveDamage
 					TotalDamage = 120000
-					Radius = 9
-					ExpandDuration = .8
+					Radius = 10
+					ExpandDuration = 1
 					ExpandStartRadius = 2
 					ExpandLoss = 100%
 					ImpulsePerNDamage = 10
@@ -102,7 +162,7 @@ Components
 					{
 						OperationalHealth = true
 						StructuralHealth = false 
-						Friendlies = true 
+						Friendlies = false 
 					}
 				}
 				{
@@ -118,7 +178,7 @@ Components
 					{
 						OperationalHealth = false
 						StructuralHealth = true
-						Friendlies = true
+						Friendlies = false
 					}
 				}
 			]
@@ -183,14 +243,38 @@ Components
 			MediaEffects
 			[
 				&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				&/SW_PARTICLES/SWIonExplosionShockwave //&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
+				&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/missile_emp/missile_emp_hit.wav"
+					Volume = 1
+					SpeedVariation = .2
+				}
+
 			]
 		}
 		PenetratingStructural
 		{
 			// No effect.
 		}
-		FinishedPenetratingOperational = &PenetratingOperational
-		FinishedPenetratingStructural = &PenetratingStructural
+		PenetratingShield
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational 
+		{
+			// No effect.
+		}
+		FinishedPenetratingStructural
+		{
+			// No effect.
+		}
+		FinishPenetratingShield
+		{
+			// No effect.
+		}
 	}
 
 

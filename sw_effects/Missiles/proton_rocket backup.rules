@@ -363,3 +363,248 @@ Components
 		]
 	}
 }
+
+/* Comments
+
+ID = SW.proton_rocket // Unique identifier for the configuration of this item.
+OtherIDs = ["proton_rocket"] // List of alternative identifiers that can be used to reference this item.
+
+Range = 450 // Maximum range the missile can travel before being considered for deactivation.
+IdealRange = 400 // The preferred range within which the missile operates most effectively.
+Speed = 55 // Speed at which the missile travels.
+
+Components // Container for all components that define the missile's behavior.
+{
+	Physics // Defines the physical properties of the missile.
+	{
+		Type = CirclePhysics // The physics model is a simple circle.
+		Density = 0.1 // Density of the missile, affects interactions with other physical objects.
+		Radius = 0.1 // Radius of the missile's circle physics model.
+		LinearDamping = 1.1 // Damping applied to reduce linear movement over time.
+	}
+
+	Homing // Defines homing capabilities to track and follow targets.
+	{
+		Type = TargetHoming // The missile will actively home in on targets.
+		TurnVelocity = 360d // Maximum turning velocity in degrees per second.
+		Delay = .1 // Delay before homing behavior starts after launch.
+		AvoidanceRaycastDistance = 10 // Distance for raycasting to avoid obstacles.
+		VelocityCompensation = 80% // Percentage of target's velocity the missile compensates for.
+	}
+
+	Retarget // Component that allows the missile to retarget.
+	{
+		Type = SameShipRetarget // Allows retargeting to another target on the same ship.
+	}
+
+	Acceleration // Defines the acceleration behavior.
+	{
+		Type = Acceleration // Type of component is a straightforward acceleration.
+		Acceleration = 120 // Rate of acceleration.
+	}
+
+	NegativeAcceleration // Defines behavior for slowing down or negative acceleration.
+	{
+		Type = Acceleration // This is still an acceleration type but used negatively.
+		Acceleration = [-90, 0] // Acceleration values, negative for deceleration.
+		AccelerationOverTime = [0, .75] // How acceleration changes over time.
+		Direction = FrameOfReferenceVelocity // The frame of reference for direction is the missile's velocity.
+	}
+
+
+	DeathByLifetime // Defines the lifespan of the missile.
+	{
+		Type = DeathByLifetime // Missile will be deactivated after its lifetime expires.
+		Lifetime = 30 // Lifetime of the missile in seconds.
+		HasTarget = true // Whether the death condition depends on having a target.
+	}
+
+	DeathByDistanceTraveled // Component that deactivates the missile based on distance traveled.
+	{
+		Type = DeathByDistanceTraveled // Type of death is based on the distance traveled.
+		// Distance auto-computed from range.
+		HasTarget = false // No target required for this death condition.
+	}
+	
+	Targetable // Makes the missile a targetable entity in the game.
+	{
+		Type = Targetable // The component type is targetable.
+		Health = 3200 // Health points of the missile.
+		TargetCategory = "missile" // Category under which the missile is targeted.
+
+		OnDeath = &../Hit/HitFriendly // Reference to what happens when it is destroyed.
+	}
+
+	Hit // Defines what happens when the missile hits a target.
+	{
+		Type = SimpleHit // The type of hit is a simple collision.
+		SourcePartCollisionDelay = 1.5/30 // Delay after collision before hit is registered.
+
+		HitShield = &HitOperational // Handles hitting shields, refers to operational hit settings.
+		HitOperational
+		{
+			HitEffects
+			[
+				// Effects for hitting operational parts of a ship.
+				{
+					Type = ExplosiveDamage // Causes explosive damage.
+					TotalDamage = 120000 // Total damage inflicted.
+					Radius = 8 // Radius of the explosion.
+					ExpandDuration = .8 // Duration over which explosion expands.
+					ExpandStartRadius = 2 // Starting radius of explosion.
+					ExpandLoss = 100% // Percentage of effect reduced over the duration.
+					ImpulsePerNDamage = 10 // Impulse applied per unit of damage.
+					NDamage = 1000 // Normalized damage value.
+					Filter
+					{
+						OperationalHealth = true // Affects operational health.
+						StructuralHealth = false // Does not affect structural health.
+						Friendlies = true // Affects friendly units.
+					}
+				},
+				// Additional effects for hitting structural parts of a ship.
+				{
+					Type = ExplosiveDamage // Causes explosive damage.
+					TotalDamage = 60000 // Total damage inflicted.
+					Radius = 8 // Radius of the explosion.
+					ExpandDuration = .8 // Duration over which explosion expands.
+					ExpandStartRadius = 2 // Starting radius of explosion.
+					ExpandLoss = 100% // Percentage of effect reduced over the duration.
+					ImpulsePerNDamage = 5 // Impulse applied per unit of damage.
+					NDamage = 1000 // Normalized damage value.
+					Filter
+					{
+						OperationalHealth = false // Does not affect operational health.
+						StructuralHealth = true // Affects structural health.
+						Friendlies = true // Affects friendly units.
+					}
+				}
+			]
+
+			MediaEffectsScale = 1.5 // Scale factor for media effects.
+			MediaEffects
+			[
+				// References to various media effects used upon impact.
+				&/SW_PARTICLES/SWIonLargeHitPurple // Particle effects for a large ion hit.
+				&/SW_PARTICLES/SWIonExplosionHit // Particle effects for ion explosion.
+				&/SW_PARTICLES/SWIonExplosionShockwave // Particle effects for shockwave from explosion.
+				&/SW_PARTICLES/SWIonExplosionDischarge// Particle effects for discharge from explosion.
+
+				&/SW_SOUNDS/SW_Proton_Missile_Hit // Sound effect for the hit.
+
+				: /BASE_SHAKE // Base shaking effect.
+				{
+					ShakeAmount = .05 // Amount of shake.
+					Duration = .5 // Duration of the shake.
+				}
+			]
+		}
+		HitStructural = &HitOperational // Uses the same settings for hitting structural parts.
+
+		HitFriendly // Effects when hitting friendly units.
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/SWIonExplosionDischarge// Particle effects for discharge.
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/missile_emp/missile_emp_hit.wav" // Sound effect for friendly hit.
+					Volume = 1 // Volume of the sound.
+					SpeedVariation = .2 // Variation in playback speed.
+				}
+			]
+		}
+	}
+
+	Sprite // Defines the visual appearance of the missile.
+	{
+		Type = AnimatedSprite // The sprite is animated.
+		ReduceScaleWith = Hit // Scale reduction based on the hit component.
+		ReduceScaleExponent = 0.5 // Exponent for scale reduction.
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "missile.png" // File for the texture.
+					SampleMode = Linear // Sampling mode for texture.
+					MipLevels = max // Maximum level of mipmaps.
+				}
+				Size = [1.5, 1.5] // Size of the sprite.
+				TargetBlendMode
+				{
+					SourceRgbFactor = SourceAlpha // RGB blending factor.
+					DestRgbFactor = One // Destination RGB blending factor.
+					RgbOperator = Add // RGB blending operation.
+					SourceAlphaFactor = Zero // Alpha blending factor.
+					DestAlphaFactor = One // Destination alpha blending factor.
+					AlphaOperator = Add // Alpha blending operation.
+				}
+			}
+			FrameCount = 16 // Number of frames in the animation.
+			FrameSize = [128, 128] // Size of each frame.
+			FramesPerRow = 4 // Frames per row in the sprite sheet.
+			FramesPerSecond = 60 // Frames per second of the animation.
+		}
+	}
+
+	GlowSprite // Defines the glowing effect for the missile.
+	{
+		Type = Sprite // Type is a simple sprite.
+		RenderBucket = BulletUpper2 // Layering order for rendering.
+		Z = 0 // Z-index for rendering order.
+		IsLight = true // Indicates the sprite represents a light source.
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png" // Texture file.
+				MipLevels = max // Maximum level of mipmaps.
+				SampleMode = Linear // Sampling mode for texture.
+			}
+			Size = [5, 5] // Size of the glow sprite.
+			VertexColor = [240, 160, 240] // Color of the vertex.
+			TargetBlendMode = Add // Blending mode for the sprite.
+			Shader = "./Data/common_effects/fancy_light.shader" // Shader used for the glow effect.
+			_litReflectiveStrength = 24 // Reflective strength when lit.
+			_litAdditiveStrength = 0.05 // Additive strength when lit.
+			_unlitAdditiveStrength = 0.25 // Additive strength when unlit.
+		}
+	}
+
+	MediaEffects // Defines additional media effects associated with the missile.
+	{
+		Type = MediaEffects // Type is media effects.
+		MediaEffects
+		[
+			&/SW_PARTICLES/ProtonThrusterTrail // Particle effect for the thruster trail.
+			&/SW_PARTICLES/ProtonTrail // Particle effect for the main trail.
+			&/SW_PARTICLES/ProtonThrusterGlow // Glow effect from the thruster.
+		]
+	}
+}
+
+DeployDeath // Defines a deployment behavior that occurs upon death.
+{
+	Type = DeathByLifetime // The type of death condition is based on a timer (lifetime).
+	Lifetime = 1.25 // The lifetime duration in seconds after which this death condition triggers.
+	FactorEffectsWith = Targetable // This death effect factors in the properties of the 'Targetable' component.
+
+	OnDeath // Defines what happens when the death condition is met.
+	{
+		HitEffects // Array of effects triggered upon hitting the death condition.
+		[
+			{
+				Type = SpawnBullets // The effect type; in this case, it spawns new bullets.
+				Bullet = &~/Stage2 // Reference to the bullet type to be spawned, typically a next stage or part of a multi-stage missile.
+				Count = 1 // Number of bullets to spawn.
+				InheritVelocity = true // Newly spawned bullets will inherit the velocity of the original entity.
+				ScaleHealth = true // Health scaling is applied based on the health of the original entity.
+			}
+		]
+	}
+}
+
+
+*/

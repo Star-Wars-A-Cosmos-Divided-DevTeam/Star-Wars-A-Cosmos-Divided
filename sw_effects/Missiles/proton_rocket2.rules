@@ -1,0 +1,127 @@
+ID = SW.proton_rocket_stage2
+Range = &<proton_rocket.rules>/Range
+IdealRange = &<proton_rocket.rules>/IdealRange
+Speed = 0
+
+Components
+{
+    Physics
+    {
+        Type = CirclePhysics
+        Radius = 0.1
+        Density = 0.1
+        LinearDamping = 0  // No damping as it will explode immediately
+    }
+
+
+	DeathByDistanceTraveled
+	{
+		Type = DeathByDistanceTraveled
+		Distance = 3(&~/Range)
+		// Distance auto-computed from range.
+		HasTarget = false
+	}
+	DeathByDistanceTraveledTargeted
+	{
+		Type = DeathByDistanceTraveled
+		Distance = (&~/Range) * 3
+		HasTarget = true
+	}
+
+    Hit
+    {
+        Type = SimpleHit
+        //Penetration = 0  // No penetration, direct explosive damage
+        HitEffects
+        [
+            {
+                Type = ExplosiveDamage
+                TotalDamage = 180000  // High damage for significant impact
+                Radius = 15  // Large radius to affect a wide area
+                ExpandDuration = 1.0  // Duration of explosion effect
+                ExpandStartRadius = 0.5  // Starting radius of explosion
+                ExpandLoss = 100%  // No reduction in damage over distance
+                ImpulsePerNDamage = 20  // Strong impulse effect
+                NDamage = 1500  // High damage points
+                Filter
+                {
+                    OperationalHealth = true
+                    StructuralHealth = true
+                    Friendlies = false  // Assuming it should damage enemies only
+                }
+            }
+        ]
+
+        MediaEffects
+        [
+        	&/SW_PARTICLES/SWIonLargeHitPurple
+            &/SW_PARTICLES/SWIonExplosionHit
+            &/SW_PARTICLES/SWIonExplosionShockwave
+            &/SW_PARTICLES/SWIonExplosionDischarge
+            &/SW_SOUNDS/SW_Proton_Missile_Hit
+
+            : /BASE_SHAKE
+            {
+                ShakeAmount = 0.2  // Stronger shake effect for more dramatic impact
+                Duration = 1.0  // Longer shake duration
+            }
+        ]
+    }
+
+   Sprite
+    {
+        Type = AnimatedSprite
+        ReduceScaleWith = Hit
+        ReduceScaleExponent = 0.5
+        Animation
+        {
+            AtlasSprite
+            {
+                Texture
+                {
+                    File = "missile.png"
+                    SampleMode = Linear
+                    MipLevels = max
+                }
+                Size = [1.5, 1.5]
+                TargetBlendMode
+                {
+                    SourceRgbFactor = SourceAlpha
+                    DestRgbFactor = One
+                    RgbOperator = Add
+                    SourceAlphaFactor = Zero
+                    DestAlphaFactor = One
+                    AlphaOperator = Add
+                }
+            }
+            FrameCount = 16
+            FrameSize = [128, 128]
+            FramesPerRow = 4
+            FramesPerSecond = 60
+        }
+    }
+
+    GlowSprite
+    {
+        Type = Sprite
+        RenderBucket = BulletUpper2
+        Z = 0
+        IsLight = true
+        Sprite
+        {
+            Texture
+            {
+                File = "./Data/common_effects/particles/blob.png"
+                MipLevels = max
+                SampleMode = Linear
+            }
+            Size = [10, 10]
+            VertexColor = [240, 160, 240]
+            TargetBlendMode = Add
+            Shader = "./Data/common_effects/fancy_light.shader"
+            _litReflectiveStrength = 24
+            _litAdditiveStrength = 0.05
+            _unlitAdditiveStrength = 0.25
+        }
+    }
+}
