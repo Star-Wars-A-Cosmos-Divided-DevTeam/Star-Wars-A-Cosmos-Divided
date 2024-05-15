@@ -12,7 +12,7 @@ Web site: <https://www.cosmoteer.net/>
 
 Forum: <https://forum.cosmoteer.net/>
 
-Steam Workshop: <https://to.add/>
+Steam Workshop: [Star Wars: A Cosmos Divided Main Mod][workshop_link]
 
 ## STAR WARS
 
@@ -124,5 +124,6 @@ Turkish = English or ChatGPT (searching translators)
 If you have any problem, suggestion, comment, or you found a bug in my
 mod, you can post in the mod section of the Cosmoteer Forum, in the Official Discord, or on our linked Discord.
 
+[workshop_link]: https://steamcommunity.com/sharedfiles/filedetails/?id=3119349707
 [discord_link]: https://discord.gg/XxmMsdwtcF
 [discord_discussion_link]: https://discord.com/channels/358437446314098699/358437446746374145
