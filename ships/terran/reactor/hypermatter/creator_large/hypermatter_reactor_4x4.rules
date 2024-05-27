@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../../base_part_terran_reactors.rules>/Part
 {
 	//IDs
 	ID = SW.hypermatter_reactor_4x4
@@ -96,7 +96,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResourcesPickUp = 3000
 			InitPickUp = 1000
 			PickUpRate = 1000
-			ExpectedResourceGenerationRate = (&../HypermatterProducer/ToQuantity) / (&../HypermatterProducer/Interval)
+			ExpectedResourceGenerationRate = { BaseValue = (&../../HypermatterProducer/ToQuantity) / (&../../HypermatterProducer/Interval/BaseValue); BuffType=ElectronDebuff; BuffMode=Multiply; }
 			ToggleOnResources = 1000
 			ToggleOffResources = (&ToggleOnResources) -1
 		}
@@ -106,7 +106,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			ToStorage = HypermatterStorage
 			ToQuantity = 1000
-			Interval = 1
+			Interval =  { BaseValue=1; BuffType=ElectronDebuff; BuffMode=Divide; } //1
 		}
 		HypermatterStorageBar
 		{
@@ -465,7 +465,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		HypermatterGeneration = (&~/Part/Components/HypermatterProducer/ToQuantity) / (&~/Part/Components/HypermatterProducer/Interval) / 1000
+		HypermatterGeneration = (&~/Part/Components/HypermatterProducer/ToQuantity) / (&~/Part/Components/HypermatterProducer/Interval/BaseValue) / 1000
 		HypermatterSize = (&~/Part/Components/HypermatterStorage/MaxResourcesPickUp) / 1000
 		HypermatterFillTime = 0 / (&~/Part/Components/HypermatterStorage/PickUpRate)
 		HypermatterCapacity = (&~/Part/Components/HypermatterStorage/MaxResources) / 1000

@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../../base_part_terran_reactors.rules>/Part
 {
 	//IDs
 	ID = SW.hypermatter_reactor_12x12
@@ -211,7 +211,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResourcesPickUp = 3000
 			InitPickUp = 3000
 			PickUpRate = 10000
-			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+			ExpectedResourceGenerationRate = { BaseValue = (&../../BatteryProducer/ToQuantity) / (&../../BatteryProducer/Interval/BaseValue) / 4; BuffType=ElectronDebuff; BuffMode=Multiply; }
 			ToggleOnResources = 5000
 			ToggleOffResources = (&ToggleOnResources)-1
 		}
@@ -228,8 +228,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 			ToStorage = BatteryStorage
 			ToQuantity = 1000
-			Interval = 3/30
-			//CheckResourceLimits = true
+			Interval =  { BaseValue=(3/30); BuffType=ElectronDebuff; BuffMode=Divide; }// 3/30
 		}
 		BatteryStorageBar
 		{
@@ -250,7 +249,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			//SuppliesResources = true
 			MinResourcesPickUp = 1000
 			MaxResourcesPickUp = 3000
-			ExpectedResourceGenerationRate = (&../HypermatterProducer/ToQuantity) / (&../HypermatterProducer/Interval)
+			ExpectedResourceGenerationRate = { BaseValue = (&../../HypermatterProducer/ToQuantity) / (&../../HypermatterProducer/Interval/BaseValue); BuffType=ElectronDebuff; BuffMode=Multiply; }
 			ToggleOnResources = 1000
 			ToggleOffResources = (&ToggleOnResources) -1
 		}
@@ -260,8 +259,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			ToStorage = HypermatterStorage
 			ToQuantity = 10
-			Interval = 1/10
-			//CheckResourceLimits = true
+			Interval =  { BaseValue=(3/30); BuffType=ElectronDebuff; BuffMode=Divide; } //1/10
 		}
 		HypermatterConsumer
 		{
@@ -479,16 +477,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
 		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
 		BatteryFillTime = 1000 / (&~/Part/Components/BatteryStorage/PickUpRate)
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	
-		HypermatterGeneration = (&~/Part/Components/HypermatterProducer/ToQuantity) / (&~/Part/Components/HypermatterProducer/Interval) / 1000
+		HypermatterGeneration = (&~/Part/Components/HypermatterProducer/ToQuantity) / (&~/Part/Components/HypermatterProducer/Interval/BaseValue) / 1000
 		HypermatterSize = (&~/Part/Components/HypermatterStorage/MaxResourcesPickUp) / 1000
 		HypermatterFillTime = 0
 		HypermatterCapacity = (&~/Part/Components/HypermatterStorage/MaxResources) / 1000
-		HypermatterPerSecond = (&~/Part/Components/BatteryProducer/From/0/Quantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		HypermatterPerSecond = (&~/Part/Components/BatteryProducer/From/0/Quantity) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
 
 		RecHypermatter = &HypermatterPerSecond
 		RecCrew = (&RecHypermatter) * 2
