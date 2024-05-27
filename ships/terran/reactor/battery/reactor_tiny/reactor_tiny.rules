@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../../base_part_terran_reactors.rules>/Part
 {
 	//IDs
 	ID = SW.reactor_tiny
@@ -77,7 +77,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResourcesPickUp = 1000
 			InitPickUp = 500
 			PickUpRate = 500 / 1.0
-			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+			ExpectedResourceGenerationRate = { BaseValue = (&../../BatteryProducer/ToQuantity) / (&../../BatteryProducer/Interval/BaseValue); BuffType=ElectronDebuff; BuffMode=Multiply; }
 			ToggleOnResources = 500
 			ToggleOffResources = (&ToggleOnResources)-1
 		}
@@ -86,7 +86,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceConverter
 			ToStorage = BatteryStorage
 			ToQuantity = 500
-			Interval = .6666
+			Interval = { BaseValue=(20/30); BuffType=ElectronDebuff; BuffMode=Divide; } //.6666
 		}
 		BatteryStorageBar
 		{
@@ -309,7 +309,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
-		DestroyedEffects = &<./data/ships/terran/reactor_small/reactor_small.rules>/Part/Components/DestroyedEffects
+		DestroyedEffects : &<./data/ships/terran/reactor_small/reactor_small.rules>/Part/Components/DestroyedEffects
+		{
+			Location = [0.5, 0.5]
+		}
 
 		Indicators
 		{
@@ -340,7 +343,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
 		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
 		BatteryFillTime = 1000 / (&~/Part/Components/BatteryStorage/PickUpRate)
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000

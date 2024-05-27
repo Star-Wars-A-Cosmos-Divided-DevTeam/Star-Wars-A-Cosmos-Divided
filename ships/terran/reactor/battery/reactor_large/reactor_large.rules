@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../../base_part_terran_reactors.rules>/Part
 {
 	//IDs
 	ID = SW.reactor_large
@@ -82,7 +82,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResourcesPickUp = 3000
 			InitPickUp = 2001
 			PickUpRate = 1000 / 1.0
-			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+			ExpectedResourceGenerationRate = { BaseValue = (&../../BatteryProducer/ToQuantity) / (&../../BatteryProducer/Interval/BaseValue); BuffType=ElectronDebuff; BuffMode=Multiply; }
 			ToggleOnResources = 6001
 			ToggleOffResources = (&ToggleOnResources)-1
 		}
@@ -91,7 +91,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ResourceConverter
 			ToStorage = BatteryStorage
 			ToQuantity = 1000
-			Interval = .2222 / 3
+			Interval =  { BaseValue=(2/30); BuffType=ElectronDebuff; BuffMode=Divide; } //(2/30)
 		}
 		BatteryStorageBar
 		{
@@ -365,72 +365,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
-		DestroyedEffects
+		DestroyedEffects : &<./data/ships/terran/reactor_large/reactor_large.rules>/Part/Components/DestroyedEffects
 		{
-			Type = DeathEffects
 			Location = [1.5, 1.5]
-
-			MediaEffects
-			[
-				&<./Data/ships/terran/reactor_large/particles/reactor_explode_large.rules>
-				&<./Data/ships/terran/reactor_large/particles/reactor_explode_flash_large.rules>
-				&<./Data/ships/terran/reactor_large/particles/reactor_shockwave_large.rules>
-				&<./Data/common_effects/particles/explosions/huge_part_explode_debris.rules>
-				&<./Data/common_effects/particles/explosions/huge_part_explode_smoke.rules>
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/ships/terran/reactor_small/destroyed.wav"
-					Volume = 2
-					Speed = .5
-					SpeedVariation = .25 * (&Speed)
-				}
-
-				: /BASE_SHAKE
-				{
-					ShakeAmount = .75
-					Duration = 4
-				}
-			]
-
-			HitEffects
-			[
-				{
-					Type = ExplosiveDamage
-					TotalDamage = 810000*(&~/Scale)
-					Radius = 18
-					Delay = .05
-					ExpandDuration = .35
-					ExpandStartRadius = 4
-					ExpandLoss = 100%
-					FireChancePerNDamage = 50%
-					ImpulsePerNDamage = 10
-					NDamage = 1000
-					Filter
-					{
-						OperationalHealth = true
-						StructuralHealth = false
-						Friendlies = true
-					}
-				}
-				{
-					Type = ExplosiveDamage
-					TotalDamage = 180000*(&~/Scale)
-					Radius = 12
-					Delay = .05
-					ExpandDuration = .2
-					ExpandStartRadius = 4
-					ExpandLoss = 100%
-					ImpulsePerNDamage = 5
-					NDamage = 1000
-					Filter
-					{
-						OperationalHealth = false
-						StructuralHealth = true
-						Friendlies = true
-					}
-				}
-			]
 		}
 
 		Indicators
@@ -462,7 +399,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Stats
 	{
-		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
+		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
 		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
 		BatteryFillTime = 1000 / (&~/Part/Components/BatteryStorage/PickUpRate)
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
