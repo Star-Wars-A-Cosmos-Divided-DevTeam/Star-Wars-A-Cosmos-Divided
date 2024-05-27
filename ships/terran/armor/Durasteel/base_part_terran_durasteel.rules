@@ -29,11 +29,11 @@ Part : &<../base_part_terran_armor.rules>/Part
 	FractionalCostToRepair = 20%
 	ConstructionDuration = 0.5 //Buff
 	RepairDuration = 0.5 //Buff
-	Density = 1.5 //v:3?
-	MaxHealth = 6000
+	Density = 1.5 //v:3? //0.5v
+	MaxHealth = 6000 //v:4000
 	//HealthType = Operational
 	ExplosiveDamageAbsorption = 100%
-	DamageResistances = {explosive = 60%}
+	DamageResistances = {explosive = 40%} //1.5HP x 0.5TONS
 	Flammable = false
 	UnderlyingPartPerTile = SW.structure_durasteel
 	UnderlyingPart = "" //SW.structure_durasteel
@@ -51,7 +51,7 @@ Part : &<../base_part_terran_armor.rules>/Part
 	//ProhibitBelow = 0
 	//Prohibits = [default]
 	//ProhibitedBy = [default]
-	SelectionTypeID = "armor" //armor stuff
+	SelectionTypeID = "durasteel_armor" //armor stuff
 	//SelectionPriority = 0 //v value 0
 	//SelectionTypeByRotation = false //v value false
 	//IsExternal = false //v value false
@@ -65,12 +65,12 @@ Part : &<../base_part_terran_armor.rules>/Part
 	//ExternalWalls = [All]//each file own def
 	//InternalWalls = [None]//each file own def
 	AllowedDoorLocations = []
-	TypeCategories = [durasteelarmor, armor] //own type + vanilla
+	TypeCategories = [durasteel_armor, armor] //own type + vanilla
 	//RequiresCategories = [] //no requirements
 	FlipHRotate = [0, 3, 2, 1] //using vanila def mostly
 	FlipVRotate = [2, 1, 0, 3] //using vanila def mostly
 	InitialPenetrationResistance = 14 //common value// most files use own def
-	ContinuingPenetrationResistance = &InitialPenetrationResistance //(floor((&InitialPenetrationResistance)/2.5)) //shared scaler //shared across all
+	ContinuingPenetrationResistance = (floor((&InitialPenetrationResistance)/2.5)) //shared scaler //shared across all
 	ReceivableBuffs : ^/0/ReceivableBuffs [] //common own type buffs later?
 
 	Components : ^/0/Components
@@ -99,39 +99,12 @@ Part : &<../base_part_terran_armor.rules>/Part
 			RandomUVRotation = true
 			AtlasSprite = &<../../structures/structure_modified/structure_durasteel.rules>/Part/Components/Graphics/Floor/DamageLevels/0
 		}
-
-		ConstructionProgressSprites
-		{
-			Type = BlendSpriteGrid
-			IncludeWhenUnderConstruction = true
-			IncludeWhenNotUnderConstruction = false
-			Layer = "construction"
-			AmbiguousSprites = &<./Data/ships/terran/construction/scaffolding.rules>/AmbiguousSprites
-			AllowUndefinedBlendSprites = true
-			BlendsWithCategories = []
-			AlwaysBlendWithSelf = true
-			UseConstructionProgressAsDamage = true
-		}
-
-		ConstructionProgressAnimationSprites
-		{
-			Type = BlendSpriteGrid
-			IncludeWhenUnderConstruction = true
-			IncludeWhenNotUnderConstruction = false
-			GetColorFrom = ConstructionTracker
-			Layer = "construction_delta"
-			AmbiguousSprites = &<./Data/ships/terran/construction/scaffolding_delta/scaffolding_delta.rules>/AmbiguousSprites
-			AllowUndefinedBlendSprites = true
-			BlendsWithCategories = []
-			AlwaysBlendWithSelf = true
-			UseConstructionProgressAsDamage = true
-		}
 	}
 }
 
 MaxHealth = 6000
 Density = 1.5
-InitialPenetrationResistance = 16
+InitialPenetrationResistance = 14
 Cost = 8
 Scale = (1)
 
