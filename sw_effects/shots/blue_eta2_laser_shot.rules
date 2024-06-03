@@ -1,7 +1,7 @@
 ID = SW.eta2_small_laser_shot_common //DIRECT WEAPONSHOT
 OtherIDs = ["eta2_small_laser_shot"]
-Range = 450
-IdealRange = [135, 450]
+Range = 350
+IdealRange = [135, 350]
 IdealRadius = [5, 50]
 Speed = 200 //120
 
@@ -140,7 +140,7 @@ Components
 			[
 				{
 					Type = Damage
-					Damage = 250 // 58
+					Damage = 200 // 58
 				}
 			]
 
@@ -163,6 +163,58 @@ Components
 		FinishedPenetratingStructural = &PenetratingStructural
 	}
 
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "laser_ball_blue_shot.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [0.64, 0.64]
+			}
+			FrameCount = 8
+			FrameSize = [128, 128]
+			FramesPerRow = 2
+			FramesPerSecond = 32
+		}
+//		NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [4, 4]
+			VertexColor = [0, 0, 255]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
+	}
+/*
 	Sprite
 	{
 		Type = AnimatedSprite
@@ -201,4 +253,5 @@ Components
 			&/SW_PARTICLES/Shot/Laser/Glow/Small/Blue
 		]
 	}
+*/
 }
