@@ -211,23 +211,36 @@ Part : &<../Cockpit/cockpit.rules>/Part
 				]
 			}
 		}
-		RCSThruster
+		// Maneuvering Thrusters - Start
+		MainAuxThruster
 		{
 			Type = Thruster
+			Location = [0.5, 2.0] // Relative to upper-left corner of unrotated part.
+			Rotation = 90d // Relative to unrotated part.
 			OperationalToggle = IsOperational
-			Location = [0.5, 1]
+			Force = 250
+			MinActivation = -1
+			MaxActivation = 3
+			MinUncommandedActivation = -1
+			MaxUncommandedActivation = 1
+			ActivationIncreaseTime = 1
+			ActivationRecoveryTime = 1
+		}
+
+		LateralAuxThruster : MainAuxThruster 
+		{	
+			Location = [0.5, 0.0]
 			Rotation = 0d
-			Force = 120
 			MinActivation = -1
 			MaxActivation = 1
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = 1
-			ActivationRecoveryTime = 1
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = 5
+			ActivationIncreaseTime = 0.1
+			ActivationRecoveryTime = 0.1
 			AllowAutoFire = false
-		}
+		}	
+		// Maneuvering Thrusters - End
+
 		// Extinguisher Graphics - Start
 		ExtinguisherSprite
 		{
