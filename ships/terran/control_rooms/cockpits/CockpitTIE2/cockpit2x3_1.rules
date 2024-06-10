@@ -37,10 +37,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	InitialPenetrationResistance = 2
 	IsContiguityOrigin = true
 	IsShipForward = true
-	ThrusterForce = 300
+	ThrusterForce = 400
 	ThrustIncreaseTime = 0
 	ThrustRecoveryTime = 0
-	FuelUsage = 75
+	FuelUsage = 10
 
     //ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust]
@@ -87,13 +87,40 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = All
 		}
 
+		IsOperationalAndHypernodeConnectedToggle
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, HypernodeConnectedToggle]
+			Mode = All
+		}
+
+		HypernodeConnectedToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Hypernode_Interface
+		}
+
+		EngineBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = Engine
+		}
+
+		PowerDistributionBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = EnginePowerDistribution
+		}
+
+
+/*
 		ThrusterIsOperational
 		{
 			Type = MultiToggle
 			Toggles = [PowerToggle, PartCrew]
 			Mode = All
 		}
-
+*/
 		//Command
 		CommandProvider
 		{
@@ -562,7 +589,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterGraphics 
 		{
 			Type = Graphics
-			OperationalToggle = ThrusterIsOperational
+			OperationalToggle = IsOperational
 			Location = [1, 2]
 
 			Floor
@@ -590,13 +617,34 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterAnimations
 		{
 			Type = Graphics
-			OperationalToggle = ThrusterIsOperational
+			OperationalToggle = IsOperational
+			GetColorFrom = ColorPickerThruster
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0.64, 2.7]
 
 			Location = [1, 2]
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				Offset = [0, .6]
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../../../Thrusters/Ion/IonThruster01_1x1/lights_1_bleached.png"
+							"../../../Thrusters/Ion/IonThruster01_1x1/lights_2_bleached.png"
+						]
+						Size = [1, 2]
+						AnimationInterval = 0.1
+					}
+				]
+			}
 			OperationalDoodad 
 			{
 				Layer = "doodads_high"
-				//Offset = [0, 45/64]
+				//Offset = [0, .2]
 				DamageLevels
 				[
 					{
@@ -619,7 +667,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			NonOperationalDoodad
 			{
 				Layer = "doodads_high"
-				//Offset = [0, 45/64]
+				//Offset = [0, .2]
 				DamageLevels
 				[
 					{
@@ -628,6 +676,42 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+			/*
+			OperationalRoofDoodad //These should be turned off till they look like proper glow effects.
+			{
+				Layer = "roof_doodads"
+				Offset = [0, -0.5]
+				DamageLevels
+				[
+					{
+						File = "roof_glows.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_glows_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_glows_66.png"
+						Size = [1, 1]
+					}
+				]
+			}	
+			OperationalRoofLighting 
+			{
+				Layer = "roof_lights_fancy"
+				Offset = [0, 0.22]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [1.5, 1.5]
+						Z = 1 // Controls the "height" of the light for the purposes of normal mapping.
+						//VertexColor = [16, 120, 255] // [6, 57, 113]
+					}
+				]
+			}
+			*/	
 		}
 
 		ThrustBuffProvider
@@ -637,139 +721,142 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ChainsFromBuffType = SW_Ion_Thruster_Overdrive
 			BuffAmount = { BaseValue=100%; BuffType=SW_Ion_Thruster_Overdrive; BuffMode=Add; }
 		}
+		/*
+		NozzleCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0			, 1			]
+				[1			, 1			]
+				[1 - 13/64	, 1 + 20/64	]
+				[0 + 13/64	, 1 + 20/64	]
+			]
+			Density = 1.35
+		}*/
+		NozzleGraphics
+		{
+			Type = Graphics
+			Location = [1, 3.1]
+			Floor
+			{
+				Layer = "weapons"
+				DamageLevels
+				[
+					{
+						File = "../../../Thrusters/Ion/IonThruster01_1x1/nozzle.png"
+						NormalsFile = "../../../Thrusters/Ion/IonThruster01_1x1/nozzle_normals.png"
+						Size = [1.0, 1.0]
+					}
+					{
+						File = "../../../Thrusters/Ion/IonThruster01_1x1/nozzle_33.png"
+						NormalsFile = "../../../Thrusters/Ion/IonThruster01_1x1/nozzle_normals_33.png"
+						Size = [1.0, 1.0]
+					}
+					{
+						File = "../../../Thrusters/Ion/IonThruster01_1x1/nozzle_66.png"
+						NormalsFile = "../../../Thrusters/Ion/IonThruster01_1x1/nozzle_normals_66.png"
+						Size = [1.0, 1.0]
+					}
+				]
+			}
+		}
 
-		MainThruster 
+		MainThruster
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
-			Location = [0.5, 3]// Relative to upper-left corner of unrotated part.
+			Location = [0.5, 1 + 20/64]
 			Rotation = 90d// Relative to unrotated part.
-			Force = &../../ThrusterForce
-			MinActivation = -0.1
-			MaxActivation = { BaseValue=4; BuffType=SW_Ion_Thruster_Overdrive_Thrust; BuffMode=Multiply; }
-			MinUncommandedActivation = &MinActivation
-			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
-		}
-		MainThruster2 
-		{
-			Type = Thruster
-			OperationalToggle = IsOperational
-			Location = [1.5, 3]// Relative to upper-left corner of unrotated part.
-			Rotation = 90d// Relative to unrotated part.
-			Force = &../../ThrusterForce
-			MinActivation = -0.1
-			MaxActivation = { BaseValue=4; BuffType=SW_Ion_Thruster_Overdrive_Thrust; BuffMode=Multiply; }
-			MinUncommandedActivation = &MinActivation
-			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
-		}
-
-		LateralThrustOfMainThruster
-		{
-			Type = Thruster
-			OperationalToggle = ThrusterIsOperational
-			Location = [1, 3]// Relative to upper-left corner of unrotated part.
-			//ChainedTo = MainThruster
-			Rotation = 0d// Relative to main thruster.
-			Force = &../../ThrusterForce
-			MinActivation = { BaseValue=-0.25; BuffType=Engine; BuffMode=Multiply; }
-			MaxActivation = { BaseValue=0.25; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = 0
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
-			AllowAutoFire = false
-		}
-
-		BackwardThruster
-		{
-			Type = Thruster
-			OperationalToggle = ThrusterIsOperational
-			Location = [1, 0]// Relative to upper-left corner of unrotated part.
-			Rotation = -90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=0.35; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
+			MaxActivation = { BaseValue=5; BuffType=SW_Ion_Thruster_Overdrive_Thrust; BuffMode=Multiply; }
+			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
 		}
-
-		LateralThrustOfBackwardThruster
+		LateralThruster : MainThruster
 		{
-			Type = Thruster
-			OperationalToggle = ThrusterIsOperational
-			//ChainedTo = BackwardThruster
-			Rotation = 180d// Relative to main thruster.
+			Rotation = 0d
+			MinActivation = -0.05
+			MaxActivation = 0.05
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			AllowAutoFire = false
+		}
+		ReverseThruster : MainThruster
+		{
+			Rotation = -90d
 			Force = &../../ThrusterForce
-			MinActivation = { BaseValue=-0.25; BuffType=Engine; BuffMode=Multiply; }
-			MaxActivation = { BaseValue=0.25; BuffType=Engine; BuffMode=Multiply; }
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = 0
+			MinActivation = 0
+			MaxActivation = 0.20
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
-			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
 			AllowAutoFire = false
 		}
 
-		ThrustEffectsForward
+		ThrustEffectsSounds
 		{
 			Type = ContinuousEffects
-			ChainedTo = MainThruster
-			FactorMediaEffectsIntensityWith = MainThruster
+			ChainedTo = MainThrusterLocationProxy
+			FactorMediaEffectsIntensityWith = DoodadAnimationSpeedFactorValue
 			MediaEffects
 			[
-				//&<./Data/ships/terran/thruster_med/particles/thruster_trail_med.rules>
-				//&<./Data/ships/terran/thruster_med/particles/thruster_glow_med.rules>
-
-				&/SW_PARTICLES/Thruster/Ion/Glow/Small/Red
-
 				: /SW_SOUNDS/ThrusterRumble
 				{
-					Volume = .125
-					Speed = 1.5
-					MaxConcurrentVolume = .25
+					Volume = .075
+					Speed = 2
+					MaxConcurrentVolume = .15
 				}
 			]
 		}
+
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
-			AmountFrom = MainThruster
-			MinAmount = .5
+			AmountFrom = MainThrusterValueProxy
+			MinAmount = 0.5
 		}
 
-		BurstEffects
+		BurstEffectsSounds
 		{
 			Type = TriggeredEffects
-			ChainedTo = MainThruster
+			ChainedTo = MainThrusterLocationProxy
 			Trigger = BurstTrigger
-			FactorMediaEffectsIntensityWith = MainThruster
+			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
 			AnchorMediaEffects = true
 			MediaEffects
 			[
 				: /SW_SOUNDS/ThrusterBurst
 				{
-					Volume = .125
-					Speed = 1.5
-					MaxConcurrentVolume = .25
+					Volume = 0.125
+					Speed = 1
+					MaxConcurrentVolume = 0.25
 				}
 			]
 		}
 
+		ThrusterHum
+		{
+			Type = ContinuousEffects
+			Location = [1, 1.5]
+			OperationalToggle = IsOperational
+			MediaEffects
+			[
+				: /SW_SOUNDS/ThrusterHum
+				{
+					Volume = .05
+					Speed = 1.5
+					MaxConcurrentVolume = 1
+				}
+			]
+		}
 
 		BatterySprites
 		{
@@ -821,6 +908,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
 
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
@@ -846,7 +934,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
-/* 1x1 Thrsuter stuff
+
 		ColorPickerThruster
 		{
 			Type = UIColor
@@ -898,35 +986,35 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = ThrusterEffectGlowToggle
-			Components = &<particles/thruster_colorable_glow.rules>/Components
+			Components = &<../../../Thrusters/Ion/IonThruster01_1x1/particles/thruster_colorable_glow.rules>/Components
 		}
 
 		ThrusterEffectSparksComponents
 		{
 			Type = ToggledComponents
 			Toggle = ThrusterEffectSparksToggle
-			Components = &<particles/thruster_colorable_sparks.rules>/Components
+			Components = &<../../../Thrusters/Ion/IonThruster01_1x1/particles/thruster_colorable_sparks.rules>/Components
 		}
 
 		ThrusterEffectFullsetComponents
 		{
 			Type = ToggledComponents
 			Toggle = ThrusterEffectFullsetToggle
-			Components = &<particles/thruster_colorable_fullset.rules>/Components
+			Components = &<../../../Thrusters/Ion/IonThruster01_1x1/particles/thruster_colorable_fullset.rules>/Components
 		}
 
 		ThrusterEffectRocketsetComponents
 		{
 			Type = ToggledComponents
 			Toggle = ThrusterEffectRocketToggle
-			Components = &<particles/thruster_colorable_rocketset.rules>/Components
+			Components = &<../../../Thrusters/Ion/IonThruster01_1x1/particles/thruster_colorable_rocketset.rules>/Components
 		}
 
 		HypernodeEffectComponents
 		{
 			Type = ToggledComponents
 			Toggle = IsOperationalAndHypernodeConnectedToggle
-			Components = &<particles/thruster_cyan_hypernodeset.rules>/Components
+			Components = &<../../../Thrusters/Ion/IonThruster01_1x1/particles/thruster_cyan_hypernodeset.rules>/Components
 		}
 
 		MainThrusterLocationProxy
@@ -960,7 +1048,68 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = BuffableValue
 			Value = { BaseValue=0; BuffType=SW_Hypernode_Interface; BuffMode=Add; }
 		}
-*/
+
+		DoodadAnimationSpeedFactorValue
+		{
+			Type = MultiValue
+			Values = [MainThrusterValueProxy, ReverseThrusterValueProxy]
+			Mode = Add
+		}
+
+		ThrusterActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ThrusterIsFiringThresholdToggle
+			ShowProgressFor = MainThrusterValueProxy
+			LowColor = [0, 0, 0]
+			HighColor = [250, 250, 250]
+			FullColor = [255, 255, 255]
+		}
+
+		ThrusterIsFiringThresholdToggle
+		{
+			Type = ThresholdToggle
+			ValueFrom = MainThrusterValueProxy
+			MinAmount = 10%
+		}
+
+		EngineBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Ion_Thruster_Overdrive
+			ChainsFromBuffType = Engine
+			BuffAmount = { BaseValue=-100%; BuffType=Engine; BuffMode=Add; }
+			OperationalToggle = EngineBuffToggle
+		}
+
+		ThrusterIsFiringRampUpBuff
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Ion_Thruster_Overdrive
+			BuffAmount = 60%
+			BuffMultiplier = ThrusterIsFiringTween
+			OperationalToggle = ThrusterIsFiringThresholdToggle
+		}
+		ThrusterIsFiringTween
+		{
+			Type = ValueTween
+			OffValue = 0
+			OnValue = 1 //+60% Boost if on for OnTweenDuration
+			OnTweenDuration = 12 //target is to reward continous flight and NOT provide burst buffing
+			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
+			IsOnToggle = ThrusterIsFiringThresholdToggle
+		}
+		OverdriveActivationBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ThrusterIsFiringThresholdToggle
+			ShowProgressFor = ThrusterIsFiringTween
+			LowColor = [0, 0, 0]
+			HighColor = [0, 250, 0]
+			FullColor = [0, 255, 0]
+			ValueRange = [&~/Part/Components/ThrusterIsFiringTween/OffValue, &~/Part/Components/ThrusterIsFiringTween/OnValue]
+		}
+
 		Indicators
 		{
 			Type = IndicatorSprites
