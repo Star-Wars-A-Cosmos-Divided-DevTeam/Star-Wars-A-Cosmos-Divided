@@ -1,18 +1,18 @@
-//This variation doesn't crash and preserves MOST of Skipper's original intended design and includes roja's graphics updates. CombinedStorage needs some fixes. (I think)
+//This variation preserves Skipper's original intended design and includes roja's graphics updates, however, this has a crash bug. Feel free to use this if you want to fix the crash bug.
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	//IDs
-	ID = SW.IonThrusterAccelerator5x10
+	ID = SW.IonThrusterAccelerator10x20
 	//OtherIDs = []
 
 	//StringKeys
-	NameKey = "Parts/IonThrusterAccelerator5x10"
-	IconNameKey = "Parts/IonThrusterAccelerator5x10Icon"
-	DescriptionKey = "Parts/IonThrusterAccelerator5x10Desc"
+	NameKey = "Parts/IonThrusterAccelerator10x20"
+	IconNameKey = "Parts/IonThrusterAccelerator10x20Icon"
+	DescriptionKey = "Parts/IonThrusterAccelerator10x20Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechII", "SWTechIII"]
-	TypeCategories = [engine_room, uses_power, SW_Ion_Accelerator, SW_Tech_II, SW_Tech_III] //, is_crewed
+	EditorGroups = ["Flight", "SWTechIII"]
+	TypeCategories = [engine_room, uses_power, SW_Ion_Accelerator, SW_Tech_III] //, is_crewed
 	RequiresCategories = [SW_Bridge]
 
 	//Resources & Size & Health
@@ -22,8 +22,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[coil2, 80]
 		[processor, 10]
 	]
-	Size = [5, 10]
-	MaxHealth = 40000
+	Size = [10, 20]
+	MaxHealth = 200000
 
 	//Selections
 	SelectionPriority = 1
@@ -41,56 +41,56 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[0, -1]
 		[1, -1]
 		[2, -1]
-		[3, -1]
-		[4, -1]
 		//
 		//
 		//
 		//
+		[7, -1]
+		[8, -1]
+		[9, -1]
+		//[0, 20]
+		[1, 20]
+		[2, 20]
 		//
-		//[0, 10]
-		[1, 10]
-		[2, 10]
-		[3, 10]
-		//
-		//
-		//[4, 10]
-		//[-1, 0]
+		[7, 20]
+		[8, 20]
+		//[9, 20]
+		[-1, 0]
 		[-1, 1]
 		[-1, 2]
 		[-1, 3]
-		//
-		//
+		[-1, 4]
+		[-1, 5]
 		[-1, 6]
 		[-1, 7]
 		[-1, 8]
-		//[-1, 9]
-		//
-		//
-		//
-		//
-		//
-		//
-		//
-		//
-		//
-		//
-		[5, 0]
-		[5, 1]
-		[5, 2]
-		[5, 3]
-		[5, 6]
-		[5, 7]
-		[5, 8]
-		//
-		//
-		//
-		//
-		//
-		//
-		//
-		//
-		//[5, 9]
+		[-1, 9]
+		[-1, 10]
+		[-1, 11]
+		[-1, 12]
+		[-1, 13]
+		[-1, 14]
+		[-1, 15]
+		[-1, 16]
+		[-1, 17]
+		[-1, 18]
+		//[-1, 19]
+		[10, 0]
+		[10, 1]
+		[10, 2]
+		[10, 3]
+		[10, 4]
+		[10, 5]
+		[10, 6]
+		[10, 7]
+		[10, 12]
+		[10, 13]
+		[10, 14]
+		[10, 15]
+		[10, 16]
+		[10, 17]
+		[10, 18]
+		//[10, 19]
 	]
 	EditorIcon
 	{
@@ -99,7 +99,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [32, 54]
+		Size = [64, 106.66]
 	}
 	Components : ^/0/Components //, <graphics.rules>
 	{
@@ -160,7 +160,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = AreaBuffProvider
 			BuffType = EnginePowerDistribution
-			BuffArea = [-5, 10, 15, 15]
+			BuffArea = [-10, 20, 30, 30]
 			OperationalToggle = DistributePowerToggle
 		}
 
@@ -168,7 +168,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 25000
+			MaxResources = 100000
 		}
 		CombinedBatteryStorage
 		{
@@ -178,7 +178,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ViaBuffs
 			{
 				OutgoingBuffProviders = [PowerDistributionBuffProvider]
-				ComponentID = BatteryStorage //s = [BatteryStorage, CombinedBatteryStorage]
+				ComponentIDs = [BatteryStorage, CombinedBatteryStorage]
 			}
 			AddMode = PrioritizeLeastResources
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
@@ -189,10 +189,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			Storage = CombinedBatteryStorage
 			DefaultPriority = &/PRIORITIES/Thruster_Supply
-			AdditionalStorageForJobPriority = [BatteryStorage] //Potentially needs to be commented out?
+			//AdditionalStorageForJobPriority = [BatteryStorage] //hmm
 			ResupplyThreshold = 500
 			OperationalToggle = PowerToggle
-			OverrideExclusiveCrewAssignment = true
 		}
 		BatteryStorageBar
 		{
@@ -203,7 +202,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
 		}
-
 		CombinedBatteryStorageBar
 		{
 			Type = ProgressBar
@@ -236,8 +234,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = AreaBuffProvider
 			BuffType = SW_Ion_Thruster_Accelerator
-			BuffAmount = { BaseValue = 15%; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Add; }
-			BuffArea = [-5, 10, 15, 15] //[0, 10, 5, 10]
+			BuffAmount = { BaseValue=75%; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Add; }
+			BuffArea = [-10, 20, 30, 30] //[0, 20, 10, 20]
 			ShowBuffRange = true
 			OperationalToggle = IsOperational
 			ChainsFromBuffType = SW_Ion_Thruster_Accelerator
@@ -276,7 +274,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = SpriteGrid
 			Location = [1.5, 0.5]
-			GridSize = [3, 1]
+			GridSize = [8, 1]
 			RandomDamageLevels
 			[
 				[
@@ -293,7 +291,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		LeftWall : &TopWall
 		{
 			Location = [0.5, 1.5]
-			GridSize = [1, 8]
+			GridSize = [1, 18]
 			RandomDamageLevels
 			[
 				[
@@ -307,8 +305,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		RightWall : &TopWall
 		{
-			Location = [4.5, 1.5]
-			GridSize = [1, 8]
+			Location = [9.5, 1.5]
+			GridSize = [1, 18]
 			RandomDamageLevels
 			[
 				[
@@ -322,8 +320,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		BottomWall : &TopWall
 		{
-			Location = [1.5, 9.5]
-			GridSize = [3, 1]
+			Location = [1.5, 19.5]
+			GridSize = [8, 1]
 			RandomDamageLevels
 			[
 				[
@@ -352,7 +350,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		TopRightWall : &TopWall
 		{
-			Location = [4.5, 0.5]
+			Location = [9.5, 0.5]
 			GridSize = [1, 1]
 			RandomDamageLevels
 			[
@@ -367,7 +365,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		BottomLeftWall : &TopWall
 		{
-			Location = [0.5, 9.5]
+			Location = [0.5, 19.5]
 			GridSize = [1, 1]
 			RandomDamageLevels
 			[
@@ -382,7 +380,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 		BottomRightWall : &TopWall
 		{
-			Location = [4.5, 9.5]
+			Location = [9.5, 19.5]
 			GridSize = [1, 1]
 			RandomDamageLevels
 			[
@@ -398,7 +396,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationalLightingGraphics
 		{
 			Type = Graphics
-			Location = [2.5, 5]
+			Location = [5, 10]
 			OperationalToggle = IsOperational
 			GetColorFrom = ColorPickerThruster
 
@@ -409,7 +407,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "../Ion_Common/IonThruster_lights.png"
-						Size = [5, 10]
+						Size = [10, 20]
 					}
 				]
 			}
@@ -420,7 +418,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "./Data/ships/common/light_blob.png"
-						Size = [7.5, 15]
+						Size = [15, 30]
 						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
 						//VertexColor = [16*1.0, 120*1.0, 255*1.0]
 					}
@@ -452,8 +450,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"../Ion_Common/roof_glowly_3c.png"
 							"../Ion_Common/roof_glowly_3b.png"
 						]
-						Size = [2.115, 2.115] // Halved size
+						Size = [4.23, 4.23]
 						AnimationInterval = 0.1
+						//AnimationInterval = 1/8
 					}
 				]
 			}
@@ -472,6 +471,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Location = &../DoodadGraphicsAnimation03_04/Location 
 			AnimationSpeedFactorRenormalize = [0, 4]
+			//Offset = [0, -0.5]
 		}
 
 		DoodadGraphics03_01
@@ -479,7 +479,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = IsOperational
 
-			Location = [2.5, 1.9765625] // Halved location
+			Location = [5, 3.953125]
 
 			OperationalDoodad
 			{
@@ -487,8 +487,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "../IonThrusterAccelerator_10x20/IonThruster_doodads03_T.png"
-						Size = [3.5, 3.5] // Halved size
+						File = "IonThruster_doodads03_T.png"
+						Size = [7, 7] // Adjusted to fit in the same space
 					}
 				]
 			}
@@ -504,7 +504,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
 			AnimationSpeedFactorRenormalize = [0, 1] //[0.64, 2.7]
 
-			Location = [2.5225, 2.89] // Halved location
+			Location = [5.045, 5.78]
 
 			OperationalDoodad
 			{
@@ -523,8 +523,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"../Ion_Common/IonThruster_doodads03_on7.png"
 							"../Ion_Common/IonThruster_doodads03_on8.png"
 						]
-						Size = [1.41, 1.41] // Halved size
+						Size = [2.82, 2.82]
 						AnimationInterval = 0.075
+						//AnimationInterval = 1/8
 					}
 				]
 			}
@@ -535,7 +536,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = IsOperational
 
-			Location = [2.5, 5.4765625] // Halved location
+			Location = [5, 10.953125]
 
 			OperationalDoodad
 			{
@@ -543,8 +544,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "../IonThrusterAccelerator_10x20/IonThruster_doodads03_M.png"
-						Size = [3.5, 3.5] // Halved size
+						File = "IonThruster_doodads03_M.png"
+						Size = [7, 7] // Adjusted to fit in the same space
 					}
 				]
 			}
@@ -559,7 +560,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
 			AnimationSpeedFactorRenormalize = [0, 2] // [0.64, 2.7]
 
-			Location = [2.5225, 4.5978125] // Halved location
+			Location = [5.045, 9.195625]
 
 			OperationalDoodad
 			{
@@ -578,13 +579,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"../Ion_Common/IonThruster_doodads03_on7.png"
 							"../Ion_Common/IonThruster_doodads03_on8.png"
 						]
-						Size = [1.41, 1.41] // Halved size
-						AnimationInterval = 0.075
+						Size = [2.82, 2.82]
+						AnimationInterval = 1/8
 					}
 				]
 			}
 		}
-
 		DoodadGraphicsAnimation03_03 : DoodadGraphicsAnimation03_01
 		{
 			Type = Graphics
@@ -593,7 +593,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
 			AnimationSpeedFactorRenormalize = [0, 3]//[0.64, 2.7]
 
-			Location = [2.5225, 6.3621875] // Halved location
+			Location = [5.045, 12.724375]
 
 			OperationalDoodad
 			{
@@ -612,8 +612,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"../Ion_Common/IonThruster_doodads03_on7.png"
 							"../Ion_Common/IonThruster_doodads03_on8.png"
 						]
-						Size = [1.41, 1.41] // Halved size
-						AnimationInterval = 0.075
+						Size = [2.82, 2.82]
+						AnimationInterval = 1/8
 					}
 				]
 			}
@@ -624,7 +624,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = Graphics
 			OperationalToggle = IsOperational
 
-			Location = [2.5, 8.25] // Halved location
+			Location = [5, 16.5]
 
 			OperationalDoodad
 			{
@@ -632,13 +632,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "../IonThrusterAccelerator_10x20/IonThruster_doodads03_B.png"
-						Size = [3.5, 3.5] // Halved size
+						File = "IonThruster_doodads03_B.png"
+						Size = [7, 7] // Adjusted to fit in the same space
 					}
 				]
 			}
 			NonOperationalDoodad = &OperationalDoodad
 		}
+
 
 		DoodadGraphicsAnimation03_04 : DoodadGraphicsAnimation03_01
 		{
@@ -648,7 +649,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
 			AnimationSpeedFactorRenormalize = [0, 4] //[0.64, 2.7]
 
-			Location = [2.5225, 8.06] // Halved location
+			Location = [5.045, 16.12]
+			//Offset = [0, -0.5]
 
 			OperationalDoodad
 			{
@@ -667,7 +669,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"../Ion_Common/IonThruster_doodads03_on7.png"
 							"../Ion_Common/IonThruster_doodads03_on8.png"
 						]
-						Size = [1.41, 1.41] // Halved size
+						Size = [2.82, 2.82]
 						AnimationInterval = 0.075
 					}
 				]
@@ -678,8 +680,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-
-			Location = [2.5, 1.05] // Halved location
+		
+			Location = [5, 2.625]
 			OperationalDoodad
 			{
 				Layer = "doodads_low"
@@ -687,7 +689,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "../Ion_Common/IonThruster_battery_holder05.png"
-								Size = [3.2,  1.28]  // Reduced by 20%
+						Size = [4, 1.6]  // Reduced by 20%
 					}
 				]
 			}
@@ -706,31 +708,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				{
 					File = "../Ion_Common/batteries_1.png"
 					Offset = [-1, 0]
-					Size = [1.6, 1.6]  // 80% of original size
+					Size = [2, 2]  // Reduced by 20%
 				}
 				{
 					File = "../Ion_Common/batteries_2.png"
-					Size = [3.2, 1.6]   // Reduced by 20%
+					Size = [4, 2]  // Reduced by 20%
 				}
 				{
 					File = "../Ion_Common/batteries_3.png"
-					Size = [3.2, 1.6]   // Reduced by 20%
+					Size = [4, 2]  // Reduced by 20%
 				}
 				{
 					File = "../Ion_Common/batteries_4.png"
-					Size = [3.2, 1.6]   // Reduced by 20%
+					Size = [4, 2]  // Reduced by 20%
 				}
 				{
 					File = "../Ion_Common/batteries_5.png"
-					Size = [3.2, 1.6]   // Reduced by 20%
+					Size = [4, 2]  // Reduced by 20%
 				}
 				{
 					File = "../Ion_Common/batteries_6.png"
-					Size = [3.2, 1.6]   // Reduced by 20%
+					Size = [4, 2]  // Reduced by 20%
 				}
 				{
 					File = "../Ion_Common/batteries_7.png"
-					Size = [3.2, 1.6]   // Reduced by 20%
+					Size = [4, 2]  // Reduced by 20%
 				}
 			]
 		}
@@ -754,7 +756,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [2.5, 5]
+			Location = [5, 10]
 			Layer = "indicators"
 			Indicators
 			[
@@ -764,7 +766,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [2.5, 2.5]
+						Size = [5, 5]
 					}
 				}
 
@@ -775,7 +777,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [2.5, 2.5]
+						Size = [5, 5]
 					}
 				}
 			]
@@ -785,15 +787,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [5, 10]
+			Size = [10, 20]
 		}
 
 		BlueprintsBuff
 		{
 			Type = BlueprintSprite
 			File = "blueprints_buff.png"
-			Size = [15, 15]
-			Offset = [0, 12.5]
+			Size = [30, 30]
+			Offset = [0, 25]
 		}
 	}
 
@@ -809,4 +811,4 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecCrew = (&RecPower) * 4
 	}
 }
-Size = Giga
+Size = Omega
