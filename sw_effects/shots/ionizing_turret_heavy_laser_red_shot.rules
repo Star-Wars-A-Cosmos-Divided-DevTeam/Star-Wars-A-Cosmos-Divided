@@ -42,8 +42,8 @@ Components
 	{
 		Type = PenetratingHit
 		FactorEffectsWith = Targetable
-		//Penetration = 200.0
-		//PenetrationSpeed = 15
+		Penetration = 50.0
+		PenetrationSpeed = 15
 		PenetratesShields = false
 
 		CrewCollisions = {Enemies=true; Junk=true}
@@ -59,6 +59,20 @@ Components
 				{
 					Type = Damage
 					Damage = 10000 
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 25000
+					Radius = 9
+					ExpandDuration = 0.2
+					ExpandStartRadius = 1
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 10000
+					// Filter
+					// {
+					// 	Friendlies = true
+					// }
 				}
 				{
 					Type = Impulse
@@ -85,7 +99,11 @@ Components
 		{
 			HitEffects
 			[
-				/*{
+				{
+					Type = Damage
+					Damage = 10000
+				}
+				{
 					Type = ExplosiveDamage
 					TotalDamage = 25000
 					Radius = 9
@@ -98,10 +116,6 @@ Components
 					// {
 					// 	Friendlies = true
 					// }
-				}*/
-				{
-					Type = Damage
-					Damage = 10000
 				}
 				{
 					Type = Impulse
@@ -126,7 +140,115 @@ Components
 				}
 			]
 		}
-		HitStructural = &HitOperational
+		HitStructural 
+		{
+			HitEffects
+			[
+
+				{
+					Type = Damage
+					Damage = 10000
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 25000
+					Radius = 9
+					ExpandDuration = 0.2
+					ExpandStartRadius = 1
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 10000
+					// Filter
+					// {
+					// 	Friendlies = true
+					// }
+				}
+				{
+					Type = Impulse
+					Impulse = 300
+				}
+			]
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/SWConcussionLaserHitRed
+				&/SW_PARTICLES/SWFlakLargeFlash
+				// &/SW_PARTICLES/SWFlakLargeSmoke
+	
+				&/SW_SOUNDS/SWConcussionLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .2
+					Duration = .75
+				}
+			]			
+		}
+		PenetratingOperational
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 2000
+				}
+				{
+					Type = Impulse
+					Impulse = 100
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/SWConcussionLaserHitRed
+				&/SW_PARTICLES/SWFlakLargeFlash
+				&/SW_SOUNDS/SWConcussionLaserHit
+			]
+		}
+		PenetratingStructural
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 2000
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 25000
+					Radius = 5
+					ExpandDuration = 0.2
+					ExpandStartRadius = 1
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 10000
+					// Filter
+					// {
+					// 	Friendlies = true
+					// }
+				}
+				{
+					Type = Impulse
+					Impulse = 100
+				}
+			]
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/SWConcussionLaserHitRed
+				&/SW_PARTICLES/SWFlakLargeFlash
+				&/SW_SOUNDS/SWConcussionLaserHit
+
+			]		
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
 	}
 	Sprite
 	{
