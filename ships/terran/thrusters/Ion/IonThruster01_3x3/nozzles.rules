@@ -1,4 +1,4 @@
-//Toggle 0 (Type A)
+//Toggle 0 (Default)
 		NozzleArtOptionToggle0
 		{
 			Type = ModeToggle
@@ -14,17 +14,26 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 4.0]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75] //4.32
 						DamageLevels
 						[
 							{
-								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]01.png"
-								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]01_normals.png"
-								Size = [7, 3.5]
+								File = "nozzle.png"
+								NormalsFile = "nozzle_normals.png"
+								Size = [3.0, 2.0]
+							}
+							{
+								File = "nozzle_33.png"
+								NormalsFile = "nozzle_normals_33.png"
+								Size = [3.0, 2.0]
+							}
+							{
+								File = "nozzle_66.png"
+								NormalsFile = "nozzle_normals_66.png"
+								Size = [3.0, 2.0]
 							}
 						]
 					}
@@ -34,74 +43,103 @@
 					Type = PolygonCollider
 					Vertices
 					[
-						[0.15, 10]
-						[0.15, 12.5]
-						[6.85, 12.5]
-						[6.85, 10]
+						[0 + 13/64	, 3			]
+						[3 - 13/64	, 3			]
+						[3 - 4/64	, 4			]
+						[3 - 4/64	, 4 + 26/64	]
+						[0 + 4/64	, 4 + 26/64	]
+						[0 + 4/64	, 4			]
 					]
-					Density = 1
+					Density = 1.35
 				}
 				NozzleOutputPosition
 				{
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 12.5]
+					Location = [1.5, 4 + 13/64]
 				}
+				LightGraphics2
+				{
+					Type = Graphics
+					Location = [1.5, 3]
+					OperationalToggle = IsOperational
+					GetColorFrom = ColorPickerThruster
+
+					AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+					AnimationSpeedFactorRenormalize = [0.64, 2.7]
+
+					OperationalLighting
+					{
+						Layer = "lights_add"
+						DamageLevels
+						[
+							{
+								AnimationFiles
+								[
+									"lights_1_bleached.png"
+									"lights_2_bleached.png"
+								]
+								Size = [3, 6]
+								AnimationInterval = 0.1
+							}
+						]
+					}
+				}			
 			}
 		}
 
 //Toggle 1 (Type E)
 		NozzleArtOptionToggle1
 		{
-			Type = ModeToggle
-			Mode = NozzleArtOptionToggle
-			OnMode = 1
+		    Type = ModeToggle
+		    Mode = NozzleArtOptionToggle
+		    OnMode = 1
 		}
 		NozzleArtOptionComponents1
 		{
-			Type = ToggledComponents
-			Toggle = NozzleArtOptionToggle1
-			Components
-			{
-				NozzleGraphics
-				{
-					Type = Graphics
-					Location = [3.5, 5]
-					Floor
-					{
-						Layer = "weapons"
-						Offset = [0, 5+(((7*4)/10)/2)]//Original offset plus ( ( ( [width of part] * [lenght of sprite] ) / [width of sprite] ) / half (sprite is centered) )
-						DamageLevels
-						[
-							{
-								File = "../Ion_Common/IonThruster_thruster_nozzle[3,1]01.png"
-								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[3,1]01_normals.png"
-								Size = [(7*10)/10, (7*4)/10]//(WIDTH * SPRITEWIDTH)/SPRITEWIDTH (redundant but yeah.),    (WIDTH * SPRITELENGHT)/SPRITEWIDTH
-							}
-						]
-					}
-				}
-				NozzleCollider
-				{
-					Type = PolygonCollider
-					Vertices
-					[
-						[0.15, 10]
-						[1.15, 12.2]
-						[5.85, 12.2]
-						[6.85, 10]
-					]
-					Density = 1
-				}
-				NozzleOutputPosition
-				{
-					Type = ContinuousEffects
-					MediaEffects = []
-					Rotation = 90d
-					Location = [3.5, 12.2]
-				}
-			}
+		    Type = ToggledComponents
+		    Toggle = NozzleArtOptionToggle1
+		    Components
+		    {
+		        NozzleGraphics
+		        {
+		            Type = Graphics
+		            Location = [1.5, 1.5]
+		            Floor
+		            {
+		                Layer = "weapons"
+		                Offset = [0, 2.025]
+		                DamageLevels
+		                [
+		                    {
+		                        File = "../Ion_Common/IonThruster_thruster_nozzle[3,1]01.png"
+		                        NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[3,1]01_normals.png"
+		                        Size = [3, 1]
+		                    }
+		                ]
+		            }
+		        }
+		        NozzleCollider
+		        {
+		            Type = PolygonCollider
+		            Vertices
+		            [
+		                [0.0643, 3]
+		                [0.1643, 3.66]
+		                [2.8357, 3.66]
+		                [2.9357, 3]
+		            ]
+		            Density = 1
+		        }
+		        NozzleOutputPosition
+		        {
+		            Type = ContinuousEffects
+		            MediaEffects = []
+		            Rotation = 90d
+					Location = [1.5, 3.81]
+		        }
+		    }
 		}
 
 //Toggle 2 (Type E)
@@ -120,17 +158,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 5+(((7*3)/10)/2)]//Original offset plus ( ( ( [width of part] * [lenght of sprite] ) / [width of sprite] ) / half (sprite is centered) )
+						Offset = [0, 2.025] // 6.75 * (3/10)
 						DamageLevels
 						[
 							{
 								File = "../Ion_Common/IonThruster_thruster_nozzle[3,1]02.png"
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[3,1]02_normals.png"
-								Size = [(7*10)/10, (7*3)/10]//(WIDTH * SPRITEWIDTH)/SPRITEWIDTH (redundant but yeah.),    (WIDTH * SPRITELENGHT)/SPRITEWIDTH
+								Size = [3, 1] // [7*(3/7), 3.5*(3/10)]
 							}
 						]
 					}
@@ -138,13 +176,13 @@
 				NozzleCollider
 				{
 					Type = PolygonCollider
-					Vertices
-					[
-						[0.15, 10]
-						[1.65, 11.78]
-						[5.35, 11.78]
-						[6.85, 10]
-					]
+            		Vertices
+            		[
+            		    [0.0643, 3]
+            		    [0.2357, 3.534]
+            		    [2.6643, 3.534]
+            		    [2.9357, 3]
+            		]
 					Density = 1
 				}
 				NozzleOutputPosition
@@ -152,7 +190,7 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 11.72]
+					Location = [1.5, 3.81]
 				}
 			}
 		}
@@ -173,17 +211,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75] //4.32
+						Offset = [0, 2.285] // 6.75 * (3/10)
 						DamageLevels
 						[
 							{
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]09.png"
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]09_normals.png"
-								Size = [7, 3.5]
+								Size = [3, 1.5] // [7*(3/7), 3.5*(3/10)]1.05
 							}
 						]
 					}
@@ -193,10 +231,10 @@
 					Type = PolygonCollider
 					Vertices
 					[
-						[0.15, 10]
-						[0.15, 12.5]
-						[6.85, 12.5]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 3.75]
+						[2.9357, 3.75]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -205,7 +243,7 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 13.47]
+					Location = [1.5, 4.52]
 				}
 			}
 		}
@@ -227,17 +265,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75] //4.32
+						Offset = [0, 2.285]
 						DamageLevels
 						[
 							{
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]04.png"
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]04_normals.png"
-								Size = [7, 3.5]
+								Size = [3, 1.5] // [7*(3/7), 3.5*(3/10)]
 							}
 						]
 					}
@@ -247,10 +285,10 @@
 					Type = PolygonCollider
 					Vertices
 					[
-						[0.15, 10]
-						[0.15, 12.8]
-						[6.85, 12.8]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 3.75]
+						[2.9357, 3.75]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -259,7 +297,7 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 12.8]
+					Location = [1.5, 4 + 13/64]
 				}
 			}
 		}
@@ -280,17 +318,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75] //4.32
+						Offset = [0, 2.285]
 						DamageLevels
 						[
 							{
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]06.png"
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]06_normals.png"
-								Size = [7, 3.5]
+								Size = [3, 1.5] // [7*(3/7), 3.5*(3/10)]
 							}
 						]
 					}
@@ -300,10 +338,10 @@
 					Type = PolygonCollider
 					Vertices
 					[
-						[0.15, 10]
-						[0.15, 12.8]
-						[6.85, 12.8]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 3.75]
+						[2.9357, 3.75]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -312,62 +350,63 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 12.8]
+					Location = [1.5, 4 + 13/64]
 				}
 			}
 		}
 //Toggle 6 (Type B)
 		NozzleArtOptionToggle6
 		{
-			Type = ModeToggle
-			Mode = NozzleArtOptionToggle
-			OnMode = 6
+		    Type = ModeToggle
+		    Mode = NozzleArtOptionToggle
+		    OnMode = 6
 		}
 		NozzleArtOptionComponents6
 		{
-			Type = ToggledComponents
-			Toggle = NozzleArtOptionToggle6
-			Components
-			{
-				NozzleGraphics
-				{
-					Type = Graphics
-					Location = [3.5, 5]
-					Floor
-					{
-						Layer = "weapons"
-						Offset = [0, 6.75] //4.32
-						DamageLevels
-						[
-							{
-								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]07.png"
-								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]07_normals.png"
-								Size = [7, 3.5]
-							}
-						]
-					}
-				}
-				NozzleCollider
-				{
-					Type = PolygonCollider
-					Vertices
-					[
-						[0.15, 10]
-						[0.15, 12.77]
-						[6.85, 12.77]
-						[6.85, 10]
-					]
-					Density = 1
-				}
-				NozzleOutputPosition
-				{
-					Type = ContinuousEffects
-					MediaEffects = []
-					Rotation = 90d
-					Location = [3.5, 12.77]
-				}
-			}
+		    Type = ToggledComponents
+		    Toggle = NozzleArtOptionToggle6
+		    Components
+		    {
+		        NozzleGraphics
+		        {
+		            Type = Graphics
+		            Location = [1.5, 1.5]
+		            Floor
+		            {
+		                Layer = "weapons"
+						Offset = [0, 2.285]
+		                DamageLevels
+		                [
+		                    {
+		                        File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]07.png"
+		                        NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]07_normals.png"
+		                        Size = [3, 1.5] // [7*(3/7), 3.5*(3/10)]
+		                    }
+		                ]
+		            }
+		        }
+		        NozzleCollider
+		        {
+		            Type = PolygonCollider
+		            Vertices
+		            [
+		                [0.0643, 3]
+		                [0.0643, 3.831]
+		                [2.9357, 3.831]
+		                [2.9357, 3]
+		            ]
+		            Density = 1
+		        }
+		        NozzleOutputPosition
+		        {
+		            Type = ContinuousEffects
+		            MediaEffects = []
+		            Rotation = 90d
+					Location = [1.5, 4 + 13/64]
+		        }
+		    }
 		}
+
 //Toggle 7 (Type D)
 		NozzleArtOptionToggle7
 		{
@@ -384,17 +423,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 5+(((7*3)/10)/2)]//Original offset plus ( ( ( [width of part] * [lenght of sprite] ) / [width of sprite] ) / half (sprite is centered) )
+						Offset = [0, 2.025]
 						DamageLevels
 						[
 							{
 								File = "../Ion_Common/IonThruster_thruster_nozzle[3,1]03.png"
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[3,1]03_normals.png"
-								Size = [(7*10)/10, (7*3)/10]//(WIDTH * SPRITEWIDTH)/SPRITEWIDTH (redundant but yeah.),    (WIDTH * SPRITELENGHT)/SPRITEWIDTH
+								Size = [3, 1] // [7*(3/7), 3.5*(3/10)]
 							}
 						]
 					}
@@ -404,10 +443,10 @@
 					Type = PolygonCollider
 					Vertices
 					[
-						[0.15, 10]
-						[1.65, 11.5]
-						[5.35, 11.5]
-						[6.85, 10]
+                		[0.0643, 3]
+                		[0.2357, 3.45]
+                		[2.6643, 3.45]
+                		[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -416,7 +455,7 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 11.46]
+					Location = [1.5, 3.72]
 				}
 			}
 		}
@@ -436,17 +475,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 5+(((7*3)/10)/2)]//Original offset plus ( ( ( [width of part] * [lenght of sprite] ) / [width of sprite] ) / half (sprite is centered) )
+						Offset = [0, 2.025] // 6.75 * (3/10)
 						DamageLevels
 						[
 							{
 								File = "../Ion_Common/IonThruster_thruster_nozzle[3,1]08.png"
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[3,1]08_normals.png"
-								Size = [(7*10)/10, (7*3)/10]//(WIDTH * SPRITEWIDTH)/SPRITEWIDTH (redundant but yeah.),    (WIDTH * SPRITELENGHT)/SPRITEWIDTH
+								Size = [3, 1]
 							}
 						]
 					}
@@ -456,10 +495,10 @@
 					Type = PolygonCollider
 					Vertices
 					[
-						[0.15, 10]
-						[1.65, 11.5]
-						[5.35, 11.5]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.2357, 3.45]
+						[2.6643, 3.45]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -468,7 +507,7 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 11.5]
+					Location = [1.5, 3.72]
 				}
 			}
 		}
@@ -489,17 +528,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 5+(((7*3)/10)/2)]//Original offset plus ( ( ( [width of part] * [lenght of sprite] ) / [width of sprite] ) / half (sprite is centered) )
+						Offset = [0, 2.025]
 						DamageLevels
 						[
 							{
 								File = "../Ion_Common/IonThruster_thruster_nozzle[3,1]05.png"
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[3,1]05_normals.png"
-								Size = [(7*10)/10, (7*3)/10]//(WIDTH * SPRITEWIDTH)/SPRITEWIDTH (redundant but yeah.),    (WIDTH * SPRITELENGHT)/SPRITEWIDTH
+								Size = [3, 1]
 							}
 						]
 					}
@@ -509,10 +548,10 @@
 					Type = PolygonCollider
 					Vertices
 					[
-						[0.15, 10]
-						[1.65, 11.5]
-						[5.35, 11.5]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.2357, 3.45]
+						[2.6643, 3.45]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -521,12 +560,12 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 11.5]
+					Location = [1.5, 3.72]
 				}
 			}
 		}
 
-		//Toggle 10 (Type G)
+//Toggle 10 (Type G)
 		NozzleArtOptionToggle10
 		{
 			Type = ModeToggle
@@ -542,17 +581,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75]
+						Offset = [0, 2.285]
 						DamageLevels
 						[	
 							{						
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]10.png"						
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]10_normals.png"						
-								Size = [7, 3.5]
+								Size = [3, 1.5] // [7*(3/7), 3.5*(3/10)]
 							}
 						]
 					}
@@ -562,10 +601,10 @@
 					Type = PolygonCollider
 					Vertices
 					[				
-						[0.15, 10]
-						[0.15, 13.45]
-						[6.85, 13.45]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 4.035]
+						[2.9357, 4.035]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -574,12 +613,12 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 13.45]
+					Location = [1.5, 4.52]
 				}
 			}
 		}
 
-		//Toggle 11 (Type G)
+//Toggle 11 (Type G)
 		NozzleArtOptionToggle11
 		{
 			Type = ModeToggle
@@ -595,17 +634,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75]
+						Offset = [0, 2.285]
 						DamageLevels
 						[					
 							{						
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]11.png"						
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]11_normals.png"						
-								Size = [7, 3.5]
+								Size = [3, 1.5]
 							}
 						]
 					}
@@ -615,10 +654,10 @@
 					Type = PolygonCollider
 					Vertices
 					[				
-						[0.15, 10]
-						[0.15, 12.5]
-						[6.85, 12.5]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 3.75]
+						[2.9357, 3.75]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -627,12 +666,12 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 13.5]
+					Location = [1.5, 4.52]
 				}
 			}
 		}
 
-		//Toggle 12 (Type G)
+//Toggle 12 (Type G)
 		NozzleArtOptionToggle12
 		{
 			Type = ModeToggle
@@ -648,17 +687,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75]
+						Offset = [0, 2.285]
 						DamageLevels
 						[					
 							{						
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]12.png"						
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]12_normals.png"						
-								Size = [7, 3.5]
+								Size = [3, 1.5]
 							}
 						]
 					}
@@ -668,10 +707,10 @@
 					Type = PolygonCollider
 					Vertices
 					[				
-						[0.15, 10]
-						[0.15, 12.5]
-						[6.85, 12.5]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 3.75]
+						[2.9357, 3.75]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -680,12 +719,12 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 13.5]
+					Location = [1.5, 4.52]
 				}
 			}
 		}
 
-		//Toggle 13 (Type G)
+//Toggle 13 (Type G)
 		NozzleArtOptionToggle13
 		{
 			Type = ModeToggle
@@ -701,44 +740,44 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75]
+						Offset = [0, 2.285]
 						DamageLevels
 						[					
 							{						
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]13.png"						
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]13_normals.png"						
-								Size = [7, 3.5]
+								Size = [3, 1.5]
 							}
 						]
 					}
 				}
 				NozzleCollider
 				{
-					Type = PolygonCollider
-					Vertices
-					[				
-						[0.15, 10]
-						[0.15, 13.48]
-						[6.85, 13.48]
-						[6.85, 10]
-					]
-					Density = 1
+				    Type = PolygonCollider
+				    Vertices
+				    [
+				        [0.0643, 3]
+				        [0.0643, 4.044]
+				        [2.9357, 4.044]
+				        [2.9357, 3]
+				    ]
+				    Density = 1
 				}
 				NozzleOutputPosition
 				{
-					Type = ContinuousEffects
-					MediaEffects = []
-					Rotation = 90d
-					Location = [3.5, 13.48]
+				    Type = ContinuousEffects
+				    MediaEffects = []
+				    Rotation = 90d
+				    Location = [1.5, 4.52]
 				}
 			}
 		}
 
-		//Toggle 14 (Type G)
+//Toggle 14 (Type G)
 		NozzleArtOptionToggle14
 		{
 			Type = ModeToggle
@@ -754,17 +793,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75]
+						Offset = [0, 2.285]
 						DamageLevels
 						[					
 							{						
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]14.png"						
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]14_normals.png"						
-								Size = [7, 3.5]
+								Size = [3, 1.5]
 							}
 						]
 					}
@@ -774,10 +813,10 @@
 					Type = PolygonCollider
 					Vertices
 					[				
-						[0.15, 10]
-						[0.15, 12.5]
-						[6.85, 12.5]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 3.75]
+						[2.9357, 3.75]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -786,12 +825,12 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 13.5]
+					Location = [1.5, 4.52]
 				}
 			}
 		}
 
-		//Toggle 15 (Type G)
+//Toggle 15 (Type G)
 		NozzleArtOptionToggle15
 		{
 			Type = ModeToggle
@@ -807,17 +846,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75]
+						Offset = [0, 2.285]
 						DamageLevels
 						[					
 							{						
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]15.png"						
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]15_normals.png"						
-								Size = [7, 3.5]
+								Size = [3, 1.5] 
 							}
 						]
 					}
@@ -827,10 +866,10 @@
 					Type = PolygonCollider
 					Vertices
 					[				
-						[0.15, 10]
-						[0.15, 13.45]
-						[6.85, 13.45]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 4.035]
+						[2.9357, 4.035]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -839,12 +878,12 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 13.45]
+					Location = [1.5, 4.52]
 				}
 			}
 		}
 
-		//Toggle 16 (Type G)
+//Toggle 16 (Type G)
 		NozzleArtOptionToggle16
 		{
 			Type = ModeToggle
@@ -860,17 +899,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75]
+						Offset = [0, 2.285]
 						DamageLevels
 						[					
 							{						
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]16.png"						
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]16_normals.png"						
-								Size = [7, 3.5]
+								Size = [3, 1.5] 
 							}
 						]
 					}
@@ -880,10 +919,10 @@
 					Type = PolygonCollider
 					Vertices
 					[				
-						[0.15, 10]
-						[0.15, 13.5]
-						[6.85, 13.5]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 4.05]
+						[2.9357, 4.05]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -892,12 +931,12 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 13.5]
+					Location = [1.5, 4.52]
 				}
 			}
 		}
 
-		//Toggle 17 (Type G)
+//Toggle 17 (Type G)
 		NozzleArtOptionToggle17
 		{
 			Type = ModeToggle
@@ -913,17 +952,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 6.75]
+						Offset = [0, 2.285]
 						DamageLevels
 						[					
 							{						
 								File = "../Ion_Common/IonThruster_thruster_nozzle[2,1]17.png"						
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[2,1]17_normals.png"						
-								Size = [7, 3.5]
+								Size = [3, 1.5]
 							}
 						]
 					}
@@ -933,10 +972,10 @@
 					Type = PolygonCollider
 					Vertices
 					[				
-						[0.15, 10]
-						[0.15, 13.45]
-						[6.85, 13.45]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 4.035]
+						[2.9357, 4.035]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -945,7 +984,7 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 13.45]
+					Location = [1.5, 4.52]
 				}
 			}
 		}
@@ -966,17 +1005,17 @@
 				NozzleGraphics
 				{
 					Type = Graphics
-					Location = [3.5, 5]
+					Location = [1.5, 1.5]
 					Floor
 					{
 						Layer = "weapons"
-						Offset = [0, 5+(((7*4)/10)/2)]//Original offset plus ( ( ( [width of part] * [lenght of sprite] ) / [width of sprite] ) / half (sprite is centered) )
+						Offset = [0, 2.025] // 6.75 * (3/10)
 						DamageLevels
 						[					
 							{						
 								File = "../Ion_Common/IonThruster_thruster_nozzle[3,1]18.png"						
 								NormalsFile = "../Ion_Common/IonThruster_thruster_nozzle[3,1]18_normals.png"						
-								Size = [7, 3.5]
+								Size = [3, 1] // [7*(3/7), 3.5*(3/10)]
 							}
 						]
 					}
@@ -986,10 +1025,10 @@
 					Type = PolygonCollider
 					Vertices
 					[				
-						[0.15, 10]
-						[0.15, 12.7]
-						[6.85, 12.7]
-						[6.85, 10]
+						[0.0643, 3]
+						[0.0643, 3.81]
+						[2.9357, 3.81]
+						[2.9357, 3]
 					]
 					Density = 1
 				}
@@ -998,7 +1037,7 @@
 					Type = ContinuousEffects
 					MediaEffects = []
 					Rotation = 90d
-					Location = [3.5, 11.72]
+					Location = [1.5, 3.81]
 				}
 			}
 		}
