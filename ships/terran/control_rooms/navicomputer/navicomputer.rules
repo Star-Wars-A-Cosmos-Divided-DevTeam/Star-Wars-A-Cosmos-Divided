@@ -26,7 +26,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	MaxHealth = 4000
 
     //Selections
-	SelectionPriority = 0
+	SelectionPriority = 1
 	SelectionTypeID = "SW_navicomputer"
 
     //PartSpecific
@@ -62,17 +62,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles = [PowerToggle, BatteryStorage, PartCrew, CommandToggle]
 			Mode = All
 		}
-
+/* Not sure why this was here but I don't see any dependencies on it aside from sensor array which could be managed by the chain to IsOperational
 		IsOperationalAndCommandToggle
 		{
 			Type = MultiToggle
 			Toggles = [IsOperational, CommandToggle]
 			Mode = All
 		}
-
+*/
 		CommandToggle
 		{
 			Type = CommandToggle
@@ -105,7 +105,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Sensor
 		{
 			Type = Sensor
-			OperationalToggle = IsOperationalAndCommandToggle
+			OperationalToggle = IsOperational // IsOperationalAndCommandToggle
 			SightRadius = { BaseValue=480; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 960 } //640
 			RadarRadius = { BaseValue=1600; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 3200} //2100
 		}
@@ -247,7 +247,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = PartCrew
 			Crew = 2
-			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			DefaultPriority = &/PRIORITIES/Utility_Crew //&/PRIORITIES/ControlRoom_Crew //This be the culprit
 			PrerequisitesBeforeCrewing = [PowerToggle]
 			HighPriorityPrerequisites = [BatteryStorage]
 			CrewDestinations
