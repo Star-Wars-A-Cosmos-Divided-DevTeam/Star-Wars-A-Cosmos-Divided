@@ -348,7 +348,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [-3-20/64, 18/64]
 			Rotation = -90d
 			Layer = "SW.roof_engines"
-			ResetAnimationTrigger = BurstTrigger
+			ResetAnimationTrigger = BurstTriggerProxy
 			AtlasSprite
 			{
 				AnimationFiles
@@ -373,7 +373,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [-3-20/64, 18/64]
 			Rotation = -90d
 			Layer = "SW.structure_engines"
-			ResetAnimationTrigger = BurstTrigger
+			ResetAnimationTrigger = BurstTriggerProxy
 			AtlasSprite
 			{
 				AnimationFiles
@@ -472,7 +472,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [-3-20/64, -18/64]
 			Rotation = -90d
 			Layer = "SW.roof_engines"
-			ResetAnimationTrigger = BurstTrigger
+			ResetAnimationTrigger = BurstTriggerProxy
 			AtlasSprite
 			{
 				AnimationFiles
@@ -498,7 +498,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [-3-20/64, -18/64]
 			Rotation = -90d
 			Layer = "SW.structure_engines"
-			ResetAnimationTrigger = BurstTrigger
+			ResetAnimationTrigger = BurstTriggerProxy
 			AtlasSprite
 			{
 				AnimationFiles
@@ -640,8 +640,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrustEffectsSound
 		{
 			Type = ContinuousEffects
-			ChainedTo = MainThrusterBase
-			FactorMediaEffectsIntensityWith = ThrusterEffectsValue
+			ChainedTo = MainThrusterLeftLocationProxy
+			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
 			MediaEffects
 			[
 				: /SW_SOUNDS/ThrusterRumble
@@ -652,20 +652,33 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-		
+
+		MainThrusterValueProxy
+		{
+			Type = ValueProxy
+			ComponentID = MainThrusterBase
+			ValueWhenNotConnected = 0
+		}
+
 		BurstTrigger
 		{
 			Type = ThresholdTrigger
-			AmountFrom = ThrusterEffectsValue
+			AmountFrom = MainThrusterValueProxy
 			MinAmount = 0.5
+		}
+
+		BurstTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = BurstTrigger
 		}
 
 		BurstEffects
 		{
 			Type = TriggeredEffects
 			ChainedTo = MainThrusterBase
-			Trigger = BurstTrigger
-			FactorMediaEffectsIntensityWith = ThrusterEffectsValue
+			Trigger = BurstTriggerProxy
+			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
 			AnchorMediaEffects = true
 			MediaEffects
 			[
