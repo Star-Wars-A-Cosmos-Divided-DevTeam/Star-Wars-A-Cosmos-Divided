@@ -43,7 +43,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	//ProhibitRects
-	ProhibitBelow = 40
+	ProhibitBelow = 10  //40 typo?
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust]
 
 	//Doors&Etc
@@ -90,7 +90,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components
+	Components : ^/0/Components, &<nozzles.rules>
 	{
 		IsOperational
 		{
@@ -256,10 +256,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Components = &<particles/thruster_cyan_hypernodeset.rules>/Components
 		}
 
+		NozzleArtOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "nozzle_art_option_switch03"
+			Default = 0
+			AvailableChoices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+/*
+		NozzleRoofCoverOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "nozzle_roof_option_switch19"
+			Default = 0
+			AvailableChoices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+*/
 		MainThrusterLocationProxy
 		{
 			Type = ChainableProxy
-			ComponentID = MainThruster
+			ComponentID = NozzleOutputPosition
 		}
 
 		MainThrusterValueProxy
@@ -375,15 +395,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalLighting
 			{
 				Layer = "lights_add"
+		        Offset = [0, -1.5]
 				DamageLevels
 				[
 					{
 						AnimationFiles
 						[
-							"lights_1_bleached.png"
-							"lights_2_bleached.png"
+							"lights_1_bleached_T.png"
+							"lights_2_bleached_T.png"
 						]
-						Size = [3, 7]
+						Size = [3, 4]
 						AnimationInterval = 0.1
 					}
 				]
@@ -583,7 +604,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-
+/*
 		NozzleCollider
 		{
 			Type = PolygonCollider
@@ -625,7 +646,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-
+*/
 		MainThruster
 		{
 			Type = Thruster
