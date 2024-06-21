@@ -1,3 +1,4 @@
+//This variation doesn't crash and preserves MOST of Skipper's original intended design and includes roja's graphics updates. CombinedStorage needs some fixes. (I think)
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	//IDs
@@ -177,7 +178,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ViaBuffs
 			{
 				OutgoingBuffProviders = [PowerDistributionBuffProvider]
-				ComponentIDs = [BatteryStorage, CombinedBatteryStorage]
+				ComponentID = BatteryStorage //s = [BatteryStorage, CombinedBatteryStorage]
 			}
 			AddMode = PrioritizeLeastResources
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
@@ -188,9 +189,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResourceType = battery
 			Storage = CombinedBatteryStorage
 			DefaultPriority = &/PRIORITIES/Thruster_Supply
-			//AdditionalStorageForJobPriority = [BatteryStorage] //hmm
+			AdditionalStorageForJobPriority = [BatteryStorage] //Potentially needs to be commented out?
 			ResupplyThreshold = 500
 			OperationalToggle = PowerToggle
+			OverrideExclusiveCrewAssignment = true
 		}
 		BatteryStorageBar
 		{
@@ -201,6 +203,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
 		}
+
 		CombinedBatteryStorageBar
 		{
 			Type = ProgressBar
@@ -434,7 +437,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			GetColorFrom = ColorPickerThruster
 
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
-			AnimationSpeedFactorRenormalize = [0.64, 2.7]
+			AnimationSpeedFactorRenormalize = [0, 1]
 
 			OperationalDoodad
 			{
@@ -459,14 +462,17 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationalGlowlyGraphics2 : &OperationalGlowlyGraphics
 		{
 			Location = &../DoodadGraphicsAnimation03_02/Location 
+			AnimationSpeedFactorRenormalize = [0, 2]
 		}
 		OperationalGlowlyGraphics3 : &OperationalGlowlyGraphics
 		{
 			Location = &../DoodadGraphicsAnimation03_03/Location 
+			AnimationSpeedFactorRenormalize = [0, 3]
 		}
 		OperationalGlowlyGraphics4 : &OperationalGlowlyGraphics
 		{
 			Location = &../DoodadGraphicsAnimation03_04/Location 
+			AnimationSpeedFactorRenormalize = [0, 4]
 			//Offset = [0, -0.5]
 		}
 
@@ -498,7 +504,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			GetColorFrom = ColorPickerThruster
 
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
-			AnimationSpeedFactorRenormalize = [0.64, 2.7]//[0, 1]
+			AnimationSpeedFactorRenormalize = [0, 1] //[0.64, 2.7]
 
 			Location = [5.045, 5.78]
 
@@ -554,7 +560,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
-			AnimationSpeedFactorRenormalize = [0.64, 2.7]//[0, 2]
+			AnimationSpeedFactorRenormalize = [0, 2] // [0.64, 2.7]
 
 			Location = [5.045, 9.195625]
 
@@ -587,7 +593,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
-			AnimationSpeedFactorRenormalize = [0.64, 2.7]//[0, 3]
+			AnimationSpeedFactorRenormalize = [0, 3]//[0.64, 2.7]
 
 			Location = [5.045, 12.724375]
 
@@ -643,7 +649,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
-			AnimationSpeedFactorRenormalize = [0.64, 2.7]
+			AnimationSpeedFactorRenormalize = [0, 4] //[0.64, 2.7]
 
 			Location = [5.045, 16.12]
 			//Offset = [0, -0.5]

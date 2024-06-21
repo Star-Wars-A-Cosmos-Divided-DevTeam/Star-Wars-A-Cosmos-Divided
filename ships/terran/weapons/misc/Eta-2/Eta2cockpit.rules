@@ -151,24 +151,33 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		// Fire Extinguisher - End
 
 		// Maneuvering Thrusters - Start
-		Thruster0
+		MainAuxThruster
 		{
 			Type = Thruster
-			Location = [0.5, 2] // Relative to upper-left corner of unrotated part.
-			Rotation = 0d // Relative to unrotated part.
+			Location = [0.5, 2.0] // Relative to upper-left corner of unrotated part.
+			Rotation = 90d // Relative to unrotated part.
 			OperationalToggle = IsOperational
-			Force = 300
-			MinActivation = 0
-			MaxActivation = 1
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = 0
-			ActivationRecoveryTime = 0
+			Force = 250 
+			MinActivation = -1
+			MaxActivation = 3
+			MinUncommandedActivation = -1
+			MaxUncommandedActivation = 1
+			ActivationIncreaseTime = 1
+			ActivationRecoveryTime = 1
 		}
 
-		Thruster1 : Thruster0 {	Rotation = 90d	}
-		Thruster2 : Thruster0 {	Rotation = 180d }
-		Thruster3 : Thruster0 {	Rotation = 270d	}		
+		LateralAuxThruster : MainAuxThruster 
+		{	
+			Location = [0.5, 0.0]
+			Rotation = 0d
+			MinActivation = -1
+			MaxActivation = 1
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = 0.1
+			ActivationRecoveryTime = 0.1
+			AllowAutoFire = false
+		}		
 		// Maneuvering Thrusters - End
 
 		BatteryStorage
