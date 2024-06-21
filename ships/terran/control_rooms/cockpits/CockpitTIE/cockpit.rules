@@ -118,24 +118,33 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		// Fire Extinguisher - End
 
 		// Maneuvering Thrusters - Start
-		Thruster0
+		MainAuxThruster
 		{
 			Type = Thruster
-			Location = [0.5, 2] // Relative to upper-left corner of unrotated part.
-			Rotation = 0d // Relative to unrotated part.
+			Location = [0.5, 2.0] // Relative to upper-left corner of unrotated part.
+			Rotation = 90d // Relative to unrotated part.
 			OperationalToggle = IsOperational
-			Force = 1500 // b4 you murder me, I know its a HUGE Boost but its limited to 1 and justifies cost of a relatively useless part. (maybe we can make it an engine booster in future)
-			MinActivation = 0
-			MaxActivation = 1
-			MinUncommandedActivation = 0
-			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = 0
-			ActivationRecoveryTime = 0
+			Force = 250 
+			MinActivation = -1
+			MaxActivation = 5 //from 3 to 5 to give large boost
+			MinUncommandedActivation = -1
+			MaxUncommandedActivation = 1
+			ActivationIncreaseTime = 1
+			ActivationRecoveryTime = 1
 		}
 
-		Thruster1 : Thruster0 {	Rotation = 90d	}
-		Thruster2 : Thruster0 {	Rotation = 180d }
-		Thruster3 : Thruster0 {	Rotation = 270d	}		
+		LateralAuxThruster : MainAuxThruster 
+		{	
+			Location = [0.5, 0.0]
+			Rotation = 0d
+			MinActivation = -2
+			MaxActivation = 2
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = 0.1
+			ActivationRecoveryTime = 0.1
+			AllowAutoFire = false
+		}
 		// Maneuvering Thrusters - End
 
 		// Command Room & Radar - Start
