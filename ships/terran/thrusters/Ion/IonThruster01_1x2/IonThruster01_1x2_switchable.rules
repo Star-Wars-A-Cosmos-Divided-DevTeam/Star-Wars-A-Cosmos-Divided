@@ -90,7 +90,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components
+	Components : ^/0/Components, &<nozzles.rules>
 	{
 		IsOperational
 		{
@@ -249,6 +249,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Components = &<particles/thruster_colorable_rocketset.rules>/Components
 		}
 
+		NozzleArtOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "nozzle_art_option_switch03"
+			Default = 0
+			AvailableChoices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+/*
+		NozzleRoofCoverOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "nozzle_roof_option_switch19"
+			Default = 0
+			AvailableChoices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+*/
 		HypernodeEffectComponents
 		{
 			Type = ToggledComponents
@@ -259,7 +279,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		MainThrusterLocationProxy
 		{
 			Type = ChainableProxy
-			ComponentID = MainThruster
+			ComponentID = NozzleOutputPosition
 		}
 
 		MainThrusterValueProxy
@@ -375,15 +395,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalLighting
 			{
 				Layer = "lights_add"
+				Offset = [0,-0.5]
 				DamageLevels
 				[
 					{
 						AnimationFiles
 						[
-							"lights_1_bleached.png"
-							"lights_2_bleached.png"
+							"lights_1_bleached_T.png"
+							"lights_2_bleached_T.png"
 						]
-						Size = [1, 3]
+						Size = [1, 2]
 						AnimationInterval = 0.1
 					}
 				]
@@ -457,22 +478,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			/*
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				Offset = [0, 0.35]
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [2.1, 3.6]
-						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
-						//VertexColor = [16, 120, 255] // [6, 57, 113]
-					}
-				]
-			}
-			*/
 		}
 
 		Graphics
@@ -503,43 +508,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}*/
 				]
 			}
-/*
-			OperationalDoodad
-			{
-				Layer = "doodads_high"
-				//
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"doodads_on_1.png"
-							"doodads_on_2.png"
-							"doodads_on_3.png"
-							"doodads_on_4.png"
-							"doodads_on_5.png"
-							"doodads_on_6.png"
-							"doodads_on_7.png"
-							"doodads_on_8.png"
-						]
-						Size = [1, 2]
-						AnimationInterval = 0.075
-					}
-				]
-			}
-			NonOperationalDoodad
-			{
-				Layer = "doodads_high"
-				//
-				DamageLevels
-				[
-					{
-						File = "doodads_off_0.png"
-						Size = [1, 2]
-					}
-				]
-			}
-*/
+
 			Walls
 			{
 				Layer = "walls"
@@ -583,47 +552,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		NozzleCollider
-		{
-			Type = PolygonCollider
-			Vertices
-			[
-				[0			, 2			]
-				[1			, 2			]
-				//
-				[1 - 5/64	, 2 + 34/64	]
-				[0 + 5/64	, 2 + 34/64	]
-				//
-			]
-			Density = 1.35
-		}
-		NozzleGraphics
-		{
-			Type = Graphics
-			Location = [0.5, 2.5]
-			Floor
-			{
-				Layer = "weapons"
-				DamageLevels
-				[
-					{
-						File = "nozzle.png"
-						NormalsFile = "nozzle_normals.png"
-						Size = [1.0, 1.0]
-					}
-					{
-						File = "nozzle_33.png"
-						NormalsFile = "nozzle_normals_33.png"
-						Size = [1.0, 1.0]
-					}
-					{
-						File = "nozzle_66.png"
-						NormalsFile = "nozzle_normals_66.png"
-						Size = [1.0, 1.0]
-					}
-				]
-			}
-		}
 
 		MainThruster
 		{
@@ -847,3 +775,103 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	]
 }
 Size = Med
+
+//Appendix
+
+/*
+		NozzleCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0			, 2			]
+				[1			, 2			]
+				//
+				[1 - 5/64	, 2 + 34/64	]
+				[0 + 5/64	, 2 + 34/64	]
+				//
+			]
+			Density = 1.35
+		}
+		NozzleGraphics
+		{
+			Type = Graphics
+			Location = [0.5, 2.5]
+			Floor
+			{
+				Layer = "weapons"
+				DamageLevels
+				[
+					{
+						File = "nozzle.png"
+						NormalsFile = "nozzle_normals.png"
+						Size = [1.0, 1.0]
+					}
+					{
+						File = "nozzle_33.png"
+						NormalsFile = "nozzle_normals_33.png"
+						Size = [1.0, 1.0]
+					}
+					{
+						File = "nozzle_66.png"
+						NormalsFile = "nozzle_normals_66.png"
+						Size = [1.0, 1.0]
+					}
+				]
+			}
+
+		}
+*/
+/*
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				//
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads_on_1.png"
+							"doodads_on_2.png"
+							"doodads_on_3.png"
+							"doodads_on_4.png"
+							"doodads_on_5.png"
+							"doodads_on_6.png"
+							"doodads_on_7.png"
+							"doodads_on_8.png"
+						]
+						Size = [1, 2]
+						AnimationInterval = 0.075
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				//
+				DamageLevels
+				[
+					{
+						File = "doodads_off_0.png"
+						Size = [1, 2]
+					}
+				]
+			}
+*/
+			/*
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				Offset = [0, 0.35]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [2.1, 3.6]
+						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
+						//VertexColor = [16, 120, 255] // [6, 57, 113]
+					}
+				]
+			}
+			*/
