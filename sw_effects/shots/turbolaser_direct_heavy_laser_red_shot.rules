@@ -166,7 +166,7 @@ Components
 	Sprite
 	{
 		Type = AnimatedSprite
-		RenderBucket = BulletUpper3
+		//RenderBucket = BulletUpper3
 		ReduceScaleWith = Hit
 		ReduceScaleExponent = 0.5
 		Animation
@@ -175,30 +175,42 @@ Components
 			{
 				Texture
 				{
-					File = "lasershotred.png"
+					File = "heavy_laser_red_shot.png"
 					SampleMode = Linear
 					MipLevels = max
 				}
 				Size = [2.1, 1.05]//2.4 1.2
 			}
-			FrameCount = 2
-			FrameSize = [64, 32]
-			FramesPerRow = 1
-			FramesPerSecond = 24
+			FrameCount = 8
+			FrameSize = [192, 128]
+			FramesPerRow = 2
+			FramesPerSecond = 32
 		}
 		//NormalsTexture = &Animation/AtlasSprite/Texture
-		DiffuseShader = "./Data/default.shader"
-		NormalsShader = "./Data/no_normals.shader"
+		//DiffuseShader = "./Data/default.shader"
+		//NormalsShader = "./Data/no_normals.shader"
 	}
-
-	MediaEffects
+	GlowSprite
 	{
-		Type = MediaEffects
-		FactorEffectsWith = Hit
-		FactorEffectsExponent = 0.5
-		MediaEffects
-		[
-			&/SW_PARTICLES/Shot/Laser/Glow/Large/Red
-		]
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [9, 9]
+			VertexColor = [255, 0, 0]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
 	}
 }
