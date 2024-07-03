@@ -19,13 +19,13 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		[coil2, 20]
 		[processor, 1]
 	]
-	Size = [1, 4]
+	Size = [1, 3]
 	MaxHealth = 1000
 
 	//Rects
 	//PhysicalRect = [0, 3, 1, 1]
 	//RectColliderRectType = Normal
-	SaveRect = [0, 3, 1, 1]
+    SaveRect = [0, 3, 1, 1] // Updated SaveRect
 
 	//Selections
 	SelectionPriority = 1
@@ -34,21 +34,21 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
-	ProhibitedBy : ^/0/ProhibitedBy [tall, SW_tall]
-	ProhibitRects
-	[
-		[default, [-1, -12, 3, 6]]
-		[tall, [-1, -6, 3, 6]]
-		[SW_tall, [-2, -1, 2, 6]]
-		[SW_tall, [1, -1, 2, 6]]
-	]
+	//ProhibitedBy : ^/0/ProhibitedBy [tall, SW_tall]
+	//ProhibitRects
+	//[
+	//	[default, [-1, -12, 3, 6]]
+	//	[tall, [-1, -6, 3, 6]]
+	//	[SW_tall, [-2, -1, 2, 6]]
+	//	[SW_tall, [1, -1, 2, 6]]
+	//]
 
 	//Doors&Etc
 	AllowedDoorLocations
 	[
-		[-1, 3] //left
- 		[0, 4]	//bottom
-		[1, 3]	//right
+		[-1, 2] //left
+ 		[0, 3]	//bottom
+		[1, 2]	//right
 	]
 	/*
 	ForceManhattanPathInPart = true
@@ -245,7 +245,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [0.5, 3.5]
+			Location = [0.5, 2.5]
 			Rotation = 0d
 		}
 		PartCrew
@@ -257,13 +257,61 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			HighPriorityPrerequisites = [MissilesPrereqToggleProxy]
 			CrewDestinations
 			[
-				[0.5, 3.5]
+				[0.5, 1.5]
 			]
 			CrewLocations
 			[
 				CrewLocation1
 			]
 		}
+
+		LaunchBayDoorAnimation
+		{
+			Type = Sprite
+			Location = [.5, 1.5]
+			Layer = "roofs"
+			ResetAnimationTrigger = CommonReloadResetTriggerProxy
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					//"roof1.png"
+					"sprites/roof2.png"
+					"sprites/roof3.png"
+					"sprites/roof4.png"
+					"sprites/roof5.png"
+					"sprites/roof6.png"
+					"sprites/roof6.png"
+					"sprites/roof6.png"
+					"sprites/roof5.png"
+					"sprites/roof4.png"
+					"sprites/roof3.png"
+					"sprites/roof2.png"
+					"sprites/roof1.png"
+				]
+				NormalsAnimationFiles
+				[
+					//"roof1.png"
+					"sprites/roof_normals2.png"
+					"sprites/roof_normals3.png"
+					"sprites/roof_normals4.png"
+					"sprites/roof_normals5.png"
+					"sprites/roof_normals6.png"
+					"sprites/roof_normals6.png"
+					"sprites/roof_normals6.png"
+					"sprites/roof_normals5.png"
+					"sprites/roof_normals4.png"
+					"sprites/roof_normals3.png"
+					"sprites/roof_normals2.png"
+					"sprites/roof_normals1.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = 0.166
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+
 
 		FloorGrid
 		{
@@ -294,12 +342,12 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		Graphics
 		{
 			Type = Graphics
-			Location = [0.5, 2]
+			Location = [0.5, 1.5]
 			OperationalToggle = IsOperational
 			Floor
 			{
 				Layer = "floors"
-				Offset = [0, 1.5]
+				//Offset = [0, .5]
 				DamageLevels
 				[
 					{
@@ -319,7 +367,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			Walls
 			{
 				Layer = "walls"
-				Offset = [0, 1.5]
+				Offset = [0, .5]
 				DamageLevels
 				[
 					{
@@ -336,35 +384,43 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
-			Roof
+
+			/*Roof
 			{
 				Layer = "roofs"
-				Offset = [0, 1.0]
+				//Offset = [0, 1.5]
 				DamageLevels
 				[
 					{
-						File = "sprites/roof.png"
-						NormalsFile = "sprites/roof_normals.png"
-						Size = [1, 2]
+						File = "sprites/roof1.png"
+						NormalsFile = "sprites/roof_normals1.png"
+						Size = [1, 3]
 					}
 					{
-						File = "sprites/roof_33.png"
-						NormalsFile = "sprites/roof_normals_33.png"
-						Size = [1, 2]
+						File = "sprites/roof1_33.png"
+						NormalsFile = "sprites/roof_normals1_33.png"
+						Size = [1, 3]
 					}
 					{
-						File = "sprites/roof_66.png"
-						NormalsFile = "sprites/roof_normals_66.png"
-						Size = [1, 2]
+						File = "sprites/roof1_66.png"
+						NormalsFile = "sprites/roof_normals1_66.png"
+						Size = [1, 3]
 					}
 				]
-			}
+			}*/
+			
 		}
+
+		//WeaponTriggerProxy
+		//{
+		//	Type = TriggerProxy
+		//	ComponentID = &~/Components/Weapon
+		//}
 
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [1, 4]
+            Location = [0.5, 2.5]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
@@ -374,7 +430,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_cluster.png"
-			Size = [1, 4]
+			Size = [1, 3]
 			//Offset = [0, -.5]
 
 			ShowOnlyInToggleMode
@@ -387,7 +443,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_intruder.png"
-			Size = [1, 4]
+			Size = [1, 3]
 
 			ShowOnlyInToggleMode
 			{
@@ -399,7 +455,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_concussion.png"
-			Size = [1, 4]
+			Size = [1, 3]
 
 			ShowOnlyInToggleMode
 			{
@@ -412,7 +468,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_hex.png"
-			Size = [1, 4]
+			Size = [1, 3]
 
 			ShowOnlyInToggleMode
 			{
