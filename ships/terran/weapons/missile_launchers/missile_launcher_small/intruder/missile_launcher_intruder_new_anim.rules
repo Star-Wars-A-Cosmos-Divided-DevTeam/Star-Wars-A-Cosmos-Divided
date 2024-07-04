@@ -25,10 +25,10 @@ Components
 		// Nothing different.
 	}
 
-	MissileStorageB_EMP : ~/MissileStorageBaseEMP
+	/*MissileStorageB_EMP : ~/MissileStorageBaseEMP
 	{
 		// Nothing different.
-	}
+	}*/
 
 	/*CombinedMissileStorage_HE
 	{
@@ -52,7 +52,7 @@ Components
 		ConsumptionToggleButtonOffset = [0, -0.4]
 	}*/
 
-	CombinedMissileStorage_EMP
+	/*CombinedMissileStorage_EMP
 	{
 		Type = MultiResourceStorage
 		ResourceType = missile_part_emp
@@ -61,37 +61,38 @@ Components
 		RemoveMode = PrioritizeMostEmptyCapacity
 		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
 		UITileRect = [.9 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
-	}
+	}*/
 
 	Consumer
 	{
 		Type = ResourceConsumer
 		ResourceType = missile_part_emp
-		Storage = CombinedMissileStorage_EMP//CombinedMissileStorage_EMP
+		Storage = MissileStorageA_EMP//CombinedMissileStorage_EMP
 		DefaultPriority = &/PRIORITIES/Weapon_Supply
 		OverridePriorityKey = EMPMissilesComponents
 		OperationalToggle = PowerToggle
-		ConsumptionToggleButtonOffset = [0, -.4]
+		ConsumptionToggleButtonOffset = [0, -0.4]
 	}
 
 	MissileStorageA
 	{
 		Type = MultiToggle
 		Toggles = [MissileStorageA_EMP]
-		Mode = Any
+		Mode = All
 	}
 
-	MissileStorageB
+	/*MissileStorageB
 	{
 		Type = MultiToggle
-		Toggles = [MissileStorageB_EMP]
-		Mode = Any
-	}
+		Toggles = [MissileStorageB_HE, MissileStorageB_EMP]
+		Mode = All
+	}*/
 
 	MissilesPrereq
 	{
 		Type = MultiToggle
-		Toggles = [MissileStorageA_EMP, MissileStorageB_EMP]
+		Toggles = [MissileStorageA_EMP]
+		//Toggles = [MissileStorageA, MissileStorageB]
 		Mode = All
 	}
 
@@ -137,13 +138,13 @@ Components
 		GetTargetFrom = WeaponA
 		ResourceUsage
 		[
+			/*{
+				ResourceStorage = MissileStorageA_HE
+				ResourcesUsed = 2
+			}*/
 			{
 				ResourceStorage = MissileStorageA_EMP
-				ResourcesUsed = 3
-			}
-			{
-				ResourceStorage = MissileStorageB_EMP
-				ResourcesUsed = 3
+				ResourcesUsed = 6
 			}
 		]
 	}
@@ -208,8 +209,8 @@ Components
     LaunchBayChangingValueTween
     {
         Type = ValueTween
-        OnTweenDuration = .2
-        OffTweenDuration = .2
+        OnTweenDuration = 1.2
+        OffTweenDuration = 1.2
         IsOnToggle = LauchBayShouldOpen
     }
     IsLaunchBayFullyOpen
@@ -227,7 +228,7 @@ Components
     LauchBayShouldOpen
     {
         Type = MultiToggle
-        Toggles = [IsOperational, MissilesPrereq, FireModeToggle/*MissilesPrereqToggleProxy*/]
+        Toggles = [IsOperational, FireModeToggle, MissilesPrereq/*MissilesPrereqToggleProxy*/]
         Mode = All
     }
 
@@ -322,7 +323,7 @@ Components
 				]
 				Size = [1, 3]
 				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OffTweenDuration) / 4
-				AnimationStartTime = 3 //MinValue
+				AnimationStartTime = 2 //MinValue
 				ClampAnimation = true
 			}
 			{
@@ -342,7 +343,7 @@ Components
 				]
 				Size = [1, 3]
 				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OffTweenDuration) / 4
-				AnimationStartTime = 3 //MinValue
+				AnimationStartTime = 2 //MinValue
 				ClampAnimation = true
 			}
 			{
@@ -362,7 +363,7 @@ Components
 				]
 				Size = [1, 3]
 				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OffTweenDuration) / 4
-				AnimationStartTime = 3 //MinValue
+				AnimationStartTime = 2 //MinValue
 				ClampAnimation = true
 			}
 		]
@@ -514,7 +515,7 @@ Components
 	MissileLightsA
 	{
 		Type = Graphics
-		OperationalToggle = MissilesPrereq
+		OperationalToggle = MissileStorageA
 		Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)+0.5]
 		OperationalRoofLighting
 		{
@@ -534,7 +535,7 @@ Components
 	MissileLightsB : MissileLightsA
 	{
 		Type = Graphics
-		OperationalToggle = MissilesPrereq
+		OperationalToggle = MissileStorageA
 		Location = [1, 1.5] //[2-(&~/Components/MissileLightsA/Location/0), (&~/Components/MissileLightsA/Location/1)]
 	}
 
@@ -542,7 +543,7 @@ Components
 	{
 		Type = ResourceSprites
 		Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)/*+1.0*/]
-		ResourceStorage = CombinedMissileStorage_EMP
+		ResourceStorage = MissileStorageA_EMP
 		Layer = "weapons"
 		HasZeroResourceSprite = true
 		ResourceLevels
@@ -675,7 +676,7 @@ Components
 		Type = DeathEffects
 		Location = [1, 2]
 
-		FactorHitEffectsWith = CombinedMissileStorage_EMP
+		FactorHitEffectsWith = MissileStorageA_EMP //CombinedMissileStorage_EMP
 		HitEffects
 		[
 			{
@@ -710,7 +711,7 @@ Components
 			}
 		]
 
-		FactorMediaEffectsWith = CombinedMissileStorage_EMP
+		FactorMediaEffectsWith = MissileStorageA_EMP//CombinedMissileStorage_EMP
 		MediaEffects
 		[
 			&<./Data/shots/missile_emp/particles/missile_emp_hit_orb.rules>
@@ -738,7 +739,7 @@ Components
 
 			// Out of missiles.
 			{
-				Toggle = CombinedMissileStorage_EMP
+				Toggle = MissileStorageA_EMP //CombinedMissileStorage_EMP
 				Delay = &<../missile_launcher_small.rules>/Part/Components/CommonReloadTimerShort/Duration
 				AtlasSprite
 				{
@@ -780,9 +781,9 @@ MissileStorageBaseEMP
 {
 	Type = ResourceStorage
 	ResourceType = missile_part_emp
-	MaxResources = 3
-	ToggleOnResources = (&MaxResources)
-	ToggleOffResources = (&ToggleOnResources)-1
+	MaxResources = 6
+	ToggleOnResources = 6//(&MaxResources)
+	ToggleOffResources = 5//(&ToggleOnResources)-1
 	DelayBeforeReadyToUse = .5
 	DropResourcesWhenDestroyed = true
 	DropResourcesWhenRemoved = true
@@ -824,9 +825,12 @@ EmitterBase
 	Recoil = 50
 	ResourceUsage
 	[
-
+		/*{
+			ResourceStorage = CombinedMissileStorage_HE
+			ResourcesUsed = 4
+		}*/
 		{
-			ResourceStorage = CombinedMissileStorage_EMP
+			ResourceStorage = MissileStorageA_EMP //CombinedMissileStorage_EMP
 			ResourcesUsed = 6
 		}
 	]
