@@ -28,18 +28,19 @@ Components
 	CombinedMissileStorage
 	{
 		Type = MultiResourceStorage
-		ResourceType = missile_part_he
+		ResourceType = missile_part_nuke
 		ResourceStorages = [MissileStorageA, MissileStorageB, MissileStorageC]
 		AddMode = PrioritizeLeastEmptyCapacity
 		RemoveMode = PrioritizeMostEmptyCapacity
 		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
-		UITileRect = [.5 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
+		UITileRect = [0.0625, 1.0625, 0.875, 0.875]  // Adjusted for padding within the tile
+		//UITileRect = [.5 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
 	}
 
 	Consumer
 	{
 		Type = ResourceConsumer
-		ResourceType = missile_part_he
+		ResourceType = missile_part_nuke
 		Storage = CombinedMissileStorage
 		DefaultPriority = &/PRIORITIES/Weapon_Supply
 		OverridePriorityKey = MissileStorage
@@ -51,20 +52,20 @@ Components
 	{
 		Type = MultiToggle
 		Toggles = [MissileStorageA, MissileStorageB, MissileStorageC]
-		Mode = Any
+		Mode = All
 	}
 
 	ReloadProgressBar
 	{
 		Type = ProgressBar
 		OperationalToggle = IsOperational
-		ShowProgressFor = CommonReloadTimerShort
+		ShowProgressFor = CommonReloadTimerLong
 		Invert = true
 	}
 
 	WeaponA : ~/WeaponBase
 	{
-		Location = [.5, 1]
+		Location = [.5, .5]
 		ShowExplicitTarget = false
 		Emitter = EmitterA
 	}
@@ -74,12 +75,12 @@ Components
 		ChainedTo = WeaponA
 		FireTrigger = WeaponA
 		GetTargetFrom = WeaponA
-		ResourceStorage = MissileStorageA
+		ResourceStorage = CombinedMissileStorage
 	}
 
-	WeaponB : ~/WeaponBase
+	/*WeaponB : ~/WeaponBase
 	{
-		Location = [1, 1]
+		Location = [.5, 1]
 		Emitter = EmitterB
 
 		CoverageSectorArc
@@ -96,34 +97,34 @@ Components
 		FireTrigger = WeaponB
 		GetTargetFrom = WeaponB
 		ResourceStorage = MissileStorageB
-	}
+	}*/
 
-	WeaponC : ~/WeaponBase
+	/*WeaponC : ~/WeaponBase
 	{
-		Location = [1.5, 1]
+		Location = [.5, 2.5]
 		ShowExplicitTarget = false
 		Emitter = EmitterC
-	}
+	}*/
 
-	EmitterC : ~/EmitterBase
+	/*EmitterC : ~/EmitterBase
 	{
 		ChainedTo = WeaponC
 		FireTrigger = WeaponC
 		GetTargetFrom = WeaponC
 		ResourceStorage = MissileStorageC
-	}
+	}*/
 
 	FirePermissionToggle
 	{
 		Type = MultiToggle
-		Toggles = [CommonReloadTimerShort, FireModeToggle]
+		Toggles = [CommonReloadTimerLong, FireModeToggle]
 		Mode = All
 	}
 
 	CommonReloadResetTrigger
 	{
 		Type = MultiTrigger
-		Triggers = [WeaponA, WeaponB, WeaponC]
+		Triggers = [WeaponA/*, WeaponB, WeaponC*/]
 	}
 
 	LaunchEffectA : ~/LaunchEffectBase
@@ -132,7 +133,7 @@ Components
 		Trigger = WeaponA
 	}
 
-	LaunchEffectB : ~/LaunchEffectBase
+	/*LaunchEffectB : ~/LaunchEffectBase
 	{
 		ChainedTo = WeaponB
 		Trigger = WeaponB
@@ -142,86 +143,373 @@ Components
 	{
 		ChainedTo = WeaponC
 		Trigger = WeaponC
+	}*/
+
+	IsLaunchBayNotFullyOpen
+	{
+		Type = MultiToggle
+		Toggles = [{Toggle = IsLaunchBayFullyOpen; Invert = true}]
+		Mode = All
+	}
+	
+    LaunchBayChangingValueTween
+    {
+        Type = ValueTween
+        OnTweenDuration = .2
+        OffTweenDuration = .2
+        IsOnToggle = LauchBayShouldOpen
+    }
+    IsLaunchBayFullyOpen
+    {
+        Type = ThresholdToggle
+        ValueFrom = LaunchBayChangingValueTween
+        MinAmount = 100%
+    }
+    IsLauchBayFullyClosed
+    {
+        Type = ThresholdToggle
+        ValueFrom = LaunchBayChangingValueTween
+        MaxAmount = 0%
+    }
+    LauchBayShouldOpen
+    {
+        Type = MultiToggle
+        Toggles = [IsOperational, MissilesPrereq, FireModeToggle]
+        Mode = All
+    }
+
+	LaunchBaySprite
+	{
+		Type = OpenCloseSprite
+		Location = [.5, 1.5]
+		OperationalToggle = LauchBayShouldOpen
+		Layer = "SW.roof_engines"
+		OpenDamageLevels
+		[
+			{
+				AnimationFiles
+				[
+					"roof_0.png"
+					"roof_1.png"
+					"roof_2.png"
+					"roof_3.png"
+				]
+				
+				NormalsAnimationFiles
+				[
+					"roof_0_normals.png"
+					"roof_1_normals.png"
+					"roof_2_normals.png"
+					"roof_3_normals.png"
+				]
+				
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OnTweenDuration) / 4
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+			{
+				AnimationFiles
+				[
+					"roof_0_33.png"
+					"roof_1_33.png"
+					"roof_2_33.png"
+					"roof_3_33.png"
+				]
+				NormalsAnimationFiles
+				[
+					"roof_0_normals_33.png"
+					"roof_1_normals_33.png"
+					"roof_2_normals_33.png"
+					"roof_3_normals_33.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OnTweenDuration) / 4
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+			{
+				AnimationFiles
+				[
+					"roof_0_66.png"
+					"roof_1_66.png"
+					"roof_2_66.png"
+					"roof_3_66.png"
+				]
+				NormalsAnimationFiles
+				[
+					"roof_0_normals_66.png"
+					"roof_1_normals_66.png"
+					"roof_2_normals_66.png"
+					"roof_3_normals_66.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OnTweenDuration) / 4
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		]
+		ClosedDamageLevels
+		[
+			{
+				AnimationFiles
+				[
+					"roof_3.png"
+					"roof_2.png"
+					"roof_1.png"
+					"roof_0.png"
+				]
+				NormalsAnimationFiles
+				[
+					"roof_3_normals.png"
+					"roof_2_normals.png"
+					"roof_1_normals.png"
+					"roof_0_normals.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OffTweenDuration) / 4
+				AnimationStartTime = 3 //MinValue
+				ClampAnimation = true
+			}
+			{
+				AnimationFiles
+				[
+					"roof_3_33.png"
+					"roof_2_33.png"
+					"roof_1_33.png"
+					"roof_0_33.png"
+				]
+				NormalsAnimationFiles
+				[
+					"roof_3_normals_33.png"
+					"roof_2_normals_33.png"
+					"roof_1_normals_33.png"
+					"roof_0_normals_33.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OffTweenDuration) / 4
+				AnimationStartTime = 3 //MinValue
+				ClampAnimation = true
+			}
+			{
+				AnimationFiles
+				[
+					"roof_3_66.png"
+					"roof_2_66.png"
+					"roof_1_66.png"
+					"roof_0_66.png"
+				]
+				NormalsAnimationFiles
+				[
+					"roof_3_normals_66.png"
+					"roof_2_normals_66.png"
+					"roof_1_normals_66.png"
+					"roof_0_normals_66.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OffTweenDuration) / 4
+				AnimationStartTime = 3 //MinValue
+				ClampAnimation = true
+			}
+		]
 	}
 
-	External_Walls_Graphics
+		CloseDoor
+		{
+			Type = Sprite
+			Location = [.5, 1.5]
+			Layer = "roofs"
+			ResetAnimationTrigger = WeaponA
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					//"missile_4.png"
+					"missile_5.png"
+					"missile_6.png"
+					"missile_7.png"
+					"missile_8.png"
+					"missile_9.png"
+				]
+				/*NormalsAnimationFiles
+				[
+					"missile_5_normals.png"
+					"missile_6_normals.png"
+					"missile_7_normals.png"
+					"missile_8_normals.png"
+				]*/
+				Size = [1, 3]
+				AnimationInterval = 0.2
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+	
+
+	Graphics
 	{
 		Type = Graphics
+		Location = [0.5, 1.5]
+		OperationalToggle = IsOperational
+		Floor
+		{
+			Layer = "floors"
+			//Offset = [0, .5]
+			DamageLevels
+			[
+				{
+					File = "floor.png"
+					Size = [1, 3]
+				}
+				{
+					File = "floor_33.png"
+					Size = [1, 1]
+				}
+				{
+					File = "floor_66.png"
+					Size = [1, 1]
+				}
+			]
+		}
+		Walls
+		{
+			Layer = "walls"
+			//Offset = [0, .5]
+			DamageLevels
+			[
+				{
+					File = "walls.png"
+					Size = [1, 3]
+				}
+				{
+					File = "walls_33.png"
+					Size = [1, 3]
+				}
+				{
+					File = "walls_66.png"
+					Size = [1, 3]
+				}
+			]
+		}
+		OperationalLighting
+		{
+			Layer = "lights_add"
+			//Offset = [0, -.2]	
+			DamageLevels
+			[
+				{
+					File = "lights.png"
+					Size = [1, 3]
+				}
+			]
+		}	
+	}
+
+	/*External_Walls_Graphics
+	{
+		Type = Graphics
+		OperationalToggle = MissilesPrereq
 		Location = [0.5, 1.5]
 		Walls
 		{
 			Layer = "external_walls"
+			//Offset = [0, -0.5]
 			DamageLevels
 			[
 				{
-					File = "external_walls.png"
-					NormalsFile = "external_walls_normals.png"
-					Size = [1, 1.5]
+					File = "walls_exterior.png"
+					NormalsFile = "walls_exterior_normals.png"
+					Size = [1, 3]
 				}
-				{
+				
 					File = "external_walls_33.png"
 					NormalsFile = "external_walls_normals_33.png"
-					Size = [1, 1.5]
+					Size = [1, 4]
 				}
 				{
 					File = "external_walls_66.png"
 					NormalsFile = "external_walls_normals_66.png"
-					Size = [1, 1.5]
+					Size = [1, 4]
+				}
+			]
+		}
+	}*/
+
+	MissileLightsA
+	{
+		Type = Graphics
+		OperationalToggle = MissilesPrereq
+		Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)+0.5]
+		OperationalRoofLighting
+		{
+			Layer = "roof_lights_fancy"
+			DamageLevels
+			[
+				{
+					File = "../sprites/light_blob.png"
+					Size = [4, 4]
+					Z = 0.35 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+					VertexColor = [0, 255, 128]
 				}
 			]
 		}
 	}
 
+	MissileLightsB : MissileLightsA
+	{
+		Type = Graphics
+		OperationalToggle = MissilesPrereq
+		Location = [1, 1.5] //[2-(&~/Components/MissileLightsA/Location/0), (&~/Components/MissileLightsA/Location/1)]
+	}
+
 	MissileSpritesA
 	{
 		Type = ResourceSprites
-		Location = [.5 + 2/64, 1.5]
-		ResourceStorage = MissileStorageA
+		Location = [.5, 1.5]
+		ResourceStorage = CombinedMissileStorage
 		Layer = "weapons"
 		HasZeroResourceSprite = true
 		ResourceLevels
 		[
 			{
-				File = "hex_0.png"
-				Offset = [0, 1]
-				Size = [1, 1]
-			}
-			{
-				File = "hex_1.png"
-				NormalsFile = "hex_normals_1.png"
-				Offset = [0, 0.5]
-				Size = [1, 2]
-			}
-			{
-				File = "hex_2.png"
-				NormalsFile = "hex_normals_2.png"
-				Offset = [0, 0.5]
-				Size = [1, 2]
-			}
-			{
-				File = "hex_3.png"
-				NormalsFile = "hex_normals_3.png"
+				File = "missile_0.png"
+				//NormalsFile = "intruder_normals_7.png"
 				Size = [1, 3]
 			}
 			{
-				File = "hex_4.png"
-				NormalsFile = "hex_normals_4.png"
+				File = "missile_1.png"
+				//NormalsFile = "intruder_normals_7.png"
+				Size = [1, 3]
+			}
+			{
+				File = "missile_2.png"
+				//NormalsFile = "intruder_normals_7.png"
+				Size = [1, 3]
+			}
+			{
+				File = "missile_3.png"
+				//NormalsFile = "intruder_normals_7.png"
+				Size = [1, 3]
+			}
+			{
+				File = "missile_4.png"
+				//NormalsFile = "intruder_normals_7.png"
 				Size = [1, 3]
 			}
 		]
 	}
 
-	MissileSpritesB : MissileSpritesA
+	/*MissileSpritesB : MissileSpritesA
 	{
-		Location = [1, 1.5]
+		Location = [.5, 1.5]
 		ResourceStorage = MissileStorageB
 	}
 
 	MissileSpritesC : MissileSpritesB
 	{
-		Location = [1.5 - 2/64, 1.5]
+		Location = [.5, 1.5]
 		ResourceStorage = MissileStorageC
-	}
+	}*/
 
 	DestroyedEffects
 	{
@@ -286,7 +574,7 @@ Components
 				Delay = &<../missile_launcher_small.rules>/Part/Components/CommonReloadTimerShort/Duration
 				AtlasSprite
 				{
-					File = &/INDICATORS/NoMissiles
+					File = &/INDICATORS/SWNoClusterMissiles
 					Size = [1, 1]
 				}
 			}
@@ -299,11 +587,11 @@ Components
 MissileStorageBase
 {
 	Type = ResourceStorage
-	ResourceType = missile_part_he
+	ResourceType = missile_part_nuke
 	MaxResources = 4
-	ToggleOnResources = 4
-	ToggleOffResources = 3
-	DelayBeforeReadyToUse = .5
+	ToggleOnResources = (&MaxResources)
+	ToggleOffResources = (&ToggleOnResources)-1
+	DelayBeforeReadyToUse = 1
 	DropResourcesWhenDestroyed = true
 	DropResourcesWhenRemoved = true
 }
@@ -338,8 +626,8 @@ EmitterBase
 {
 	Type = BulletEmitter
 	OperationalToggle = IsOperational
-	Location = [.5, 0]
-	ResourcesUsed = 4
+	Location = [.5, 1.5]
+	ResourcesUsed = 12
 	Bullet = &/SW_SHOTS/Missiles/HEX
 	TargetLeadPrediction = false
 	Recoil = 50
@@ -371,7 +659,7 @@ MissileStats
 		DamagePerSecond = (&DamagePerShot) * (&ROF)
 		MaxDamage = [&../DamagePerShot, &../DamagePerSecond]
 		DamageArea = &~/EmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
-		ROF = 1 / (&<../missile_launcher_small.rules>/Part/Components/CommonReloadTimerShort/Duration)
+		ROF = 1 / (&<../missile_launcher_small.rules>/Part/Components/CommonReloadTimerLong/Duration)
 		Range = &~/EmitterBase/Bullet/Range
 		Arc = deg(&~/WeaponBase/ValidArc)
 		ShotLaunchSpeed = &~/EmitterBase/Bullet/Speed
