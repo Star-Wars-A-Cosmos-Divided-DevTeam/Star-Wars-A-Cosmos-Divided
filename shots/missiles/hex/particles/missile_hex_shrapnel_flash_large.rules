@@ -28,21 +28,13 @@ Def
 			Enabled = true
 			UpdateAfterInit = false
 		}
-		{
-			Type = RotationToWorldSpace
-			RotationIn = rot
-			RotationOut = rot
-			Name = ""
-			Enabled = true
-			UpdateAfterInit = false
-		}
 	]
 	Updaters
 	[
 		{
 			Type = Lifetime
 			LifeInOut = life
-			Lifetime = 1
+			Lifetime = 0.25
 			Name = Lifetime
 			Enabled = true
 			UpdateAfterInit = false
@@ -100,7 +92,7 @@ Def
 		LocationIn = location
 		ScaleIn = scale
 		Scale2In
-		RotationIn = rot
+		RotationIn
 		ColorIn = color
 		UvRectIn
 		BaseSize
@@ -121,7 +113,7 @@ Def
 		{
 			File = ./Data/common_effects/particles/particle_light.shader
 		}
-		_z = 0.5
+		_z = 0.2
 		_litReflectiveStrength = 24
 		_litAdditiveStrength = 0.05
 		_unlitAdditiveStrength = 0.25
@@ -157,32 +149,32 @@ EmitterDef
 	[
 		{
 			Type = SetValue
-			DataOut = scale
-			ValueType = Float
-			Value = 20
-			Name = Scale
-			Enabled = true
-			UpdateAfterInit = false
-		}
-		{
-			Type = SetValue
 			DataOut = base_color
 			ValueType = Color
 			Value
 			{
-				Rf = 0.2
+				Rf = 0.5
 				Gf = 1
-				Bf = 0.2
+				Bf = 0.5
 				Af = 1
 			}
 			Name = "Base color"
 			Enabled = true
 			UpdateAfterInit = false
 		}
+		{
+			Type = ScaleFromIntensity
+			ScaleOut = scale
+			ScaleFactor = 7
+			IntensityExponent = 0.5
+			Name = "Scale from intensity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
 	]
 	PostInitializers[]
 }
-Bucket = Upper5
+Bucket = Upper1
 UseRealTime = false
 PenetratingBucket
 MinIntensity = 0
@@ -194,7 +186,7 @@ UnsharedRenderInWorldSpace = false
 DontEmitWhenOffScreen = true
 DontEmitWhenOffScreenSizeInflate = 5
 UseCustomShapeForOffScreenCheck = false
-MaxEmissionZoom = 30
+MaxEmissionZoom = 3.4028235E+38
 ScaleEmissionWithIntensity = false
 ScaleEmissionWithBeamLength = false
 ScaleEmissionWithWorldVelocity = false
