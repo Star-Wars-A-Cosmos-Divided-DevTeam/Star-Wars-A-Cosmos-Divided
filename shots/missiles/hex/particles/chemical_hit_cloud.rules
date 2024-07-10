@@ -1,0 +1,905 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Location to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rot
+			RotationOut = rot
+			Name = "Rotation to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = base_scale
+			ScaleOut = base_scale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 8.0
+			Name = Lifetime
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = color
+			Invert = false
+			ValueType = Color
+			FromValue
+			{
+				Rf = 0
+				Gf = 1
+				Bf = 0
+				Af = 1
+			}
+			ToValue
+			{
+				Rf = 0
+				Gf = 1
+				Bf = 0
+				Af = 0
+			}
+			Name = "Color lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = alphaMod
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0.5
+					Gf = 1
+					Bf = 0.5
+					Af = 1
+				}
+				{
+					Rf = 0.5
+					Gf = 1
+					Bf = 0.5
+					Af = 0.5
+				}
+				{
+					Rf = 0.5
+					Gf = 1
+					Bf = 0.5
+					Af = 0.2
+				}
+				{
+					Rf = 0.5
+					Gf = 1
+					Bf = 0.5
+					Af = 0
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 0.5
+			ToValue = 5.0
+			Name = "scale lerp"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = rot
+			BIn = rot_vel
+			ResultOut = rot
+			Operator = AddDt
+			Name = "apply angular velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = scale
+			BIn = base_scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "apply base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "apply velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = TwoColorQuadRenderer
+		Color2In = alphaMod
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn
+		BaseSize
+		{
+			X = 2.5
+			Y = 2.5
+		}
+		Offset
+		{
+			X = 0
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
+			File = ./Data/common_effects/particles/particle_dissolve.shader
+		}
+		Texture
+		{
+			File = chemical_hit_cloud.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 0
+	EmitPerOneShot
+	{
+		Min = 6
+		Max = 9
+	}
+	PreInitializers
+	[
+		{
+			Type = SetRandom
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 0d
+			ToValue = 360d
+			Name = "random rotation"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rot_vel
+			ValueType = Angle
+			FromValue = -10d
+			ToValue = 10d
+			Name = "random rot vel"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = base_scale
+			ValueType = Float
+			FromValue = 3
+			ToValue = 5
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetValue
+			DataOut = location
+			ValueType = Vector2
+			Value
+			{
+				X = -0.15
+				Y = 0
+			}
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = Upper3 //BulletHitSparks
+//Bucket = DisruptorOrb
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 0
+IsFancy = true
+IsFancyLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 5
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 30
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Junk = true
+	TargetedJunk
+}
+Delay = 0
+IgnoreIntensity = false
+
+
+/*
+Type = Particles
+Def
+{
+    EmitPerSecond = 0
+    EmitPerOneShot = 0
+    Initializers
+    [
+        {
+            Type = LocationToWorldSpace
+            LocationIn = location
+            LocationOut = location
+            Name = "Location to world space"
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = RotationToWorldSpace
+            RotationIn = rot
+            RotationOut = rot
+            Name = "Rotation to world space"
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = AddFrameOfReference
+            VelocityInOut = velocity
+            Name = ""
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = ScaleToWorldSpace
+            ScaleIn = base_scale
+            ScaleOut = base_scale
+            Name = ""
+            Enabled = true
+            UpdateAfterInit = false
+        }
+    ]
+    Updaters
+    [
+        {
+            Type = Lifetime
+            LifeInOut = life
+            Lifetime = 8.0
+            Name = Lifetime
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = Lerp
+            LerpIn = life
+            DataOut = color
+            Invert = false
+            ValueType = Color
+            FromValue
+            {
+                Rf = 0.2
+                Gf = 0.8
+                Bf = 0.2
+                Af = 0.7
+            }
+            ToValue
+            {
+                Rf = 0.2
+                Gf = 0.8
+                Bf = 0.2
+                Af = 0.1
+            }
+            Name = "Color lerp"
+            Enabled = true
+            UpdateAfterInit = true
+        }
+        {
+            Type = ColorRamp
+            LerpIn = life
+            ColorOut = alphaMod
+            Invert = false
+            Colors
+            [
+                {
+                    Rf = 0.2
+                    Gf = 0.8
+                    Bf = 0.2
+                    Af = 0.4
+                }
+                {
+                    Rf = 0.4
+                    Gf = 0.4
+                    Bf = 0.4
+                    Af = 0.3
+                }
+                {
+                    Rf = 0.2
+                    Gf = 0.8
+                    Bf = 0.2
+                    Af = 0.2
+                }
+                {
+                    Rf = 0.2
+                    Gf = 0.8
+                    Bf = 0.2
+                    Af = 0.1
+                }
+            ]
+            Name = ""
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = Lerp
+            LerpIn = life
+            DataOut = scale
+            Invert = false
+            ValueType = Float
+            FromValue = 1.5
+            ToValue = 3.0
+            Name = "scale lerp"
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = Operator
+            DataType = Float
+            AIn = rot
+            BIn = rot_vel
+            ResultOut = rot
+            Operator = AddDt
+            Name = "apply angular velocity"
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = Operator
+            DataType = Float
+            AIn = scale
+            BIn = base_scale
+            ResultOut = scale
+            Operator = Multiply
+            Name = "apply base scale"
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = Operator
+            DataType = Vector2
+            AIn = location
+            BIn = velocity
+            ResultOut = location
+            Operator = AddDt
+            Name = "apply velocity"
+            Enabled = true
+            UpdateAfterInit = false
+        }
+    ]
+    Renderer
+    {
+        Type = TwoColorQuadRenderer
+        Color2In = alphaMod
+        LocationIn = location
+        ScaleIn = scale
+        Scale2In
+        RotationIn = rot
+        ColorIn = color
+        UvRectIn
+        BaseSize
+        {
+            X = 2
+            Y = 2
+        }
+        Offset
+        {
+            X = 0
+            Y = 0
+        }
+        Name = ""
+        //RenderBucket = BulletHitSparks
+        //Z = 0.5
+    }
+    Material
+    {
+        Shader
+        {
+            File = ./Data/common_effects/particles/particle_dissolve.shader
+        }
+        //_z = 0.5
+        //_litReflectiveStrength = 3
+        //_litAdditiveStrength = 0.05
+        //_unlitAdditiveStrength = 0
+        //_emissiveStrength = 2
+        Texture
+        {
+            File = chemical_hit_cloud.png
+            MipLevels = max
+            SampleMode = Linear
+        }
+        TargetBlendMode
+        {
+            SourceRgbFactor = InverseDestColor
+            DestRgbFactor = One
+            RgbOperator = Add
+            SourceAlphaFactor = Zero
+            DestAlphaFactor = One
+            AlphaOperator = Add
+        }
+    }
+    DeleteMode = Fast
+    EnableMultithreading = false
+    InitCapacity = 256
+}
+EmitterDef
+{
+    EmitPerSecond = 0
+    EmitPerOneShot
+    {
+        Min = 6
+        Max = 9
+    }
+    PreInitializers
+    [
+        {
+            Type = SetRandom
+            DataOut = rot
+            ValueType = Angle
+            FromValue = 0d
+            ToValue = 360d
+            Name = "random rotation"
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = SetRandom
+            DataOut = rot_vel
+            ValueType = Angle
+            FromValue = -10d
+            ToValue = 10d
+            Name = "random rot vel"
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = SetRandom
+            DataOut = base_scale
+            ValueType = Float
+            FromValue = 1.0
+            ToValue = 2.5
+            Name = ""
+            Enabled = true
+            UpdateAfterInit = false
+        }
+        {
+            Type = SetValue
+            DataOut = location
+            ValueType = Vector2
+            Value
+            {
+                X = -0.15
+                Y = 0
+            }
+            Name = ""
+            Enabled = true
+            UpdateAfterInit = false
+        }
+    ]
+    PostInitializers[]
+}
+Bucket = BulletHitSparks
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 0
+IsFancy = true
+IsFancyLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 5
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 30
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+    Ships = true
+    OperationalHealth = true
+    StructuralHealth = true
+    OnlyPartCategories
+    ExcludePartCategories
+    Shields = true
+    Bullets = true
+    OnlyBulletCategories
+    ExcludeBulletCategories
+    Crew = true
+    Nuggets = true
+    IgnoreInvulnerability = true
+    Self
+    TargetedSelf
+    Friendlies = true
+    TargetedFriendlies
+    Enemies = true
+    TargetedEnemies
+    Junk = true
+    TargetedJunk
+}
+Delay = 0
+IgnoreIntensity = false
+*/
+
+/*Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Location to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rot
+			RotationOut = rot
+			Name = "Rotation to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = base_scale
+			ScaleOut = base_scale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 8.0
+			Name = Lifetime
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = color
+			Invert = false
+			ValueType = Color
+			FromValue
+			{
+				Rf = 0
+				Gf = 1
+				Bf = 0
+				Af = 1
+			}
+			ToValue
+			{
+				Rf = 0
+				Gf = 1
+				Bf = 0
+				Af = 0
+			}
+			Name = "Color lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = alphaMod
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0.5
+					Gf = 1
+					Bf = 0.5
+					Af = 1
+				}
+				{
+					Rf = 0.5
+					Gf = 1
+					Bf = 0.5
+					Af = 0.5
+				}
+				{
+					Rf = 0.5
+					Gf = 1
+					Bf = 0.5
+					Af = 0.2
+				}
+				{
+					Rf = 0.5
+					Gf = 1
+					Bf = 0.5
+					Af = 0
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 0.5
+			ToValue = 5.0
+			Name = "scale lerp"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = rot
+			BIn = rot_vel
+			ResultOut = rot
+			Operator = AddDt
+			Name = "apply angular velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = scale
+			BIn = base_scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "apply base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "apply velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = TwoColorQuadRenderer
+		Color2In = alphaMod
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn
+		BaseSize
+		{
+			X = 2.5
+			Y = 2.5
+		}
+		Offset
+		{
+			X = 0
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
+			File = ./Data/common_effects/particles/particle_dissolve.shader
+		}
+		Texture
+		{
+			File = chemical_hit_cloud.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 0
+	EmitPerOneShot
+	{
+		Min = 6
+		Max = 9
+	}
+	PreInitializers
+	[
+		{
+			Type = SetRandom
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 0d
+			ToValue = 360d
+			Name = "random rotation"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rot_vel
+			ValueType = Angle
+			FromValue = -10d
+			ToValue = 10d
+			Name = "random rot vel"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = base_scale
+			ValueType = Float
+			FromValue = 3
+			ToValue = 5
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetValue
+			DataOut = location
+			ValueType = Vector2
+			Value
+			{
+				X = -0.15
+				Y = 0
+			}
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = BulletHitSparks
+//Bucket = DisruptorOrb
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 0
+IsFancy = true
+IsFancyLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 5
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 30
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Junk = true
+	TargetedJunk
+}
+Delay = 0
+IgnoreIntensity = false*/
