@@ -3,29 +3,30 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
     //IDs
     ID = SW.missile_launcher_small
     //StringKeys
-	NameKey = "Parts/MissileLauncher"
-	IconNameKey = "Parts/MissileLauncherIcon"
-	DescriptionKey = "Parts/MissileLauncherDesc"
+	NameKey = "Parts/MissileLauncherCompact"
+	IconNameKey = "Parts/MissileLauncherCompactIcon"
+	DescriptionKey = "Parts/MissileLauncherCompactDesc"
 
 	//Groups&Categories
 	EditorGroups = ["WeaponsProjectile", "SWTechI"]
-	TypeCategories = [weapon, uses_clusters, uses_concussions, uses_hexs, uses_intruders, uses_launcher_parts, is_crewed, SW_Tech_I]
+	TypeCategories = [weapon, uses_clusters, uses_concussions, uses_hexs, uses_intruders, uses_launcher_parts, /*is_crewed,*/ SW_Tech_I, SW_Laucher_S]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
 	Resources
 	[
-		[steel, 60]
-		[coil2, 20]
-		[processor, 1]
+		[steel, 240]
+		[SW.durasteel, 120]
+		[coil2, 60]
+		[processor, 3]
 	]
-	Size = [1, 4]
-	MaxHealth = 1000
+	Size = [1, 3]
+	MaxHealth = 5000
 
 	//Rects
 	//PhysicalRect = [0, 3, 1, 1]
 	//RectColliderRectType = Normal
-	SaveRect = [0, 3, 1, 1]
+    SaveRect = [0, 3, 1, 1]
 
 	//Selections
 	SelectionPriority = 1
@@ -34,21 +35,21 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
-	ProhibitedBy : ^/0/ProhibitedBy [tall, SW_tall]
-	ProhibitRects
-	[
-		[default, [-1, -12, 3, 6]]
-		[tall, [-1, -6, 3, 6]]
-		[SW_tall, [-2, -1, 2, 6]]
-		[SW_tall, [1, -1, 2, 6]]
-	]
+	//ProhibitedBy : ^/0/ProhibitedBy [tall, SW_tall]
+	//ProhibitRects
+	//[
+	//	[default, [-1, -12, 3, 6]]
+	//	[tall, [-1, -6, 3, 6]]
+	//	[SW_tall, [-2, -1, 2, 6]]
+	//	[SW_tall, [1, -1, 2, 6]]
+	//]
 
 	//Doors&Etc
 	AllowedDoorLocations
 	[
-		[-1, 3] //left
- 		[0, 4]	//bottom
-		[1, 3]	//right
+		[-1, 2] //left
+ 		[0, 3]	//bottom
+		[1, 2]	//right
 	]
 	/*
 	ForceManhattanPathInPart = true
@@ -85,7 +86,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, PartCrew]
+			Toggles = [PowerToggle, FireModeToggle] /*, PartCrew]*/
 			Mode = All
 		}
 
@@ -155,25 +156,11 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			Components = &<mini_cluster/missile_launcher_mini_cluster.rules>/Components
 		}
 
-		IntruderMissilesToggle
-		{
-			Type = ModeToggle
-			Mode = SW_MissileType
-			OnMode = 1
-		}
-		IntruderMissilesComponents
-		{
-			Type = ToggledComponents
-			Toggle = IntruderMissilesToggle
-			IncludeInBlueprints = true
-			Components = &<intruder/missile_launcher_intruder.rules>/Components
-		}
-
 		ConcussionMissilesToggle
 		{
 			Type = ModeToggle
 			Mode = SW_MissileType
-			OnMode = 2
+			OnMode = 1
 		}
 		ConcussionMissilesComponents
 		{
@@ -187,7 +174,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = ModeToggle
 			Mode = SW_MissileType
-			OnMode = 3
+			OnMode = 2
 		}
 		HEXMissilesComponents
 		{
@@ -195,6 +182,20 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			Toggle = HEXMissilesToggle
 			IncludeInBlueprints = true
 			Components = &<hex/missile_launcher_hex.rules>/Components
+		}
+
+		IntruderMissilesToggle
+		{
+			Type = ModeToggle
+			Mode = SW_MissileType
+			OnMode = 3
+		}
+		IntruderMissilesComponents
+		{
+			Type = ToggledComponents
+			Toggle = IntruderMissilesToggle
+			IncludeInBlueprints = true
+			Components = &<intruder/missile_launcher_intruder.rules>/Components
 		}
 
 		CommonDelayTimerShort
@@ -214,7 +215,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		CommonReloadTimerMed
 		{
 			Type = Timer
-			Duration = 6
+			Duration = 4
 			AutoStart = true
 			StartTrigger = CommonReloadResetTriggerProxy
 		}
@@ -241,13 +242,15 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ToggleProxy
 			ComponentID = MissilesPrereq
 		}
-
+/*
 		CrewLocation1
 		{
 			Type = CrewLocation
-			Location = [0.5, 3.5]
+			Location = [0.5, 2.2]
 			Rotation = 0d
 		}
+*/
+/*
 		PartCrew
 		{
 			Type = PartCrew
@@ -257,14 +260,336 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			HighPriorityPrerequisites = [MissilesPrereqToggleProxy]
 			CrewDestinations
 			[
-				[0.5, 3.5]
+				[0.5, 2]
 			]
 			CrewLocations
 			[
 				CrewLocation1
 			]
 		}
+*/
+/*
+		MissilesPreparingToFire
+		{
+			Type = OpenCloseSprite
+			Location = [.5, 1.5]
+			OperationalToggle = LauchBayShouldOpen
+			Layer = "doodads_high"
+			OpenDamageLevels
+			[
+				{
+					AnimationFiles
+					[
+						"sprites/missile_0.png"
+						"sprites/missile_1.png"
+						"sprites/missile_2.png"
+						"sprites/missile_3.png"
+						"sprites/missile_4.png"
+						"sprites/missile_5.png"
+						"sprites/missile_6.png"
+						"sprites/missile_7.png"
+						"sprites/missile_8.png"
+						"sprites/missile_9.png"
+						"sprites/missile_10.png"
+						"sprites/missile_11.png"
+						"sprites/missile_12.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/LaunchBayChangingValueTween/OnTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+			]
+			ClosedDamageLevels
+			[
+				{
+					AnimationFiles
+					[
+						"sprites/missile_12.png"
+						"sprites/missile_11.png"
+						"sprites/missile_10.png"
+						"sprites/missile_9.png"
+						"sprites/missile_8.png"
+						"sprites/missile_7.png"
+						"sprites/missile_6.png"
+						"sprites/missile_5.png"
+						"sprites/missile_4.png"
+						"sprites/missile_3.png"
+						"sprites/missile_2.png"
+						"sprites/missile_1.png"
+						"sprites/missile_0.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/LaunchBayChangingValueTween/OffTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+			]
+		}
+*/
+/*
+		InternalLaunchBaySprite
+		{
+			Type = OpenCloseSprite
+			Location = [.5, 1.5]
+			OperationalToggle = LauchBayShouldOpen
+			Layer = "roofs"
+			OpenDamageLevels
+			[
+				{
+					AnimationFiles
+					[
+						"sprites/roof_0.png"
+						"sprites/roof_1.png"
+						"sprites/roof_2.png"
+						"sprites/roof_3.png"
+					]
+					
+					NormalsAnimationFiles
+					[
+						"sprites/roof_0_normals.png"
+						"sprites/roof_1_normals.png"
+						"sprites/roof_2_normals.png"
+						"sprites/roof_3_normals.png"
+					]
+					
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/LaunchBayChangingValueTween/OnTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+				{
+					AnimationFiles
+					[
+						"sprites/roof_0_33.png"
+						"sprites/roof_1_33.png"
+						"sprites/roof_2_33.png"
+						"sprites/roof_3_33.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/roof_0_normals_33.png"
+						"sprites/roof_1_normals_33.png"
+						"sprites/roof_2_normals_33.png"
+						"sprites/roof_3_normals_33.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/LaunchBayChangingValueTween/OnTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+				{
+					AnimationFiles
+					[
+						"sprites/roof_0_66.png"
+						"sprites/roof_1_66.png"
+						"sprites/roof_2_66.png"
+						"sprites/roof_3_66.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/roof_0_normals_66.png"
+						"sprites/roof_1_normals_66.png"
+						"sprites/roof_2_normals_66.png"
+						"sprites/roof_3_normals_66.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/LaunchBayChangingValueTween/OnTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+			]
+			ClosedDamageLevels
+			[
+				{
+					AnimationFiles
+					[
+						"sprites/roof_3.png"
+						"sprites/roof_2.png"
+						"sprites/roof_1.png"
+						"sprites/roof_0.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/roof_3_normals.png"
+						"sprites/roof_2_normals.png"
+						"sprites/roof_1_normals.png"
+						"sprites/roof_0_normals.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/LaunchBayChangingValueTween/OffTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+				{
+					AnimationFiles
+					[
+						"sprites/roof_3_33.png"
+						"sprites/roof_2_33.png"
+						"sprites/roof_1_33.png"
+						"sprites/roof_0_33.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/roof_3_normals_33.png"
+						"sprites/roof_2_normals_33.png"
+						"sprites/roof_1_normals_33.png"
+						"sprites/roof_0_normals_33.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/LaunchBayChangingValueTween/OffTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+				{
+					AnimationFiles
+					[
+						"sprites/roof_3_66.png"
+						"sprites/roof_2_66.png"
+						"sprites/roof_1_66.png"
+						"sprites/roof_0_66.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/roof_3_normals_66.png"
+						"sprites/roof_2_normals_66.png"
+						"sprites/roof_1_normals_66.png"
+						"sprites/roof_0_normals_66.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/LaunchBayChangingValueTween/OffTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+			]
+		}
+*/
+/*
+		LaunchBayDoorAnimation
+		{
+			Type = Sprite
+			Location = [.5, 1.5]
+			Layer = "sprites/roofs"
+			ResetAnimationTrigger = CommonReloadResetTriggerProxy
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					//"sprites/roof1.png"
+					"sprites/roof_1.png"
+					"sprites/roof_2.png"
+					"sprites/roof_3.png"
+					//"sprites/roof4.png"
+					//"sprites/roof5.png"
+					//"sprites/roof6.png"
+					//"sprites/roof6.png"
+					//"sprites/roof6.png"
+					//"sprites/roof5.png"
+					//"sprites/roof4.png"
+					"sprites/roof3.png"
+					"sprites/roof2.png"
+					"sprites/roof.png"
+				]
+				NormalsAnimationFiles
+				[
+					//"sprites/roof1.png"
+					"sprites/roof_normals2.png"
+					"sprites/roof_normals3.png"
+					//"sprites/roof_normals4.png"
+					//"sprites/roof_normals5.png"
+					//"sprites/roof_normals6.png"
+					//"sprites/roof_normals6.png"
+					//"sprites/roof_normals6.png"
+					//"sprites/roof_normals5.png"
+					//"sprites/roof_normals4.png"
+					"sprites/roof_normals3.png"
+					"sprites/roof_normals2.png"
+					"sprites/roof_normals1.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = 0.166
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+*/
+/*
+		IsLaunchBayNotFullyOpen
+		{
+			Type = MultiToggle
+			Toggles = [{Toggle = IsLaunchBayFullyOpen; Invert = true}]
+			Mode = All
+		}
 
+        LaunchBayChangingValueTween
+        {
+            Type = ValueTween
+            OnTweenDuration = 0.6
+            OffTweenDuration = 0.6
+            IsOnToggle = LauchBayShouldOpen
+        }
+
+        IsLaunchBayFullyOpen
+        {
+            Type = ThresholdToggle
+            ValueFrom = LaunchBayChangingValueTween
+            MinAmount = 100%
+        }
+
+        IsLauchBayFullyClosed
+        {
+            Type = ThresholdToggle
+            ValueFrom = LaunchBayChangingValueTween
+            MaxAmount = 0%
+        }
+
+        LauchBayShouldOpen
+        {
+            Type = MultiToggle
+            Toggles = [IsOperational, FireModeToggle, MissilesPrereqToggleProxy]
+            Mode = All
+        }
+*/
+ /*
+ 		IsOuterLaunchBayNotFullyOpen
+		{
+			Type = MultiToggle
+			Toggles = [{Toggle = IsOuterLaunchBayFullyOpen; Invert = true}]
+			Mode = All
+		}
+
+        OuterLaunchBayChangingValueTween
+        {
+            Type = ValueTween
+            OnTweenDuration = 0.6
+            OffTweenDuration = 0.6
+            IsOnToggle = OuterLauchBayShouldOpen
+        }
+
+        IsOuterLaunchBayFullyOpen
+        {
+            Type = ThresholdToggle
+            ValueFrom = OuterLaunchBayChangingValueTween
+            MinAmount = 100%
+        }
+
+        IsOuterLauchBayFullyClosed
+        {
+            Type = ThresholdToggle
+            ValueFrom = OuterLaunchBayChangingValueTween
+            MaxAmount = 0%
+        }
+
+        OuterLauchBayShouldOpen
+        {
+            Type = MultiToggle
+            Toggles = [IsOperational, FireModeToggle, MissilesPrereqToggleProxy]
+            Mode = All
+        }
+*/
+
+
+/*
 		FloorGrid
 		{
 			Type = SpriteGrid
@@ -290,21 +615,22 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			RandomUVRotation = true
 			Layer = "floors"
 		}
-
+		*/
+		/*
 		Graphics
 		{
 			Type = Graphics
-			Location = [0.5, 2]
+			Location = [0.5, 1.5]
 			OperationalToggle = IsOperational
 			Floor
 			{
 				Layer = "floors"
-				Offset = [0, 1.5]
+				//Offset = [0, .5]
 				DamageLevels
 				[
 					{
 						File = "sprites/floor.png"
-						Size = [1, 1]
+						Size = [1, 3]
 					}
 					{
 						File = "sprites/floor_33.png"
@@ -319,52 +645,114 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			Walls
 			{
 				Layer = "walls"
-				Offset = [0, 1.5]
+				//Offset = [0, .5]
 				DamageLevels
 				[
 					{
 						File = "sprites/walls.png"
-						Size = [1, 1]
+						Size = [1, 3]
 					}
 					{
 						File = "sprites/walls_33.png"
-						Size = [1, 1]
+						Size = [1, 3]
 					}
 					{
 						File = "sprites/walls_66.png"
-						Size = [1, 1]
+						Size = [1, 3]
 					}
 				]
 			}
+
 			Roof
 			{
-				Layer = "roofs"
-				Offset = [0, 1.0]
+				Layer = "sprites/roofs"
+				//Offset = [0, 1.5]
 				DamageLevels
 				[
 					{
-						File = "sprites/roof.png"
-						NormalsFile = "sprites/roof_normals.png"
-						Size = [1, 2]
+						File = "sprites/roof1.png"
+						NormalsFile = "sprites/roof_normals1.png"
+						Size = [1, 3]
 					}
 					{
-						File = "sprites/roof_33.png"
-						NormalsFile = "sprites/roof_normals_33.png"
-						Size = [1, 2]
+						File = "sprites/roof1_33.png"
+						NormalsFile = "sprites/roof_normals1_33.png"
+						Size = [1, 3]
 					}
 					{
-						File = "sprites/roof_66.png"
-						NormalsFile = "sprites/roof_normals_66.png"
-						Size = [1, 2]
+						File = "sprites/roof1_66.png"
+						NormalsFile = "sprites/roof_normals1_66.png"
+						Size = [1, 3]
+					}
+				]
+			}
+			
+		}
+*/
+/*
+		DoodadGraphics
+		{
+			Type = Graphics
+			Location = [0.5, 1.5]
+			OperationalToggle = IsOperational
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				//Offset = [0, .5]
+				DamageLevels
+				[
+					{
+						File = "sprites/doodads.png"
+						Size = [1, 3]
+					}
+					{
+						File = "sprites/doodads_33.png"
+						Size = [1, 3]
+					}
+					{
+						File = "sprites/doodads_66.png"
+						Size = [1, 3]
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				//Offset = [0, .5]
+				DamageLevels
+				[
+					{
+						File = "sprites/doodads.png"
+						Size = [1, 3]
+					}
+					{
+						File = "sprites/doodads_33.png"
+						Size = [1, 3]
+					}
+					{
+						File = "sprites/doodads_66.png"
+						Size = [1, 3]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "sprites/lights.png"
+						Size = [1, 3]
 					}
 				]
 			}
 		}
 
+*/
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [1, 4]
+            Location = [0.5, 2.5]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
@@ -374,7 +762,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_cluster.png"
-			Size = [1, 4]
+			Size = [1, 3]
 			//Offset = [0, -.5]
 
 			ShowOnlyInToggleMode
@@ -387,7 +775,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_intruder.png"
-			Size = [1, 4]
+			Size = [1, 3]
 
 			ShowOnlyInToggleMode
 			{
@@ -399,7 +787,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_concussion.png"
-			Size = [1, 4]
+			Size = [1, 3]
 
 			ShowOnlyInToggleMode
 			{
@@ -412,7 +800,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BlueprintSprite
 			File = "blueprints_hex.png"
-			Size = [1, 4]
+			Size = [1, 3]
 
 			ShowOnlyInToggleMode
 			{
@@ -424,7 +812,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 
     Stats
     {
-        CrewRequired = &~/Part/Components/PartCrew/Crew
+        CrewRequired = 0 //&~/Part/Components/PartCrew/Crew
         MiniClusterCapacity = 6
         IntruderMissileCapacity = 1
         ConcussionMissileCapacity = 1
@@ -490,4 +878,163 @@ For example:
 
 </missile_launcher>
 
+*/
+/*
+		OuterLaunchBayDoorsSprite
+		{
+			Type = OpenCloseSprite
+			Location = [.5, 1.5]
+			OperationalToggle = OuterLauchBayShouldOpen
+			Layer = "SW.roof_engines"
+			OpenDamageLevels
+			[
+				{
+					AnimationFiles
+					[
+						"sprites/outer_roof_1.png"
+						"sprites/outer_roof_2.png"
+						"sprites/outer_roof_3.png"
+						"sprites/outer_roof_4.png"
+						"sprites/outer_roof_5.png"
+						"sprites/outer_roof_6.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/outer_roof_normals_1.png"
+						"sprites/outer_roof_normals_2.png"
+						"sprites/outer_roof_normals_3.png"
+						"sprites/outer_roof_normals_4.png"
+						"sprites/outer_roof_normals_5.png"
+						"sprites/outer_roof_normals_6.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/OuterLaunchBayChangingValueTween/OnTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+				{
+					AnimationFiles
+					[
+						"sprites/outer_roof_1_33.png"
+						"sprites/outer_roof_2_33.png"
+						"sprites/outer_roof_3_33.png"
+						"sprites/outer_roof_4_33.png"
+						"sprites/outer_roof_5_33.png"
+						"sprites/outer_roof_6.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/outer_roof_normals_1_33.png"
+						"sprites/outer_roof_normals_2_33.png"
+						"sprites/outer_roof_normals_3_33.png"
+						"sprites/outer_roof_normals_4_33.png"
+						"sprites/outer_roof_normals_5_33.png"
+						"sprites/outer_roof_normals_6.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/OuterLaunchBayChangingValueTween/OnTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+				{
+					AnimationFiles
+					[
+						"sprites/outer_roof_1_66.png"
+						"sprites/outer_roof_2_66.png"
+						"sprites/outer_roof_3_66.png"
+						"sprites/outer_roof_4_66.png"
+						"sprites/outer_roof_5_66.png"
+						"sprites/outer_roof_6.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/outer_roof_normals_1_66.png"
+						"sprites/outer_roof_normals_2_66.png"
+						"sprites/outer_roof_normals_3_66.png"
+						"sprites/outer_roof_normals_4_66.png"
+						"sprites/outer_roof_normals_5_66.png"
+						"sprites/outer_roof_normals_6.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/OuterLaunchBayChangingValueTween/OnTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+			]
+			ClosedDamageLevels
+			[
+				{
+					AnimationFiles
+					[
+						"sprites/outer_roof_6.png"
+						"sprites/outer_roof_5.png"
+						"sprites/outer_roof_4.png"
+						"sprites/outer_roof_3.png"
+						"sprites/outer_roof_2.png"
+						"sprites/outer_roof_1.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/outer_roof_normals_6.png"
+						"sprites/outer_roof_normals_5.png"
+						"sprites/outer_roof_normals_4.png"
+						"sprites/outer_roof_normals_3.png"
+						"sprites/outer_roof_normals_2.png"
+						"sprites/outer_roof_normals_1.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/OuterLaunchBayChangingValueTween/OffTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+				{
+					AnimationFiles
+					[
+						"sprites/outer_roof_6.png"
+						"sprites/outer_roof_5_33.png"
+						"sprites/outer_roof_4_33.png"
+						"sprites/outer_roof_3_33.png"
+						"sprites/outer_roof_2_33.png"
+						"sprites/outer_roof_1_33.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/outer_roof_normals_6.png"
+						"sprites/outer_roof_normals_5_33.png"
+						"sprites/outer_roof_normals_4_33.png"
+						"sprites/outer_roof_normals_3_33.png"
+						"sprites/outer_roof_normals_2_33.png"
+						"sprites/outer_roof_normals_1_33.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/OuterLaunchBayChangingValueTween/OffTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+				{
+					AnimationFiles
+					[
+						"sprites/outer_roof_6.png"
+						"sprites/outer_roof_5_66.png"
+						"sprites/outer_roof_4_66.png"
+						"sprites/outer_roof_3_66.png"
+						"sprites/outer_roof_2_66.png"
+						"sprites/outer_roof_1_66.png"
+					]
+					NormalsAnimationFiles
+					[
+						"sprites/outer_roof_normals_6.png"
+						"sprites/outer_roof_normals_5_66.png"
+						"sprites/outer_roof_normals_4_66.png"
+						"sprites/outer_roof_normals_3_66.png"
+						"sprites/outer_roof_normals_2_66.png"
+						"sprites/outer_roof_normals_1_66.png"
+					]
+					Size = [1, 3]
+					AnimationInterval = (&~/Part/Components/OuterLaunchBayChangingValueTween/OffTweenDuration) / 12
+					AnimationStartTime = MinValue
+					ClampAnimation = true
+				}
+			]
+		}
 */

@@ -57,6 +57,7 @@ Components
 	Sprite
 	{
 		Type = Sprite
+		RenderBucket = BulletUpper3
 		IsLit = true
 		Sprite
 		{
@@ -78,7 +79,8 @@ Components
 	HELightsSprite
 	{
 		Type = AnimatedSprite
-		RenderBucket = BulletUpper1
+		RenderBucket = BulletUpper4
+		Z = 0.5
 		Offset = [24/64, 0]
 		Animation
 		{
@@ -103,7 +105,7 @@ Components
 	MediaEffects
 	{
 		Type = MediaEffects
-		Offset = [-0.9, 0]
+		Offset = [-0.3, 0]//[-0.9, 0]
 		Rotation = 180d
 		MediaEffects
 		[
@@ -119,7 +121,248 @@ Components
 	Targetable
 	{
 		Type = Targetable
-		Health = 800
+		Health = 9800
+		TargetCategory = "missile"
+
+		// No AOE damage when shot down.
+		OnDeath = &../Hit/HitFriendly
+	}
+
+	Hit
+	{
+		Type = SimpleHit
+		ShieldCollisions = { Shields=true; }
+		SourcePartCollisionDelay = 1.5/30
+		FriendlyShipLowCollisions = false
+
+		HitShield = &HitFriendly 
+
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = SpawnBullets
+					Bullet = &<missile_hex_shrapnel.rules>
+					Count = 4
+					Distance = .4
+					Spread = [-1d, 1d]
+					InheritVelocity = false
+				}
+				{
+					Type = Fire
+					FireChance = 2
+				}
+				{
+					Type = Impulse
+					Impulse = 32
+					CrewKillChance = 100%
+				}
+				{
+					Type = Repeating
+					Count = 5
+					Interval = 2
+					InitialDelay = 1
+					RequireHitPart = true
+					HitEffectsScaleOverIterations
+					{
+						Min = 0.5
+						Max = 1.5
+					}
+					HitEffects
+					[
+						{
+							Type = ExplosiveDamage
+							TotalDamage = 5000
+							Radius = 10
+							CrewKillChance = 100%
+							Filter
+							{
+								Friendlies = true
+							}
+						}
+						{
+							Type = Impulse
+							Impulse = 10
+							CrewKillChance = 100%
+						}
+					]
+					MediaEffects
+					[
+						//&<particles/chemical_hit_effect.rules>
+						&<particles/missile_hex_shrapnel_hit_large_sparks.rules>
+						&<particles/missile_hex_flash.rules>
+						&<particles/missile_hex_smoke.rules>
+					]
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/missile_hex_flash.rules>
+				&<particles/missile_hex_smoke.rules>
+				&<particles/chemical_hit_cloud.rules>
+				&/SW_SOUNDS/SW_Missile_Hex_Hit
+				//: /BASE_SOUNDS/AudioExterior
+				//{
+				//	Sound = "missile_hex_hit.wav"
+				//	Volume = .75
+				//	SpeedVariation = .4
+				//}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .15
+					Duration = .75
+				}
+			]
+		}
+		HitStructural = &HitOperational
+
+		HitFriendly
+		{
+			MediaEffects
+			[
+				&<particles/missile_hex_flash.rules>
+				&<particles/missile_hex_smoke.rules>
+				&<particles/chemical_hit_cloud.rules>
+				&/SW_SOUNDS/SW_Missile_Hex_Hit
+				//: /BASE_SOUNDS/AudioExterior
+				//{
+				//	Sound = "missile_hex_hit.wav"
+				//	Volume = .75
+				//	SpeedVariation = .4
+				//}
+			]
+		}
+	}
+}
+
+/*
+ID = "SW.missile_hex"
+Range = 1250 //666
+IdealRange = 450
+Speed = 45
+
+Components
+{
+	Physics
+	{
+		Type = BoxPhysics
+		Size = [1.5, .5]
+		Density = 0.1
+	}
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 240d
+		Delay = .1
+		AvoidanceRaycastDistance = 250
+		VelocityCompensation = 60%
+	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+	Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 65
+	}
+
+	NegativeAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [-90, 0]
+		AccelerationOverTime = [0, .75]
+		Direction = FrameOfReferenceVelocity
+	}
+
+	DeathByLifetime
+	{
+		Type = DeathByLifetime
+		Lifetime = 15
+		HasTarget = true
+	}
+
+	DeathByDistanceTraveled
+	{
+		Type = DeathByDistanceTraveled
+		// Distance auto-computed from range.
+		HasTarget = false
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper3
+		IsLit = true
+		Sprite
+		{
+			Texture
+			{
+				File = "missile_hex.png"
+				MipLevels = max
+			}
+			Size = [2, 1]
+		}
+
+		NormalsTexture
+		{
+			File = "missile_hex_normals.png"
+			MipLevels = max
+		}
+	}
+
+	HELightsSprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		Offset = [24/64, 0]
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "missile_hex_light.png"
+					MipLevels = max
+					SampleMode = Linear
+				}
+				Size = [1.5, 1.5]
+				TargetBlendMode = Add
+			}
+			FrameCount = 4
+			FrameSize = [98, 98]
+			FramesPerRow = 4
+			FramesPerSecond = 15
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		Offset = [-0.3, 0]//[-0.9, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&<particles/missile_hex_thruster_fire.rules>
+			&<particles/missile_hex_thruster_smoke.rules>
+			&<particles/missile_hex_thruster_plume.rules>
+			&<particles/missile_hex_thruster_plume_light.rules>
+			&/SW_PARTICLES/Thruster/Vanilla/PlumeLight/Small/Orange
+			&/SW_PARTICLES/Thruster/Vanilla/PlumeLight/Med/Green
+		]
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 9800
 		TargetCategory = "missile"
 
 		// No AOE damage when shot down.
@@ -195,3 +438,223 @@ Components
 		}
 	}
 }
+*/
+/*
+ID = "SW.missile_hex"
+Range = 1250
+IdealRange = 450
+Speed = 45
+
+Components
+{
+	Physics
+	{
+		Type = BoxPhysics
+		Size = [1.5, .5]
+		Density = 0.1
+	}
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 240d
+		Delay = .1
+		AvoidanceRaycastDistance = 250
+		VelocityCompensation = 60%
+	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+	Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 65
+	}
+
+	NegativeAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [-90, 0]
+		AccelerationOverTime = [0, .75]
+		Direction = FrameOfReferenceVelocity
+	}
+
+	DeathByLifetime
+	{
+		Type = DeathByLifetime
+		Lifetime = 15
+		HasTarget = true
+	}
+
+	DeathByDistanceTraveled
+	{
+		Type = DeathByDistanceTraveled
+		HasTarget = false
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper3
+		IsLit = true
+		Sprite
+		{
+			Texture
+			{
+				File = "missile_hex.png"
+				MipLevels = max
+			}
+			Size = [2, 1]
+		}
+
+		NormalsTexture
+		{
+			File = "missile_hex_normals.png"
+			MipLevels = max
+		}
+	}
+
+	HELightsSprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		Offset = [24/64, 0]
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "missile_hex_light.png"
+					MipLevels = max
+					SampleMode = Linear
+				}
+				Size = [1.5, 1.5]
+				TargetBlendMode = Add
+			}
+			FrameCount = 4
+			FrameSize = [98, 98]
+			FramesPerRow = 4
+			FramesPerSecond = 15
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		Offset = [-0.3, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&<particles/missile_hex_thruster_fire.rules>
+			&<particles/missile_hex_thruster_smoke.rules>
+			&<particles/missile_hex_thruster_plume.rules>
+			&<particles/missile_hex_thruster_plume_light.rules>
+			&/SW_PARTICLES/Thruster/Vanilla/PlumeLight/Small/Orange
+			&/SW_PARTICLES/Thruster/Vanilla/PlumeLight/Med/Green
+		]
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 9800
+		TargetCategory = "missile"
+		OnDeath = &../Hit/HitFriendly
+	}
+
+	Hit
+	{
+		Type = SimpleHit
+		ShieldCollisions = { Shields=true; }
+		SourcePartCollisionDelay = 1.5/30
+		FriendlyShipLowCollisions = false
+
+		HitShield {}
+
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Repeating
+					Count = 5
+					Interval = 2
+					InitialDelay = 1
+					RequireHitPart = true
+					HitEffectsScaleOverIterations
+					{
+						Min = 0.5
+						Max = 1.5
+					}
+					HitEffects
+					[
+						{
+							Type = Damage
+							Damage = 5000
+						}
+						{
+							Type = Impulse
+							Impulse = 10
+						}
+					]
+					MediaEffects
+					[
+						&<particles/chemical_hit_effect.rules>
+					]
+				}
+				{
+					Type = Fire
+					FireChance = 2
+				}
+				{
+					Type = Impulse
+					Impulse = 32
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/missile_hex_flash.rules>
+				&<particles/missile_hex_smoke.rules>
+				&<particles/chemical_hit_effect.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "missile_hex_hit.wav"
+					Volume = .75
+					SpeedVariation = .4
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .15
+					Duration = .75
+				}
+			]
+		}
+		HitStructural = &HitOperational
+
+		HitFriendly
+		{
+			MediaEffects
+			[
+				&<particles/missile_hex_flash.rules>
+				&<particles/missile_hex_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "missile_hex_hit.wav"
+					Volume = .75
+					SpeedVariation = .4
+				}
+			]
+		}
+	}
+}
+
+*/
