@@ -16,10 +16,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Resources&Size&Health
 	Resources
 	[
-		[steel, 20]
+		[steel, 80]
 		[coil, 12]
 		[enriched_uranium, 1]
-
 	]
 	Size = [1, 2]
 	MaxHealth = 2000
@@ -66,7 +65,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]
+			Toggles = [PowerToggle]
 			Mode = All
 		}
 
@@ -107,55 +106,86 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnMode = 2
 		}
 
-		CommonReloadTimer
+		CommonReloadTimerExtraLong
 		{
 			Type = Timer
-			Duration = 30.0
+			Duration = 20.0
 			AutoStart = true
-			StartsOn = 0
-			StartTrigger = CommonReloadResetTriggerProxy
+			//StartsOn = 0
+			StartTrigger = Turret
 		}
 
-		CommonReloadTimerShort
-		{
-			Type = Timer
-			Duration = 0.4
-			AutoStart = true
-			StartsOn = 0
-			StartTrigger = CommonReloadResetTriggerProxy
-		}
 
-		CommonReloadResetTriggerProxy
+/*		CommonReloadResetTriggerProxy
 		{
 			Type = TriggerProxy
-			ComponentID = CommonReloadResetTrigger
-		}
-		BatteryStorage
+			ComponentID = Turret
+		}*/
+		LoadedDroid
 		{
 			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 1000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ResourceType = mine_part
+			MaxResources = 1
+			DelayBeforeReadyToUse = .5
+			AnticipateMoreResourcesFrom = ["DroidStorage"]
+			ToggleOnResources = 1
+			ToggleOffResources = 0
+			DropResourcesWhenDestroyed = true
 		}
 
-		BatteryConsumer
+		DroidStorage
+		{
+			Type = ResourceStorage
+			ResourceType = mine_part
+			MaxResources = 15
+			DropResourcesWhenDestroyed = true
+		}
+
+		CombinedDroidParts
+		{
+			Type = MultiResourceStorage
+			ResourceType = mine_part
+			ResourceStorages = [LoadedDroid, DroidStorage]
+			UITileRect = [0.5, 0.5, 0.5, 0.5]
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/HeavyDeliver
+			AddMode = InReverseOrder
+		}
+
+		DroidConsumer
 		{
 			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
+			ResourceType = mine_part
+			Storage = CombinedDroidParts
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 0
-			OperatinalToggle = PowerToggle
+			AdditionalStorageForJobPriority = [LoadedDroid]
+			OperationalToggle = PowerToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
 		}
 
-		BatteryStorageBar
+		DroidLoader
+		{
+			Type = ResourceConverter
+			FromStorage = DroidStorage
+			ToStorage = LoadedDroid
+			FromQuantity = 1
+			ToQuantity = 1
+			Interval = .5
+			DelayTrigger = CommonReloadTimerExtraLong
+			DelayAfterTrigger = .5
+		}
+
+		LoadEffects
+		{
+			Type = TriggeredEffects
+			Trigger = DroidLoader
+			MediaEffects = &/COMMON_EFFECTS/AmmoLoad
+		}
+
+		ReloadProgressBar
 		{
 			Type = ProgressBar
 			OperationalToggle = IsOperational
-			ShowProgressFor = BatteryStorage
-			LowColor = [64, 64, 0]
-			HighColor = [250, 250, 0]
-			FullColor = [255, 255, 0]
+			ShowProgressFor = CommonReloadTimerExtraLong
 		}
 
 		Graphics
@@ -279,7 +309,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		FirePermissionToggle
 		{
 			Type = MultiToggle
-			Toggles = [CommonReloadTimer, FireModeToggle]
+			Toggles = [LoadedDroid, FireModeToggle, CommonReloadTimerExtraLong]
 			Mode = All
 		}
 
@@ -288,15 +318,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = TurretWeapon
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			Location = [ .5, 0.89]
+			Location = [.5, 0.89]
 			Rotation = -90d
-			FireInterval = 4
-			FiringArc = 135d
-			RotateSpeed = 90d
+			FireInterval = 0
+			FiringArc = 90d
+			RotateSpeed = 15d
 			FireThresholdAngle = 1d
 			AIFirepowerRating = 2000
 			AllowFireWithBlockedLOS = true
-			FirePermissionToggle = FireModeToggle
+			FirePermissionToggle = FirePermissionToggle
 			Emitter = BulletEmitter
 
 			AutoTargets
@@ -304,6 +334,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				{
 					TargetType = ShipParts
 					Toggle = AutoTargetToggle
+					EnableInDirectControlMode = true
 				}
 			]
 
@@ -324,12 +355,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = Turret
-		}
 
 		BulletEmitter : &~/BulletEmitterBase
 		{
@@ -340,8 +365,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [1, 0]
 			OperationalToggle = IsOperational
 			Bullet = &/SW_SHOTS/Missiles/Discord
-			ResourceStorage = BatteryStorage
-			ResourcesUsed = 1000
+			ResourceStorage = LoadedDroid
+			ResourcesUsed = 1
 		}
 
 		FireEffect
@@ -362,7 +387,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		GraphicsExtraLight
 		{
 			Type = Graphics
-			OperationalToggle = CommonReloadTimerShort
+			OperationalToggle = CommonReloadTimerExtraLong
 			InvertOperationalToggle = true
 			ChainedTo = BulletEmitter
 
@@ -427,14 +452,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-
-		BatterySprites
+		DroidResourcesSprite //1
 		{
 			Type = ResourceSprites
-			Location = [.5, 1.5]
-			ResourceStorage = BatteryStorage
+			Location = [0.5, 1.5]
+			ResourceStorage = LoadedDroid
 			Layer = "doodads_low"
-			//HasZeroAmmoSprite = false
 			HasZeroResourceSprite = false
 			ResourceLevels
 			[
@@ -443,7 +466,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					Size = [1, 1]
 				}
 				{
-					File = "battery1.png"
+					File = "buzz-droid-ready.png"
 					Size = [1, 1]
 				}
 			]
@@ -484,10 +507,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 				// Out of power.
 				{
-					Toggle = BatteryStorage
+					Toggle = DroidStorage
 					AtlasSprite
 					{
-						File = &/INDICATORS/NoPower
+						File = &/INDICATORS/NoMines
 						Size = [1, 1]
 					}
 				}
@@ -505,11 +528,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Stats
 	Stats
 	{
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		//PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		//RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 
-		RecCrew = (&RecPower) * 4
+		AmmoCapacity = (&~/Part/Components/DroidStorage/MaxResources) + (&~/Part/Components/LoadedDroid/MaxResources)
+
+		RecAmmo = 1//&../StatsByCategory/0/Stats/AmmoPerSecond
+
+		RecCrew = (&RecAmmo) * 1
 
 		Arc = deg(&~/Part/Components/Turret/FiringArc)
 		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
@@ -553,15 +580,15 @@ TurretStats
 	Stats
 	{
 		Barrels = 1
-		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
+		ReloadTime = &~/Part/Components/CommonReloadTimerExtraLong/Duration
 		Salvo = [&../Barrels, &../ReloadTime]
-		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimerExtraLong/Duration)
 		Range = &~/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/TurretBase/FiringArc)
 		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
-		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * (&ROF)
-		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+		AmmoPerShot = &~/BulletEmitterBase/ResourcesUsed
+		AmmoPerSecond = (&AmmoPerShot) * (&ROF)
+		ShotAmmoUsage = [&../AmmoPerShot, &../AmmoPerSecond]
 		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
 	}
 }
@@ -574,10 +601,10 @@ BulletStats
 		// ShieldDamagePerShot = &~/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
 		// ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/TurretStats/Stats/ROF)
 		// ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = &~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/TotalDamage
-		DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
-		MaxDamage = [&../DamagePerShot, &../DamagePerSecond]
-		DamageArea = &~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
+		//DamagePerShot = 50 //&~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/Bullet/Components/Hit/HitOperational/HitEffects/0/HitEffects/Damage
+		//DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
+		//MaxDamage = [&../DamagePerShot, &../DamagePerSecond]
+		//DamageArea = &~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
 		// Penetration = &~/BulletEmitterBase/Bullet/Components/Hit/Penetration
 		Acceleration = &~/BulletEmitterBase/Bullet/Components/Acceleration/Acceleration
 		ShotGuidance = deg(&~/BulletEmitterBase/Bullet/Components/Homing/TurnVelocity)
@@ -595,16 +622,17 @@ OperationalRoofLightingBase
 
 BulletEmitterBase
 {
+
 	Type = BulletEmitter
 	ChainedTo = Turret
 	FireTrigger = Turret
 	GetTargetFrom = Turret
-	Location = [0+1/64, 0]
+	Location = [1, 0]
 	OperationalToggle = IsOperational
-	FireDelay = 0.03
-	ResourceStorage = BatteryStorage
-	ResourcesUsed = 20000 // Previously 400
-	Bullet = &/SW_SHOTS/proton_rocket
+	FireDelay = 1
+	Bullet = &/SW_SHOTS/Missiles/Discord
+	ResourceStorage = LoadedDroid
+	ResourcesUsed = 1
 	TargetLeadPrediction = true
 	Recoil = 10
 }
