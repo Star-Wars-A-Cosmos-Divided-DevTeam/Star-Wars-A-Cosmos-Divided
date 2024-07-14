@@ -39,7 +39,7 @@ Components
 	DeathByLifetime
 	{
 		Type = DeathByLifetime
-		Lifetime = 100
+		Lifetime = 150
 	}
 
 	Targetable
@@ -75,35 +75,19 @@ Components
 		}
 		HitOperational
 		{
-//start
+            StartDelay = 4  
 			HitEffects
 			[
 				{
-					Type = Repeating
-					Count = 4
-					Interval = .5
-					InitialDelay = 0.1
-					RequireHitPart = true
-
-					HitEffects
-					[
-						{
-							Type = Damage
-							Damage = 50
-						}
-						//{
-						//	Type = Fire
-						//	FireChance = 2%
-						//}
-					]
-					MediaEffects
-					[
-						&<particles/BuzzDroid_beam_hit_sparks.rules>
-					]
+					Type = Damage
+					Damage = 200
 				}
+
 			]
 			MediaEffects
 			[
+				//&<buzzdroid_deployment.rules>
+				&<particles/BuzzDroid_beam_hit_sparks.rules>
 				&<particles/BuzzDroid_debris.rules>
 				: /BASE_SOUNDS/AudioExterior
 				{
@@ -116,6 +100,7 @@ Components
 					RampDownTime = 1
 				}
 			]
+			
 		}
 		HitStructural = &HitOperational
 
@@ -126,10 +111,11 @@ Components
 		FinishedPenetratingStructural = &HitOperational
 	}
 
-	Sprite
+	HitSprite
 	{
 		Type = AnimatedSprite
 		RenderBucket = BulletUpper4
+        StartTime = &~/Components/Hit/HitOperational/StartDelay
 		Animation
 		{
 			AtlasSprite
@@ -140,7 +126,7 @@ Components
 			FrameCount = 5
 			FrameSize = [64, 64]
 			FramesPerRow = 1
-			FramesPerSecond = 1//7.5
+			FramesPerSecond = 3//7.5
 			WrapMode = Clamp
 		}
 		NormalsTexture
@@ -148,6 +134,32 @@ Components
 			File = "buzz bullet_normals.png"
 			MipLevels = max
 		}
+	}
+
+
+	RollingSprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+        EndTime = &~/Components/Hit/HitOperational/StartDelay    //HitOperational/StartDelay
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture = "buzz bullet rollin.png"
+				Size = [1.5, 1.5]
+			}
+			FrameCount = 4
+			FrameSize = [64, 64]
+			FramesPerRow = 1
+			FramesPerSecond = 20//7.5
+			//WrapMode = Clamp
+		}
+		//NormalsTexture
+		//{
+		//	File = "buzz bullet_normals.png"
+		//	MipLevels = max
+		//}
 	}
 
 	Thruster_MediaEffectsR
