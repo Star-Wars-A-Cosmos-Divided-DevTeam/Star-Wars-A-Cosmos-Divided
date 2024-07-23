@@ -1,38 +1,26 @@
 Components
 	{
-		ReloadProgressBar : &<light_turbolaser_switchable.rules>/ReloadProgressBarBase
+		//ReloadProgressBar : &<light_turbolaser_switchable.rules>/ReloadProgressBarBase
+		//{
+		//	LowColor = [0, 64, 0]
+		//	HighColor = [0, 255, 0]
+		//}
+	
+		BulletEmitterLeft : &<light_turbolaser_switchable.rules>/Part/Components/BulletEmitterBase
 		{
-			LowColor = [0, 64, 0]
-			HighColor = [0, 255, 0]
-		}
-
-		BulletEmitterLeft : &<light_turbolaser_switchable.rules>/BulletEmitterBase
-		{
+			FireTrigger = ShootLeftTriggerProxy
 			Type = BulletEmitter
-			Location = [1.48, 0.405]
+			Location = [1.18, 0.405]
 			Bullet = &/SW_SHOTS/turretturbolaserlightlasergreenshot		// greenmedlasershot
 		}
 
 		BulletEmitterRight : BulletEmitterLeft
 		{
+			FireTrigger = ShootRightTriggerProxy
 			Type = BulletEmitter
-			Location = [1.48, -0.405]
-		}
-/*
-		BulletEmitterLeft2 : BulletEmitterLeft
-		{
-			Type = BulletEmitter
-			FireDelay = 0.2
-//			Location = [1.612, 0.15]
+			Location = [1.18, -0.405]
 		}
 
-		BulletEmitterRight2 : BulletEmitterRight
-		{
-			Type = BulletEmitter
-			FireDelay = 0.2
-//			Location = [1.612, -0.15]
-		}
-*/
 		FireEffectLeft
 		{
 			Type = TriggeredEffects
@@ -51,26 +39,15 @@ Components
 			ChainedTo = BulletEmitterRight
 			Trigger = BulletEmitterRight
 		}
-/*
-		FireEffectLeft2 : FireEffectLeft
-		{
-			ChainedTo = BulletEmitterLeft2
-			Trigger = BulletEmitterLeft2
-		}
 
-		FireEffectRight2 : FireEffectRight
-		{
-			ChainedTo = BulletEmitterRight2
-			Trigger = BulletEmitterRight2
-		}
-*/
 		LightGraphics
 		{
 			Type = Graphics
-			OperationalToggle = CommonOnShootEffectTimer
+			OperationalToggle = FireTimerProxy
 			InvertOperationalToggle = true
 			ChainedTo = TurretLocationProxy
-			Location = [1.9, 0]
+			Location = [1.2, 0]
+
 
 			OperationalRoofLighting
 			{
@@ -263,6 +240,7 @@ Components
 			ChainedTo = Turret
 			Radius = .8
 			Density = 1.5
+			//InitialPenetrationResistance = 5
 		}
 		
 		WeaponSprite

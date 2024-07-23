@@ -1,32 +1,54 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
-	NameKey = "Parts/DiscordMissileLauncher"
-	IconNameKey = "Parts/DiscordMissileLauncherIcon"
+	//IDs
 	ID = SW.discordmissile_launcher
 	OtherIDs = ["discordmissile_launcher"]
-	EditorGroups = ["WeaponsProjectile", "SWTechII"]
+
+	//StringKeys
+	NameKey = "Parts/DiscordMissileLauncher"
+	IconNameKey = "Parts/DiscordMissileLauncherIcon"
 	DescriptionKey = "Parts/DiscordMissileLauncherDesc"
+
+	//Groups&Categories
+	EditorGroups = ["WeaponsProjectile", "SWTechI"]
+	TypeCategories = [weapon, uses_power]
+
+	//Resources&Size&Health
 	Resources
 	[
-		[steel, 8] //
-	]  //Cost = 6000
-	AIValueFactor = 1
-
-	TypeCategories = [weapon, uses_ammo]
+		[steel, 80]
+		[coil, 12]
+		[enriched_uranium, 1]
+	]
 	Size = [1, 2]
+	MaxHealth = 2000
+
+	//Rects
 	PhysicalRect = [0, 1, 1, 1]
 	SaveRect = &PhysicalRect
+
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
-	MaxHealth = 2000
+
+	//PartSpecific
+	AIValueFactor = 1
 	InitialPenetrationResistance = 1
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 	ProhibitAbove = 1
+
+	//Doors&Etc
+	MaxDoors = 2
 	AllowedDoorLocations
 	[
 		[-1, 1]
 		[1, 1]
 		[0, 2]
 	]
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -36,38 +58,30 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		Size = [21.33, 42.66]
 	}
-	Components
-	{
-		AutoFireToggle
-		{
-			Type = ModeToggle
-			Mode = FireModeToggle
-			OnMode = 2
-		}
 
-		BlueprintSprite0
-		{
-			File = "blueprints.png"
-			Size = [1, 3]
-			Offset = [0, -0.5]
-			Type=BlueprintSprite;
-		}
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles
-			[
-				PowerToggle
-				BatteryStorage
-			]
+			Toggles = [PowerToggle]
 			Mode = All
 		}
+
 		PowerToggle
 		{
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
-			ToggledOnChoices = [1]
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 2
 		}
 
 		FireModeToggle
@@ -77,6 +91,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			ToggledOnChoices = [0, 1, 2]
 		}
+
 		AutoTargetToggle
 		{
 			Type = ModeToggle
@@ -84,21 +99,94 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OnModes = [1, 2]
 		}
 
-		BatteryStorage
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+
+		CommonReloadTimerExtraLong
+		{
+			Type = Timer
+			Duration = 8.0
+			AutoStart = true
+			//StartsOn = 0
+			StartTrigger = Turret
+		}
+
+
+/*		CommonReloadResetTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = Turret
+		}*/
+		LoadedDroid
 		{
 			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 4000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ResourceType = mine_part
+			MaxResources = 1
+			DelayBeforeReadyToUse = .5
+			AnticipateMoreResourcesFrom = ["DroidStorage"]
+			ToggleOnResources = 1
+			ToggleOffResources = 0
+			DropResourcesWhenDestroyed = true
 		}
-		BatteryConsumer
+
+		DroidStorage
+		{
+			Type = ResourceStorage
+			ResourceType = mine_part
+			MaxResources = 15
+			DropResourcesWhenDestroyed = true
+		}
+
+		CombinedDroidParts
+		{
+			Type = MultiResourceStorage
+			ResourceType = mine_part
+			ResourceStorages = [LoadedDroid, DroidStorage]
+			//UITileRect = [0.5, 0.5, 0.5, 0.5]
+			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/HeavyDeliver
+			AddMode = InReverseOrder
+		}
+
+		DroidConsumer
 		{
 			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
+			ResourceType = mine_part
+			Storage = CombinedDroidParts
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 400
-			OperatinalToggle = PowerToggle
+			AdditionalStorageForJobPriority = [LoadedDroid]
+			OperationalToggle = PowerToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+
+		DroidLoader
+		{
+			Type = ResourceConverter
+			FromStorage = DroidStorage
+			ToStorage = LoadedDroid
+			FromQuantity = 1
+			ToQuantity = 1
+			Interval = .5
+			DelayTrigger = CommonReloadTimerExtraLong
+			DelayAfterTrigger = .5
+		}
+
+		LoadEffects
+		{
+			Type = TriggeredEffects
+			Trigger = DroidLoader
+			MediaEffects = &/COMMON_EFFECTS/AmmoLoad
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = CommonReloadTimerExtraLong
 		}
 
 		Graphics
@@ -112,15 +200,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "floor.png"
+						File = "../common_graphics_1/floor.png"
 						Size = [1, 1]
 					}
 					{
-						File = "floor_33.png"
+						File = "../common_graphics_1/floor_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "floor_66.png"
+						File = "../common_graphics_1/floor_66.png"
 						Size = [1, 1]
 					}
 				]
@@ -182,15 +270,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "walls.png"
+						File = "../common_graphics_1/walls.png"
 						Size = [1, 1]
 					}
 					{
-						File = "walls_33.png"
+						File = "../common_graphics_1/walls_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "walls_66.png"
+						File = "../common_graphics_1/walls_66.png"
 						Size = [1, 1]
 					}
 				]
@@ -201,55 +289,45 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "roof.png"
+						File = "../common_graphics_1/roof.png"
+						NormalsFile = "../common_graphics_1/roof_normals.png"
 						Size = [1, 1]
 					}
 					{
-						File = "roof_33.png"
+						File = "../common_graphics_1/roof_33.png"
+						NormalsFile = "../common_graphics_1/roof_normals_33.png"
 						Size = [1, 1]
 					}
 					{
-						File = "roof_66.png"
+						File = "../common_graphics_1/roof_66.png"
+						NormalsFile = "../common_graphics_1/roof_normals_66.png"
 						Size = [1, 1]
 					}
 				]
 			}
-			OperationalRoofWindows
-			{
-				Layer = "roof_windows"
-				DamageLevels
-				[
-					{
-						File = "roof_window.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_window_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_window_66.png"
-						Size = [1, 1]
-					}
-				]
-			}
-			NonOperationalRoofWindows = &OperationalRoofWindows
 		}
 
-		Turret
+		FirePermissionToggle
+		{
+			Type = MultiToggle
+			Toggles = [LoadedDroid, FireModeToggle, CommonReloadTimerExtraLong]
+			Mode = All
+		}
+
+		Turret : &~/TurretBase
 		{
 			Type = TurretWeapon
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			Location = [ .5, 0.89]
+			Location = [.5, 0.89]
 			Rotation = -90d
-			FireInterval = 4
-			FiringArc = 135d
-			RotateSpeed = 90d
+			FireInterval = 0
+			FiringArc = 90d
+			RotateSpeed = 15d
 			FireThresholdAngle = 1d
 			AIFirepowerRating = 2000
 			AllowFireWithBlockedLOS = true
-			FirePermissionToggle = FireModeToggle
+			FirePermissionToggle = FirePermissionToggle
 			Emitter = BulletEmitter
 
 			AutoTargets
@@ -257,6 +335,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				{
 					TargetType = ShipParts
 					Toggle = AutoTargetToggle
+					EnableInDirectControlMode = true
 				}
 			]
 
@@ -277,14 +356,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = Turret
-		}
 
-		BulletEmitter
+		BulletEmitter : &~/BulletEmitterBase
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
@@ -292,9 +365,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			GetTargetFrom = Turret
 			Location = [1, 0]
 			OperationalToggle = IsOperational
-			Bullet = &<discord_missile.rules>
-			ResourceStorage = BatteryStorage
-			ResourcesUsed = 400
+			Bullet = &/SW_SHOTS/Missiles/Discord
+			ResourceStorage = LoadedDroid
+			ResourcesUsed = 1
 		}
 
 		FireEffect
@@ -302,20 +375,36 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = TriggeredEffects
 			ChainedTo = Turret
 			Trigger = BulletEmitter
+
 			Location = [0.6875, 0]
 			AnchorMediaEffects = true
 
 			MediaEffects
 			[
-				&<./Data/ships/terran/point_defense/particles/point_defense_shoot.rules>
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "../protonlauncher/proton_shoot.wav"
-					Volume = .30
-					SpeedVariation = .25
-				}
+				&/SW_SOUNDS/ProtonLauncherShoot
 			]
+		}
+
+		GraphicsExtraLight
+		{
+			Type = Graphics
+			OperationalToggle = CommonReloadTimerExtraLong
+			InvertOperationalToggle = true
+			ChainedTo = BulletEmitter
+
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = &~/OperationalRoofLightingBase/Size
+						Z = &~/OperationalRoofLightingBase/Z
+						VertexColor = [240, 160, 240]
+					}
+				]
+			}
 		}
 
 		TurretGraphics
@@ -364,14 +453,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
-
-		BatterySprites
+		DroidResourcesSprite //1
 		{
 			Type = ResourceSprites
-			Location = [.5, 1.5]
-			ResourceStorage = BatteryStorage
+			Location = [0.5, 1.5]
+			ResourceStorage = LoadedDroid
 			Layer = "doodads_low"
-			HasZeroAmmoSprite = true
 			HasZeroResourceSprite = false
 			ResourceLevels
 			[
@@ -380,7 +467,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					Size = [1, 1]
 				}
 				{
-					File = "battery1.png"
+					File = "buzz-droid-ready.png"
 					Size = [1, 1]
 				}
 			]
@@ -406,7 +493,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = IndicatorSprites
 			Location = [.5, 1.5]
-			Layer = "indicators"
+			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.
@@ -417,28 +504,41 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
+					HidesIndicators = [1]
 				}
 
 				// Out of power.
 				{
-					Toggle = BatteryStorage
+					Toggle = DroidStorage
 					AtlasSprite
 					{
-						File = &/INDICATORS/NoPower
+						File = &/INDICATORS/NoMines
 						Size = [1, 1]
 					}
 				}
 			]
 		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
+		}
 	}
 
+	//Stats
 	Stats
 	{
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		//PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
-		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
+		//RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
 
-		RecCrew = (&RecPower) * 4
+		MineCapacity = (&~/Part/Components/DroidStorage/MaxResources) + (&~/Part/Components/LoadedDroid/MaxResources)
+
+		RecAmmo = 1//&../StatsByCategory/0/Stats/AmmoPerSecond
+
+		RecCrew = (&RecAmmo) * 1
 
 		Arc = deg(&~/Part/Components/Turret/FiringArc)
 		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
@@ -446,7 +546,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	StatsByCategory
 	[
-		{
+		&~/TurretStats
+		&~/BulletStats
+		/*{
 			NameKey = "StatCategories/Missile"
 			Stats
 			{
@@ -463,13 +565,115 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			NameKey = "StatCategories/BuzzDroid"
 			Stats
 			{
-				//SimpleDamage = &~/Part/Components/BulletEmitter/Bullet/Components/Death/OnDeath/HitEffects/0/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-				Local_Burst = (&~/Part/Components/BulletEmitter/Bullet/Components/Death/OnDeath/HitEffects/0/Count/0) + (((&~/Part/Components/BulletEmitter/Bullet/Components/Death/OnDeath/HitEffects/0/Count/1) - (&~/Part/Components/BulletEmitter/Bullet/Components/Death/OnDeath/HitEffects/0/Count/0) ) / 2)
+				// SimpleDamage = &~/Part/Components/BulletEmitter/Bullet/Components/Death/OnDeath/HitEffects/0/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+				Local_Burst = (&~/Part/Components/BulletEmitter/Bullet/Components/Death/OnDeath/HitEffects/0/Count/0) + (((&~/Part/Components/BulletEmitter/Bullet/Components/Death/OnDeath/HitEffects/0/Count/1) - (&~/Part/Components/BulletEmitter/Bullet/Components/Death/OnDeath/HitEffects/0/Count/0)) / 2)
 				ROF = (&Local_Burst) / (&~/Part/Components/Turret/FireInterval)
 				Salvo = [&../Local_Burst, (&~/Part/Components/Turret/FireInterval)]
 				ShotSpeed = &~/Part/Components/BulletEmitter/Bullet/Components/Death/OnDeath/HitEffects/0/Bullet/Speed
 				ShotHP = &~/Part/Components/BulletEmitter/Bullet/Components/Death/OnDeath/HitEffects/0/Bullet/Components/Targetable/Health
 			}
+		}*/
+	]
+}
+
+TurretStats
+{
+	NameKey = "StatCategories/Turret"
+	Stats
+	{
+		Barrels = 1
+		ReloadTime = &~/Part/Components/CommonReloadTimerExtraLong/Duration
+		Salvo = [&../Barrels, &../ReloadTime]
+		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimerExtraLong/Duration)
+		Range = &~/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/TurretBase/FiringArc)
+		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
+		AmmoPerShot = &~/BulletEmitterBase/ResourcesUsed
+		AmmoPerSecond = (&AmmoPerShot) * (&ROF)
+		ShotAmmoUsage = [&../AmmoPerShot, &../AmmoPerSecond]
+		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
+	}
+}
+
+BulletStats
+{
+	NameKey = "StatCategories/BuzzDroid"
+	Stats
+	{
+		// ShieldDamagePerShot = &~/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		// ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/TurretStats/Stats/ROF)
+		// ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		//DamagePerShot = 50 //&~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/Bullet/Components/Hit/HitOperational/HitEffects/0/HitEffects/Damage
+		//DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
+		//MaxDamage = [&../DamagePerShot, &../DamagePerSecond]
+		//DamageArea = &~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
+		// Penetration = &~/BulletEmitterBase/Bullet/Components/Hit/Penetration
+		Acceleration = &~/BulletEmitterBase/Bullet/Components/Acceleration/Acceleration
+		ShotGuidance = deg(&~/BulletEmitterBase/Bullet/Components/Homing/TurnVelocity)
+
+		ShotSpeed = &~/BulletEmitterBase/Bullet/Speed
+		ShotHP = &~/BulletEmitterBase/Bullet/Components/Targetable/Health
+	}
+}
+
+OperationalRoofLightingBase
+{
+	Size = [1.2, 1.2] //X(Desired Radius)+barrelspacing(Distance between Barrels)+X(Desired Radius)=Y 
+	Z = 1.32 // Controls the "height" of the light for the purposes of normal mapping.
+}
+
+BulletEmitterBase
+{
+
+	Type = BulletEmitter
+	ChainedTo = Turret
+	FireTrigger = Turret
+	GetTargetFrom = Turret
+	Location = [1, 0]
+	OperationalToggle = IsOperational
+	FireDelay = 1
+	Bullet = &/SW_SHOTS/Missiles/Discord
+	ResourceStorage = LoadedDroid
+	ResourcesUsed = 1
+	TargetLeadPrediction = true
+	Recoil = 10
+}
+
+TurretBase
+{
+	Type = TurretWeapon
+	Location = [0.5, 0.39]
+	Rotation = -90d
+	OperationalToggle = IsOperational
+	AutoFireToggle = AutoFireToggle
+	FireInterval = 0
+	FiringArc = 90d
+	ValidArc = 90d //Must be facing the direction
+	RotateSpeed = 0d
+	FireThresholdAngle = 90d
+	AIFirepowerRating = 2000
+	CanBeGivenExplicitTarget = true
+	TargetSearchesPerSecond = 1
+	Emitter = BulletEmitter
+	FirePermissionToggle = FirePermissionToggle
+	HoldTargetAfterCancel = 0.15
+	AutoTargetCrewSafetyDist = 8
+	IgnoreSourceShipLOSChecks = false
+	AllowFireWithBlockedLOS = false
+
+	AutoTargets
+	[
+		{
+			TargetType = ShipParts
+			Toggle = AutoTargetToggle
+			EnableInDirectControlMode = true
 		}
 	]
+
+	CoverageSectorArc
+	{
+		Texture = &/INDICATORS/VerticalGradient
+		VertexColor = [255, 255, 255, 51]
+		QuadCount = 64
+	}
 }
