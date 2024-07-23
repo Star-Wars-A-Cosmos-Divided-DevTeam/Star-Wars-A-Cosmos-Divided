@@ -326,6 +326,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[0.34, 0.16]
 			]
 			IsHigh = false
+			InitialPenetrationResistance = 5
 		}
 */
 		CommonReloadResetTrigger
@@ -559,7 +560,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = IndicatorSprites
 			Location = [1, 3.5]
-			Layer = "indicators"
+			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.
@@ -570,6 +571,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
+					HidesIndicators = [1,2]
 				}
 
 				// Out of power.
@@ -608,6 +610,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		//TurretPenResist = &~/Part/Components/TurretCollider/InitialPenetrationResistance
 
 		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
 		RecCrew = (&RecPower) * 4//(&CrewRequired) + 
@@ -628,7 +631,7 @@ TurretStats
 		Barrels = 1
 		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
 		Salvo = [&../Barrels, &../ReloadTime]
-		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		ROF = (&Barrels) * (&~/TurretBase/FireInterval)//(&~/Part/Components/CommonReloadTimer/Duration)
 		Range = &~/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/TurretBase/FiringArc)
 		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
@@ -644,10 +647,10 @@ BulletStats
 	Stats
 	{
 		ShieldDamagePerShot = &~/BulletEmitterBase/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/TurretStats/Stats/ROF)
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) / (&~/TurretStats/Stats/ROF)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 		DamagePerShot =  &~/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-		DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
+		DamagePerSecond = (&DamagePerShot) / (&~/TurretStats/Stats/ROF)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 		ShotSpeed = &~/BulletEmitterBase/Bullet/Speed
 		ShotHP = &~/BulletEmitterBase/Bullet/Components/Targetable/Health
@@ -668,7 +671,7 @@ BulletEmitterBase
 		OperationalToggle = IsOperational
 		FireDelay = 0.01
 		ResourceStorage = BatteryStorage
-		ResourcesUsed = 60
+		ResourcesUsed = 250
 		Bullet = &/SW_SHOTS/directturbolaserheavylasergreenshot //greenheavylasershot 
 }
 TurretBase
@@ -678,7 +681,7 @@ TurretBase
 			Rotation = -90d
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			FireInterval = 1.5
+			FireInterval = 4.2
 			FiringArc = 15d
 			RotateSpeed = 90d
 			FireThresholdAngle = 1d

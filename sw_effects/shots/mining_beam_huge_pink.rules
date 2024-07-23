@@ -1,7 +1,7 @@
 Range = 300
 IdealRange = 250
 Width = .2
-HitInterval = .1
+HitInterval = 3 / (&/Simulation/PhysicsUpdatesPerSecond)
 PenetratesStructure = false
 FriendlyShipLowCollisions = false
 CrewCollisions = {Enemies=true; Junk=true}
@@ -52,6 +52,7 @@ BeamMediaEffects
 		RandomTimeOffset = [0, 1]
 		Bucket = Upper1
 	}
+
 	// Beam lighting.
 	{
 		Type = Beam
@@ -100,20 +101,52 @@ HitOperational
 {
 	HitEffects
 	[
-		{
+		{ //Damage to enemy ships
 			Type = Damage
-			Damage = 1200/10*2
-			DamageType = Salvage
+			Damage = { BaseValue=1200/10/2; BuffType=ElectronBuff; BuffMode=Multiply; }
+			//Damage = 1200/10*2
+			DamageType = salvage
 			SpawnUnderlying = false
 			Filter
 			{
 				ExcludePartCategories = [asteroid]
+				junk = false
 			}
 		}
-		{
+		{ //Damage to junk
 			Type = Damage
-			Damage = 64000/10*2
-			DamageType = Salvage
+			Damage = { BaseValue=19200/10/2; BuffType=ElectronBuff; BuffMode=Multiply; }
+			//Damage = 64000/10*2
+			DamageType = salvage
+			SpawnUnderlying = false
+			Filter
+			{
+				ExcludePartCategories = [asteroid, armor]
+				junk = true
+				Enemies = false
+				Friendlies = false
+				Neutrals = false
+			}
+		}
+		{ //Damage to junk armor
+			Type = Damage
+			Damage = { BaseValue=38400/10/2; BuffType=ElectronBuff; BuffMode=Multiply; }
+			DamageType = salvage
+			SpawnUnderlying = false
+			Filter
+			{
+				ExcludePartCategories = [asteroid]
+				OnlyPartCategories = [armor]
+				junk = true
+				Enemies = false
+				Friendlies = false
+				Neutrals = false
+			}
+		}
+		{ //Damage to asteroids
+			Type = Damage
+			Damage = { BaseValue=128000/10/2; BuffType=ElectronBuff; BuffMode=Multiply; }
+			DamageType = salvage
 			SpawnUnderlying = false
 			Filter
 			{
