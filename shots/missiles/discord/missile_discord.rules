@@ -13,29 +13,54 @@ Components
 		Density = 0.1
 		Radius = 0.4
         LinearDamping = 1.1
-        }
+    }
 
 	Homing
 	{
 		Type = TargetHoming
 		TurnVelocity = 360d
 		Delay = 1
-		RaycastForward = [1, 0]
-		RaycastLeft = [1, -1]
-		RaycastRight = [1, 1]
+		AvoidanceRaycastDistance = 250
+		//RaycastForward = [1, 0]
+		//RaycastLeft = [1, -1]
+		//RaycastRight = [1, 1]
+		VelocityCompensation = 60%
 	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+//	Homing
+//	{
+//		Type = TargetHoming
+//		TurnVelocity = 360d
+//		Delay = 1
+//		RaycastForward = [1, 0]
+//		RaycastLeft = [1, -1]
+//		RaycastRight = [1, 1]
+//	}
 
 	Acceleration
 	{
 		Type = Acceleration
-		Acceleration = 100
+		Acceleration = 65//100
+	}
+
+	NegativeAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [-90, 0]
+		AccelerationOverTime = [0, .75]
+		Direction = FrameOfReferenceVelocity
 	}
 
 	DeathByEnemyProximity
 	{
 		Type = DeathByEnemyProximity
 		Interval = .05
-		Range = 17
+		Range = 30
 		DetectsShips = true
 		DetectsBullets = false
 		StartDelay = .1
