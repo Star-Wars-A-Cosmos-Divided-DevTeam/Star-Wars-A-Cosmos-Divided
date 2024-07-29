@@ -1,5 +1,9 @@
 /*Simplified Equation for math dumb-dumbs like me for calculating Width Height based on Original Sprite vs Target Size in game
-Pixel W/64 Pixel Height/64 = Size W, Size H
+
+Size Calculation = pixel𝑊/64 pixel𝐻/64 = Size W, Size H
+Example: 102/64, 244/64 = 
+1.6, 3.8125
+
 Simplified Equation
 For any given original size (in units 64 = 1 unit) ["𝑊orig","𝐻orig"] and target width "𝑊target":
 
@@ -11,17 +15,46 @@ Original Height (𝐻orig): The height of the sprite in its original form.
 Target Width (𝑊target: The width you WANT the sprite to be.
 Target Height (𝐻target): The height the sprite SHOULD be, calculated to maintain the aspect ratio.
 
-Example: I have a sprite that is originally [5, 7] I want it to be width of 2 units wide.
-Original Width (𝑊orig): 5
-Original Height (𝐻orig): 7
-Target Width (𝑊target: 2
-Target Height (𝐻target): "T" (Target)
+Example: I have a sprite that is originally [1.64, 2.98] (7*64px, 17.5*64px = Width x Height resolution).  I want it to be width of 3 units wide.
+𝑊o = Original Width (𝑊orig): 1.64
+𝐻o = Original Height (𝐻orig): 2.98
+𝑊t = Target Width (𝑊target: 1
+T = Target Height (𝐻target): "T" (Target)
 
-T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
+𝐻t = 𝐻o * (𝑊t / 𝑊o)
+T = 2.98 * ( 1 / 1.64 ) = 1.817 New Size = [1, 1.817]
 
 */
 
-//NozzleRoofCoverOptionToggle0
+/*Simplified Equation for calculating the vertical Offset to align the bottom of a shape with the bottom of a space on a grid
+
+
+Simplified Equation
+For any given space height ("Hs"), vertical center of the space ("Yc"), and shape height ("Ht"):
+
+Δy = Yc + (Hs / 2) - Ht
+
+Explanation
+Space Height (Hs): The height of the space in units.
+Center of Space (Yc): The vertical coordinate of the center of the space.
+Shape Height (Ht): The height of the shape in units.
+Vertical Offset (Δy): The vertical coordinate where the top of the shape should be placed to align its bottom with the bottom of the space.
+
+Example: I have a space that is 2 units tall and its center is at y = 1. I want to align a shape that is 3.8125 units tall.
+Hs = Space Height: 2
+Yc = Center of Space: 1
+Ht = Shape Height: 1.817
+Δy = Vertical Offset: Δy
+Δy = Yc + (Hs / 2) - (Ht / 2)
+Δy = 1 + (2 / 2) - (1.817 / 2) = 1 - .9 = .1 
+Offset = [0, .1]
+
+So, the top of the shape should be placed at y = -2 to align its bottom with the bottom of the space.
+
+
+*/
+
+
         NozzleRoofCoverOptionToggle0
         {
             Type = ModeToggle
@@ -29,7 +62,6 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
             OnMode = 0
         }
         
-//NozzleRoofCoverOptionToggle1
         NozzleRoofCoverOptionToggle1
         {
             Type = ModeToggle
@@ -50,13 +82,13 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, 3.0] // Offset X = 0 (no change) Offset Y = remainder of loc to end of part + half of roof cover Size height (Y) (e.g., Location of mid part = .5, .5, Roof Size = [1, 7] then offset for Y is .5 + 3.5 = 4)
+                        Offset = [0, 1.5] // Offset X = 0 (no change) Offset Y = remainder of loc to end of part + half of roof cover Size height (Y) (e.g., Location of mid part = .5, .5, Roof Size = [1, 7] then offset for Y is .5 + 3.5 = 4)
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/Nozzle_Covers/SM/nozzle_cover_1.png"
-                                NormalsFile =  "../Ion_Common/Nozzle_Covers/SM/nozzle_cover_1_normals.png"
-                                Size = [2, 12]
+                                File = "roof_B.png"
+                                NormalsFile =  "roof_B_normals.png"
+                                Size = [1, 4]
                                 //UVRotation = 2
                             }
                         ]
@@ -64,8 +96,6 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 }
             }
         }
-
-//NozzleRoofCoverOptionToggle2
         NozzleRoofCoverOptionToggle2
         {
             Type = ModeToggle
@@ -86,13 +116,13 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, 2.5] // 
+                        //Offset = [0, .1] 
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/Nozzle_Covers/SM/nozzle_cover_2.png"
-                                NormalsFile =  "../Ion_Common/Nozzle_Covers/SM/nozzle_cover_2_normals.png"
-                                Size = [2, 12]
+                                File = "roof_D.png"
+                                NormalsFile =  "roof_D_normals.png"
+                                Size = [1, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
@@ -101,7 +131,6 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 }
             }
         }
-
 //NozzleRoofCoverOptionToggle3
         NozzleRoofCoverOptionToggle3
         {
@@ -123,20 +152,22 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, 3.2] // Offset X = 0 (no change) Offset Y = remainder of loc to end of part + half of roof cover Size height (Y) (e.g., Location of mid part = .5, .5, Roof Size = [1, 7] then offset for Y is .5 + 3.5 = 4)
+                        //Offset = [0, .1] 
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/Nozzle_Covers/MED/nozzle_cover_roof_1.png"
-                                NormalsFile =  "../Ion_Common/Nozzle_Covers/MED/nozzle_cover_roof_1_normals.png"
-                                Size = [2, 12]
+                                File = "roof_F.png"
+                                NormalsFile =  "roof_F_normals.png"
+                                Size = [1, 2]
                                 //UVRotation = 2
+                                //MirrorU = true
                             }
                         ]
                     }
                 }
             }
         }
+
 
 
 //NozzleRoofCoverOptionToggle4
@@ -160,20 +191,22 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, 3.2] // Offset X = 0 (no change) Offset Y = remainder of loc to end of part + half of roof cover Size height (Y) (e.g., Location of mid part = .5, .5, Roof Size = [1, 7] then offset for Y is .5 + 3.5 = 4)
+                        //Offset = [0, .1] 
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/Nozzle_Covers/SM/nozzle_cover_4.png"
-                                NormalsFile =  "../Ion_Common/Nozzle_Covers/SM/nozzle_cover_4_normals.png"
-                                Size = [2, 12]
+                                File = "roof_F2.png"
+                                NormalsFile =  "roof_F_normals.png"
+                                Size = [1, 2]
                                 //UVRotation = 2
+                                //MirrorU = true
                             }
                         ]
                     }
                 }
             }
         }
+
 //NozzleRoofCoverOptionToggle5
         NozzleRoofCoverOptionToggle5
         {
@@ -195,20 +228,22 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, 3.15] // Offset X = 0 (no change) Offset Y = remainder of loc to end of part + half of roof cover Size height (Y) (e.g., Location of mid part = .5, .5, Roof Size = [1, 7] then offset for Y is .5 + 3.5 = 4)
+                        //Offset = [0, .1] 
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/Nozzle_Covers/SM/nozzle_cover_5.png"
-                                NormalsFile =  "../Ion_Common/Nozzle_Covers/SM/nozzle_cover_5_normals.png"
-                                Size = [2, 12]
+                                File = "roof_E.png"
+                                NormalsFile =  "roof_E_normals.png"
+                                Size = [1, 2]
                                 //UVRotation = 2
+                                //MirrorU = true
                             }
                         ]
                     }
                 }
             }
         }
+
 //NozzleRoofCoverOptionToggle6
         NozzleRoofCoverOptionToggle6
         {
@@ -230,13 +265,13 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, .5]
+                        //Offset = [0, .1] 
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/Nozzle_Covers/SM/A-Wing.png"
-                                NormalsFile =   "../Ion_Common/Nozzle_Covers/SM/A-Wing_normals.png"
-                                Size = [1, 3]
+                                File = "roof_E2.png"
+                                NormalsFile =  "roof_E_normals.png"
+                                Size = [1, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
@@ -245,6 +280,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 }
             }
         }
+/*
 //NozzleRoofCoverOptionToggle7
         NozzleRoofCoverOptionToggle7
         {
@@ -262,11 +298,11 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics7
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [.5, 0]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, .5]
+                        Offset = [0, 0.25]
                         DamageLevels
                         [
                             {
@@ -302,13 +338,13 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, 2.3]
+                        Offset = [0, 1.35]
                         DamageLevels
                         [
                             {
                                 File = "../Ion_Common/Nozzle_Covers/SM/N1Engine.png"
                                 NormalsFile =   "../Ion_Common/Nozzle_Covers/SM/N1Engine_normals.png"
-                                Size = [1.6, 8.85]
+                                Size = [1.515, 8.265]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
@@ -338,13 +374,13 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, -.15] //-.35
+                        Offset = [0, -1]
                         DamageLevels
                         [
                             {
                                 File = "../Ion_Common/Nozzle_Covers/MED/nozzle_cover_roof_13.png"
                                 NormalsFile =   "../Ion_Common/Nozzle_Covers/MED/nozzle_cover_roof_13_normals.png"
-                                Size = [2.5, 3.5]//(WIDTHWANTED * SPRITEWIDTH)/SPRITEWIDTH (redundant but yeah.),    (WIDTH WANTED * SPRITELENGHT)/SPRITEWIDTH
+                                Size = [2, 2.8]//(WIDTHWANTED * SPRITEWIDTH)/SPRITEWIDTH (redundant but yeah.),    (WIDTH WANTED * SPRITELENGHT)/SPRITEWIDTH
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
@@ -375,7 +411,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, .15]
+                        Offset = [0, -.85]
                         DamageLevels
                         [
                             {
@@ -412,13 +448,13 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, 0]
+                        Offset = [0, -0.9]
                         DamageLevels
                         [
                             {
                                 File = "../Ion_Common/Nozzle_Covers/MED/nozzle_cover_roof_16.png"
                                 NormalsFile =   "../Ion_Common/Nozzle_Covers/MED/nozzle_cover_roof_16_normals.png"
-                                Size = [2, 5]//(WIDTHWANTED * SPRITEWIDTH)/SPRITEWIDTH (redundant but yeah.),    (WIDTH WANTED * SPRITELENGHT)/SPRITEWIDTH
+                                Size = [1.5, 3.75]//(WIDTHWANTED * SPRITEWIDTH)/SPRITEWIDTH (redundant but yeah.),    (WIDTH WANTED * SPRITELENGHT)/SPRITEWIDTH
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
@@ -427,42 +463,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 }
             }
         }
-/*
-        NozzleRoofCoverOptionToggle8
-        {
-            Type = ModeToggle
-            Mode = NozzleRoofCoverOptionToggle
-            OnMode = 8
-        }
-        NozzleRoofCoverComponents8
-        {
-            Type = ToggledComponents
-            Toggle = NozzleRoofCoverOptionToggle8
-            //Invert = true
-            Components
-            {
-                NozzleRoofCoverGraphics8
-                {
-                    Type = Graphics
-                    Location = [10, 26]
-                    Roof
-                    {
-                        Layer = "SW.roof_engines"
-                        Offset = [0, 2.5]
-                        DamageLevels
-                        [
-                            {
-                                File = "../Ion_Common/roof_cover_slope4x1.png"
-                                NormalsFile =  "../Ion_Common/roof_cover_slope4x1_normals.png"
-                                Size = [20, 5]
-                                UVRotation = 2
-                                MirrorU = true
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+
         NozzleRoofCoverOptionToggle9
         {
             Type = ModeToggle
@@ -479,7 +480,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics9
                 {
                     Type = Graphics
-                    Location = [10, 26]
+                    Location = [.5, .5]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -513,7 +514,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics10
                 {
                     Type = Graphics
-                    Location = [10, 26]
+                    Location = [.5, .5]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -548,7 +549,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics11
                 {
                     Type = Graphics
-                    Location = [10, 26]
+                    Location = [.5, .5]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -582,7 +583,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics12
                 {
                     Type = Graphics
-                    Location = [10, 26]
+                    Location = [.5, .5]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -617,7 +618,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics13
                 {
                     Type = Graphics
-                    Location = [10, 26]
+                    Location = [.5, .5]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -650,7 +651,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics14
                 {
                     Type = Graphics
-                    Location = [10, 26]
+                    Location = [.5, .5]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -683,7 +684,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics15
                 {
                     Type = Graphics
-                    Location = [10, 26]
+                    Location = [.5, .5]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -729,7 +730,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics16
                 {
                     Type = Graphics
-                    Location = [10, 26]
+                    Location = [.5, .5]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -775,7 +776,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics17
                 {
                     Type = Graphics
-                    Location = [10, 26]
+                    Location = [.5, .5]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -821,7 +822,7 @@ T = 7 * (2 / 5) = 2.8 New Size = [2, 2.8]
                 NozzleRoofCoverGraphics18
                 {
                     Type = Graphics
-                    Location = [10, 26]
+                    Location = [.5, .5]
                     Roof
                     {
                         Layer = "SW.roof_engines"
