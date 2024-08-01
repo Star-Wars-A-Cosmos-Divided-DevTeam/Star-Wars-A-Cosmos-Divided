@@ -1,0 +1,574 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+    //IDs
+	ID = SW.bridge_2x3
+	//OtherIDs = ["cockpit2"]
+
+    //StringKeys
+	NameKey = "Parts/SWBridge2x3"
+	IconNameKey = "Parts/SWBridge2x3Icon"
+	DescriptionKey = "Parts/SWBridge2x3Desc"
+
+    //Groups&Categories
+	EditorGroups = ["Flight", "SWTechII"]
+	TypeCategories = [command, uses_power, is_crewed, fire_extinguisher, airlock]
+	//RequiresCategories = []
+
+    //Resources&Size&Health
+	Resources
+	[
+		[SW.durasteel, 58] 
+		[coil2, 24]
+		[processor, 4]
+	]
+	Size = [2, 3]
+	MaxHealth = 5500
+
+    //Selections
+	SelectionPriority = 0
+	SelectionTypeID = "control_room"
+
+    //PartSpecific
+	AIValueFactor = 5
+	InitialPenetrationResistance = 2
+	//IsContiguityOrigin = true
+	//IsShipForward = true
+	ContiguityOriginPriority = 2
+	ExternalWalls = [None]
+	AllowedContiguity = [Right, Bottom, Left]//, Bottom Left, Bottom Right]
+
+    //ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+    //Doors&Etc
+	MaxDoors = 4
+	AllowedDoorLocations
+	[
+		[-1, 2]
+		[2, 2]
+		[0, 3]
+		[1, 3]
+	]
+
+
+
+    //Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [48, 64]
+	}
+
+    //Components&Inheritance
+	Components : ^/0/Components, &<roofs.rules>, &<roofs_exterior.rules>
+	{
+		/* SPECIAL COCKPIT TOGGLES */
+		
+		NozzleRoofCoverOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "nozzle_roof_option_switch19"
+			Default = 0
+			AvailableChoices = [0,1,2,3,4,5,6/*,7,8,9,10,11,12,13,14,15,16,17,18*/]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		RoofExteriorOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "SW.show_roof_type"
+			Default = 0
+			AvailableChoices = [0,1]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		// Airlock - Start
+		AirLock
+		{
+			Type = Airlock
+			EnterExitPoint = [1, 2.5]
+			NuggetEjectVelocity = [1, 1]
+			NuggetEjectDirection = [-100d, -80d]
+			NuggetEjectDoorOpenDuration = 0.65
+			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
+
+			CrewEnterEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					RandomSounds = 
+					[
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_01.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_02.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_04.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_05.wav"
+					]
+					SpeedVariation = .1
+				}
+			]
+
+			CrewLeaveEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					RandomSounds = 
+					[
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_01.wav", 
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_02.wav", 
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_03.wav"
+					]
+					SpeedVariation = .1
+				}
+			]	
+		}
+		// Airlock - End
+
+		// Fire Extinguisher - Start
+		ExtinguisherStorage
+		{
+			Type = ResourceStorage
+			ResourceType = fire_extinguisher
+			MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			StartingResources = &MaxResources
+			SuppliesResources = true
+		}
+
+		ExtinguisherProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = ExtinguisherStorage
+			InvertOperationalToggle = true
+			ToStorage = ExtinguisherStorage
+			ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			Interval = 45
+		}
+
+		ProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ExtinguisherProducer
+			ShowProgressFor = ExtinguisherProducer
+		}
+		// Fire Extinguisher - End
+
+
+		
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 3000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+			AllowNonContiguousCrewSearch = true
+		}
+		PowerDrain
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
+			FromQuantity = 1000				//uses less power
+			MinFromQuantityForConversion = 1
+			Interval = 30	// Drains 1 power every 30 seconds.
+		}
+
+		CommandProvider
+		{
+			Type = CommandProvider
+			OperationalToggle = IsOperational
+			CommandPoints = 125  //Remember to update tooltip.
+		}
+
+		Sensor
+		{
+			Type = Sensor				//lower radius
+			SightRadius = 400
+			RadarRadius = ceil(400*4.5)
+
+		}
+
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [1, 1.55]
+			Rotation = 0d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [.5, 1.95]i
+			Rotation = 0d
+		}
+		CrewLocation3
+		{
+			Type = CrewLocation
+			Location = [1.5, 1.95]
+			Rotation = 0d
+		}
+
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 3
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			AbandonWhenOnFire = false
+			CrewDestinations
+			[
+				&../../CrewLocation1/Location
+				&../../CrewLocation2/Location
+				&../../CrewLocation3/Location
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+				CrewLocation3
+
+			]
+		}
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [1, 1.5]
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"on1.png"
+							"on2.png"
+							"on3.png"
+							//"on4.png"
+							//"on5.png"
+						    //"on6.png"
+						    //"on7.png"
+						    //"on8.png"
+						]
+						Size = [2, 3]
+						AnimationInterval = 0.3
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "off.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			/* Removed to place in roof Toggles
+//			Floor
+//			{
+//				Layer = "floors"
+//				DamageLevels
+//				[
+//					{
+//						File = "floor.png"
+//						Size = [2, 3]
+//					}
+//					{
+//						File = "floor_33.png"
+//						Size = [2, 3]
+//					}
+//					{
+//						File = "floor_66.png"
+//						Size = [2, 3]
+//					}
+//				]
+//			}
+//			Walls
+//			{
+//				Layer = "walls"
+//				DamageLevels
+//				[
+//					{
+//						File = "walls.png"
+//						Size = [2, 3]
+//					}
+//				    {
+//						File = "walls_33.png"
+//						Size = [2, 3]
+//					}
+//				    {
+//						File = "walls_66.png"
+//						Size = [2, 3]
+//					}
+//				]
+//			}
+//
+//			Roof
+//			{
+//				Layer = "roofs"
+//				DamageLevels
+//				[
+//					{
+//						File = "roof.png"
+//						NormalsFile = "roof_normals.png"
+//						Size = [1, 2]
+//					}
+//					{
+//						File = "roof_33.png"
+//						NormalsFile = "roof_normals_33.png"
+//						Size = [1, 2]
+//					}
+//					{
+//						File = "roof_66.png"
+//						NormalsFile = "roof_normals_66.png"
+//						Size = [1, 2]
+//					}
+//				]
+//			} 
+			*/ 
+			/*  HOW THE FK IS THIS NOT CRASHING???
+			OperationalRoofWindows
+			{
+				Layer = "roof_windows"
+				DamageLevels
+				[
+					{
+						File = "Cockpit Window.png"
+						Size = [1, 2]
+					}
+				    {
+						File = "Cockpit Window_33.png"
+						Size = [1, 2]
+					}
+				    {
+						File = "Cockpit Window_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			NonOperationalRoofWindows = &OperationalRoofWindows */
+		}
+		ChairGraphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [1, 1.5]
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "chairs.png"
+						Size = [2, 3]
+					}
+					{
+						File = "chairs_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "chairs_66.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "chairs_off.png"
+						Size = [2, 3]
+					}
+					{
+						File = "chairs_off_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "chairs_off_66.png"
+						Size = [2, 3]
+					}
+				]
+			}
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [1, 99/64]
+			ResourceStorage = BatteryStorage
+			Layer = "walls"
+			HasZeroResourceSprite = true
+			ResourceLevels
+			[
+				{
+					File = "batteries_0.png"
+					Size = [1.875, .58]
+				}
+				{
+					File = "batteries_1.png"
+					Size = [1.875, .58]
+				}
+				{
+					File = "batteries_2.png"
+					Size = [1.875, .58]
+				}
+			]
+		}
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational
+			Location = [1, 1.5]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [1, 1.5]
+		}
+		OperationSoundLoop
+		{
+			Type = ContinuousEffects
+			Location = [1, 1]
+			OperationalToggle = IsOperational
+			MaxMediaEffectsZoom = 4
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					Sound = "./Data/ships/terran/control_room_small/operating.wav"
+					Volume = .15
+					MaxConcurrentVolume = .3
+					Speed = .75
+					MaxConcurrent = 1
+				}
+			]
+		}
+
+		// Indicators - Start
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [1, 1.5]
+			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+					HidesIndicators = [1,2]
+				}
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [1, 1]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+// Indicators - End
+
+		// Extinguisher Graphics - Start
+		ExtinguisherSprite
+		{
+			Type = ResourceSprites
+			Location = [1, 2.4]
+			ResourceStorage = ExtinguisherStorage
+			Layer = "doodads_low"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "extinguisher.png"
+					Size = [2, 1]
+				}
+			]
+		}
+		// Extinguisher Graphics - End
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [2, 3]
+		}
+
+	}
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		SightRange = &~/Part/Components/Sensor/SightRadius
+		RadarRange = &~/Part/Components/Sensor/RadarRadius
+
+		RecPower = (&PowerUsageContinuousMinutes) / 60
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+}
