@@ -1,8 +1,8 @@
 /*Simplified Equation for math dumb-dumbs like me for calculating Width Height based on Original Sprite vs Target Size in game
 
 Size Calculation = pixel𝑊/64 pixel𝐻/64 = Size W, Size H
-Example: 102/64, 244/64 = 
-1.6, 3.8125
+Example: 512/64, 707/64 = 6, 9
+8, 11.05
 
 Simplified Equation
 For any given original size (in units 64 = 1 unit) ["𝑊orig","𝐻orig"] and target width "𝑊target":
@@ -16,13 +16,13 @@ Target Width (𝑊target: The width you WANT the sprite to be.
 Target Height (𝐻target): The height the sprite SHOULD be, calculated to maintain the aspect ratio.
 
 Example: I have a sprite that is originally [1.64, 2.98] (7*64px, 17.5*64px = Width x Height resolution).  I want it to be width of 3 units wide.
-𝑊o = Original Width (𝑊orig): 1.64
-𝐻o = Original Height (𝐻orig): 2.98
-𝑊t = Target Width (𝑊target: 1
+𝑊o = Original Width (𝑊orig): 8
+𝐻o = Original Height (𝐻orig): 11
+𝑊t = Target Width (𝑊target: 3
 T = Target Height (𝐻target): "T" (Target)
 
 𝐻t = 𝐻o * (𝑊t / 𝑊o)
-T = 2.98 * ( 1 / 1.64 ) = 1.817 New Size = [1, 1.817]
+T = 11 * ( 3 / 8 ) = 4.125 New Size = [3, 4.125]
 
 */
 
@@ -70,30 +70,90 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics0
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
 			        Roof
 			        {
-			        	Layer = "roofs"
+			        	Layer = "SW.roof_engines"
+                        //Offset = [0, .5] // Offset X = 0 (no change) Offset Y = remainder of loc to end of part + half of roof cover Size height (Y) (e.g., Location of mid part = .5, .5, Roof Size = [1, 7] then offset for Y is .5 + 3.5 = 4)
 			        	DamageLevels
 			        	[
 			        		{
-			        			File = "roof.png"
-			        			NormalsFile = "roof_normals.png"
-			        			Size = [1, 2]
+			        			File = "roof_0.png"
+			        			NormalsFile = "roof_0_normals.png"
+			        			Size = [3, 2]//[3, 4.5]
 			        		}
-			        		{
-			        			File = "roof_33.png"
-			        			NormalsFile = "roof_normals_33.png"
-			        			Size = [1, 2]
-			        		}
-			        		{
-			        			File = "roof_66.png"
-			        			NormalsFile = "roof_normals_66.png"
-			        			Size = [1, 2]
-			        		}
+			        		//{
+			        		//	File = "roof_33.png"
+			        		//	NormalsFile = "roof_normals_33.png"
+			        		//	Size = [1, 2]
+			        		//}
+			        		//{
+			        		//	File = "roof_66.png"
+			        		//	NormalsFile = "roof_normals_66.png"
+			        		//	Size = [1, 2]
+			        		//}
 			        	]
 			        }
                 }
+		        RadarGraphics
+		        {
+		        	Type = Graphics
+		        	Location = [1.5, 1.7]
+		        	OperationalToggle = IsOperational
+		        	OperationalRoofDoodad
+		        	{
+		        		Layer = "roof_turrets"
+		        		DamageLevels
+		        		[
+		        			{
+		        				File = "sw_radar.png"
+		        				NormalsFile = "sw_radar_normals.png"
+		        				RotSpeed = 180d
+		        			}
+		        		]
+		        	}
+		        	NonOperationalRoofDoodad
+		        	{
+		        		Layer = "roof_turrets"
+		        		DamageLevels
+		        		[
+		        			{
+		        				File = "sw_radar.png"
+		        				NormalsFile = "sw_radar_normals.png"
+		        				Size = [1, 1]
+		        			}
+		        		]
+		        	}
+		        }
+                /*
+			    RoofGraphics
+			    {
+                    Type = Graphics
+                    Location = [1.5, 1]
+                    Roof
+                    {
+			    	    Layer = "roofs"
+			    	    DamageLevels
+			    	    [
+			    	    	{
+			    	    		File = "roof.png"
+			    	    		NormalsFile = "roof_normals.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_33.png"
+			    	    		NormalsFile = "roof_normals_33.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_66.png"
+			    	    		NormalsFile = "roof_normals_66.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    ]
+                    }
+			    }
+                */   
             }            
         }
 
@@ -113,26 +173,27 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics1
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, 1.5] // Offset X = 0 (no change) Offset Y = remainder of loc to end of part + half of roof cover Size height (Y) (e.g., Location of mid part = .5, .5, Roof Size = [1, 7] then offset for Y is .5 + 3.5 = 4)
+                        //Offset = [0, .5] // Offset X = 0 (no change) Offset Y = remainder of loc to end of part + half of roof cover Size height (Y) (e.g., Location of mid part = .5, .5, Roof Size = [1, 7] then offset for Y is .5 + 3.5 = 4)
                         DamageLevels
                         [
                             {
-                                File = "roof_B.png"
-                                NormalsFile =  "roof_B_normals.png"
-                                Size = [1, 4]
+                                File = "roof_A.png"
+                                NormalsFile =  "roof_A_normals.png"
+                                Size = [3, 2]//[3, 4]
                                 //UVRotation = 2
                             }
                         ]
                     }
                 }
+                /*
 			    RoofGraphics
 			    {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
 			    	    Layer = "roofs"
@@ -141,21 +202,22 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
 			    	    	{
 			    	    		File = "roof.png"
 			    	    		NormalsFile = "roof_normals.png"
-			    	    		Size = [1, 2]
+			    	    		Size = [3, 2]
 			    	    	}
 			    	    	{
 			    	    		File = "roof_33.png"
 			    	    		NormalsFile = "roof_normals_33.png"
-			    	    		Size = [1, 2]
+			    	    		Size = [3, 2]
 			    	    	}
 			    	    	{
 			    	    		File = "roof_66.png"
 			    	    		NormalsFile = "roof_normals_66.png"
-			    	    		Size = [1, 2]
+			    	    		Size = [3, 2]
 			    	    	}
 			    	    ]
                     }
-			    }   
+			    }
+                */   
             }
         }
         NozzleRoofCoverOptionToggle2
@@ -174,17 +236,17 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics2
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
-                        Layer = "roofs"
+                        Layer = "SW.roof_engines"
                         //Offset = [0, .1] 
                         DamageLevels
                         [
                             {
-                                File = "roof_D.png"
-                                NormalsFile =  "roof_D_normals.png"
-                                Size = [1, 2]
+                                File = "roof_C.png"
+                                NormalsFile =  "roof_C_normals.png"
+                                Size = [3, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
@@ -210,17 +272,17 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics3
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
-                        Layer = "roofs"
+                        Layer = "SW.roof_engines"
                         //Offset = [0, .1] 
                         DamageLevels
                         [
                             {
-                                File = "roof_F.png"
-                                NormalsFile =  "roof_F_normals.png"
-                                Size = [1, 2]
+                                File = "roof_D.png"
+                                NormalsFile =  "roof_D_normals.png"
+                                Size = [3, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
@@ -249,17 +311,17 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics4
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
-                        Layer = "roofs"
+                        Layer = "SW.roof_engines"
                         //Offset = [0, .1] 
                         DamageLevels
                         [
                             {
-                                File = "roof_F2.png"
-                                NormalsFile =  "roof_F_normals.png"
-                                Size = [1, 2]
+                                File = "roof_E.png"
+                                NormalsFile =  "roof_E_normals.png"
+                                Size = [3, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
@@ -286,17 +348,17 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics5
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
-                        Layer = "roofs"
+                        Layer = "SW.roof_engines"
                         //Offset = [0, .1] 
                         DamageLevels
                         [
                             {
-                                File = "roof_E.png"
-                                NormalsFile =  "roof_E_normals.png"
-                                Size = [1, 2]
+                                File = "roof_F.png"
+                                NormalsFile =  "roof_F_normals.png"
+                                Size = [3, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
@@ -305,6 +367,7 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 }
             }
         }
+
 
 //NozzleRoofCoverOptionToggle6
         NozzleRoofCoverOptionToggle6
@@ -323,17 +386,17 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics6
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
-                        Layer = "roofs"
+                        Layer = "SW.roof_engines"
                         //Offset = [0, .1] 
                         DamageLevels
                         [
                             {
-                                File = "roof_E2.png"
-                                NormalsFile =  "roof_E_normals.png"
-                                Size = [1, 2]
+                                File = "roof_H.png"
+                                NormalsFile =  "roof_H_normals.png"
+                                Size = [3, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
@@ -360,7 +423,7 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics7
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -368,44 +431,19 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                         DamageLevels
                         [
                             {
-                                File = "roof_H.png"
-                                NormalsFile =  "roof_H_normals.png"
-                                Size = [1, 2]
+                                File = "roof_I.png"
+                                NormalsFile =  "roof_I_normals.png"
+                                Size = [3, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
                         ]
                     }
-                }
-			    RoofGraphics
-			    {
-                    Type = Graphics
-                    Location = [.5, 1]
-                    Roof
-                    {
-			    	    Layer = "roofs"
-			    	    DamageLevels
-			    	    [
-			    	    	{
-			    	    		File = "roof.png"
-			    	    		NormalsFile = "roof_normals.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    	{
-			    	    		File = "roof_33.png"
-			    	    		NormalsFile = "roof_normals_33.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    	{
-			    	    		File = "roof_66.png"
-			    	    		NormalsFile = "roof_normals_66.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    ]
-                    }
-			    }   
+                }                
             }
         }
+
+
 //NozzleRoofCoverOptionToggle8
         NozzleRoofCoverOptionToggle8
         {
@@ -423,7 +461,7 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics8
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -431,42 +469,15 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                         DamageLevels
                         [
                             {
-                                File = "roof_H2.png"
-                                NormalsFile =  "roof_H_normals.png"
-                                Size = [1, 2]
+                                File = "roof_B.png"
+                                NormalsFile =  "roof_B_normals.png"
+                                Size = [3, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
                         ]
                     }
-                }
-			    RoofGraphics
-			    {
-                    Type = Graphics
-                    Location = [.5, 1]
-                    Roof
-                    {
-			    	    Layer = "roofs"
-			    	    DamageLevels
-			    	    [
-			    	    	{
-			    	    		File = "roof.png"
-			    	    		NormalsFile = "roof_normals.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    	{
-			    	    		File = "roof_33.png"
-			    	    		NormalsFile = "roof_normals_33.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    	{
-			    	    		File = "roof_66.png"
-			    	    		NormalsFile = "roof_normals_66.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    ]
-                    }
-			    }   
+                }                
             }
         }
 
@@ -487,7 +498,7 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics9
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -495,44 +506,19 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                         DamageLevels
                         [
                             {
-                                File = "roof_I2.png"
-                                NormalsFile =  "roof_I_normals.png"
-                                Size = [1, 2]
+                                File = "roof_J.png"
+                                NormalsFile =  "roof_J_normals.png"
+                                Size = [3, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
                         ]
                     }
                 }
-			    RoofGraphics
-			    {
-                    Type = Graphics
-                    Location = [.5, 1]
-                    Roof
-                    {
-			    	    Layer = "roofs"
-			    	    DamageLevels
-			    	    [
-			    	    	{
-			    	    		File = "roof.png"
-			    	    		NormalsFile = "roof_normals.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    	{
-			    	    		File = "roof_33.png"
-			    	    		NormalsFile = "roof_normals_33.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    	{
-			    	    		File = "roof_66.png"
-			    	    		NormalsFile = "roof_normals_66.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    ]
-                    }
-			    }   
+                  
             }
         }
+
 
 //NozzleRoofCoverOptionToggle10
         NozzleRoofCoverOptionToggle10
@@ -551,7 +537,7 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics10
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
                         Layer = "SW.roof_engines"
@@ -559,42 +545,15 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                         DamageLevels
                         [
                             {
-                                File = "roof_J.png"
-                                NormalsFile =  "roof_J_normals.png"
-                                Size = [1, 2]
+                                File = "roof_K.png"
+                                NormalsFile =  "roof_K_normals.png"
+                                Size = [3, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
                         ]
                     }
                 }
-			    RoofGraphics
-			    {
-                    Type = Graphics
-                    Location = [.5, 1]
-                    Roof
-                    {
-			    	    Layer = "roofs"
-			    	    DamageLevels
-			    	    [
-			    	    	{
-			    	    		File = "roof.png"
-			    	    		NormalsFile = "roof_normals.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    	{
-			    	    		File = "roof_33.png"
-			    	    		NormalsFile = "roof_normals_33.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    	{
-			    	    		File = "roof_66.png"
-			    	    		NormalsFile = "roof_normals_66.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    ]
-                    }
-			    }   
             }
         }
 
@@ -615,156 +574,55 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics11
                 {
                     Type = Graphics
-                    Location = [.5, 1]
+                    Location = [1.5, 1]
                     Roof
                     {
                         Layer = "SW.roof_engines"
-                        Offset = [0, .5] 
                         DamageLevels
                         [
                             {
-                                File = "roof_A.png"
-                                NormalsFile =  "roof_A_normals.png"
-                                Size = [1, 3]
+                                File = "roof_F2.png"
+                                NormalsFile =  "roof_0_normals.png"
+                                Size = [3, 2]
                                 //UVRotation = 2
                                 //MirrorU = true
                             }
                         ]
                     }
                 }
-			    RoofGraphics
-			    {
-                    Type = Graphics
-                    Location = [.5, 1]
-                    Roof
-                    {
-			    	    Layer = "roofs"
-			    	    DamageLevels
-			    	    [
-			    	    	{
-			    	    		File = "roof.png"
-			    	    		NormalsFile = "roof_normals.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    	{
-			    	    		File = "roof_33.png"
-			    	    		NormalsFile = "roof_normals_33.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    	{
-			    	    		File = "roof_66.png"
-			    	    		NormalsFile = "roof_normals_66.png"
-			    	    		Size = [1, 2]
-			    	    	}
-			    	    ]
-                    }
-			    }   
+		        RadarGraphics
+		        {
+		        	Type = Graphics
+		        	Location = [1.5, 1.7]
+		        	OperationalToggle = IsOperational
+		        	OperationalRoofDoodad
+		        	{
+		        		Layer = "roof_turrets"
+		        		DamageLevels
+		        		[
+		        			{
+		        				File = "sw_radar.png"
+		        				NormalsFile = "sw_radar_normals.png"
+		        				RotSpeed = 180d
+		        			}
+		        		]
+		        	}
+		        	NonOperationalRoofDoodad
+		        	{
+		        		Layer = "roof_turrets"
+		        		DamageLevels
+		        		[
+		        			{
+		        				File = "sw_radar.png"
+		        				NormalsFile = "sw_radar_normals.png"
+		        				Size = [1, 1]
+		        			}
+		        		]
+		        	}
+		        }
             }
         }
-/*
-        NozzleRoofCoverOptionToggle9
-        {
-            Type = ModeToggle
-            Mode = NozzleRoofCoverOptionToggle
-            OnMode = 9
-        }
-        NozzleRoofCoverComponents9
-        {
-            Type = ToggledComponents
-            Toggle = NozzleRoofCoverOptionToggle9
-            //Invert = true
-            Components
-            {
-                NozzleRoofCoverGraphics9
-                {
-                    Type = Graphics
-                    Location = [.5, .5]
-                    Roof
-                    {
-                        Layer = "roofs"
-                        Offset = [0, 2]
-                        DamageLevels
-                        [
-                            {
-                                File = "../Ion_Common/roof_cover_slope5x1.png"
-                                NormalsFile =  "../Ion_Common/roof_cover_slope5x1_normals.png"
-                                Size = [20, 4]
-                                UVRotation = 2
-                            }
-                        ]
-                    }
-                }
-            }
-        }
-        NozzleRoofCoverOptionToggle10
-        {
-            Type = ModeToggle
-            Mode = NozzleRoofCoverOptionToggle
-            OnMode = 10
-        }
-        NozzleRoofCoverComponents10
-        {
-            Type = ToggledComponents
-            Toggle = NozzleRoofCoverOptionToggle10
-            //Invert = true
-            Components
-            {
-                NozzleRoofCoverGraphics10
-                {
-                    Type = Graphics
-                    Location = [.5, .5]
-                    Roof
-                    {
-                        Layer = "roofs"
-                        Offset = [0, 2]
-                        DamageLevels
-                        [
-                            {
-                                File = "../Ion_Common/roof_cover_slope5x1.png"
-                                NormalsFile =  "../Ion_Common/roof_cover_slope5x1_normals.png"
-                                Size = [20, 4]
-                                UVRotation = 2
-                                MirrorU = true
-                            }
-                        ]
-                    }
-                }
-            }
-        }
-        NozzleRoofCoverOptionToggle11
-        {
-            Type = ModeToggle
-            Mode = NozzleRoofCoverOptionToggle
-            OnMode = 11
-        }
-        NozzleRoofCoverComponents11
-        {
-            Type = ToggledComponents
-            Toggle = NozzleRoofCoverOptionToggle11
-            //Invert = true
-            Components
-            {
-                NozzleRoofCoverGraphics11
-                {
-                    Type = Graphics
-                    Location = [.5, .5]
-                    Roof
-                    {
-                        Layer = "roofs"
-                        Offset = [0, 1.6666]
-                        DamageLevels
-                        [
-                            {
-                                File = "../Ion_Common/roof_cover_slope6x1.png"
-                                NormalsFile =  "../Ion_Common/roof_cover_slope6x1_normals.png"
-                                Size = [20, 3.33333]
-                                UVRotation = 2
-                            }
-                        ]
-                    }
-                }
-            }
-        }
+
         NozzleRoofCoverOptionToggle12
         {
             Type = ModeToggle
@@ -781,26 +639,24 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics12
                 {
                     Type = Graphics
-                    Location = [.5, .5]
+                    Location = [1.5, 1]
                     Roof
                     {
-                        Layer = "roofs"
-                        Offset = [0, 1.66666]
+                        Layer = "SW.roof_engines"
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/roof_cover_slope6x1.png"
-                                NormalsFile =  "../Ion_Common/roof_cover_slope6x1_normals.png"
-                                Size = [20, 3.33333]
-                                UVRotation = 2
-                                MirrorU = true
+                                File = "roof_I2.png"
+                                NormalsFile =  "roof_I2_normals.png"
+                                Size = [3, 2]
                             }
                         ]
                     }
                 }
             }
         }
-        NozzleRoofCoverOptionToggle13
+
+       NozzleRoofCoverOptionToggle13
         {
             Type = ModeToggle
             Mode = NozzleRoofCoverOptionToggle
@@ -816,24 +672,24 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics13
                 {
                     Type = Graphics
-                    Location = [.5, .5]
+                    Location = [1.5, 1]
                     Roof
                     {
-                        Layer = "roofs"
-                        Offset = [0, 1.75]
+                        Layer = "SW.roof_engines"
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/roof_cover_[1,1].png"
-                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
-                                Size = [20, 3.5]
+                                File = "roof_L.png"
+                                NormalsFile =  "roof_L_normals.png"
+                                Size = [3, 2]
                             }
                         ]
                     }
                 }
             }
         }
-        NozzleRoofCoverOptionToggle14
+//NozzleRoofCoverOptionsToggle14
+       NozzleRoofCoverOptionToggle14
         {
             Type = ModeToggle
             Mode = NozzleRoofCoverOptionToggle
@@ -849,24 +705,24 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics14
                 {
                     Type = Graphics
-                    Location = [.5, .5]
+                    Location = [1.5, 1]
                     Roof
                     {
-                        Layer = "roofs"
-                        Offset = [0, 3.5]
+                        Layer = "SW.roof_engines"
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/roof_cover_[1,1].png"
-                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
-                                Size = [20, 7]
+                                File = "roof_M.png"
+                                NormalsFile =  "roof_M_normals.png"
+                                Size = [3, 2]
                             }
                         ]
                     }
                 }
             }
         }
-        NozzleRoofCoverOptionToggle15
+//NozzleRoofCoverOptionsToggle15
+       NozzleRoofCoverOptionToggle15
         {
             Type = ModeToggle
             Mode = NozzleRoofCoverOptionToggle
@@ -882,37 +738,25 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics15
                 {
                     Type = Graphics
-                    Location = [.5, .5]
+                    Location = [1.5, 1]
                     Roof
                     {
-                        Layer = "roofs"
-                        Offset = [0, 12.5]
+                        Layer = "SW.roof_engines"
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/roof_cover_[1,1].png"
-                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
-                                Size = [20, 25]
-                            }
-                        ]
-                    }
-                    Floor
-                    {
-                        Layer = "SW.structure_engines"
-                        Offset = [0, 12.5]
-                        DamageLevels
-                        [
-                            {
-                                File = "../Ion_Common/roof_cover_[1,1]02.png"
-                                NormalsFile = "../Ion_Common/roof_cover_[1,1]02_normals.png"
-                                Size = [20, 25]
+                                File = "roof_N.png"
+                                NormalsFile =  "roof_N_normals.png"
+                                Size = [3, 2]
                             }
                         ]
                     }
                 }
             }
         }
-        NozzleRoofCoverOptionToggle16
+
+//NozzleRoofCoverOptionsToggle16
+       NozzleRoofCoverOptionToggle16
         {
             Type = ModeToggle
             Mode = NozzleRoofCoverOptionToggle
@@ -928,126 +772,51 @@ So, the top of the shape should be placed at y = -2 to align its bottom with the
                 NozzleRoofCoverGraphics16
                 {
                     Type = Graphics
-                    Location = [.5, .5]
+                    Location = [1.5, 1]
                     Roof
                     {
-                        Layer = "roofs"
-                        Offset = [0, 16.25] //480gap
+                        Layer = "SW.roof_engines"
                         DamageLevels
                         [
                             {
-                                File = "../Ion_Common/roof_cover_[1,1].png"
-                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
-                                Size = [20, 17.5]
-                            }
-                        ]
-                    }
-                    Floor
-                    {
-                        Layer = "SW.structure_engines"
-                        Offset = [0, 12.5]
-                        DamageLevels
-                        [
-                            {
-                                File = "../Ion_Common/roof_cover_[1,1]02.png"
-                                NormalsFile = "../Ion_Common/roof_cover_[1,1]02_normals.png"
-                                Size = [20, 25]
+                                File = "roof_O.png"
+                                NormalsFile =  "roof_O_normals.png"
+                                Size = [3, 2]
                             }
                         ]
                     }
                 }
+                /*
+		        RadarGraphics
+		        {
+		        	Type = Graphics
+		        	Location = [1.5, 1]
+		        	OperationalToggle = IsOperational
+		        	OperationalRoofDoodad
+		        	{
+		        		Layer = "roof_turrets"
+		        		DamageLevels
+		        		[
+		        			{
+		        				File = "sw_radar2.png"
+		        				NormalsFile = "sw_radar2_normals.png"
+		        				RotSpeed = 180d
+		        			}
+		        		]
+		        	}
+		        	NonOperationalRoofDoodad
+		        	{
+		        		Layer = "roof_turrets"
+		        		DamageLevels
+		        		[
+		        			{
+		        				File = "sw_radar2.png"
+		        				NormalsFile = "sw_radar2_normals.png"
+		        				Size = [1, 1]
+		        			}
+		        		]
+		        	}
+		        }
+                */
             }
         }
-        NozzleRoofCoverOptionToggle17
-        {
-            Type = ModeToggle
-            Mode = NozzleRoofCoverOptionToggle
-            OnMode = 17
-        }
-        NozzleRoofCoverComponents17
-        {
-            Type = ToggledComponents
-            Toggle = NozzleRoofCoverOptionToggle17
-            //Invert = true
-            Components
-            {
-                NozzleRoofCoverGraphics17
-                {
-                    Type = Graphics
-                    Location = [.5, .5]
-                    Roof
-                    {
-                        Layer = "roofs"
-                        Offset = [0, 15.625] //400gap
-                        DamageLevels
-                        [
-                            {
-                                File = "../Ion_Common/roof_cover_[1,1].png"
-                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
-                                Size = [20, 18.75]
-                            }
-                        ]
-                    }
-                    Floor
-                    {
-                        Layer = "SW.structure_engines"
-                        Offset = [0, 12.5]
-                        DamageLevels
-                        [
-                            {
-                                File = "../Ion_Common/roof_cover_[1,1]02.png"
-                                NormalsFile = "../Ion_Common/roof_cover_[1,1]02_normals.png"
-                                Size = [20, 25]
-                            }
-                        ]
-                    }
-                }
-            }
-        }
-        NozzleRoofCoverOptionToggle18
-        {
-            Type = ModeToggle
-            Mode = NozzleRoofCoverOptionToggle
-            OnMode = 18
-        }
-        NozzleRoofCoverComponents18
-        {
-            Type = ToggledComponents
-            Toggle = NozzleRoofCoverOptionToggle18
-            //Invert = true
-            Components
-            {
-                NozzleRoofCoverGraphics18
-                {
-                    Type = Graphics
-                    Location = [.5, .5]
-                    Roof
-                    {
-                        Layer = "roofs"
-                        Offset = [0, 14.734375] //286gap
-                        DamageLevels
-                        [
-                            {
-                                File = "../Ion_Common/roof_cover_[1,1].png"
-                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
-                                Size = [20, 20.53125]
-                            }
-                        ]
-                    }
-                    Floor
-                    {
-                        Layer = "SW.structure_engines"
-                        Offset = [0, 12.5]
-                        DamageLevels
-                        [
-                            {
-                                File = "../Ion_Common/roof_cover_[1,1]02.png"
-                                NormalsFile = "../Ion_Common/roof_cover_[1,1]02_normals.png"
-                                Size = [20, 25]
-                            }
-                        ]
-                    }
-                }
-            }
-        }
-*/
