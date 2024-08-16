@@ -16,12 +16,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
     //Resources&Size&Health
 	Resources
 	[
-		[SW.durasteel, 52]
+		[SW.durasteel, 65]
 		[coil2, 32]
 		[processor, 2]
+		[enriched_uranium, 2]
 	]  //52*200+32*300+2*2500=25000  //Cost = 25000
 	Size = [2, 3]
-	MaxHealth = 4200 //(17090/4096)*1000=4172.36328125
+	MaxHealth = 8500 //(17090/4096)*1000=4172.36328125
 
     //Rects
 	GenerateRectCollider = false 	//uses turret collider
@@ -34,14 +35,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
     //PartSpecific
 	AIValueFactor = 5
 	Density = 0.7
-	InitialPenetrationResistance = 2
+	InitialPenetrationResistance = 7
 	ContiguityOriginPriority = 1
 	//IsContiguityOrigin = true
 	//IsShipForward = true
-	ThrusterForce = 400
+	ThrusterForce = 110
 	ThrustIncreaseTime = 0
 	ThrustRecoveryTime = 0
 	FuelUsage = 10
+	//IsBuildable = false
 
     //ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust]
@@ -223,13 +225,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = -90d
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			FireInterval = .30
-			FiringArc = 15d
+			FireInterval = 0
+			FiringArc = 30d
 			RotateSpeed = 90d
-			FireThresholdAngle = 1d
+			FireThresholdAngle = 3d
 			//TargetSearchTriesPerFrame = 2
 			AIFirepowerRating = 500
 			FirePermissionToggle = FireModeToggle
+			TargetSearchesPerSecond = 4
 			Emitter = BulletEmitterBase
 			AllowFireWithBlockedLOS = true
 			IgnoreSourceShipLowLOSChecks = true
@@ -266,16 +269,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
-			FireTrigger = Turret
+			FireTrigger // = Turret
 			GetTargetFrom = Turret
 			Location = [0, 0] //[24/64, -0.75]
-			FireDelay = .04
+			FireDelay = .1
 			OperationalToggle = IsOperational
 			Spread = [-1.5d, 1.5d]
 			Burst = 2
 			BurstDelay = 0.075
 			//FireDelay = 0.01
-			Bullet = &/SW_SHOTS/blueeta2lasershot
+			Bullet = &/SW_SHOTS/greensmalllasershot
 			ResourceStorage = BatteryStorage
 			ResourcesUsed = 40
 			MinResourcesUsed = 1
@@ -291,19 +294,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BulletEmitterLeft : BulletEmitterBase
 		{
 			Type = BulletEmitter
-			Location = [24/64, -0.75]
+			Location = [1, -1]
+			FireTrigger = Turret
 		}
 
-		BulletEmitterRight : BulletEmitterBase
+		BulletEmitterRight : BulletEmitterLeft
 		{
 			Type = BulletEmitter
-			Location = [24/64, 0.75]
+			Location = [1, 1]
 		}
 
 		ChargeEffectBase
 		{
 			Type = TriggeredEffects
-			ChainedTo = BulletEmitterBase
+			ChainedTo = BulletEmitterLeft
 			Trigger = Turret
 			AnchorMediaEffects = true
 
@@ -313,31 +317,32 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
-		FireEffectBase
-		{
-			Type = TriggeredEffects
-			ChainedTo = BulletEmitterBase
-			Trigger = Turret
-			Location = [0, 0]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/SW_SOUNDS/Eta2SFX
-			]
-		}
+		//FireEffectBase
+		//{
+		//	Type = TriggeredEffects
+		//	ChainedTo = BulletEmitterBase
+		//	Trigger = Turret
+		//	Location = [0, 0]
+		//	AnchorMediaEffects = true
+//
+		//	MediaEffects
+		//	[
+		//		&/SW_SOUNDS/TIELaser2C
+		//	]
+		//}
 
 		FireEffectLeft
 		{
 			Type = TriggeredEffects
 			ChainedTo = BulletEmitterLeft
 			Trigger = BulletEmitterLeft
-			Location = [10/64, -0.75]
+			//Location = [10/64, -0.75]
 			AnchorMediaEffects = true
 	
 			MediaEffects
 			[
-				&/SW_PARTICLES/Shot/Laser/Shoot/Med/Blue
+				&/SW_PARTICLES/Shot/Laser/Shoot/Small/Green
+				&/SW_SOUNDS/TIELaser2C
 			]
 		}
 
@@ -345,7 +350,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			ChainedTo = BulletEmitterRight
 			Trigger = BulletEmitterRight
-			Location = [10/64, 0.75]
+			//Location = [10/64, 0.75]
 		}
 		
 		WeaponSprite
@@ -355,7 +360,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [.5, -1]
 			Rotation = 90d
 			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitterBase
+			ResetAnimationTrigger = BulletEmitterLeft
 			AtlasSprite
 			{
 				AnimationFiles
@@ -381,7 +386,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [.5, 1]
 			Rotation = 90d
 			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitterBase
+			ResetAnimationTrigger = BulletEmitterRight
 			AtlasSprite
 			{
 				AnimationFiles
@@ -443,7 +448,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = CrewLocation
 			Location = [1, 1.275]
-			Rotation = 180d
+			Rotation = 0d
 		}
 		PartCrew
 		{
@@ -544,26 +549,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 			Roof
 			{
-				Layer = "roofs"
+				Layer = "SW.roof_engines"
 				DamageLevels
 				[
 					{
 						File = "roof.png"
 						NormalsFile = "roof_normals.png"
-						Size = [2, 3]
+						Size = [2.5, 3]
 					}
 					{
 						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
-						Size = [2, 3]
+						NormalsFile = "roof_33_normals.png"
+						Size = [2.5, 3]
 					}
 					{
 						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
-						Size = [2, 3]
+						NormalsFile = "roof_66_normals.png"
+						Size = [2.5, 3]
 					}
 				]
 			}
+			/*
 			Windows
 			{
 				Layer = "roof_turrets"
@@ -583,6 +589,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					}
 				]
 			}
+			*/
 		}
 
 
@@ -767,7 +774,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
-			Location = [0.5, 1 + 20/64]
+			Location = [1, 3.2]
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
@@ -779,21 +786,93 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
 		}
-		LateralThruster : MainThruster
+
+		/*MainThrusterA
+		{
+			Type = Thruster
+			OperationalToggle = IsOperational
+			Location = [0, 1 + 20/64]
+			Rotation = 90d// Relative to unrotated part.
+			Force = &../../ThrusterForce
+			MinActivation = 0
+			MaxActivation = { BaseValue=5; BuffType=SW_Ion_Thruster_Overdrive_Thrust; BuffMode=Multiply; }
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationRecoveryTime = &../../ThrustRecoveryTime
+			FuelStorage = BatteryStorage
+			FuelUsagePerSecond = &../../FuelUsage
+		}*/
+
+		/*MainThrusterB
+		{
+			Type = Thruster
+			OperationalToggle = IsOperational
+			Location = [2, 1 + 20/64]
+			Rotation = 90d// Relative to unrotated part.
+			Force = &../../ThrusterForce
+			MinActivation = 0
+			MaxActivation = { BaseValue=5; BuffType=SW_Ion_Thruster_Overdrive_Thrust; BuffMode=Multiply; }
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationRecoveryTime = &../../ThrustRecoveryTime
+			FuelStorage = BatteryStorage
+			FuelUsagePerSecond = &../../FuelUsage
+		}*/
+
+		LateralThrusterA : MainThruster
 		{
 			Rotation = 0d
-			MinActivation = -0.05
-			MaxActivation = 0.05
+			Location = [0, 0]
+			//Location = [1, 0.5]
+			MinActivation = 0//-0.50
+			MaxActivation = 1 //0.50
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			AllowAutoFire = false
 		}
+
+		LateralThrusterB : MainThruster
+		{
+			Rotation = 180d
+			Location = [2, 0]
+			MinActivation = 0//-0.05
+			MaxActivation = 1 //0.05
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			AllowAutoFire = false
+		}
+
+		RotationThrusterA : MainThruster //Rotation
+		{
+			Rotation = 90d
+			Location = [0, 1.5]
+			//MinActivation = -0.1
+			//MaxActivation = 0.1
+			//MinUncommandedActivation = &MinActivation
+			//MaxUncommandedActivation = &MaxActivation
+			//AllowAutoFire = false
+		}
+
+		RotationThrusterB : MainThruster //Rotation
+		{
+			Rotation = 90d
+			Location = [2, 1.5]
+			//MinActivation = -0.1
+			//MaxActivation = 0.1
+			//MinUncommandedActivation = &MinActivation
+			//MaxUncommandedActivation = &MaxActivation
+			//AllowAutoFire = false
+		}
+
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
+			//Location = [1, 1.5]
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = 0.20
+			MaxActivation = 1//0.20
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -809,12 +888,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FactorMediaEffectsIntensityWith = DoodadAnimationSpeedFactorValue
 			MediaEffects
 			[
-				: /SW_SOUNDS/ThrusterRumble
-				{
-					Volume = .075
-					Speed = 2
-					MaxConcurrentVolume = .15
-				}
+				&/SW_SOUNDS/TIEThrusterRumble //:  /SW_SOUNDS/ThrusterRumble
+				//{
+					//Volume = .075
+					//Speed = 2
+					//MaxConcurrentVolume = .15
+				//}
 			]
 		}
 
@@ -834,12 +913,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AnchorMediaEffects = true
 			MediaEffects
 			[
-				: /SW_SOUNDS/ThrusterBurst
-				{
-					Volume = 0.125
-					Speed = 1
-					MaxConcurrentVolume = 0.25
-				}
+				&/SW_SOUNDS/TIEBoost // : 
+				//{
+					//Volume = 0.125
+					//Speed = 1
+					//MaxConcurrentVolume = 0.25
+				//}
 			]
 		}
 
@@ -850,19 +929,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalToggle = IsOperational
 			MediaEffects
 			[
-				: /SW_SOUNDS/ThrusterHum
-				{
-					Volume = .05
-					Speed = 1.5
-					MaxConcurrentVolume = 1
-				}
+				&/SW_SOUNDS/TIEThrusterHum //:  /SW_SOUNDS/ThrusterHum
+				//{
+				//	//Volume = .05
+				//	//Speed = 1.5
+				//	//MaxConcurrentVolume = 1
+				//}
 			]
 		}
 
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [1, 1.8]
+			Location = [1, 2]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			RangeLow = 0
@@ -914,6 +993,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			MediaEffects2 = &/SW_SOUNDS/TIEdye
 			Location = [1, 1.5]
 		}
 
@@ -925,14 +1005,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxMediaEffectsZoom = 4
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioInterior
-				{
-					Sound = "./Data/ships/terran/control_room_small/operating.wav"
-					Volume = .15
-					MaxConcurrentVolume = .3
-					Speed = .75
-					MaxConcurrent = 1
-				}
+				&/SW_SOUNDS/TIEThrusterHum //:  /BASE_SOUNDS/AudioInterior
+				//{
+				//	Sound = "./Data/ships/terran/control_room_small/operating.wav"
+				//	Volume = .15
+				//	MaxConcurrentVolume = .3
+				//	Speed = .75
+				//	MaxConcurrent = 1
+				//}
 			]
 		}
 
@@ -941,7 +1021,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIColor
 			ColorID = "SW_Part_ThrusterColor"
-			Default = [38, 38, 255, 255]//.85 saturation
+			Default = [0, 176, 255, 255]//.85 saturation
 			AlwaysAllowInBuildMode = false
 			RequiresCommand = true
 		}
@@ -950,7 +1030,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = UIToggle
 			ToggleID = "SW.thruster_effect_type"
-			Default = 0
+			Default = 3
 			AvailableChoices = [0, 1, 2, 3, 4, 5]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
