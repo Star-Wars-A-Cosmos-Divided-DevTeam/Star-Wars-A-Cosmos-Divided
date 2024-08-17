@@ -1,0 +1,131 @@
+/*Notes: 
+Include this at the top of the file you want to use this set of components 
+
+Part : &<../base_part_terran_automagic_cockpits.rules>/Part 
+
+
+This file should be linked if you want the following items:
+Airlock
+Extinguisher Resources (But not the sprite itself)
+Hypermatter Energy Grid (Wireless Power Buff)
+Battery Producers, Storage, and Consumers
+Will want to also include the following Type Categories in the cockpit itself
+
+TypeCategories = [airlock, fire_extinguisher, provides_power, reactor]
+
+Its recommended to put a limit_1Cockpits or limit_2Cockpits on this item to avoid making it OP)
+*/
+Part : &<../base_part_terran_control_rooms.rules>/Part
+{
+	Components : ^/0/Components
+	{
+		// Airlock 
+		AirLock
+		{
+			Type = Airlock
+			EnterExitPoint = [.5, 1.5]
+			NuggetEjectVelocity = [1, 1]
+			NuggetEjectDirection = [-100d, -80d]
+			NuggetEjectDoorOpenDuration = 0.65
+			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
+
+			CrewEnterEffects = &<./Data/ships/terran/airlock/airlock.rules>/Part/Components/Airlock/CrewEnterEffects
+			CrewLeaveEffects = &<./Data/ships/terran/airlock/airlock.rules>/Part/Components/Airlock/CrewLeaveEffects
+		}
+
+		// Fire Extinguisher 
+		ExtinguisherStorage
+		{
+			Type = ResourceStorage
+			ResourceType = fire_extinguisher
+			MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			StartingResources = &MaxResources
+			SuppliesResources = true
+		}
+
+		ExtinguisherProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = ExtinguisherStorage
+			InvertOperationalToggle = true
+			ToStorage = ExtinguisherStorage
+			ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			Interval = 45
+		}
+
+
+		// Hypermatter Energy Grid
+		BuffProvider
+		{
+			Type = GridBuffProvider
+			BuffType = SW_Hypermatter_Energy_Grid
+			BuffAmount = 100%
+			GridDistance = 5
+		}
+
+		PowerConversion
+		{
+			Type = ResourceConverter
+			FromStorage = BatteryStorage
+			FromQuantity = 1000
+			ToStorage = CombinedBatteryStorage
+			ToQuantity = 1000
+			Interval = .8
+			MinFromQuantityForConversion = 1000
+		}
+
+		//Battery
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 6000
+			StartingResources = &MaxResources
+			SuppliesResources = true
+			ToggleOnResources = 4001
+			ToggleOffResources = 4000
+			MaxResourcesPickUp = 1000
+			MinResourcesPickUp = 1000
+			ExpectedResourceGenerationRate = (&../BatteryProducer/ToQuantity) / (&../BatteryProducer/Interval)
+		}
+
+		CombinedBatteryStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorage]
+			ViaBuffs
+			{
+				OutgoingBuffProviders = [BuffProvider]
+				ComponentID = BatteryStorage
+			}
+			AddMode = PrioritizeLeastResources
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		BatteryProducer
+		{
+			Type = ResourceConverter
+			ToStorage = BatteryStorage
+			ToQuantity = 600
+			Interval = .6666
+		}
+
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = CombinedBatteryStorage
+			DefaultPriority = 0
+			ResupplyThreshold = 100
+		}
+
+		PowerDrain
+		{
+			Type = ResourceConverter
+			FromStorage = BatteryStorage
+			FromQuantity = 1000
+			Interval = 80// Drains 1,5 power every minute.
+		}		
+	}
+}
