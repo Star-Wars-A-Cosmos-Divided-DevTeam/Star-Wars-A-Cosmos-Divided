@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../../../control_rooms/cockpits/base_part_terran_automagic_cockpits.rules>/Part
 {
 	//IDs
 	ID = SW.eta2cockpit
@@ -11,17 +11,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
     //Groups&Categories
 	EditorGroups = [/*"WeaponsEnergy",*/ "Flight", "SWTechI"]
-	TypeCategories = [command, weapon, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits]
+	TypeCategories = [command, weapon, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits, provides_power, reactor]
 
     //Resources&Size&Health
 	Resources
 	[
-		[steel, 46]
+		[SW.durasteel, 76]
 		[coil2, 20]
-		[processor, 1]
+		[processor, 2]
+		[enriched_uranium, 2]
 	]
 	Size = [1, 2]
-	MaxHealth = 12000
+	MaxHealth = 10000
 
     //Rects
 
@@ -34,7 +35,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	InitialPenetrationResistance = 2
 	IsContiguityOrigin = true
 	IsShipForward = true
-
+	ThrusterForce = 110
+	ThrustIncreaseTime = 0
+	ThrustRecoveryTime = 0
+	FuelUsage = 10
     //ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	ProhibitAbove = 3
@@ -73,73 +77,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles = [PowerToggle, /*BatteryStorage,*/ PartCrew]
 			Mode = All
-		}
-
-		/* SPECIAL COCKPIT ITEMS */
-
-		// Airlock - Start
-		AirLock
-		{
-			Type = Airlock
-			EnterExitPoint = [.5, 1.5]
-			NuggetEjectVelocity = [1, 1]
-			NuggetEjectDirection = [-100d, -80d]
-			NuggetEjectDoorOpenDuration = 0.65
-			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
-
-			CrewEnterEffects = &<./Data/ships/terran/airlock/airlock.rules>/Part/Components/Airlock/CrewEnterEffects
-			//[
-			/*	: /BASE_SOUNDS/AudioInterior
-				{
-					RandomSounds = 
-					[
-						"./Data/ships/terran/airlock/crew_enter/crew_enter_01.wav", 
-						"./Data/ships/terran/airlock/crew_enter/crew_enter_02.wav", 
-						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
-						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
-						"./Data/ships/terran/airlock/crew_enter/crew_enter_04.wav", 
-						"./Data/ships/terran/airlock/crew_enter/crew_enter_05.wav"
-					]
-					SpeedVariation = .1
-				}*/
-			//]
-
-			CrewLeaveEffects = &<./Data/ships/terran/airlock/airlock.rules>/Part/Components/Airlock/CrewLeaveEffects
-			//[
-			/*	: /BASE_SOUNDS/AudioInterior
-				{
-					RandomSounds = 
-					[
-						"./Data/ships/terran/airlock/crew_leave/crew_leave_01.wav", 
-						"./Data/ships/terran/airlock/crew_leave/crew_leave_02.wav", 
-						"./Data/ships/terran/airlock/crew_leave/crew_leave_03.wav"
-					]
-					SpeedVariation = .1
-				}*/
-			//]	
-		}
-		// Airlock - End
-
-		// Fire Extinguisher - Start
-		ExtinguisherStorage
-		{
-			Type = ResourceStorage
-			ResourceType = fire_extinguisher
-			MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
-			StartingResources = &MaxResources
-			SuppliesResources = true
-		}
-
-		ExtinguisherProducer
-		{
-			Type = ResourceConverter
-			OperationalToggle = ExtinguisherStorage
-			InvertOperationalToggle = true
-			ToStorage = ExtinguisherStorage
-			ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
-			Interval = 45
 		}
 
 		ProgressBar
@@ -151,59 +90,92 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		// Fire Extinguisher - End
 
 		// Maneuvering Thrusters - Start
-		MainAuxThruster
+	
+		MainThruster
 		{
 			Type = Thruster
-			Location = [0.5, 2.0] // Relative to upper-left corner of unrotated part.
-			Rotation = 90d // Relative to unrotated part.
 			OperationalToggle = IsOperational
-			Force = 250 
-			MinActivation = -1
-			MaxActivation = 3
-			MinUncommandedActivation = -1
-			MaxUncommandedActivation = 1
-			ActivationIncreaseTime = 1
-			ActivationRecoveryTime = 1
-		}
-
-		LateralAuxThruster : MainAuxThruster 
-		{	
-			Location = [0.5, 0.0]
-			Rotation = 0d
-			MinActivation = -1
-			MaxActivation = 1
+			Location = [1, 3.2]
+			Rotation = 90d// Relative to unrotated part.
+			Force = &../../ThrusterForce
+			MinActivation = 0
+			MaxActivation = { BaseValue=5; BuffType=SW_Ion_Thruster_Overdrive_Thrust; BuffMode=Multiply; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = 0.1
-			ActivationRecoveryTime = 0.1
+			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationRecoveryTime = &../../ThrustRecoveryTime
+			FuelStorage = BatteryStorage
+			FuelUsagePerSecond = &../../FuelUsage
+		}
+
+		LateralThrusterA : MainThruster
+		{
+			Rotation = 0d
+			Location = [0, 0]
+			//Location = [1, 0.5]
+			MinActivation = 0//-0.50
+			MaxActivation = 1 //0.50
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
 			AllowAutoFire = false
-		}		
+		}
+
+		LateralThrusterB : MainThruster
+		{
+			Rotation = 180d
+			Location = [2, 0]
+			MinActivation = 0//-0.05
+			MaxActivation = 1 //0.05
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			AllowAutoFire = false
+		}
+
+		RotationThrusterA : MainThruster //Rotation
+		{
+			Rotation = 90d
+			Location = [0, 1.5]
+			//MinActivation = -0.1
+			//MaxActivation = 0.1
+			//MinUncommandedActivation = &MinActivation
+			//MaxUncommandedActivation = &MaxActivation
+			//AllowAutoFire = false
+		}
+
+		RotationThrusterB : MainThruster //Rotation
+		{
+			Rotation = 90d
+			Location = [2, 1.5]
+			//MinActivation = -0.1
+			//MaxActivation = 0.1
+			//MinUncommandedActivation = &MinActivation
+			//MaxUncommandedActivation = &MaxActivation
+			//AllowAutoFire = false
+		}
+
+		ReverseThruster : MainThruster
+		{
+			Rotation = -90d
+			//Location = [1, 1.5]
+			Force = &../../ThrusterForce
+			MinActivation = 0
+			MaxActivation = 1//0.20
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationRecoveryTime = &../../ThrustRecoveryTime
+			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
+			AllowAutoFire = false
+		}
 		// Maneuvering Thrusters - End
 
-		BatteryStorage
-		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 4000
-		}
-		BatteryConsumer
-		{
-			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
-			ResupplyThreshold = 400
-			OperationalToggle = PowerToggle
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-		}
-
-		PowerDrain
-		{
-			Type = ResourceConverter
-			FromStorage = BatteryStorage
-			FromQuantity = 150
-			Interval = 8
-		}
+//		PowerDrain
+//		{
+//			Type = ResourceConverter
+//			FromStorage = BatteryStorage
+//			FromQuantity = 150
+//			Interval = 8
+//		}
 
 		CommandProvider
 		{
@@ -240,7 +212,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Crew = 1
 			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
 			PrerequisitesBeforeCrewing = [PowerToggle]
-			HighPriorityPrerequisites = [BatteryStorage]
+			HighPriorityPrerequisites = [/*BatteryStorage*/]
 			AbandonWhenOnFire = false
 			CrewDestinations
 			[
@@ -292,9 +264,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FiringArc = 2d
 			RotateSpeed = 180d
 			FireThresholdAngle = 5d
-			//TargetSearchTriesPerFrame = 2
 			AIFirepowerRating = 500
 			FirePermissionToggle = FireModeToggle
+			TargetSearchesPerSecond = 8
 			Emitter = BulletEmitterBase
 			AllowFireWithBlockedLOS = true
 			IgnoreSourceShipLowLOSChecks = true
@@ -331,7 +303,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
-			FireTrigger = Turret
+			FireTrigger //= Turret
 			GetTargetFrom = Turret
 			Location = [0.5, 0]
 			FireDelay = .04
@@ -357,9 +329,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = BulletEmitter
 			Location = [3.2, 0.245]
+			FireTrigger = Turret
 		}
 
-		BulletEmitterRight : BulletEmitterBase
+		BulletEmitterRight : BulletEmitterLeft
 		{
 			Type = BulletEmitter
 			Location = [3.2, -0.245]
@@ -368,7 +341,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ChargeEffectBase
 		{
 			Type = TriggeredEffects
-			ChainedTo = BulletEmitterBase
+			ChainedTo = BulletEmitterLeft
 			Trigger = Turret
 			AnchorMediaEffects = true
 
@@ -378,19 +351,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
-		FireEffectBase
-		{
-			Type = TriggeredEffects
-			ChainedTo = BulletEmitterBase
-			Trigger = Turret
-			Location = [3, 0]
-			AnchorMediaEffects = true
-
-			MediaEffects
-			[
-				&/SW_SOUNDS/Eta2SFX
-			]
-		}
+//		FireEffectBase
+//		{
+//			Type = TriggeredEffects
+//			ChainedTo = BulletEmitterBase
+//			Trigger = Turret
+//			Location = [3, 0]
+//			AnchorMediaEffects = true
+//
+//			MediaEffects
+//			[
+//				&/SW_SOUNDS/Eta2SFX
+//			]
+//		}
 
 		FireEffectLeft
 		{
@@ -402,6 +375,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MediaEffects
 			[
 				&/SW_PARTICLES/Shot/Laser/Shoot/Med/Blue
+				&/SW_SOUNDS/Eta2SFX
 			]
 		}
 
