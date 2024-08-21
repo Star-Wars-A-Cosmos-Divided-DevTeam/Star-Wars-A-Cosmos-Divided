@@ -1,4 +1,4 @@
-Part : &<../Cockpit/cockpit.rules>/Part
+Part : &<../base_part_terran_automagic_cockpits.rules>/Part 
 {
 	//IDs
 	ID = SW.cockpitT85
@@ -11,16 +11,19 @@ Part : &<../Cockpit/cockpit.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits]
+	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits, provides_power, reactor]
 
 	//Resources&Size&Health
 	Resources
 	[
 		[SW.durasteel, 40]
-		[steel, 20]
-		[coil2, 14]
-		[processor, 2]
+		[coil2, 24]
+		[processor, 3]
+		[enriched_uranium, 2]
 	]
+	AIValueFactor = 5
+	Size = [1, 2]
+	SelectionPriority = 0
 	MaxHealth = 5000
 	InitialPenetrationResistance = 5
 
@@ -57,6 +60,16 @@ Part : &<../Cockpit/cockpit.rules>/Part
 	//Components
 	Components : ^/0/Components
 	{
+		ProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ExtinguisherProducer
+			ShowProgressFor = ExtinguisherProducer
+		}
+
+
+
+		// Command Room & Radar - Start
 		CommandProvider
 		{
 			Type = CommandProvider
@@ -64,6 +77,107 @@ Part : &<../Cockpit/cockpit.rules>/Part
 			CommandPoints = 50  //Remember to update tooltip.
 		}
 
+		Sensor
+		{
+			Type = Sensor				
+			SightRadius = 300
+			RadarRadius = ceil(300*4.5)
+		}
+		// Command Room & Radar - End
+
+		// Toggles - Start
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, /*BatteryStorage,*/ PartCrew]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+		// Toggles - End
+
+		// Battery Storage and Use - Start
+//		BatteryStorage
+//		{
+//			Type = ResourceStorage
+//			ResourceType = battery
+//			MaxResources = 2000
+//			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+//		}
+
+//		BatteryConsumer
+//		{
+//			Type = ResourceConsumer
+//			ResourceType = battery
+//			Storage = BatteryStorage
+//			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
+//			ResupplyThreshold = 1000
+//			OperationalToggle = PowerToggle
+//			AllowNonContiguousCrewSearch = true
+//		}
+//
+//		PowerDrain
+//		{
+//			Type = ResourceConverter
+//			OperationalToggle = IsOperational
+//			FromStorage = BatteryStorage
+//			FromQuantity = 1000				//uses less power
+//			Interval = 80					// Drains 1.5 power every minute.
+//		}
+		// Battery Storage and Use - End
+
+		// Pilot & Crew - Start
+		CrewSource
+		{
+			Type = CrewSource
+			Crew = 1 //Pilots this T-85 cockpit
+			ColorSRange = [0, 0.25]
+			ColorVRange = [0.5, 0.75]
+		}
+
+		CrewLocation
+		{
+			Type = CrewLocation
+			Location = [.5, 1.32]
+			Rotation = 0d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 1
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [/*BatteryStorage*/]
+			AbandonWhenOnFire = false
+			CrewDestinations
+			[
+				[.5, 1.30]
+			]
+			CrewLocations
+			[
+				CrewLocation
+			]
+		}
+		// Pilot & Crew - End
+/*
+		// Buffs - Start
+		BuffProvider
+		{
+			//square, 3fore, 3sides, 3aft
+			Type = AreaBuffProvider
+			BuffType = SWCockpitSpeed
+			BuffAmount = 300%
+			BuffArea = [-3, -3, 7, 8]
+			OperationalToggle = IsOperational
+		}
+		// Buffs - End
+*/
 
 		Graphics
 		{
@@ -242,23 +356,42 @@ Part : &<../Cockpit/cockpit.rules>/Part
 		}	
 		// Maneuvering Thrusters - End
 
-		// Extinguisher Graphics - Start
-		ExtinguisherSprite
+
+		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, 1.2]
-			ResourceStorage = ExtinguisherStorage
+			Location = [.5, 1]
+			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			HasZeroResourceSprite = false
 			ResourceLevels
 			[
 				{
-					File = "../extinguisher2.png"
-					Size = [1, 1]
+					File = "batteries_1.png"
+					Size = [1, 2]
+				}
+				{
+					File = "batteries_2.png"
+					Size = [1, 2]
 				}
 			]
 		}
-		// Extinguisher Graphics - End
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+			Location = [1, 1]
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [1, 1]
+		}
 
 		OperationSoundLoop
 		{
@@ -278,7 +411,65 @@ Part : &<../Cockpit/cockpit.rules>/Part
 				}
 			]
 		}
+		// Indicators - Start
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [.5, 1]
+			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+					HidesIndicators = [1,2]
+				}
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [.75, .75]
+					}
+				}
 
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [.75, .75]
+					}
+				}
+			]
+		}
+		// Indicators - End
+
+		// Extinguisher Graphics - Start
+		ExtinguisherSprite
+		{
+			Type = ResourceSprites
+			Location = [.5, 1.2]
+			ResourceStorage = ExtinguisherStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../extinguisher2.png"
+					Size = [1, 1]
+				}
+			]
+		}
+		// Extinguisher Graphics - End
+		
 		Blueprints
 		{
 			Type = BlueprintSprite
@@ -287,7 +478,7 @@ Part : &<../Cockpit/cockpit.rules>/Part
 		}
 
 	}
-/*
+
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -301,5 +492,5 @@ Part : &<../Cockpit/cockpit.rules>/Part
 		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
-*/
+
 }
