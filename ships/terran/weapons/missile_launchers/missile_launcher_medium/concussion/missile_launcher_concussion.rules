@@ -20,15 +20,21 @@ Components
 		// Nothing different.
 	}
 
-	MissileStorageA_EMP : ~/MissileStorageBaseEMP
-	{
-		// Nothing different.
-	}
+	//MissileStorageC_HE : ~/MissileStorageBaseHE
+	//{
+	//	// Nothing different.
+	//}
 
-	MissileStorageB_EMP : ~/MissileStorageBaseEMP
-	{
-		// Nothing different.
-	}
+
+	//MissileStorageA_EMP : ~/MissileStorageBaseEMP
+	//{
+	//	// Nothing different.
+	//}
+	//
+	//MissileStorageB_EMP : ~/MissileStorageBaseEMP
+	//{
+	//	// Nothing different.
+	//}
 
 	CombinedMissileStorage_HE
 	{
@@ -52,32 +58,32 @@ Components
 		ConsumptionToggleButtonOffset = [0, -0.4]
 	}
 
-	CombinedMissileStorage_EMP
-	{
-		Type = MultiResourceStorage
-		ResourceType = missile_part_emp
-		ResourceStorages = [MissileStorageA_EMP, MissileStorageB_EMP]
-		AddMode = PrioritizeLeastEmptyCapacity
-		RemoveMode = PrioritizeMostEmptyCapacity
-		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
-		UITileRect = [.9 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
-	}
-
-	ConsumerEMP
-	{
-		Type = ResourceConsumer
-		ResourceType = missile_part_emp
-		Storage = CombinedMissileStorage_EMP
-		DefaultPriority = &/PRIORITIES/Weapon_Supply
-		OverridePriorityKey = MissileStorage
-		OperationalToggle = PowerToggle
-		ConsumptionToggleButtonOffset = [0, -0.4]
-	}
+//	CombinedMissileStorage_EMP
+//	{
+//		Type = MultiResourceStorage
+//		ResourceType = missile_part_emp
+//		ResourceStorages = [MissileStorageA_EMP, MissileStorageB_EMP]
+//		AddMode = PrioritizeLeastEmptyCapacity
+//		RemoveMode = PrioritizeMostEmptyCapacity
+//		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
+//		UITileRect = [.9 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
+//	}
+//
+//	ConsumerEMP
+//	{
+//		Type = ResourceConsumer
+//		ResourceType = missile_part_emp
+//		Storage = CombinedMissileStorage_EMP
+//		DefaultPriority = &/PRIORITIES/Weapon_Supply
+//		OverridePriorityKey = MissileStorage
+//		OperationalToggle = PowerToggle
+//		ConsumptionToggleButtonOffset = [0, -0.4]
+//	}
 
 	MissilesPrereq
 	{
 		Type = MultiToggle
-		Toggles = [MissileStorageA_HE, MissileStorageB_HE, MissileStorageA_EMP, MissileStorageB_EMP]
+		Toggles = [MissileStorageA_HE, MissileStorageB_HE /*, MissileStorageA_EMP, MissileStorageB_EMP*/]
 		Mode = Any
 	}
 
@@ -125,12 +131,12 @@ Components
 		[
 			{
 				ResourceStorage = MissileStorageA_HE
-				ResourcesUsed = 3
+				ResourcesUsed = 6
 			}
-			{
-				ResourceStorage = MissileStorageA_EMP
-				ResourcesUsed = 1
-			}
+			//{
+			//	ResourceStorage = MissileStorageA_EMP
+			//	ResourcesUsed = 1
+			//}
 		]
 	}
 
@@ -150,14 +156,35 @@ Components
 		[
 			{
 				ResourceStorage = MissileStorageB_HE
-				ResourcesUsed = 3
+				ResourcesUsed = 6
 			}
-			{
-				ResourceStorage = MissileStorageB_EMP
-				ResourcesUsed = 1
-			}
+			//{
+			//	ResourceStorage = MissileStorageB_EMP
+			//	ResourcesUsed = 1
+			//}
 		]
 	}
+
+		FireEffect1a
+		{
+			Type = TriggeredEffects
+			ChainedTo = EmitterA
+			Trigger = EmitterA
+			Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)]
+
+			MediaEffects
+			[
+				&<./Data/ships/terran/flak_cannon_large/particles/flak_cannon_shoot_flash_large.rules>
+				&<./Data/ships/terran/flak_cannon_large/particles/flak_cannon_smoke_large.rules>
+			]
+		}
+		FireEffect2a : FireEffect1a
+		{
+			Type = TriggeredEffects
+			ChainedTo = EmitterB
+			Trigger = EmitterB
+			Location = [2- (&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)]
+		}
 
 	FirePermissionToggle
 	{
@@ -187,26 +214,26 @@ Components
 	External_Walls_Graphics
 	{
 		Type = Graphics
-		Location = [1, 1.5]
+		Location = [1, 2]
 		Walls
 		{
 			Layer = "external_walls"
 			DamageLevels
 			[
 				{
-					File = "external_walls.png"
-					NormalsFile = "external_walls_normals.png"
-					Size = [2, 4]
+					File = "externals_walls.png"
+					NormalsFile = "externals_walls_normals.png"
+					Size = [2, 3]
 				}
 				{
-					File = "external_walls_33.png"
-					NormalsFile = "external_walls_normals_33.png"
-					Size = [2, 4]
+					File = "externals_walls_33.png"
+					NormalsFile = "externals_walls_normals_33.png"
+					Size = [2, 3]
 				}
 				{
-					File = "external_walls_66.png"
-					NormalsFile = "external_walls_normals_66.png"
-					Size = [2, 4]
+					File = "externals_walls_66.png"
+					NormalsFile = "externals_walls_normals_66.png"
+					Size = [2, 3]
 				}
 			]
 		}
@@ -218,23 +245,44 @@ Components
 		Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)+1.25]
 		ResourceStorage = MissileStorageA_HE
 		Layer = "weapons"
+		HasZeroResourceSprite = true
 		ResourceLevels
 		[
 			{
-				File = "concussion_2.png"
-				NormalsFile = "concussion_normals_2.png"
-				Offset = [0, 0.5]
+				File = "missile_0.png"
+				//NormalsFile = "concussion_normals_2.png"
+				Offset = [0, 1.5]
 				Size = [1, 1]
 			}
 			{
-				File = "concussion_3.png"
-				NormalsFile = "concussion_normals_3.png"
+				File = "missile_1.png"
+				//NormalsFile = "concussion_normals_2.png"
+				Offset = [0, 1]
 				Size = [1, 2]
 			}
 			{
-				File = "concussion_4.png"
-				NormalsFile = "concussion_normals_4.png"
+				File = "missile_2.png"
+				//NormalsFile = "concussion_normals_3.png"
+				Offset = [0, 1]
 				Size = [1, 2]
+			}
+			{
+				File = "missile_3.png"
+				//NormalsFile = "concussion_normals_4.png"
+				Offset = [0, .5]
+				Size = [1, 3]
+			}
+			{
+				File = "missile_4.png"
+				//NormalsFile = "concussion_normals_4.png"
+				Offset = [0, .5]
+				Size = [1, 3]
+			}
+			{
+				File = "missile_5.png"
+				//NormalsFile = "concussion_normals_4.png"
+				Offset = [0, .5]
+				Size = [1, 3]
 			}
 		]
 	}
@@ -245,28 +293,28 @@ Components
 		ResourceStorage = MissileStorageB_HE
 	}
 
-	MissileSpritesA2
-	{
-		Type = ResourceSprites
-		Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)-0.25]
-		ResourceStorage = MissileStorageA_EMP
-		Layer = "weapons"
-		ResourceLevels
-		[
-			{
-				File = "concussion_1.png"
-				NormalsFile = "concussion_normals_1.png"
-				//Offset = [0, 0.5]
-				Size = [1, 1]
-			}
-		]
-	}
+	//MissileSpritesA2
+	//{
+	//	Type = ResourceSprites
+	//	Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)-0.25]
+	//	ResourceStorage = MissileStorageA_EMP
+	//	Layer = "weapons"
+	//	ResourceLevels
+	//	[
+	//		{
+	//			File = "missile_0.png"
+	//			//NormalsFile = "concussion_normals_1.png"
+	//			//Offset = [0, 0.5]
+	//			Size = [1, 1]
+	//		}
+	//	]
+	//}
 
-	MissileSpritesB2 : MissileSpritesA2
-	{
-		Location = [2- (&~/Components/MissileSpritesA2/Location/0), (&~/Components/MissileSpritesA2/Location/1)]
-		ResourceStorage = MissileStorageB_EMP
-	}
+	//MissileSpritesB2 : MissileSpritesA2
+	//{
+	//	Location = [2- (&~/Components/MissileSpritesA2/Location/0), (&~/Components/MissileSpritesA2/Location/1)]
+	//	ResourceStorage = MissileStorageB_EMP
+	//}
 
 	MissileLightsA
 	{
@@ -293,6 +341,35 @@ Components
 		Type = Graphics
 		OperationalToggle = MissileStorageB_HE
 		Location = [2-(&~/Components/MissileLightsA/Location/0), (&~/Components/MissileLightsA/Location/1)]
+	}
+
+	OperationalLights
+	{
+		Type = Graphics
+		OperationalToggle = IsOperational
+		Location = [1, 2.75]
+		OperationalLighting
+		{
+			Layer = "lights_add"
+			DamageLevels
+			[
+				{
+					File = "../sprites/roof_glows_concussion.png"
+					Size = [2, 4.5]
+				}
+			]
+		}
+		OperationalRoofLighting
+		{
+			Layer = "roof_lights_fancy"
+			DamageLevels
+			[
+				{
+					File = "../sprites/roof_glows_concussion.png"
+					Size = [2, 4.5]
+				}
+			]
+		}
 	}
 
 	DestroyedEffects_HE
@@ -335,7 +412,7 @@ Components
 		]
 	}
 
-	DestroyedEffects_EMP
+	/*DestroyedEffects_EMP
 	{
 		Type = DeathEffects
 		Location = [1, 3]
@@ -382,7 +459,7 @@ Components
 			&<./Data/shots/missile_emp/particles/missile_emp_hit_bolts.rules>
 			&<./Data/shots/missile_emp/particles/missile_emp_hit_shockwave.rules>
 		]
-	}
+	}*/
 
 	Indicators
 	{
@@ -399,6 +476,7 @@ Components
 					File = &/INDICATORS/PowerOff
 					Size = [1, 1]
 				}
+				HidesIndicators = [1, 2]
 			}
 
 			// Out of missiles.
@@ -413,7 +491,7 @@ Components
 			}
 
 			// Out of missiles.
-			{
+			/*{
 				Toggle = CombinedMissileStorage_EMP
 				Delay = &<../missile_launcher.rules>/Part/Components/CommonReloadTimerShort/Duration
 				AtlasSprite
@@ -421,7 +499,7 @@ Components
 					File = &/INDICATORS/NoEmp
 					Size = [1, 1]
 				}
-			}
+			}*/
 
 			// No crew.
 			{
@@ -440,7 +518,7 @@ MissileStorageBaseHE
 {
 	Type = ResourceStorage
 	ResourceType = missile_part_he
-	MaxResources = 3
+	MaxResources = 6
 	ToggleOnResources = (&MaxResources)
 	ToggleOffResources = (&ToggleOnResources)-1
 	DelayBeforeReadyToUse = .5
@@ -448,7 +526,7 @@ MissileStorageBaseHE
 	DropResourcesWhenRemoved = true
 }
 
-MissileStorageBaseEMP
+/*MissileStorageBaseEMP
 {
 	Type = ResourceStorage
 	ResourceType = missile_part_emp
@@ -458,7 +536,7 @@ MissileStorageBaseEMP
 	DelayBeforeReadyToUse = .5
 	DropResourcesWhenDestroyed = true
 	DropResourcesWhenRemoved = true
-}
+}*/
 
 WeaponBase
 {
@@ -499,10 +577,10 @@ EmitterBase
 			ResourceStorage = CombinedMissileStorage_HE
 			ResourcesUsed = 6
 		}
-		{
-			ResourceStorage = CombinedMissileStorage_EMP
-			ResourcesUsed = 2
-		}
+		//{
+		//	ResourceStorage = CombinedMissileStorage_EMP
+		//	ResourcesUsed = 2
+		//}
 	]
 }
 
