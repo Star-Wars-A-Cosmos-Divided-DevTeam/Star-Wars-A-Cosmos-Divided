@@ -47,6 +47,13 @@ Components
 		HasTarget = true
 	}
 
+	DeathByDistanceTraveledTargeted
+	{
+		Type = DeathByDistanceTraveled
+		Distance = (&~/Range) * 3
+		HasTarget = true
+	}
+
 	DeathByDistanceTraveled
 	{
 		Type = DeathByDistanceTraveled
@@ -54,12 +61,6 @@ Components
 		HasTarget = false
 	}
 
-	DeathByDistanceTraveledTargeted
-	{
-		Type = DeathByDistanceTraveled
-		Distance = (&~/Range) * 3
-		HasTarget = true
-	}
 
 	Sprite
 	{
@@ -123,7 +124,7 @@ Components
 	Targetable
 	{
 		Type = Targetable
-		Health = 8800//3200
+		Health = 8800 //3200
 		TargetCategory = "missile"
 
 		// No AOE damage when shot down.
@@ -137,7 +138,6 @@ Components
 	    FriendlyShipLowCollisions = false
 
 	    HitShield = &HitOperational
-
 	    HitOperational
 	    {
 	        HitEffects
@@ -175,31 +175,7 @@ Components
 	                            &/SW_SOUNDS/SW_Missile_Intruder_Hit
 	                        ]
 	                    }
-	                    {
-	                        Type = Damage
-	                        Damage = 300
-	                        Filter
-	                        {
-	                            Friendlies = true
-	                        }
-	                    }
-	                    {
-	                        Type = ExplosiveDamage
-	                        TotalDamage = 10000
-	                        Radius = 3
-	                        Filter
-	                        {
-	                            OperationalHealth = false
-	                            StructuralHealth = true
-	                            Friendlies = true
-	                        }
-	                    }
-	                    {
-	                        Type = Impulse
-	                        Impulse = 100
-	                    }
 	                ]
-
 	                MediaEffects
 	                [
 						&<particles/missile_intruder_hit_emitter.rules>
@@ -215,6 +191,43 @@ Components
 	                        Duration = .3
 	                    }
 	                ]
+	            }
+				{
+	                Type = Damage
+	                Damage = 300
+	                Filter
+	                {
+	                    Friendlies = true
+	                }
+	            }
+	            {
+	                Type = ExplosiveDamage
+	                TotalDamage = 10000
+	                Radius = 3
+	                Filter
+	            	{
+	                OperationalHealth = false
+	                StructuralHealth = true
+	                Friendlies = true
+	            	}
+	            }
+	            {
+	                Type = Impulse
+	                Impulse = 100
+	            }
+	        ]
+			MediaEffects
+	        [
+				//&<particles/missile_intruder_hit_emitter.rules>
+	            &/SW_PARTICLES/Shot/Ion/Hit/Med/Cyan
+	            &/SW_PARTICLES/Shot/Ion/Flash/Med/Cyan
+	            &/SW_PARTICLES/Shot/Ion/Sparks/Med/Cyan
+	            &/SW_SOUNDS/SW_Missile_Intruder_Hit
+				
+	            : /BASE_SHAKE
+	            {
+	                ShakeAmount = .03
+	                Duration = .3
 	            }
 	        ]
 	    }
