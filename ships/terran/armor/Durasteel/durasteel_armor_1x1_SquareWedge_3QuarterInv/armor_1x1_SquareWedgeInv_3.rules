@@ -8,7 +8,7 @@ Part : &<../base_part_terran_durasteel.rules>/Part
 	//EditorReplacementPartID = ""
 	MaxHealth = floor((&<../base_part_terran_durasteel.rules>/MaxHealth) * (&~/Scale))	
 	InitialPenetrationResistance = floor((&<../base_part_terran_durasteel.rules>/InitialPenetrationResistance) * (&~/Scale))
-	Density = (&<../base_part_terran_durasteel.rules>/Density)
+	//Density = (&<../base_part_terran_durasteel.rules>/Density)
 
     Resources
     [
@@ -16,7 +16,7 @@ Part : &<../base_part_terran_durasteel.rules>/Part
     ]
 	//AIValueFactor = 0
 	Size = [1, 1]
-	AllowedContiguity = [Right, Bottom]
+	//AllowedContiguity = [Right, Bottom]
 	//SelectionTypeID = "armor"
 	//MaxHealth = 3400 //4000*9/16*1,5
 	//ExplosiveDamageAbsorption = 100%
@@ -33,13 +33,13 @@ Part : &<../base_part_terran_durasteel.rules>/Part
 	//IsRotateable = true
 	//IsWalled = true
 	//IsSelfDestructible = false
-	ExternalWalls = [ BottomRight]
-	InternalWalls = [ BottomLeft, Left, TopLeft, Top, TopRight]
-	VirtualInternalCells
-	[
-		{ExternalCell=[0, 1]; InternalCell=[1, 0]}
-		{ExternalCell=[1, 0]; InternalCell=[0, 1]}
-	]
+	ExternalWalls = [Bottom, BottomRight, Right]
+	InternalWalls = [Left, TopLeft, Top]
+//	VirtualInternalCells
+//	[
+//		{ExternalCell=[0, 1]; InternalCell=[1, 0]}
+//		{ExternalCell=[1, 0]; InternalCell=[0, 1]}
+//	]
 	//AllowedDoorLocations = []
 	//GeneratorRequiresDoor = false
 	FlipHRotate = [1, 0, 3, 2]
@@ -66,6 +66,30 @@ Part : &<../base_part_terran_durasteel.rules>/Part
 			RequiresCommand = false
 		}
 
+		ColliderLeft
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0, 16/64]
+				[16/64, 16/64]
+				[1, 1]
+				[0, 1]
+			]
+		}
+		ColliderRight
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[1, 0]
+				[1, 1]
+				[16/64, 0]
+				[16/64, 16/64]
+			]
+		}
+
+/*
 		Collider
 		{
 			Type = PolygonCollider
@@ -78,6 +102,7 @@ Part : &<../base_part_terran_durasteel.rules>/Part
 			]
 		}
 		
+*/
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
