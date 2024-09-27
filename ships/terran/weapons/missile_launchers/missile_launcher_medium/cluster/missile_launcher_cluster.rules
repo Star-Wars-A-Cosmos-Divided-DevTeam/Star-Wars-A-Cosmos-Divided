@@ -199,7 +199,7 @@ Components
 	External_Walls_Graphics
 	{
 		Type = Graphics
-		Location = [1, 1.5]
+		Location = [1, 2]
 		Walls
 		{
 			Layer = "external_walls"
@@ -208,17 +208,78 @@ Components
 				{
 					File = "external_walls.png"
 					NormalsFile = "external_walls_normals.png"
-					Size = [2, 4]
+					Size = [2, 3]
 				}
 				{
 					File = "external_walls_33.png"
 					NormalsFile = "external_walls_normals_33.png"
-					Size = [2, 4]
+					Size = [2, 3]
 				}
 				{
 					File = "external_walls_66.png"
 					NormalsFile = "external_walls_normals_66.png"
-					Size = [2, 4]
+					Size = [2, 3]
+				}
+			]
+		}
+	}
+
+	MissileLightsA
+	{
+		Type = Graphics
+		OperationalToggle = CombinedMissileStorage
+		Location = [38/64, 1.2 - 16/64]
+		//Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)+0.5]
+		OperationalRoofLighting
+		{
+			Layer = "roof_lights_fancy"
+			DamageLevels
+			[
+				{
+					File = "../sprites/light_blob.png"
+					Size = [3, 3]
+					Z = 0.35 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+					VertexColor = [255, 0, 0]
+				}
+			]
+		}
+	}
+
+	MissileLightsB : MissileLightsA
+	{
+		Type = Graphics
+		OperationalToggle = CombinedMissileStorage
+		Location = [2-(&~/Components/MissileLightsA/Location/0), (&~/Components/MissileLightsA/Location/1)]
+	}
+
+
+	OperationalLights
+	{
+		Type = Graphics
+		OperationalToggle = IsOperational
+		Location = [1, 2.75]
+		OperationalLighting
+		{
+			Layer = "lights_add"
+			Offset = [0, 1.25]
+			DamageLevels
+			[
+				{
+					File = "../sprites/lights.png"
+					Size = [2, 2]
+					VertexColor = [255, 0, 0]
+				}
+			]
+		}
+		OperationalRoofLighting
+		{
+			Layer = "roof_doodads"
+			DamageLevels
+			[
+				{
+					File = "../sprites/roof_glows.png"
+					Size = [2, 4.5]
+					VertexColor = [255, 0, 0]
 				}
 			]
 		}
@@ -227,20 +288,29 @@ Components
 	MissileSpritesA
 	{
 		Type = ResourceSprites
-		Location = [.5 + 2/64, 1.6]
+		//Location = [.5 + 2/64, 1.6]
+		Location = [.5 + 2/64, (&~/Components/MissileSpritesD/Location/1)+0.1]
 		ResourceStorage = MissileStorageA
 		Layer = "weapons"
+		HasZeroResourceSprite = false
 		ResourceLevels
 		[
+			//{
+			//	File = "missile_0.png"
+			//	//NormalsFile = "cluster_normals_1.png"
+			//	Size = [1, 1]
+			//}
 			{
-				File = "cluster_1.png"
-				NormalsFile = "cluster_normals_1.png"
-				Size = [1, 1]
+				File = "missile_1_L.png"
+				//NormalsFile = "cluster_normals_1.png"
+				Offset = [0, 1.25]
+				Size = [1, 2]
 			}
 			{
 				File = "cluster_2.png"
-				NormalsFile = "cluster_normals_2.png"
-				Offset = [0, -0.3]
+				//NormalsFile = "cluster_normals_2.png"
+				//Offset = [0, -0.3]
+				Offset = [0, .3]
 				Size = [1, 2]
 			}
 		]
@@ -250,27 +320,94 @@ Components
 	{
 		Location = [1, (&~/Components/MissileSpritesA/Location/1)]
 		ResourceStorage = MissileStorageB
+		ResourceLevels
+		[
+			//{
+			//	File = "missile_0.png"
+			//	//NormalsFile = "cluster_normals_1.png"
+			//	Size = [1, 1]
+			//}
+			{
+				File = "cluster_1.png"
+				//NormalsFile = "cluster_normals_1.png"
+				Offset = [0, 1.75]
+				Size = [1, 1]
+			}
+			{
+				File = "cluster_2.png"
+				//NormalsFile = "cluster_normals_2.png"
+				//Offset = [0, -0.3]
+				Offset = [0, .3]
+				Size = [1, 2]
+			}
+		]
 	}
 
 	MissileSpritesC : MissileSpritesA
 	{
 		Location = [1.5 - 2/64, (&~/Components/MissileSpritesA/Location/1)]
 		ResourceStorage = MissileStorageC
+		ResourceLevels
+		[
+			//{
+			//	File = "missile_0.png"
+			//	//NormalsFile = "cluster_normals_1.png"
+			//	Size = [1, 1]
+			//}
+			{
+				File = "missile_1_R.png"
+				//NormalsFile = "cluster_normals_1.png"
+				Offset = [0, 1.25]
+				Size = [1, 2]
+			}
+			{
+				File = "cluster_2.png"
+				//NormalsFile = "cluster_normals_2.png"
+				//Offset = [0, -0.3]
+				Offset = [0, .3]
+				Size = [1, 2]
+			}
+		]
 	}
 
-	MissileSpritesD : MissileSpritesA
+	MissileSpritesD 
 	{
-		Location = [.5 + 2/64, (&~/Components/MissileSpritesA/Location/1)+0.81]
+		Type = ResourceSprites
+		Location = [.5 + 2/64, 1.6]
 		ResourceStorage = MissileStorageD
+		Layer = "doodads_high"
+		HasZeroResourceSprite = true
+		ResourceLevels
+		[
+			{
+				File = "missile_0.png"
+				//NormalsFile = "cluster_normals_1.png"
+				Offset = [0, 1.9] //1.85
+				Size = [1, 1]
+			}
+			{
+				File = "missile_1.png"
+				//NormalsFile = "cluster_normals_1.png"
+				Offset = [0, 1.4] //1.3
+				Size = [1, 2]
+			}
+			{
+				File = "missile_2.png"
+				//NormalsFile = "cluster_normals_2.png"
+				//Offset = [0, -0.3]
+				Offset = [0, .9]
+				Size = [1, 3]
+			}
+		]
 	}
 
-	MissileSpritesE : MissileSpritesA
+	MissileSpritesE : MissileSpritesD
 	{
 		Location = [1, (&~/Components/MissileSpritesD/Location/1)]
 		ResourceStorage = MissileStorageE
 	}
 
-	MissileSpritesF : MissileSpritesA
+	MissileSpritesF : MissileSpritesD
 	{
 		Location = [1.5 - 2/64, (&~/Components/MissileSpritesD/Location/1)]
 		ResourceStorage = MissileStorageF
@@ -331,6 +468,7 @@ Components
 					File = &/INDICATORS/PowerOff
 					Size = [1, 1]
 				}
+				HidesIndicators = [1, 2]
 			}
 
 			// Out of missiles.
