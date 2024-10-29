@@ -16,7 +16,7 @@ Part : &<../base_part_terran_durasteel.rules>/Part
     ]
 	//AIValueFactor = 0
 	Size = [1, 1]
-	AllowedContiguity = [Right, Bottom]
+	//AllowedContiguity = [Right, Bottom]
 	//SelectionTypeID = "armor"
 	//MaxHealth = 4200 //4000/4*1,5
 	//ExplosiveDamageAbsorption = 100%
@@ -34,13 +34,13 @@ Part : &<../base_part_terran_durasteel.rules>/Part
 	//IsRotateable = true
 	//IsWalled = true
 	//IsSelfDestructible = false
-	ExternalWalls = [BottomRight]
-	InternalWalls = [BottomLeft, Left, TopLeft, Top, TopRight]
-	VirtualInternalCells
-	[
-		{ExternalCell=[0, 1]; InternalCell=[1, 0]}
-		{ExternalCell=[1, 0]; InternalCell=[0, 1]}
-	]
+	ExternalWalls = [Bottom, BottomRight, Right]
+	InternalWalls = [Left, TopLeft, Top]
+//	VirtualInternalCells
+//	[
+//		{ExternalCell=[0, 1]; InternalCell=[1, 0]}
+//		{ExternalCell=[1, 0]; InternalCell=[0, 1]}
+//	]
 	//AllowedDoorLocations = []
 	//GeneratorRequiresDoor = false
 	FlipHRotate = [1, 0, 3, 2]
@@ -55,8 +55,41 @@ Part : &<../base_part_terran_durasteel.rules>/Part
 		}
 		Size = [32, 32]
 	}
-	Components : ^/0/Components
+	Components : ^/0/Components, &<roofs.rules>
 	{
+		RoofArtOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "SW.armor_roof_type"
+			Default = 4
+			AvailableChoices = [0,1,2,3,4]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		ColliderLeft
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0, 32/64]
+				[32/64, 32/64]
+				[1, 1]
+				[0, 1]
+			]
+		}
+		ColliderRight
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[1, 0]
+				[1, 1]
+				[32/64, 0]
+				[32/64, 32/64]
+			]
+		}
+/*
 		Collider
 		{
 			Type = PolygonCollider
@@ -69,6 +102,7 @@ Part : &<../base_part_terran_durasteel.rules>/Part
 			]
 		}
 
+*/
 		EmpAbsorber
 		{
 			Type = ExplosiveResourceDrainSink
@@ -128,31 +162,31 @@ Part : &<../base_part_terran_durasteel.rules>/Part
 					}
 				]
 			}
-			Roof
-			{
-				Layer = "roofs"
-				DamageLevels
-				[
-					{
-						File = "roof_0.png"
-						NormalsFile = "roof_1_normals.png"
-						Size = [1, 1]
-						UVRotation = 0
-					}
-					{
-						File = "roof_0_33.png"
-						NormalsFile = "roof_1_normals_33.png"
-						Size = [1, 1]
-						UVRotation = 0
-					}
-					{
-						File = "roof_0_66.png"
-						NormalsFile = "roof_1_normals_66.png"
-						Size = [1, 1]
-						UVRotation = 0
-					}
-				]
-			}
+//			Roof
+//			{
+//				Layer = "roofs"
+//				DamageLevels
+//				[
+//					{
+//						File = "roof_4.png"
+//						NormalsFile = "roof_4_normals.png"
+//						Size = [1, 1]
+//						UVRotation = 0
+//					}
+//					{
+//						File = "roof_4_33.png"
+//						NormalsFile = "roof_4_33_normals.png"
+//						Size = [1, 1]
+//						UVRotation = 0
+//					}
+//					{
+//						File = "roof_4_66.png"
+//						NormalsFile = "roof_4_66_normals.png"
+//						Size = [1, 1]
+//						UVRotation = 0
+//					}
+//				]
+//			}
 		}
 
 		DestroyedEffects
