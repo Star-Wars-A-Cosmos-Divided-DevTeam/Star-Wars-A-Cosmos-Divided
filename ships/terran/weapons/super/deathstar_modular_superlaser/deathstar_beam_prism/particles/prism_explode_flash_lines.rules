@@ -1,0 +1,434 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Location to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetWorldSpaceScale
+			ScaleOut = base_scale
+			LocalScale = 1
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = base_scale
+			ScaleOut = base_scale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 0d
+			ToValue = 360d
+			Name = "random rotation"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rot
+			RotationOut = rot
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.6
+			ToValue = 0.8
+			Name = "random lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandomHsvColor
+			ColorOut = base_color
+			HueRange
+			{
+				Min = 0
+				Max = 0
+			}
+			SaturationRange
+			{
+				Min = 0
+				Max = 0
+			}
+			ValueRange
+			{
+				Min = 0.2
+				Max = 0.5
+			}
+			AlphaRange
+			{
+				Min = 1
+				Max = 1
+			}
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rot_vel
+			ValueType = Angle
+			FromValue = -45d
+			ToValue = 45d
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 0.6
+			Name = Lifetime
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ValueCurve
+			MinValue = 0
+			MaxValue = 1
+			LerpIn = life
+			CurveOut = curve
+			Invert = true
+			Points
+			[
+				0
+				0.1254902
+				0.30980393
+				0.52156866
+				0.7294118
+				0.90588236
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+				1
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.09803922
+				}
+				{
+					Rf = 0.39215687
+					Gf = 0.19607843
+					Bf = 0.19607843
+					Af = 0.019607844
+				}
+				{
+					Rf = 0.19607843
+					Gf = 0.039215688
+					Bf = 0.039215688
+					Af = 0.019607844
+				}
+				{
+					Rf = 0
+					Gf = 0
+					Bf = 0
+					Af = 0
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = curve
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 10
+			ToValue = 8
+			Name = "Scale lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Operator
+			DataType = Color
+			AIn = color
+			BIn = base_color
+			ResultOut = color
+			Operator = Multiply
+			Name = "apply base color"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = curve
+			DataOut = scale2
+			Invert = false
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0.01
+				Y = 1
+			}
+			ToValue
+			{
+				X = 2
+				Y = 1
+			}
+			Name = scale2
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = scale2
+			BIn = base_scale
+			ResultOut = scale2
+			Operator = Multiply
+			Name = "Apply base scale"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Operator
+			DataType = Angle
+			AIn = rot
+			BIn = rot_vel
+			ResultOut = rot
+			Operator = AddDt
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In = scale2
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn
+		BaseSize
+		{
+			X = 1
+			Y = 1
+		}
+		Offset
+		{
+			X = 0
+			Y = 0.49
+		}
+		Name = ""
+	}
+	Material
+	{
+		Texture
+		{
+			File = prism_crack_flash.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+		TargetBlendMode
+		{
+			SourceRgbFactor = One
+			DestRgbFactor = One
+			RgbOperator = Add
+			SourceAlphaFactor = InverseDestAlpha
+			DestAlphaFactor = One
+			AlphaOperator = Add
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 0
+	EmitPerOneShot
+	{
+		Min = 40
+		Max = 40
+	}
+	PreInitializers
+	[
+		{
+			Type = SetRandom
+			DataOut = base_scale
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0.1
+				Y = 1
+			}
+			ToValue
+			{
+				X = 1
+				Y = 1
+			}
+			Name = "random base Scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = PrismFlash
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 0
+IsFancy = true
+IsFancyLight = false
+IsSimpleLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 5
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.4028235E+38
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies = true
+	Enemies = true
+	TargetedEnemies = true
+	Neutrals = true
+	TargetedNeutrals
+	Junk = true
+	TargetedJunk
+}
+Delay = 0
+IgnoreIntensity = false

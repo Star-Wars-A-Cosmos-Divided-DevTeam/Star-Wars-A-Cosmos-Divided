@@ -1,0 +1,544 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	//IDs
+	ID = SW.deathstar_beam_prism
+	//OtherIDs = [deathstar_beam_prism]
+
+	//StringKeys
+	NameKey = "Parts/DeathstarBeamPrism"
+	IconNameKey = "Parts/DeathstarBeamPrismIcon"
+	DescriptionKey = "Parts/DeathstarBeamPrismDesc"
+
+	//Groups&Categories
+	EditorGroups = ["WeaponsEnergy", "SWTechIII"]
+	TypeCategories = [weapon, deathstar, deathstar_beam_prism]
+	RequiresCategories = [SW_Bridge]
+
+	//Resources&Size&Health
+	Resources
+	[
+		[steel, 16]
+		[coil2, 2]
+		[diamond, 1]
+	]
+	Size = [4, 4]
+	MaxHealth = 32000
+
+	//Rects
+	GenerateRectCollider = false
+
+	//Selections
+	SelectionPriority = 1
+	SelectionTypeID = "deathstar_beam_prism"
+	IgnoreRotationForMirroredSelection = true
+
+	//PartSpecific
+	AIValueFactor = 5
+	InitialPenetrationResistance = 100
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	//
+	IsExternal = true
+	Flammable = false
+	IsWalled = false
+	CrewSpeedFactor = 0
+	ExternalWalls = [None]
+	InternalWalls = [All]
+	CreatePartPerTileWhenGrabbed = structure
+	EditorReplacementPartID = structure
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs [ElectronBuff]
+
+	//Doors&Etc
+	AllowedDoorLocations = []
+	GeneratorRequiresDoor = false
+	NoAutoDoors = true
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [48, 60]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		TurretToggle
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, CommandToggle]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 2
+		}
+
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+
+		Collider
+		{
+			Type = CircleCollider
+			Location = [2, 2]
+			Radius = 1.4
+			Density = 5
+		}
+
+		ToggledDeathStarEnergyStorage
+		{
+			Type = ToggledComponents
+			Toggle = PowerToggle
+			Components
+			{
+				DeathStarEnergyStorage
+				{
+					Type = IonEnergyStorage //DO NOT CHANGE
+					ResourceType = deathstar_energy
+					ReductionFactorPerBeam = 0
+					IsDrainable = false
+				}
+			}
+		}
+
+		DeathStarEnergy
+		{
+			Type = ResourceStorageProxy
+			ComponentID = DeathStarEnergyStorage
+			ResourceType = deathstar_energy
+			ProvidedValueRange = 0
+			ProvidedValuePerResource = 1/1000
+			IsDrainable = false
+		}
+
+		BeamTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = DeathStarEnergy
+			TriggerWhenOn = true
+			TriggerWhenOff = false
+		}
+
+		Targeter
+		{
+			Type = UITargeter
+			TargeterID = sw_prism_aim
+			Weapons = [Turret, DeathStarBeamChainToggle]
+		}
+
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [2, 2] // Relative to upper-left corner of unrotated part.
+			Rotation = -90d // Relative to unrotated part.
+			OperationalToggle = TurretToggle
+			FireInterval = &<../deathstar_beam_emitter/deathstar_beam_emitter.rules>/Part/Components/Weapon/FireInterval
+			FiringArc = 360d
+			RotateSpeed = 20d
+			FireThresholdAngle = 1d
+			AIFirepowerRating = 0
+			AddAIFirepowerRatingsWhenTargetedByPartCategories = [deathstar_beam_emitter, deathstar_beam_prism]
+			TargetingEmitter = BeamEmitter
+			ProhibitTargetPartsFilter = &FriendlyPrismFilter
+			AllowAimAtProhibitedTarget = true
+			SuppressShipWideExplicitTargetsWhenTargetingPartsFilter = &FriendlyPrismFilter
+			SuppressShipWideExplicitTargetsWhenTargetingShipRelativePoints = true
+			SuppressDirectControlWhenTargetingPartsFilter = &FriendlyPrismFilter
+			SuppressDirectControlWhenTargetingShipRelativePoints = true
+			SuppressFirepowerEstimationWhenTargetingPartsFilter = &FriendlyPrismFilter
+			SuppressFirepowerEstimationWhenTargetingShipRelativePoints = true
+			SaveSelfTargetPartCategories = [deathstar_beam_prism]
+			SaveShipRelativeTargets = true
+			HoldTargetAfterCancel = 3.0
+			FirePermissionToggle = FireModeToggle
+
+			FriendlyPrismFilter
+			{
+				Enemies = false
+				Junk = false
+				OnlyPartCategories = [deathstar_beam_prism, deathstar_beam_combiner]
+			}
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		DeathStarBeamChainToggle
+		{
+			Type = FixedWeapon
+			ChainedTo = Turret
+			OperationalToggle = PowerToggle
+			AutoFireToggle = AutoFireToggle
+			FireInterval = .2
+			AIFirepowerRating = 0
+			AddAIFirepowerRatingsWhenTargetedByPartCategories = [deathstar_beam_emitter, deathstar_beam_prism]
+			TargetingEmitter = BeamEmitter
+			ChainFireToggleComponent = DeathStarBeamChainToggle
+			ProhibitTargetPartsFilter = &../Turret/FriendlyPrismFilter // Don't force fire on friendly ion prisms!
+			ProhibitShipRelativePointTargets = true
+			SuppressShipWideExplicitTargetsWhenTargetingPartsFilter = &../Turret/FriendlyPrismFilter
+			SuppressShipWideExplicitTargetsWhenTargetingShipRelativePoints = true
+			SuppressDirectControlWhenTargetingPartsFilter = &../Turret/FriendlyPrismFilter
+			SuppressFirepowerEstimationWhenTargetingPartsFilter = &../Turret/FriendlyPrismFilter
+			SuppressFirepowerEstimationWhenNotTargetingShipRelativePoints = true
+			SaveSelfTargetPartCategories = [deathstar_beam_prism]
+			SaveShipRelativeTargets = true
+			DefaultDirectControlBinding = 0
+			FirePermissionToggle = FireModeToggle
+
+			AutoTarget
+			{
+				TargetType = ShipParts
+				Toggle = AutoTargetToggle
+			}
+
+			CoverageLine
+			{
+				LineSprite
+				{
+					Texture = &/INDICATORS/RadialGradient
+					VertexColor = [255, 255, 255, 191]
+					UVRect = [.5, 0, 0, 1]
+				}
+				LineThickness = 2
+
+				BeginCapSprite : LineSprite
+				{
+					UVRect = [0, 0, .5, 1]
+				}
+				BeginCapSize = [1, 2]
+
+				EndCapSprite : LineSprite
+				{
+					UVRect = [.5, 0, .5, 1]
+				}
+				EndCapSize = [1, 2]
+			}
+		}
+
+		BeamEmitter : &/SW_SHOTS/Beam/DeathStar
+		{
+			Type = BeamEmitter
+			ChainedTo = Turret
+			FireTrigger = BeamTrigger
+			GetTargetFrom = Turret
+			ResourceStorage = DeathStarEnergy
+			ResourcesUsed = 1000
+			MinResourcesUsed = 1
+			FireDelay = &HitInterval // Needed to let multiple beams accumulate their energy.
+			Duration = &HitInterval // Can't be longer than HitInterval or it can create positive feedback loops.
+			EffectsScaleFactor = DeathStarEnergy
+			ValueScaleFactor = DeathStarEnergy
+			ResourceScaleFactor = DeathStarEnergy
+			UpdateScaleFactorsPerEmit = true
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [2, 2]
+			Floor
+			{
+				Layer = "structure"
+				DamageLevels
+				[
+					{
+						File = "structure.png"
+						NormalsFile = "structure_normals.png"
+						Size = [4, 4]
+					}
+					{
+						File = "structure_33.png"
+						NormalsFile = "structure_normals_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "structure_66.png"
+						NormalsFile = "structure_normals_66.png"
+						Size = [4, 4]
+					}
+				]
+			}
+		}
+
+		TurretGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [1, 0]
+			Rotation = 90d
+			OperationalToggle = BeamEmitter
+			Floor
+			{
+				Layer = "weapons"
+				DamageLevels
+				[
+					{
+						File = "prism.png"
+						NormalsFile = "prism_normals.png"
+						Size = [4, 6]
+					}
+					{
+						File = "prism_33.png"
+						NormalsFile = "prism_normals_33.png"
+						Size = [4, 6]
+					}
+					{
+						File = "prism_66.png"
+						NormalsFile = "prism_normals_66.png"
+						Size = [4, 6]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "lights_add"
+				Offset = [0, .5]
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"energy1.png"
+							"energy2.png"
+							"energy3.png"
+							"energy4.png"
+						]
+						Size = [6, 6]
+						AnimationInterval = 0.0375
+						AnimationStartTime = Zero
+					}
+					{
+						AnimationFiles
+						[
+							"energy1_33.png"
+							"energy2_33.png"
+							"energy3_33.png"
+							"energy4_33.png"
+						]
+						Size = [6, 6]
+						AnimationInterval = 0.0375
+						AnimationStartTime = Zero
+					}
+					{
+						AnimationFiles
+						[
+							"energy1_66.png"
+							"energy2_66.png"
+							"energy3_66.png"
+							"energy4_66.png"
+						]
+						Size = [6, 6]
+						AnimationInterval = 0.0375
+						AnimationStartTime = Zero
+					}
+				]
+			}
+		}
+
+		DestroyedEffectsCold
+		{
+			Type = DeathEffects
+			Location = [2, 2]
+			OperationalToggle = BeamEmitter
+			InvertOperationalToggle = true
+			IncludeWhenUnderConstruction = false
+
+			MediaEffects
+			[
+				&<./Data/common_effects/particles/explosions/med_part_explode_dry.rules>
+				//&<particles/prism_explode_shrapnel.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/common_effects/sounds/small_part_destroyed.wav"
+					Volume = .5
+					SpeedVariation = .25
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .05
+					Duration = .5
+				}
+			]
+		}
+
+		DestroyedEffectsUnderConstruction : DestroyedEffectsCold
+		{
+			OperationalToggle // Null or else we'll crash when building.
+			IncludeWhenUnderConstruction = true
+		}
+
+		DestroyedEffectsHot
+		{
+			Type = DeathEffects
+			Location = [2, 2]
+			OperationalToggle = BeamEmitter
+			IncludeWhenUnderConstruction = false
+
+			MediaEffects
+			[
+				&<./Data/common_effects/particles/explosions/med_part_explode_smoke.rules>
+				&<particles/prism_explode_shockwave.rules>
+				&<particles/prism_explode_shrapnel.rules>
+				&<particles/prism_explode_flash.rules>
+				&<particles/prism_explode_flash_lines.rules>
+				&<particles/prism_explode_hot.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/common_effects/sounds/small_part_destroyed.wav"
+					Volume = .75
+					SpeedVariation = .25
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .1
+					Duration = .75
+				}
+			]
+
+			FactorHitEffectsWith = BeamEmitter
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 45000
+					Radius = 5
+					Delay = .05
+					FireChancePerNDamage = 50%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false
+						Friendlies = true
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 10000
+					Radius = 3
+					Delay = .05
+					ImpulsePerNDamage = 5
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = true
+					}
+				}
+			]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [2, 2]
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [2, 2]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [4, 4]
+		}
+	}
+
+	Stats
+	{
+
+	}
+
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/DeathStarBeam"
+			Stats
+			{
+				Range = &~/Part/Components/BeamEmitter/Range
+				Arc = deg(&~/Part/Components/Turret/FiringArc)
+				ShotSpeed = Infinity
+				TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+
+				ReductionFactorPerBeam = &~/Part/Components/ToggledDeathStarEnergyStorage/Components/DeathStarEnergyStorage/ReductionFactorPerBeam
+				BeamDamageFalloff
+				[
+					(1 - (&../ReductionFactorPerBeam)) * 100
+					(&../ReductionFactorPerBeam)^0 * 100
+					(&../ReductionFactorPerBeam)^1 * 100
+					(&../ReductionFactorPerBeam)^2 * 100
+					(&../ReductionFactorPerBeam)^3 * 100
+					(&../ReductionFactorPerBeam)^4 * 100
+				]
+			}
+		}
+	]
+}
+Size = Large
