@@ -36,22 +36,24 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeID = "ion_thrusters"
 
 	//PartSpecific
-	ThrusterForce = 5000 //12800 managed thru ramping buff //160%*8000 of vanilla
+	ThrusterForce = 5120 		//v:3200		//160%*3200 of vanilla = 5120 managed thru ramping buff 
 	ThrustIncreaseTime = { BaseValue=5.6; BuffType=SW_Ion_Thruster_Boost_RampUpFinal; BuffMode=Divide; }
+	ThrustDecreaseTime = 2.6 	//v:0			//softer deccel
 	ThrustRecoveryTime = { BaseValue=3.0; BuffType=SW_Ion_Thruster_Boost_RampUpFinal; BuffMode=Divide; }
-	FuelUsage = 128 //160%*40%*200 of vanilla
+	FuelUsage = 128 			//v:200			// 64%*200 of vanilla
     
     //Boosted
-	BoostedThrusterForce = 15000		//ONLY HERE FOR STAT DISPLAY
+	BoostedThrusterForce = 15360		//ONLY HERE FOR STAT DISPLAY
 	BoostedThrustIncreaseTime = 0		//ONLY HERE FOR STAT DISPLAY
+	BoostedThrustDecreaseTime = 0		//ONLY HERE FOR STAT DISPLAY
 	BoostedThrustRecoveryTime = 0		//ONLY HERE FOR STAT DISPLAY
 	BoostedFuelUsage = 384				//ONLY HERE FOR STAT DISPLAY
-	BoostedPowerDrain = { BaseValue=-20; BuffType=Engine;  BuffMode=Multiply; MaxValue=1000%; }
+	BoostedPowerDrain = { BaseValue=-10; BuffType=Engine;  BuffMode=Multiply; MinValue=(&BaseValue)/10; MaxValue=(&BaseValue)*10; }
 	BoostedPowerDrainInterval = 0.1
 	
     //ReceivableBuffs&Prohibits
 	//
-	ProhibitBelow = 18
+	ProhibitBelow = 18			//v:18
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Boost, SW_Ion_Thruster_Boost_Thrust, SW_Ion_Thruster_Boost_RampUp, SW_Ion_Thruster_Boost_RampUpFinal]
 
 	//Doors&Etc
@@ -98,7 +100,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components
+	Components : ^/0/Components //, &<nozzles.rules>, &<nozzle_covers.rules> /*@Rojamahorse where?*/
 	{
 		IsOperational
 		{
@@ -141,18 +143,190 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			BuffType = Engine
 		}
 
-		PowerDistributionBuffToggle
+		BoostToggle
 		{
-			Type = BuffToggle
-			BuffType = EnginePowerDistribution
+			Type = UIToggle
+			ToggleID = "thruster_boost"
+			Default = 0
+			AutoOffTrigger = AutoBoostOffTrigger
+			OperationalToggle = IsOperational
+			RememberValue = false
 		}
 
 		RealBatteryStorage // Can't call this "BatteryStorage" because we don't want it fillable via the engine room when in boost mode. We define a proxy to it below.
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 8000
+			MaxResources = 8000 //v:6000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ToggleOnResources = (&MaxResources) - 999
+			ToggleOffResources = 0
+		}
+
+		BoostProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = BoostToggle
+			ShowProgressFor = RealBatteryStorage
+			LowColor = [64, 0, 64]
+			HighColor = [0, 0, 255]
+			FullColor = [0, 0, 255]
+		}
+
+		FullAmmoToggle
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [RealBatteryStorage]
+			ToggleOnResources = &../RealBatteryStorage/MaxResources
+			ToggleOffResources = (&ToggleOnResources) - 1
+		}
+
+		BoostOffInstantDrainToggles
+		{
+			Type = MultiToggle
+			Toggles = [BoostToggle, PowerToggle]
+			Mode = All
+		}
+
+		BoostOffInstantDrainTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = BoostOffInstantDrainToggles
+			TriggerWhenOn = false
+			TriggerWhenOff = true
+			OperationalToggle = FullAmmoToggle
+			InvertOperationalToggle = true
+		}
+
+		BoostOffInstantDrain
+		{
+			Type = ResourceChange
+			Trigger = BoostOffInstantDrainTrigger
+			ResourceStorage = RealBatteryStorage
+			Amount = -999999
+		}
+
+		AutoBoostOffTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = RealBatteryStorage
+			TriggerWhenOn = false
+			TriggerWhenOff = true
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [1, 1.5]
+			OperationalToggle = IsOperational
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0.64, 2.7]
+
+			Floor
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads_base.png"
+						Size = [2, 3]
+					}
+					/*{
+						File = "doodads_base_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "doodads_base_66.png"
+						Size = [2, 3]
+					}*/
+				]
+			}
+			/*
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				//
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads_on_1.png"
+							"doodads_on_2.png"
+							"doodads_on_3.png"
+							"doodads_on_4.png"
+							"doodads_on_5.png"
+							"doodads_on_6.png"
+							"doodads_on_7.png"
+							"doodads_on_8.png"
+						]
+						Size = [2, 3]
+						AnimationInterval = 0.075
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				//
+				DamageLevels
+				[
+					{
+						File = "doodads_off_0.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			*/
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [2, 3]
+					}
+					{
+						File = "walls_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "walls_66.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [2, 3]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [2, 3]
+					}
+				]
+			}
+		}
+
+		PowerDistributionBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = EnginePowerDistribution
 		}
 
 		BoostOffComponents
@@ -168,13 +342,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					Type = ResourceStorageProxy
 					ResourceType = battery
 					ComponentID = RealBatteryStorage
+					//
 				}
 				ToggledBatteryConsumer
 				{
 					Type = ToggledComponents
 					Toggle = PowerDistributionBuffToggle
 					Invert = true
-					//IncludeInBlueprints = true //added 0.27.0_rc2_steam - unsure if this applies
+					IncludeInBlueprints = true //added 0.27.0_rc2_steam - unsure if this applies
 					Components
 					{
 						BatteryConsumer
@@ -190,6 +365,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			}
 		}
+
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -199,7 +375,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
 		}
-		
+
 		ColorPickerThruster
 		{
 			Type = UIColor
@@ -309,7 +485,27 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Toggle = IsOperationalAndHypernodeConnectedToggle
 			Components = &<particles/thruster_cyan_hypernodeset.rules>/Components
 		}
+/*
+		NozzleArtOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "nozzle_art_option_switch03"
+			Default = 0
+			AvailableChoices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
 
+		NozzleRoofCoverOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "nozzle_roof_option_switch_sm"
+			Default = 0
+			AvailableChoices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18] //patch me @Rojamahorse
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+*/
 		ThrusterEffectBoostsetComponents
 		{
 			Type = ToggledComponents
@@ -317,73 +513,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Components = &<particles/thruster_colorable_boostset.rules>/Components
 		}
 
-		BoostToggle
-		{
-			Type = UIToggle
-			ToggleID = "thruster_boost"
-			Default = 0
-			AutoOffTrigger = AutoBoostOffTrigger
-			OperationalToggle = IsOperational
-			RememberValue = false
-		}
-
 		IsOperationalAndNotBoostToggle
 		{
 			Type = MultiToggle
 			Toggles = [IsOperational,  {Toggle = BoostToggle; Invert = true},]
 			Mode = All
-		}
-
-		BoostProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = BoostToggle
-			ShowProgressFor = RealBatteryStorage
-			LowColor = [64, 0, 64]
-			HighColor = [0, 0, 255]
-			FullColor = [0, 0, 255]
-		}
-
-		FullAmmoToggle
-		{
-			Type = MultiResourceStorage
-			ResourceType = battery
-			ResourceStorages = [RealBatteryStorage]
-			ToggleOnResources = &../RealBatteryStorage/MaxResources
-			ToggleOffResources = (&ToggleOnResources) - 1
-		}
-
-		BoostOffInstantDrainToggles
-		{
-			Type = MultiToggle
-			Toggles = [BoostToggle, PowerToggle]
-			Mode = All
-		}
-
-		BoostOffInstantDrainTrigger
-		{
-			Type = ToggleTrigger
-			Toggle = BoostOffInstantDrainToggles
-			TriggerWhenOn = false
-			TriggerWhenOff = true
-			OperationalToggle = FullAmmoToggle
-			InvertOperationalToggle = true
-		}
-
-		BoostOffInstantDrain
-		{
-			Type = ResourceChange
-			Trigger = BoostOffInstantDrainTrigger
-			ResourceStorage = RealBatteryStorage
-			Amount = -999999
-		}
-
-		AutoBoostOffTrigger
-		{
-			Type = ToggleTrigger
-			Toggle = RealBatteryStorage
-			TriggerWhenOn = false
-			TriggerWhenOff = true
 		}
 
 		PowerDrainTimer
@@ -501,7 +635,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = SelfBuffProvider
 			BuffType =	SW_Ion_Thruster_Boost_RampUpFinal
 			ChainsFromBuffType = SW_Ion_Thruster_Boost_RampUp
-			BuffAmount = { BaseValue=100%; BuffType=SW_Ion_Thruster_Boost_RampUp;  BuffMode=Multiply; MaxValue=1000%; }
+			BuffAmount = { BaseValue=100%; BuffType=SW_Ion_Thruster_Boost_RampUp;  BuffMode=Multiply; MaxValue=900%; }
 		}
 
 		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
@@ -682,113 +816,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 
-		Graphics
-		{
-			Type = Graphics
-			Location = [1, 1.5]
-			OperationalToggle = IsOperational
-
-			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
-			AnimationSpeedFactorRenormalize = [0.64, 2.7]
-
-			Floor
-			{
-				Layer = "doodads_low"
-				DamageLevels
-				[
-					{
-						File = "doodads_base.png"
-						Size = [2, 3]
-					}
-					/*{
-						File = "doodads_base_33.png"
-						Size = [2, 3]
-					}
-					{
-						File = "doodads_base_66.png"
-						Size = [2, 3]
-					}*/
-				]
-			}
-			/*
-			OperationalDoodad
-			{
-				Layer = "doodads_high"
-				//
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"doodads_on_1.png"
-							"doodads_on_2.png"
-							"doodads_on_3.png"
-							"doodads_on_4.png"
-							"doodads_on_5.png"
-							"doodads_on_6.png"
-							"doodads_on_7.png"
-							"doodads_on_8.png"
-						]
-						Size = [2, 3]
-						AnimationInterval = 0.075
-					}
-				]
-			}
-			NonOperationalDoodad
-			{
-				Layer = "doodads_high"
-				//
-				DamageLevels
-				[
-					{
-						File = "doodads_off_0.png"
-						Size = [2, 3]
-					}
-				]
-			}
-			*/
-			Walls
-			{
-				Layer = "walls"
-				DamageLevels
-				[
-					{
-						File = "walls.png"
-						Size = [2, 3]
-					}
-					{
-						File = "walls_33.png"
-						Size = [2, 3]
-					}
-					{
-						File = "walls_66.png"
-						Size = [2, 3]
-					}
-				]
-			}
-			Roof
-			{
-				Layer = "roofs"
-				DamageLevels
-				[
-					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
-						Size = [2, 3]
-					}
-					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
-						Size = [2, 3]
-					}
-					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
-						Size = [2, 3]
-					}
-				]
-			}
-		}
+		
 
 		CircleCollider
 		{
@@ -811,6 +839,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 			Density = 1.35
 		}
+
 		NozzleGraphics
 		{
 			Type = Graphics
@@ -843,11 +872,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Thruster
 			OperationalToggle = IsOperational
-			Location = [1, 4.5]// Relative to upper-left corner of unrotated part.
+			Location = [1, 4.5]
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Boost_Thrust;  BuffMode=Multiply; MaxValue=1000%; }
+			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Boost_Thrust;  BuffMode=Multiply; MaxValue=900%; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -923,6 +952,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ContinuousEffects
 			Location = [1, 1.5]
 			OperationalToggle = IsOperational
+			MaxMediaEffectsZoom = 4
 			MediaEffects
 			[
 				: /SW_SOUNDS/ThrusterHum
@@ -983,8 +1013,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational
 			Location = [1, 1.5]
+			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
@@ -1040,6 +1070,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		//
 		//
 		//
+		//
 		PowerCapacity = (&~/Part/Components/RealBatteryStorage/MaxResources) / 1000
 
 		RecPower = ((&../StatsByCategory/1/Stats/ThrusterPowerUsage) + (&../StatsByCategory/1/Stats/BoostedPowerUsageContinuous)) / 2
@@ -1052,7 +1083,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Stats
 			{
 				ThrusterForce = &~/Part/ThrusterForce
-				ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
+				ThrusterRampUp = ceil(&~/Part/ThrustIncreaseTime/BaseValue)
+				ThrusterRampDown = ceil(&~/Part/ThrustDecreaseTime)
 				ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 			}
 		}
@@ -1061,7 +1093,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Stats
 			{
 				ThrusterForce = &~/Part/BoostedThrusterForce
-				ThrusterRampUp = &~/Part/BoostedThrustIncreaseTime
+				ThrusterRampUp = ceil(&~/Part/BoostedThrustIncreaseTime)
+				ThrusterRampDown = ceil(&~/Part/BoostedThrustDecreaseTime)
 				ThrusterPowerUsage = (&~/Part/BoostedFuelUsage) / 1000
 				BoostedPowerUsageContinuous = -(&~/Part/BoostedPowerDrain/BaseValue) / (&~/Part/BoostedPowerDrainInterval) / 1000
 			}
