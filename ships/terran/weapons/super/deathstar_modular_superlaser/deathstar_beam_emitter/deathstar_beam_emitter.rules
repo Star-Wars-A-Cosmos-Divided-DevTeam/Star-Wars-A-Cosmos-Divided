@@ -1,8 +1,8 @@
 Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 {
 	//IDs
-	ID = SW.deathstar_beam_emitter_4x4
-	//OtherIDs = [SW.deathstar_beam_emitter_4x4, deathstar_beam_emitter_4x4]
+	ID = SW.deathstar_beam_emitter
+	OtherIDs = [SW.deathstar_beam_emitter_4x4, deathstar_beam_emitter_4x4]
 
 	//StringKeys
 	NameKey = "Parts/DeathStarBeamEmitter"
@@ -10,13 +10,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/DeathstarBeamEmitterDesc"
 	//Groups&Categories
 	EditorGroups = ["WeaponsEnergy", "SWTechIII"]
-	TypeCategories = [weapon, uses_power, deathstar, deathstar_beam_emitter]
+	TypeCategories = [weapon, uses_power, SW_DeathStar, SW_DeathStar_Beam_Emitter]
 	RequiresCategories = [SW_Bridge]
 
 	//Resources&Size&Health
 	Resources
 	[
-		[steel, 60]
+		[steel, 128]
 		[coil2, 15]
 		[diamond, 1]
 	]
@@ -27,14 +27,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Selections
 	SelectionPriority = 1
-	SelectionTypeID = "deathstar_beam_emitter"
+	SelectionTypeID = "SW_deathstar_beam_emitter"
 	SelectionTypeByRotation = true
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [ElectronBuff, DeathStar ,DeathstarReverseOperation]
+	ReceivableBuffs : ^/0/ReceivableBuffs [ElectronBuff, SW_DeathStar, SW_DeathStarBeam ,SW_DeathstarReverseOperation]
 
 	//PartSpecific
-	Density = 2.4
+	Density = 4.0
+	GenerateRectCollider = false
+	ForceManhattanPathInPart = true
 
 	//Doors&Etc
 	AllowedDoorLocations
@@ -63,7 +65,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		//[1, 3]
 		//[2, 3]
 	]
-	ForceManhattanPathInPart = true
 
 	//Editor
 	EditorIcon
@@ -78,38 +79,77 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	Components : ^/0/Components
 	{
+		ColliderLeft
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0, 0]
+				[1, 0]
+				[2, 1]
+				[2, 4]
+				[0, 4]
+			]
+			Density = 4.2
+		}
+		ColliderRight
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[2, 1]
+				[3, 0]
+				[4, 0]
+				[4, 4]
+				[2, 4]
+			]
+			Density = 4.2
+		}
+
 		BuffOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]
+			Toggles = [True]
 			Mode = All
 		}
+		True
+		{
+			Type = StaticToggle
+			ToggleOn = "true"
+		}
+
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [BuffOperational/*, DeathstarReverseOperationBuffToggle */]
+			Toggles = [BuffOperational, DeathstarReverseOperationBuffToggle]
 			Mode = All
 		}
 
 		DeathstarReverseOperationBuffToggle
 		{
 			Type = BuffToggle
-			BuffType = DeathstarReverseOperation
+			BuffType = SW_DeathstarReverseOperation
 		}
 
 		OperationBuffProvider
 		{
 			Type = AreaBuffProvider
-			BuffType = DeathstarOperation
-			BuffArea = [0, -1, 2, 1]
+			BuffType = SW_DeathstarOperation
+			BuffArea = [0, -1, 4, 1]
 			OperationalToggle = BuffOperational
 			Criteria
 			{
 				Rot = 0
 				Left = 0
-				Right = 2
+				Right = 4
 				Bottom = 0
 			}
+			ShowBuffRange = true //DEBUG
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
 		}
 
 		PowerToggle
@@ -205,7 +245,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Weapon
 		{
 			Type = FixedWeapon
-			Location = [2, 3]// Relative to upper-left corner of unrotated part.
+			Location = [2, 0.5]// Relative to upper-left corner of unrotated part.
 			Rotation = -90d// Relative to unrotated part.
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
@@ -218,14 +258,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			SuppressDirectControlWhenTargetingPartsFilter = &FriendlyPrismFilter
 			SuppressFirepowerEstimationWhenTargetingPartsFilter = &FriendlyPrismFilter
 			AutoExplicitTargetPartsFilter = &FriendlyPrismFilter
-			SaveSelfTargetPartCategories = [deathstar_beam_prism]
+			SaveSelfTargetPartCategories = [SW_DeathStar_Beam_Prism]
 			FirePermissionToggle = FireModeToggle
 
 			FriendlyPrismFilter
 			{
 				Enemies = false
 				Junk = false
-				OnlyPartCategories = [deathstar_beam_prism]
+				OnlyPartCategories = [SW_DeathStar_Beam_Prism]
 			}
 
 			AutoTarget
@@ -363,9 +403,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [3.0, 3.0]
+						Size = [2.0, 2.0]
 					}
-					HidesIndicators = [1]
+					HidesIndicators = [2]
+				}
+
+				// Missing component
+				{
+					Toggle = DeathStarReverseOperationBuffToggle
+					ShowInBuildMode = true
+					AtlasSprite
+					{
+						File = &/INDICATORS/MissingComponent
+						Size = [1.5, 1.5]
+					}
 				}
 
 				// Out of power.
