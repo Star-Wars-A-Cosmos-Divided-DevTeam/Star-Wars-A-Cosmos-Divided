@@ -1,0 +1,658 @@
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+    //IDs
+	ID = SW.deathstar_beam_command
+	OtherIDs = [deathstar_beam_command]
+
+    //StringKeys
+	NameKey = "Parts/DeathstarBeamCommand"
+	IconNameKey = "Parts/DeathstarBeamCommandIcon"
+	DescriptionKey = "Parts/DeathstarBeamCommandDesc"
+
+    //Groups&Categories
+	EditorGroups = ["WeaponsEnergy", "SWTechIII"]
+	RequiresCategories = [SW_Bridge, SW_WarRoom]
+	TypeCategories = [command, uses_power, is_crewed, SW_DeathStar, SW_DeathStar_Beam_Command, SW_DeathStar_Beam_Combiner, SW_Tech_III]
+
+    //Resources&Size&Health
+	Resources
+	[
+		[steel, 720]//[steel, 360]
+		[SW.durasteel, 480] 
+		[SW.doonium_ingot, 360]
+		[coil2, 160]//[coil2, 80]
+		[processor, 48]//[processor, 16]
+	]
+	Size = [6, 7]
+	MaxHealth = 20000
+
+    //Selections
+	SelectionPriority = 0
+	SelectionTypeID = "SW_deathstar_command"
+
+    //PartSpecific
+	AIValueFactor = 5
+	//IsContiguityOrigin = true
+	//IsShipForward = true
+	ContiguityOriginPriority = 5
+
+    //ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//SpecialCells
+	ForceManhattenPathInPart = true
+	BlockedTravelCells
+	[
+		[2, 3]
+		[3, 3]
+	]
+	HasNonContiguousPathing = true
+	BlockedTravelCellDirections
+	[
+		//----- Cell [1,1] -----
+		{
+			Key = [1, 1]
+			Value = [Up]
+		}
+		{
+			Key = [1, 0]
+			Value = [Down]
+		}
+		{
+			Key = [0, 1]
+			Value = [Right]
+		}
+		{
+			Key = [2, 1]
+			Value = [Left]
+		}
+
+		//----- Cell [4,1] -----
+		{
+			Key = [4, 1]
+			Value = [Up]
+		}
+		{
+			Key = [4, 0]
+			Value = [Down]
+		}
+		{
+			Key = [3, 1]
+			Value = [Right]
+		}
+		{
+			Key = [5, 1]
+			Value = [Left]
+		}
+
+		//----- Cell [1,5] -----
+		{
+			Key = [1, 5]
+			Value = [Up]
+		}
+		{
+			Key = [1, 4]
+			Value = [Down]
+		}
+		{
+			Key = [0, 5]
+			Value = [Right]
+		}
+		{
+			Key = [2, 5]
+			Value = [Left]
+		}
+
+		//----- Cell [4,5] -----
+		{
+			Key = [4, 5]
+			Value = [Up]
+		}
+		{
+			Key = [4, 4]
+			Value = [Down]
+		}
+		{
+			Key = [3, 5]
+			Value = [Right]
+		}
+		{
+			Key = [5, 5]
+			Value = [Left]
+		}
+	]
+
+    //Doors&Etc
+	AutoDoorMaxPathLength = 5
+	AllowedDoorLocations
+	[
+		[3, -1]
+		[2, -1]
+
+		[-1, 2]
+		[6, 2]
+		[-1, 3]
+		[6, 3]
+		[-1, 4]
+		[6, 4]
+
+		[3, 7]
+		[2, 7]
+	]
+
+    //Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [47, 55]
+	}
+
+    //Components&Inheritance
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage,  PartCrew]
+			Mode = All
+		}
+
+		TurretToggle
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, CommandToggle]
+			Mode = All
+		}
+
+		IsOperationalAndCommandToggle
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, CommandToggle]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 2000 //ADJUST ME
+		}
+
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+
+		ToggledDeathStarEnergyStorage
+		{
+			Type = ToggledComponents
+			Toggle = PowerToggle
+			Components
+			{
+				DeathStarEnergyStorage
+				{
+					Type = IonEnergyStorage //DO NOT CHANGE
+					ResourceType = deathstar_energy
+					ReductionFactorPerBeam = 1
+					IsDrainable = true
+				}
+			}
+		}
+
+		BeamTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = DeathStarEnergy
+			TriggerWhenOn = true
+			TriggerWhenOff = false
+		}
+
+		DeathStarEnergy
+		{
+			Type = ResourceStorageProxy
+			ComponentID = DeathStarEnergyStorage
+			ResourceType = deathstar_energy
+			ProvidedValueRange = 0
+			ProvidedValuePerResource = 1/1000
+			IsDrainable = false
+		}
+
+		Collider
+		{
+			Type = CircleCollider
+			Location = [3, -61]
+			Radius = 0.01
+			Density = 0.01
+		}
+
+		Turret
+		{
+			Type = FixedWeapon
+			Location = [3, -(60 + 32/64)]
+			Rotation = -90d // Relative to unrotated part.
+			OperationalToggle = PowerToggle
+			AutoFireToggle = AutoFireToggle
+			FireInterval = &<../deathstar_beam_emitter/deathstar_beam_emitter.rules>/Part/Components/Weapon/FireInterval
+			AIFirepowerRating = 0
+			AddAIFirepowerRatingsWhenTargetedByPartCategories = [SW_DeathStar_Beam_Emitter, SW_DeathStar_Beam_Prism]
+			TargetingEmitter = BeamEmitter
+			ChainFireToggleComponent = DeathStarBeamChainToggle
+			ProhibitTargetPartsFilter = &FriendlyPrismFilter // Don't force fire on friendly ion prisms!
+			ProhibitShipRelativePointTargets = true
+			SuppressShipWideExplicitTargetsWhenTargetingPartsFilter = &FriendlyPrismFilter
+			SuppressShipWideExplicitTargetsWhenTargetingShipRelativePoints = true
+			SuppressDirectControlWhenTargetingPartsFilter = &FriendlyPrismFilter
+			SuppressFirepowerEstimationWhenTargetingPartsFilter = &FriendlyPrismFilter
+			SuppressFirepowerEstimationWhenNotTargetingShipRelativePoints = true
+			SaveSelfTargetPartCategories = [SW_DeathStar_Beam_Prism]
+			SaveShipRelativeTargets = true
+			DefaultDirectControlBinding = 0
+			FirePermissionToggle = FireModeToggle
+
+			FriendlyPrismFilter
+			{
+				Enemies = false
+				Junk = false
+				OnlyPartCategories = [SW_DeathStar_Beam_Prism, SW_DeathStar_Beam_Combiner]
+			}
+
+			AutoTarget
+			{
+				TargetType = ShipParts
+				Toggle = AutoTargetToggle
+			}
+
+			CoverageLine
+			{
+				LineSprite
+				{
+					Texture = &/INDICATORS/RadialGradient
+					VertexColor = [255, 255, 255, 191]
+					UVRect = [.5, 0, 0, 1]
+				}
+				LineThickness = 2
+
+				BeginCapSprite : LineSprite
+				{
+					UVRect = [0, 0, .5, 1]
+				}
+				BeginCapSize = [1, 2]
+
+				EndCapSprite : LineSprite
+				{
+					UVRect = [.5, 0, .5, 1]
+				}
+				EndCapSize = [1, 2]
+			}
+		}
+
+		BeamEmitter : &/SW_SHOTS/Beam/DeathStar
+		{
+			Type = BeamEmitter
+			ChainedTo = Turret
+			FireTrigger = BeamTrigger
+			GetTargetFrom = Turret
+			ResourceStorage = DeathStarEnergy
+			ResourcesUsed = 1000
+			MinResourcesUsed = 1
+			FireDelay = &HitInterval // Needed to let multiple beams accumulate their energy.
+			Duration = &HitInterval // Can't be longer than HitInterval or it can create positive feedback loops.
+			EffectsScaleFactor = DeathStarEnergy
+			ValueScaleFactor = DeathStarEnergy
+			ResourceScaleFactor = DeathStarEnergy
+			UpdateScaleFactorsPerEmit = true
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 8000
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
+			ResupplyThreshold = 1000
+			OperationalToggle = PowerToggle
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		PowerDrain
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
+			FromQuantity = 1000
+			MinFromQuantityForConversion = 1
+			Interval = 10 // Drains 1 power every 10 seconds.
+		}
+
+		CrewLocation1 //CircleTop
+		{
+			Type = CrewLocation
+			Location = [3, 2.27]
+			Rotation = 180d
+		}
+		CrewLocation2 //CircleLeft
+		{
+			Type = CrewLocation
+			Location = [1.75, 3.5]
+			Rotation = 90d
+		}
+		CrewLocation3 //CircleRight
+		{
+			Type = CrewLocation
+			Location = [4.25, 3.5]
+			Rotation = 270d
+		}
+		CrewLocation4 //CircleBottom
+		{
+			Type = CrewLocation
+			Location = [3, 4.72]
+			Rotation = 0d
+		}
+		CrewLocation5
+		{
+			Type = CrewLocation
+			Location = [1.5, 1.85]
+			Rotation = 0d
+		}
+		CrewLocation6
+		{
+			Type = CrewLocation
+			Location = [4.5, 1.85]
+			Rotation = 0d
+		}
+		CrewLocation7
+		{
+			Type = CrewLocation
+			Location =  [1.85, 5.5]
+			Rotation = 270d
+		}
+		CrewLocation8
+		{
+			Type = CrewLocation
+			Location = [4.15, 5.5]
+			Rotation = 90d
+		}
+
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 8
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			AbandonWhenOnFire = false
+			CrewDestinations
+			[
+				[3, 2.27]
+				[1.75, 3.5]
+				[4.25, 3.5]
+				[3, 4.72]
+
+				[1.5, 2]
+				[4.5, 2]
+				[2, 5.5]
+				[3.99, 5.5]
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+				CrewLocation3
+				CrewLocation4
+				CrewLocation5
+				CrewLocation6
+				CrewLocation7
+				CrewLocation8
+			]
+			//SwitchLocationInterval = [5, 10]
+		}
+
+		FloorGrid = &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_11/RDL
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [3,3.5]
+
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads1.png"
+							"doodads2.png"
+						]
+						Size = [6, 7]
+						AnimationInterval = 0.80
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [6, 7]
+					}
+					{
+						File = "walls_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "walls_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [6, 7]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
+		}
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [3, 3.5]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			ResourceLevels
+			[
+				{
+					File = "batteries_1.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_2.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_3.png"
+					Size = [2, 2]
+				}
+				{
+					File = "batteries_4.png"
+					Size = [2, 2]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational
+
+			Location = [1, 1]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
+			Location = [3,3.5]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [3, 3.5]
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [4, 4]
+					}
+					HidesIndicators = [1,2]
+				}
+				//Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [4, 4]
+					}
+				}
+				//No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [4, 4]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [6, 7]
+		}
+    }
+	//Stats
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = (&PowerUsageContinuousMinutes) / 60
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/DeathStarBeam"
+			Stats
+			{
+				Range = &~/Part/Components/BeamEmitter/Range
+				Arc = deg(0)
+				ShotSpeed = Infinity
+
+				ReductionFactorPerBeam = &~/Part/Components/ToggledDeathStarEnergyStorage/Components/DeathStarEnergyStorage/ReductionFactorPerBeam
+				BeamDamageFalloff
+				[
+					(1 - (&../ReductionFactorPerBeam)) * 100
+					(&../ReductionFactorPerBeam)^0 * 100
+					(&../ReductionFactorPerBeam)^1 * 100
+					(&../ReductionFactorPerBeam)^2 * 100
+					(&../ReductionFactorPerBeam)^3 * 100
+					(&../ReductionFactorPerBeam)^4 * 100
+				]
+			}
+		}
+	]
+}
+Size = Huge
