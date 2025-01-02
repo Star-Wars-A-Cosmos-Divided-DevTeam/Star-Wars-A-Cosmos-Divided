@@ -50,8 +50,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[4, 2]
 		[4, 3]
 		[0, 4]
-		[1, 4]
-		[2, 4]
+		//[1, 4]
+		//[2, 4]
 		[3, 4]
 	]
 	BlockedTravelCells
@@ -109,7 +109,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BuffOperational
 		{
 			Type = MultiToggle
-			Toggles = [True]
+			Toggles = [CommandToggle]
 			Mode = All
 		}
 		True
@@ -131,6 +131,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			BuffType = SW_DeathstarReverseOperation
 		}
 
+		DeathStarBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_DeathStar
+		}
+
 		OperationBuffProvider
 		{
 			Type = AreaBuffProvider
@@ -144,7 +150,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				Right = 4
 				Bottom = 0
 			}
-			ShowBuffRange = true //DEBUG
+		}
+
+		DeathStarBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = SW_DeathStar
+			BuffAmount = { BaseValue=1; BuffType=SW_DeathStar; BuffMode=Add; }
+			BuffArea = [0, 4, 4, 1]
+			OperationalToggle = DeathStarBuffToggle
+			ChainsFromBuffType = SW_DeathStar
+			Criteria
+			{
+				Rot = 0
+				Left = 0
+				Right = 4
+				Top = 4
+			}
+		}
+
+		BeamBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_DeathStarBeam
+			ChainsFromBuffType = SW_DeathStar
+			BuffAmount = { BaseValue=0; BuffType=SW_DeathStar; BuffMode=Add; }
 		}
 
 		CommandToggle
@@ -203,14 +233,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ResupplyThreshold = 500
 			OperationalToggle = PowerToggle
 		}
-/*
-		LoadEffects
-		{
-			Type = TriggeredEffects
-			Trigger = AmmoLoader
-			MediaEffects = &/COMMON_EFFECTS/AmmoLoad
-		}
-*/
 /*
 		WeaponTrigger
 		{
@@ -312,6 +334,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 			BeamMediaEffects : ^/0/BeamMediaEffects
 			[
+				/*
 				: /BASE_SOUNDS/AudioExterior
 				{
 					Sound = "./Data/shots/ion_beam/ion_beam_emit.wav"
@@ -321,6 +344,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					RampUpTime = .25
 					RampDownTime = .25
 				}
+				*/
 			]
 		}
 
@@ -328,9 +352,113 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = Graphics
 			Location = [2, 2]
-			//OperationalToggle = IsOperational
-			//DoodadToggle = BeamEmitter
-			//ShowToggledDoodadsWhenNotOperational = false
+			OperationalToggle = IsOperational
+			DoodadToggle = BatteryStorage
+
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [4, 4]
+					}
+					{
+						File = "floor_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "floor_66.png"
+						Size = [4, 4]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [4, 4]
+					}
+					{
+						File = "walls_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "walls_66.png"
+						Size = [4, 4]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads.png"
+						Size = [4, 4]
+					}
+					{
+						File = "doodads_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "doodads_66.png"
+						Size = [4, 4]
+					}
+				]
+			}
+			NonOperationalDoodad = &OperationalDoodad
+
+			ToggleOnDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "lights_on.png"
+						Size = [4, 4]
+					}
+				]
+			}
+			ToggleOffDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "lights_off.png"
+						Size = [4, 4]
+					}
+				]
+			}
+			/*
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [4, 4]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [4, 4]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [4, 4]
+					}
+				]
+			}*/
 		}
 
 		OperatingHum
@@ -468,5 +596,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			}
 		}
 	]
+
+	StatsNotesKey = "Stats/DeathstarBeamNotes"
 }
 Size = Huge
