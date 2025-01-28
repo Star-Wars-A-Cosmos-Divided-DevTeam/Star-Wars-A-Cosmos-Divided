@@ -36,14 +36,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeID = "ion_thrusters"
 
 	//PartSpecific
-	ThrusterForce = 1200 //1920 managed thru ramping buff //160%*1200 of vanilla
-	ThrustIncreaseTime = 3.2 //80%*4.0 of vanilla
-	ThrustRecoveryTime = 1.6 //80%*2.0 of vanilla
-	FuelUsage = 64 //160%*40%*100 of vanilla
+	ThrusterForce = 1200 		//v:1200	//160%*1200 of vanilla = 1920 managed thru ramping buff 
+	ThrustIncreaseTime = 0.8	//v:1		// 80%*1 of vanilla
+	ThrustDecreaseTime = 1.2	//v:0		//softer deccel 
+	ThrustRecoveryTime = 1.6	//v:2		// 80%*2 of vanilla
+	FuelUsage = 64				//v:100		// 64%*100 of vanilla
 
 	//ReceivableBuffs&Prohibits
 	//
-	ProhibitBelow = 4
+	ProhibitBelow = 4			//v:5
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust]
 
 	//Doors&Etc
@@ -562,7 +563,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Overdrive_Thrust;  BuffMode=Multiply; MaxValue=1000%; }
+			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Overdrive_Thrust;  BuffMode=Multiply; MinValue=(&BaseValue)/10; MaxValue=(&BaseValue)*10; }
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
@@ -639,6 +640,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = ContinuousEffects
 			Location = [0.5, 1]
 			OperationalToggle = IsOperational
+			MaxMediaEffectsZoom = 4
 			MediaEffects
 			[
 				: /SW_SOUNDS/ThrusterHum
@@ -750,7 +752,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce
-		ThrusterRampUp = &~/Part/ThrustIncreaseTime
+		ThrusterRampUp = ceil(&~/Part/ThrustIncreaseTime)
+		ThrusterRampDown = ceil(&~/Part/ThrustDecreaseTime)
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
