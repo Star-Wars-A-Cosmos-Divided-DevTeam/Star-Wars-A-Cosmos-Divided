@@ -111,7 +111,7 @@ Artist - Roasted (2022-)
 
 German - SkipperWraith, Wolfram  
 English - Classicjam, SkipperWraith  
-French = English or ChatGPT (searching translators)  
+French = LePetitLord 
 Italian = English or ChatGPT (searching translators)  
 Spanish - Rojamahorse  
 Japanese = English or ChatGPT (searching translators)  
