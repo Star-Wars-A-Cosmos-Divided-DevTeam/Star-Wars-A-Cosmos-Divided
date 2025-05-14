@@ -23,7 +23,7 @@ Part : &<../base_part_terran_small_weapons.rules>/Part
 	MaxHealth = 3000
 
     //Rects
-	GenerateRectCollider = false
+	//GenerateRectCollider = false
 	PhysicalRect = [0, 1, 1, 1]
 	SaveRect = &PhysicalRect
 	ProhibitAbove = 3
@@ -63,17 +63,6 @@ Part : &<../base_part_terran_small_weapons.rules>/Part
     //Components&Inheritance
 	Components : ^/0/Components
 	{
-		Collider
-		{
-			Type = PolygonCollider
-			Vertices
-			[
-				[0, 1]
-				[0, 2]
-				[1, 2]
-				[1, 1]
-			]
-		}
 
 		IsOperational
 		{
@@ -177,7 +166,7 @@ Part : &<../base_part_terran_small_weapons.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [.5, 1]
+			Location = [0.5, 1.5]
 			Floor
 			{
 				Layer = "floors"
@@ -296,9 +285,9 @@ Part : &<../base_part_terran_small_weapons.rules>/Part
 			Rotation = -90d
 			Vertices
 			[
-				[4, 0]
-				[0.34, -0.16]
-				[0.34, 0.16]
+				[4-11/64, 0]
+				[-22/64, 16/64]
+				[-22/64, -16/64]
 			]
 			IsHigh = false
 			//InitialPenetrationResistance = 5
@@ -380,7 +369,7 @@ Part : &<../base_part_terran_small_weapons.rules>/Part
 		{
 			Type = Sprite
 			ChainedTo = Turret
-			Location = [1.66, 0]
+			Location = [1.66, 83/3200] //yes thats correct, no u dont get to touch it without death.
 			Rotation = 90d
 			Layer = "weapons"
 			ResetAnimationTrigger = BulletEmitter
@@ -406,7 +395,7 @@ Part : &<../base_part_terran_small_weapons.rules>/Part
 			Type = Graphics
 			OperationalToggle = IsOperational
 			ChainedTo = Turret
-			Location = [.5, 0]
+			Location = [0.5, 0]
 			Rotation = 90d
 			OperationalDoodad
 			{
@@ -461,7 +450,7 @@ Part : &<../base_part_terran_small_weapons.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_low"
 			HasZeroResourceSprite = true
@@ -509,8 +498,8 @@ Part : &<../base_part_terran_small_weapons.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
+			Location = [0.5, 1.5]
 			Toggle = IsOperational
-			Location = [.5, 1.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -519,13 +508,13 @@ Part : &<../base_part_terran_small_weapons.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 		}
 
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			
 			Indicators
 			[
@@ -622,7 +611,7 @@ BulletEmitterBase
 		ChainedTo = Turret
 		FireTrigger = Turret
 		GetTargetFrom = Turret
-		Location = [4, 0]
+		Location = [4-11/64, 0]
 		OperationalToggle = IsOperational
 		FireDelay = 0.01
 		ResourceStorage = BatteryStorage
@@ -633,7 +622,7 @@ BulletEmitterBase
 TurretBase
 		{
 			Type = TurretWeapon
-			Location = [0.5, 0.66]
+			Location = [0.5, 42/64]
 			Rotation = -90d
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
