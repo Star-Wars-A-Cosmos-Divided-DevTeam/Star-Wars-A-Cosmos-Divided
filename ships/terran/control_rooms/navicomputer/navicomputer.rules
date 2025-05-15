@@ -32,6 +32,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
     //PartSpecific
 	AIValueFactor = 2
 	AutoDoorMaxPathLength = 5
+	SignificanceToggle = ScorchedToggle
 
     //ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor]
@@ -62,17 +63,17 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew, CommandToggle]
+			Toggles = [PowerToggle, BatteryStorage, PartCrew, ScorchedToggle]
 			Mode = All
 		}
-/* Not sure why this was here but I don't see any dependencies on it aside from sensor array which could be managed by the chain to IsOperational
+		// Not sure why this was here but I don't see any dependencies on it aside from sensor array which could be managed by the chain to IsOperational, then ASK.
 		IsOperationalAndCommandToggle
 		{
 			Type = MultiToggle
 			Toggles = [IsOperational, CommandToggle]
 			Mode = All
 		}
-*/
+
 		CommandToggle
 		{
 			Type = CommandToggle
@@ -84,6 +85,14 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 			RequiresCommand = false
+		}
+
+		ScorchedToggle
+		{
+			Type = StatusToggle
+			StatusType = cosmoteer.scorched
+			MinStatusValue = 1
+			Invert = true
 		}
 
 		CommandConsumer
@@ -105,7 +114,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		Sensor
 		{
 			Type = Sensor
-			OperationalToggle = IsOperational // IsOperationalAndCommandToggle
+			OperationalToggle = IsOperationalAndCommandToggle
 			SightRadius = { BaseValue=480; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 960 } //640
 			RadarRadius = { BaseValue=1600; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 3200} //2100
 		}
@@ -247,7 +256,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		{
 			Type = PartCrew
 			Crew = 2
-			DefaultPriority = &/PRIORITIES/Utility_Crew //&/PRIORITIES/ControlRoom_Crew //This be the culprit
+			DefaultPriority = &/PRIORITIES/Utility_Crew
 			PrerequisitesBeforeCrewing = [PowerToggle]
 			HighPriorityPrerequisites = [BatteryStorage]
 			CrewDestinations
@@ -290,6 +299,21 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
 
+		ScorchedTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = ScorchedToggle
+			TriggerWhenOn = false
+		}
+
+		ScorchedEffects
+		{
+			Type = TriggeredEffects
+			Trigger = ScorchedTrigger
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/MedPartScorched
+		}
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
@@ -303,6 +327,12 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			Location = [1, 1]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -311,9 +341,8 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
-
 				// Out of power.
 				{
 					Toggle = BatteryStorage
@@ -354,4 +383,8 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
+	Features
+	[
+		CanBuffSWSensor
+	]
 }
