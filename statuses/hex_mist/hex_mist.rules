@@ -1,0 +1,313 @@
+ID = SW.hex_mist
+FIRE_MAX_HEALTH = 75
+FIRE_SELF_MODIFIER
+{
+	Type = Status
+	StatusType = SW.hex_mist
+	ModificationMode = Multiply
+}
+FIRE_SELF_MODIFIER_LERP : ~/FIRE_SELF_MODIFIER
+{
+	ValueType = Interpolated
+}
+FIRE_SELF_MODIFIER_LERP_MAP : ~/FIRE_SELF_MODIFIER_LERP
+{
+	Type = StatusRemap
+	RemapFrom = [0.2, 1]
+	RemapTo = [0, 1]
+}
+
+// The total % of current health damage to reach max scorch
+MAX_SCORCH_DAMAGE_PERCENT = 75%
+// The time for a fully on-hex_mist, full-health part with 1000 HP per tile to reach max scorch.
+FULL_HEALTH_SCORCH_TIME = 80
+
+SCORCH_PER_SECOND = (&MAX_SCORCH_DAMAGE_PERCENT) / (&FULL_HEALTH_SCORCH_TIME)
+SCORCH_PER_TICK = (&SCORCH_PER_SECOND) & (&TickInterval)
+
+DAMAGE_PER_SECOND = (&~/MAX_SCORCH_DAMAGE_PERCENT) / (&~/FULL_HEALTH_SCORCH_TIME) * 1000.0
+DAMAGE_PER_TICK = floor((&~/DAMAGE_PER_SECOND) * (&~/TickInterval))
+
+Layer = Tile
+StatusCombineMode = CombineValue
+ValueCombiner
+{
+	Type = "NormalizedAdd"
+	ValueRange = [0, &~/FIRE_MAX_HEALTH]
+	InverseValueExponent = 2.5
+	ReduceNegativeValues = false
+}
+ValueClampRange = [0, &../FIRE_MAX_HEALTH]
+RemoveAtMinValue = true
+NegativeCombineIgnoresResistance = true
+MediaIntensityValueType = Interpolated
+CrewSpeedFactor = [1, .2]
+Filter
+{
+	PartRectType = Physical
+	NonWalkable = false
+	ExcludePartCategories = [ non_flammable ]
+	StructuralHealth = false
+}
+ResourceSink 
+{
+	Resource = fire_extinguisher
+	AssociateJobWithPart = cosmoteer.fire_extinguisher
+	JobNameKey = "JobNames/ExtinguishFire"
+	DefaultPriority = &/PRIORITIES/ExtinguishFire
+	ValueChangePerResource = -1
+	TargetValue = 0
+	AlwaysRequestMaxResources = true
+	ReassignmentSearchIterations = 100
+	DeliveryMediaEffects
+	[
+    	&<particles/fire_extinguisher.rules>
+    
+    	: /BASE_SOUNDS/AudioInterior
+    	{
+    		Sound = "fire_extinguisher.wav"
+    		Volume = .25
+    		MaxConcurrentVolume = &Volume
+    		RampUpTime = .05
+    		RampDownTime = .05
+    		MaxConcurrent = 1
+    	}
+    ]
+    DeliveryHitEffects
+    [
+		{
+    		Type = StatusApplication
+    		StatusType = cosmoteer.fire_foam
+    		StatusDuration
+    		{
+    			FULL_EXTINGUISH_FOAM_DURATION = 20
+    			BaseValue = (&FULL_EXTINGUISH_FOAM_DURATION) / (&~/FIRE_MAX_HEALTH)
+    			EffectScaleExponent = 1
+    		}
+    		Filter
+    		{
+    			Friendlies = true
+    			Neutrals = true
+    		}
+    	}
+    ]
+}
+SoftRepair
+{
+	RepairType = Blocking
+	TargetValue = 0
+	WorkPerValueChange = 0.1/3
+	CrewRequestCountOverride = 1
+}
+TickInterval = 0.5
+TickingEffects
+[
+	{
+		Type = GridStatusApplication
+		StatusType = SW.hex_mist
+		StatusChance
+		{
+			BaseValue = 0.4
+			Modifiers 
+			[
+				: ~/FIRE_SELF_MODIFIER_LERP_MAP
+				{
+					Exponent = 2
+				}
+				// Prevent spread when the hex_mist's tile has foam
+				{
+					Type = Status
+					StatusType = cosmoteer.fire_foam
+					ModificationMode = Replace
+					MinValue = 0
+					MaxValue = 0
+				}
+			]
+		}
+		StatusValue 
+		{
+			BaseValue = 0.2
+			Modifiers [ &~/FIRE_SELF_MODIFIER ]
+		}
+		MaxCost = 1
+		MinDistance = 1
+		MaxDistance = 1
+		BlockedByWalls = true
+		Filter 
+		{
+			IgnoreInvulnerability = true
+			Friendlies = true
+			Neutrals = true
+		}
+	}
+	{
+		Type = Damage
+		Damage
+		{
+			BaseValue = &~/DAMAGE_PER_TICK
+			Modifiers 
+			[
+				: ~/FIRE_SELF_MODIFIER_LERP_MAP
+				{
+					Exponent = 2
+				}
+			]
+		}
+		DamageType = hex_mist
+		Filter
+		{
+			Friendlies = true
+			Neutrals = true
+		}
+	}
+	{
+		Type = KillCrew
+		KillChance
+		{
+			BaseValue = .16 * (&~/TickInterval)
+			Modifiers 
+			[
+				: ~/FIRE_SELF_MODIFIER_LERP_MAP
+				{
+					Exponent = 2
+				}
+			]
+		}
+		ImmunityResources = [ fire_extinguisher ]
+		Filter
+		{
+			Friendlies = true
+			Neutrals = true
+		}
+	}
+	{
+		Type = StatusApplication
+		StatusType = cosmoteer.scorched
+		DivideValueByPartHealth = true
+		DivideValueByPartHealthFactor = true
+		// Value is balanced between the scorch remap modifier and DivideValueByPartHealth
+		// They offset each-other when hex_mist is the only damage to the part
+		// When part health is proportionally lower (ie. something else damages the part), scorch rate increases
+		// This ensures that the part always scorches before it would die
+		// Formula: value = (damage / max_scorch_damage%) * ((1 - scorch * max_scorch_damage%) / health%)
+		StatusValue
+		{
+			BaseValue = (&~/DAMAGE_PER_TICK) / (&~/MAX_SCORCH_DAMAGE_PERCENT)
+			Modifiers 
+			[
+				: ~/FIRE_SELF_MODIFIER_LERP_MAP
+				{
+					Exponent = 2
+				}
+				{
+					Type = StatusRemap
+					StatusType = cosmoteer.scorched
+					ModificationMode = Multiply
+					RemapFrom = [0, 1]
+					RemapTo = [1, 1 - (&~/MAX_SCORCH_DAMAGE_PERCENT)]
+				}
+			]
+		}
+		Filter
+		{
+			Friendlies = true
+			Neutrals = true
+		}
+	}
+]
+ValueModulators
+{
+	T_1 = 0.1 * (&~/FIRE_MAX_HEALTH)
+	T_2 = 0.15 * (&~/FIRE_MAX_HEALTH)
+	T_3 = ((&~/FIRE_MAX_HEALTH) - (&T_1)) / 2 + (&T_1)
+	
+	Modulators
+	[
+		// Slowly extinguish when part is scorched
+		{
+			Type = Constant
+			AffectedValueRange = [-infinity, infinity]
+			StatusFilter
+			{
+				StatusType = cosmoteer.scorched
+				MinValue = 1
+			}
+			ModificationMode = Add
+			Value = -1.5
+		}
+		{
+			Type = Interpolate
+			AffectedValueRange = [0, &../../../T_1 ]
+			InterpolationRange = [-0.0025 * (&~/FIRE_MAX_HEALTH), -0.0125 * (&~/FIRE_MAX_HEALTH)]
+			Exponent = 1.5
+			ModificationMode = Add
+			ScaleByDeltaTime = true
+		}
+		{
+			Type = Interpolate
+			AffectedValueRange = [&../../../T_1, &../../../T_2]
+			InterpolationRange = [&../../1/InterpolationRange/1, 0]
+			Exponent = 2
+			ModificationMode = Add
+			ScaleByDeltaTime = true
+		}
+		{
+			Type = InterpolateSine
+			AffectedValueRange = [&../../../T_2, &../../../T_3]
+			InterpolationRange = [0, 0.05 * (&~/FIRE_MAX_HEALTH)]
+			ModificationMode = Add
+			ScaleByDeltaTime = true
+		}
+		{
+			Type = InterpolateSine
+			AffectedValueRange = [&../../../T_3, &~/FIRE_MAX_HEALTH]
+			InterpolationRange = [&../../3/InterpolationRange/1, 0.004 * (&~/FIRE_MAX_HEALTH)]
+			InvertCurve = true
+			ModificationMode = Add
+			ScaleByDeltaTime = true
+		}
+	]
+}
+CustomShapeEffects
+{
+	StatusValueToEffectValueType = Interpolated
+	RectSizeFactor = [0.25, 0.25]
+	Effects
+	[
+    	&<particles/fire_base.rules>
+    	&<particles/fire_smoke.rules>
+    	&<particles/fire_sparks.rules>
+    
+    	: /BASE_SOUNDS/AudioInterior
+    	{
+    		Sound = "hex_mist.wav"
+    		Volume = .5
+    		MaxConcurrentVolume = &Volume
+    		VolumeOverIntensity = 1
+    		RampUpTime = .2
+    		RampDownTime = .2
+    		MaxConcurrent = 1
+    
+    		DynamicVolume : ^/0/DynamicVolume
+    		{
+    			UseCustomShapeForDistance = true
+    		}
+    	}
+    ]
+}
+ContinuousMediaEffects
+[
+	{
+		Type = TileQuad
+		Sprite
+		{
+			Texture
+			{
+				File = indicator_fire_packed.png
+			}
+			Shader = indicators_fire.shader
+			VertexColor = [255,255,255,255]
+		}
+		Bucket = Upper1
+	}
+]
