@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_turbolasers.rules>/Part
 {
 	//IDs
 	ID = SW.medium_triple_turbolaser
@@ -69,10 +69,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
 
@@ -294,7 +294,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			FullColor = [255, 255, 0]
 		}
 
-		FloorGrid = &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
+		{	
+            GridSize = [5, 5]
+		}
 
 		Graphics
 		{
@@ -425,9 +428,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Vertices
 			[
 				[-.5, -.5]
-				[.5, -.5]
-				[.5, .5]
-				[-.5, .5]
+				[0.5, -.5]
+				[0.5, 0.5]
+				[-.5, 0.5]
 			]
 			Location = &~/TurretBase/Location
 			//IsHigh = true
@@ -657,12 +660,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [1, 1]
 		}
 
-		Indicators
+		Indicators : ^/0/Indicators
 		{
 			Type = IndicatorSprites
 			Location = [2.5, 2.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
-			Indicators
+			Indicators : ^/0/Indicators
 			[
 				// Turned off.
 				{
@@ -759,6 +761,7 @@ BulletEmitterBase
 	Bullet = &/SW_SHOTS/redtriplelasershot
 	Recoil = 150
 	Spread = [-5d, 5d]
+	AntiPhasingRaycastDistance = 5
 }
 ReloadProgressBarBase
 {

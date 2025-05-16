@@ -1,4 +1,4 @@
-Part : &<../base_part_terran_sm_weapons.rules>/Part
+Part : &<../base_part_terran_small.rules>/Part
 {	
 	//IDs
 	ID = SW.turbolaser_tiny_02
@@ -56,10 +56,10 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
     //Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
 
@@ -385,7 +385,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		CrewLocation
 		{
 			Type = CrewLocation
-			Location = [.5, 0.6875]
+			Location = [0.5, 0.6875]
 			Rotation = 0d
 		}
 		PartCrew
@@ -441,7 +441,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			ResourceStorage = BatteryStorage
 			HasZeroResourceSprite = true
 			Layer = "doodads_high"
@@ -466,7 +466,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
@@ -476,15 +476,14 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 		}
 
-		Indicators
+		Indicators : ^/0/Indicators
 		{
 			Type = IndicatorSprites
-			Location = [.5, 1.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
-			Indicators
+			Location = [0.5, 1.5]
+			Indicators : ^/0/Indicators
 			[
 				// Turned off.
 				{
@@ -583,6 +582,7 @@ BulletEmitterBase
 	ResourcesUsed = 50
 	MinResourcesUsed = 50
 	Bullet = &/SW_SHOTS/turretbasicsmalllaserredshot
+	AntiPhasingRaycastDistance = 1.5
 }
 ReloadProgressBarBase
 {

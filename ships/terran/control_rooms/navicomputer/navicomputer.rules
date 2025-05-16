@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_control_rooms.rules>/Part
 {
     //IDs
 	ID = SW.navicomputer
@@ -11,7 +11,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
     //Groups&Categories
 	EditorGroups = ["Flight", "SWTechII"]
-	TypeCategories = [navicomputer, uses_power, is_crewed, SW_Navicomputer, SW_Tech_II]
+	TypeCategories : ^/0/TypeCategories [navicomputer, uses_power, is_crewed, SW_Navicomputer, SW_Tech_II]
 	RequiresCategories = []
 
     //Resources&Size&Health
@@ -32,6 +32,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
     //PartSpecific
 	AIValueFactor = 2
 	AutoDoorMaxPathLength = 5
+	SignificanceToggle = ScorchedToggle
 
     //ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor]
@@ -59,20 +60,20 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
     //Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational// : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew, CommandToggle]
+			Toggles = [PowerToggle, BatteryStorage, PartCrew, ScorchedToggle]
 			Mode = All
 		}
-/* Not sure why this was here but I don't see any dependencies on it aside from sensor array which could be managed by the chain to IsOperational
+		// Not sure why this was here but I don't see any dependencies on it aside from sensor array which could be managed by the chain to IsOperational, then ASK.
 		IsOperationalAndCommandToggle
 		{
 			Type = MultiToggle
 			Toggles = [IsOperational, CommandToggle]
 			Mode = All
 		}
-*/
+
 		CommandToggle
 		{
 			Type = CommandToggle
@@ -84,6 +85,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 			RequiresCommand = false
+		}
+
+		ScorchedToggle
+		{
+			Type = StatusToggle
+			StatusType = cosmoteer.scorched
+			MinStatusValue = 1
+			Invert = true
 		}
 
 		CommandConsumer
@@ -105,7 +114,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Sensor
 		{
 			Type = Sensor
-			OperationalToggle = IsOperational // IsOperationalAndCommandToggle
+			OperationalToggle = IsOperationalAndCommandToggle
 			SightRadius = { BaseValue=480; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 960 } //640
 			RadarRadius = { BaseValue=1600; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 3200} //2100
 		}
@@ -247,7 +256,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = PartCrew
 			Crew = 2
-			DefaultPriority = &/PRIORITIES/Utility_Crew //&/PRIORITIES/ControlRoom_Crew //This be the culprit
+			DefaultPriority = &/PRIORITIES/Utility_Crew
 			PrerequisitesBeforeCrewing = [PowerToggle]
 			HighPriorityPrerequisites = [BatteryStorage]
 			CrewDestinations
@@ -290,6 +299,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
 
+		ScorchedTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = ScorchedToggle
+			TriggerWhenOn = false
+		}
+
+		ScorchedEffects
+		{
+			Type = TriggeredEffects
+			Trigger = ScorchedTrigger
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/MedPartScorched
+		}
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
@@ -297,12 +321,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [1, 1]
 		}
 
-		Indicators
+		Indicators : ^/0/Indicators
 		{
 			Type = IndicatorSprites
 			Location = [1, 1]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
-			Indicators
+			Indicators : ^/0/Indicators
 			[
 				// Turned off.
 				{
@@ -312,9 +335,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
-
 				// Out of power.
 				{
 					Toggle = BatteryStorage
@@ -355,4 +377,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
+	Features
+	[
+		CanBuffSWSensor
+	]
 }

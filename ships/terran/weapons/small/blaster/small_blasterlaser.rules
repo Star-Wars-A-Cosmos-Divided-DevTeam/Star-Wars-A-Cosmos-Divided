@@ -1,4 +1,4 @@
-Part : &<../base_part_terran_sm_weapons.rules>/Part
+Part : &<../base_part_terran_small.rules>/Part
 {
     //IDs
 	ID = SW.blasterlaser_switchable
@@ -10,8 +10,8 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 	DescriptionKey = "Parts/SmallpointlaserDesc"
 	
 	//Groups&Categories
-	EditorGroups = ["WeaponsEnergy", "SWTechI"]
-	TypeCategories = [weapon, uses_power]//, is_crewed
+	EditorGroups = ["WeaponsEnergy", "Defenses", "SWTechI"]
+	TypeCategories = [weapon, uses_power, SW_Tech_I]//, is_crewed
 
     //Resources&Size&Health
 	Resources
@@ -20,18 +20,24 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		[coil, 6]
 	]
 	Size = [1, 2]
-	AIValueFactor = 2
 	MaxHealth = 2500
+
+	//Rects
+	PhysicalRect = [0, 1, 1, 1]
+	SaveRect = &PhysicalRect
 
     //Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "blasterlasers"
 
-    //Rects
-	PhysicalRect = [0, 1, 1, 1]
-	SaveRect = &PhysicalRect
+    //PartSpecific
+	AIValueFactor = 2
 	InitialPenetrationResistance = 3
+
+    //ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	ProhibitAbove = 1
 
     //Doors&Etc
 	MaxDoors = 2
@@ -41,13 +47,6 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		[1, 1]
 		[0, 2]
 	]
-
-	//Rects
-	GenerateRectCollider = false
-
-    //ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs []
-	ProhibitAbove = 1
 
     //Editor
 	EditorIcon
@@ -59,6 +58,8 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		}
 		Size = [21.33, 64]
 	}
+
+    //Components&Inheritance
 	Components : ^/0/Components
 	{
 		Collider
@@ -73,10 +74,10 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			]
 		}
 
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]//, PartCrew
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage]//, PartCrew
 			Mode = All
 		}
 
@@ -345,7 +346,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		TurretHolder
 		{
 			Type = Sprite
-			Location = [.5, .5]
+			Location = [0.5, 0.5]
 			Layer = "structure"
 			AtlasSprite
 			{
@@ -359,7 +360,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			Floor
 			{
 				Layer = "floors"
@@ -589,7 +590,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		TurretGraphics
 		{
 			Type = Graphics
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			OperationalToggle = IsOperational
 			Walls
 			{
@@ -614,7 +615,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			HasZeroResourceSprite = true
@@ -662,7 +663,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
@@ -671,16 +672,15 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
+			Location = [0.5, 1.5]
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [.5, 1.5]
 		}
 
-		Indicators
+		Indicators : ^/0/Indicators
 		{
 			Type = IndicatorSprites
-			Location = [.5, 1.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
-			Indicators
+			Location = [0.5, 1.5]
+			Indicators : ^/0/Indicators
 			[
 				// Turned off.
 				{
@@ -712,6 +712,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			Offset = [0, -0.5]
 		}
 	}
+	//Stats
 	Stats
 	{
 		CrewRequired = 0 //&~/Part/Components/PartCrew/Crew
@@ -721,6 +722,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
 		RecCrew = (&RecPower) * 2//(&CrewRequired) + 
 	}
+
 	StatsByCategory
 	[
 		&~/TurretStats
@@ -728,7 +730,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		&<blue_blasterlaser.rules>/LaserStats
 		&<green_blasterlaser.rules>/LaserStats
 		&<yellow_pdlaser.rules>/LaserStats
-	]	
+	]
 }
 TurretStats
 {
@@ -766,6 +768,7 @@ BulletEmitterBase
 	ResourcesUsed = 50
 	MinResourcesUsed = 50
 	Bullet = &/SW_SHOTS/redsmalllasershot
+	AntiPhasingRaycastDistance = 1
 }
 ReloadProgressBarBase
 {
@@ -795,6 +798,7 @@ ChargeEffectBase
 		&/SW_SOUNDS/SmallLaserCharge
 	]
 }
+
 TurretColliderBase
 {
 	Type = CircleCollider
@@ -803,6 +807,7 @@ TurretColliderBase
 	Density = .75
 	//InitialPenetrationResistance = 5
 }
+
 TurretBase
 		{
 			Type = TurretWeapon
@@ -849,55 +854,3 @@ TurretBase
 				QuadCount = 64
 			}
 		}
-/*
-		CrewLocation
-		{
-			Type = CrewLocation
-			Location = [.5, 1.75]
-		}
-		PartCrew
-		{
-			Type = PartCrew
-			Crew = 1
-			DefaultPriority = &/PRIORITIES/Weapon_Crew
-			PrerequisitesBeforeCrewing = [PowerToggle]
-			HighPriorityPrerequisites = [BatteryStorage]
-			CrewDestinations
-			[
-				&../../CrewLocation/Location
-			]
-			CrewLocations
-			[
-				CrewLocation
-			]
-		}
-*/
-/*
-				// No crew.
-				{
-					Toggle = PartCrew
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoCrew
-						Size = [1, 1]
-					}
-				}
-*/
-/*
-"weapon2.png"
-"weapon3.png"
-"weapon4.png"
-"weapon5.png"
-"weapon6.png"
-"weapon7.png"
-"weapon8.png"
-*/
-/*
-					"weapon2_normals.png"
-					"weapon3_normals.png"
-					"weapon4_normals.png"
-					"weapon5_normals.png"
-					"weapon6_normals.png"
-					"weapon7_normals.png"
-					"weapon8_normals.png"
-*/

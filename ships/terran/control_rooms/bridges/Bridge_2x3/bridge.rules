@@ -1,8 +1,8 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_bridges.rules>/Part
 {
     //IDs
 	ID = SW.bridge_2x3
-	//OtherIDs = ["cockpit2"]
+	//OtherIDs = ["bridge_2x3"]
 
     //StringKeys
 	NameKey = "Parts/SWBridge2x3"
@@ -161,10 +161,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 
 		
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
 		PowerToggle
@@ -226,7 +226,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CrewLocation2
 		{
 			Type = CrewLocation
-			Location = [.5, 1.95]i
+			Location = [0.5, 1.95]i
 			Rotation = 0d
 		}
 		CrewLocation3
@@ -482,24 +482,16 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxMediaEffectsZoom = 4
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioInterior
-				{
-					Sound = "../_common/sounds/sw-idle-engine-med.wav"
-					Volume = .7
-					MaxConcurrentVolume = .7
-					Speed = 1
-					MaxConcurrent = 1
-				}
+				&/SW_SOUNDS/SW_Idle_Engine_med
 			]
 		}
 
 		// Indicators - Start
-		Indicators
+		Indicators : ^/0/Indicators
 		{
 			Type = IndicatorSprites
 			Location = [1, 1.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
-			Indicators
+			Indicators : ^/0/Indicators
 			[
 				// Turned off.
 				{
@@ -509,7 +501,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
 				// Out of power.
 				{

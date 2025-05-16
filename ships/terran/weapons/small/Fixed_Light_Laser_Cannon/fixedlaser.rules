@@ -1,6 +1,6 @@
-Part : &<../base_part_terran_sm_weapons.rules>/Part
+Part : &<../base_part_terran_small.rules>/Part
 {
-   //IDs
+   	//IDs
 	ID = SW.fixed_laser_cannon_switchable
 	OtherIDs = [SW.fixed_laser_cannonL,SW.fixedlaserL,SW.fixed_laser_cannon_L,SW.fixedlaserR,SW.fixed_laser_cannonR, SW.fixed_laser_cannon_R]
 	FlipWhenLoadingIDs = [SW.fixedlaserR, SW.fixed_laser_cannonR, SW.fixed_laser_cannon_R]
@@ -11,8 +11,8 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 	DescriptionKey = "Parts/fixedlasercannonDesc"
 
     //Groups&Categories
-	TypeCategories = [weapon, uses_power]//, is_crewed
 	EditorGroups = ["WeaponsEnergy", "SWTechI"]
+	TypeCategories = [weapon, uses_power]//, is_crewed
 
     //Resources&Size&Health
 	Resources
@@ -26,9 +26,6 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
     //Rects
 	//PhysicalRect = [0, 1, 1, 1]
 	//SaveRect = [0, 1, 1, 1]
-	IsFlippable = true
-	FlipHRotate = [0, 3, 2, 1] 
-	FlipVRotate = [2, 1, 0, 3]
 
     //Selections
 	SelectionPriority = 1
@@ -38,12 +35,16 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
     //PartSpecific
 	AIValueFactor = 2
 	InitialPenetrationResistance = 3
+	IsFlippable = true
+	FlipHRotate = [0, 3, 2, 1] 
+	FlipVRotate = [2, 1, 0, 3]
 
     //ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	ProhibitLeft = 1
 
     //Doors&Etc
+	MaxDoors = 2
 	AllowedDoorLocations
 	[
 		[1, 0]
@@ -65,10 +66,10 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
     //Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]//, PartCrew
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage]//, PartCrew
 			Mode = All
 		}
 
@@ -107,7 +108,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-		
+
 		MunitionType
 		{
 			Type = UIToggle
@@ -188,8 +189,8 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			InvertOperationalToggle = true
 			ShowProgressFor = SwitchWeaponCooldownTimer
 			Invert = true
-			LowColor = [0, 0, 0]
-			HighColor = [255, 255, 255]
+			LowColor = [255, 0, 0]
+			HighColor = [0, 255, 0]
 		}
 		SwitchWeaponCooldownTimer
 		{
@@ -238,7 +239,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			Type = Graphics
 			OperationalToggle = IsOperational
 			Rotation = 270d
-			Location = [.5, .5]
+			Location = [0.5, 0.5]
 			Floor
 			{
 				Layer = "floors"
@@ -276,7 +277,6 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 							"../common_graphics_1/doodads on8.png"
 						]
 						Size = [1, 1]
-//						UVRotation = 3
 						AnimationInterval = 0.1
 					}
 				]
@@ -288,8 +288,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 				[
 					{
 						File = "../common_graphics_1/doodads off.png"
-						Size = [1, 1]
-//						UVRotation = 3 
+						Size = [1, 1] 
 					}
 				]
 			}
@@ -301,7 +300,6 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 					{
 						File = "../common_graphics_1/lights.png"
 						Size = [1, 1]
-//						UVRotation = 3
 					}
 				]
 			}
@@ -333,19 +331,16 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 						File = "../common_graphics_1/roof.png"
 						NormalsFile = "../common_graphics_1/roof_normals.png"
 						Size = [1, 1]
-//						UVRotation = 3
 					}
 					{
 						File = "../common_graphics_1/roof_33.png"
 						NormalsFile = "../common_graphics_1/roof_normals_33.png"
 						Size = [1, 1]
-//						UVRotation = 3
 					}
 					{
 						File = "../common_graphics_1/roof_66.png"
 						NormalsFile = "../common_graphics_1/roof_normals_66.png"
 						Size = [1, 1]
-//						UVRotation = 3
 					}
 				]
 			}
@@ -395,9 +390,9 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		TurretGraphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational
+			Location = [0.5, 0]
 			ChainedTo = Turret
-			Location = [.5, 0]
+			OperationalToggle = IsOperational
 			Rotation = 90d
 			Walls
 			{
@@ -448,7 +443,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, .5]
+			Location = [0.5, 0.5]
 			Rotation = 270d
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
@@ -459,55 +454,46 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 					File = "../common_graphics_1/batteries0.png"
 					Size = [1, 1]
 					MirrorU = true 
-//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries1.png"
 					Size = [1, 1]
 					MirrorU = true
-//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries2.png"
 					Size = [1, 1]
 					MirrorU = true
-//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries3.png"
 					Size = [1, 1]
 					MirrorU = true
-//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries4.png"
 					Size = [1, 1]
 					MirrorU = true
-//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries5.png"
 					Size = [1, 1]
 					MirrorU = true
-//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries6.png"
 					Size = [1, 1]
 					MirrorU = true
-//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries7.png"
 					Size = [1, 1]
 					MirrorU = true
-//					UVRotation = 3
 				}
 				{
 					File = "../common_graphics_1/batteries8.png"
 					Size = [1, 1]
 					MirrorU = true
-//					UVRotation = 3
 				}
 			]
 		}
@@ -515,8 +501,8 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
+			Location = [0.5, 0.5]
 			Toggle = IsOperational
-			Location = [.5, .5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -524,16 +510,15 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
+			Location = [0.5, 0.5]
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [.5, .5]
 		}
 
-		Indicators
+		Indicators : ^/0/Indicators
 		{
 			Type = IndicatorSprites
-			Location = [.5, .5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
-			Indicators
+			Location = [0.5, 0.5]
+			Indicators : ^/0/Indicators
 			[
 				// Turned off.
 				{
@@ -565,8 +550,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			Offset = [-0.5, 0]
 		}
 	}
-
-   //Stats
+	//Stats
 	Stats
 	{
 		CrewRequired = 0 //&~/Part/Components/PartCrew/Crew
@@ -575,10 +559,10 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 
 		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
 		RecCrew = (&RecPower) * 2//(&CrewRequired) + 
-
 	}
+
 	StatsByCategory
-	[	
+	[
 		&~/TurretStats
 		&<red_fixedlaser.rules>/LaserStats
 		&<blue_fixedlaser.rules>/LaserStats
@@ -626,6 +610,7 @@ TurretStats
 			MinResourcesUsed = 50
 			Bullet = &/SW_SHOTS/bluesmalllasershot
 			Spread = [-2.5d, 2.5d]
+			AntiPhasingRaycastDistance = 1
 		}
 		ReloadProgressBarBase
 		{
@@ -711,7 +696,3 @@ TurretStats
 				QuadCount = 64
 			}
 		}
-
-
-
-
