@@ -1,0 +1,227 @@
+ID = SW.hyperplasma
+Layer = Tile
+StatusCombineMode = CombineValue
+//ValueCombiner
+//{
+//	Type = "NormalizedAdd"
+//	ValueRange = [0, 1000]
+//	InverseValueExponent = 0.9
+//	ReduceNegativeValues = false
+//	MinFactor = 0.1
+//}
+STATUS_TO_RESOURCE_RATIO = 1000
+RESOURCE_TO_STATUS_RATIO = 1 / (&STATUS_TO_RESOURCE_RATIO)
+ValueClampRange = [0, Infinity]
+RemoveAtMinValue = true
+TransferToUnderlyingOnPartDestroyed = true
+TickInterval = 0.5
+RequireValueRangeForTick = [350, Infinity]
+MediaIntensityValueType = Interpolated
+MediaIntensityInterpolationRange = [0, 1000]
+ClampMediaIntensity = false
+SoftRepair
+{
+	RepairType = Simultaneous
+	TargetValue = 0
+	WorkPerValueChange = 0.02
+	RegistrationValueRange = [350, infinity]
+	DeregistrationValueBuffer = 150
+}
+Diffusion
+{
+	Basis = 0
+	SpeedFactor = 0.003
+	MinDeltaThreshold = (&SpeedFactor) * 0.1
+	EmptyCellSpeedFactor = 0.0015
+	PartOutboundSpeedFactors
+	{
+		cosmoteer.structure = 100
+		cosmoteer.structure_1x3_wedge = &cosmoteer.structure
+		cosmoteer.structure_1x2_wedge = &cosmoteer.structure
+		cosmoteer.structure_tri = &cosmoteer.structure
+		cosmoteer.structure_wedge = &cosmoteer.structure
+	}
+}
+DamageResistances
+{
+	default {
+		MultiplyByStatusCount = false
+		Resistance
+		{
+			BaseValue = -1.25%
+			Modifiers
+			[
+				{
+					Type = StatusExponent
+					StatusType = SW.hyperplasma
+					ValueType = Raw
+					ModificationMode = Multiply
+					Exponent = 0.75
+				}
+			]
+		}
+	}
+	explosive = &default
+	salvage = &default
+}
+PenetrationResistanceModifier
+{
+	ModificationMode = Multiply
+	MultiplyByStatusCount = false
+	Resistance
+	{
+		BaseValue = 1
+		Modifiers
+		[
+			{
+				Type = ScaledStatusExponent
+				StatusType = SW.hyperplasma
+				ValueType = Raw
+				ModificationMode = Divide
+				BaseStatusValue = 1
+				Exponent = 0.5
+				Scale = 1/200
+			}
+		]
+	}
+}
+TickingEffects
+[
+	{
+		Type = Damage
+		Damage = 0
+		DamageType = thermal
+		DamagePerTileHealth
+		{
+			BaseValue = 1
+			Modifiers
+			[
+//				{
+//					Type = StatusRemap
+//					StatusType = SW.hyperplasma
+//					ModificationMode = Replace
+//					RemapFrom = [750, 1000]
+//					RemapTo = [0, 0.1]
+//				}
+				{
+					Type = StatusRemap
+					StatusType = SW.hyperplasma
+					ModificationMode = Multiply
+					RemapFrom = [700, 4600]
+					RemapTo = [0, 1]
+					Exponent = 2
+				}
+			]
+		}
+		Filter
+		{
+			Friendlies = true
+			Neutrals = true
+		}
+	}
+	{
+		Type = StatusApplication
+		StatusType = cosmoteer.fire
+		StatusChance
+		{
+			BaseValue = 0
+			Modifiers
+			[
+				{
+					Type = StatusRemap
+					StatusType = SW.hyperplasma
+					ModificationMode = Replace
+					RemapFrom = [350, 2500]
+					RemapTo = [0, 0.5]
+				}
+			]
+		}
+		ValueType = Interpolated
+		StatusValue
+		{
+			BaseValue = 1
+			Modifiers
+			[
+				{
+					Type = StatusRemap
+					StatusType = SW.hyperplasma
+					ModificationMode = Multiply
+					RemapFrom = [350, 2500]
+					RemapTo = [0, 1]
+				}
+			]
+		}
+		Filter
+		{
+			Friendlies = true
+			Neutrals = true
+		}
+	}
+]
+ValueModulators
+{
+	Modulators
+	[
+		{
+			Type = Constant
+			AffectedValueRange = [0, infinity]
+			Value = 0.05
+			ModificationMode = Subtract
+			ScaleByDeltaTime = true
+		}
+	]
+}
+ContinuousMediaEffects
+[
+	{
+		Type = TileQuad
+		Sprite
+		{
+			Texture
+			{
+				File = heatNoise2.png
+				MipLevels = max
+				SampleMode = Linear
+				UVMode = Wrap
+			}
+			_maskTexture
+			{
+				//File = "./Data/common_effects/particles/wet_light_cookie.png"
+				File = single_tile_square_mask.png
+				MipLevels = max
+				SampleMode = Linear
+			}
+			_noiseTexture2
+			{
+				File = heatNoise.png
+				MipLevels = max
+				SampleMode = Linear
+				UVMode = Wrap
+			}
+			Shader = hyperplasma.shader
+			_hotColor = [0, 204, 255, 255]
+			_coldColor = [0, 51, 127, 255]
+			_normalIntensity = 0.02; //lower is more intense, 0.02 for ship
+			TargetBlendMode
+			{
+				SourceRgbFactor = SourceAlpha
+				DestRgbFactor = InverseSourceAlpha
+				RgbOperator = Add
+				SourceAlphaFactor = Zero
+				DestAlphaFactor = One
+				AlphaOperator = Add
+			}
+		}
+		Bucket = Surface2
+		Inflate = 0.5
+		FadeInTime = 0
+		FadeOutTime = 0.5
+		IsFancyLight = true
+		CaptureBackBuffer = true
+		ColorOverIntensity
+		[
+			[0, 0, 0, 0]
+			[255, 255, 255, 255]
+		]
+    }
+]

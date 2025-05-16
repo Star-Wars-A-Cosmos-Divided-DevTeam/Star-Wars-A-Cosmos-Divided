@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_control_rooms.rules>/Part
 {
     //IDs
 	ID = SW.WarRoom
@@ -153,10 +153,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
     //Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage,  PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage,  PartCrew]
 			Mode = All
 		}
 
@@ -250,6 +250,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Interval = 10 // Drains 1 power every 10 seconds.
 		}
 
+		//temp fixi remove in 2,3 months started 16.01.2024
+		FtlBeaconBatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 0
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
 		CrewLocation1 //CircleTop
 		{
 			Type = CrewLocation
@@ -333,14 +342,31 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			//SwitchLocationInterval = [5, 10]
 		}
 
-		FloorGrid = &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_11/RDL
-
 		Graphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [3,3.5]
 
+			Location = [3,3.5]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [6, 7]
+					}
+					{
+						File = "floor_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "floor_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
 			OperationalLighting
 			{
 				Layer = "lights_add"
@@ -348,7 +374,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				[
 					{
 						File = "lights.png"
-						Size = [6, 7]
+						Size = [6,7]
 					}
 				]
 			}
@@ -363,7 +389,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"doodads1.png"
 							"doodads2.png"
 						]
-						Size = [6, 7]
+						Size = [6,7]
 						AnimationInterval = 0.80
 					}
 				]
@@ -465,12 +491,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Location = [3,3.5]
 		}
 
-		Indicators
+		Indicators : ^/0/Indicators
 		{
 			Type = IndicatorSprites
 			Location = [3, 3.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
-			Indicators
+			Indicators : ^/0/Indicators
 			[
 				// Turned off.
 				{
@@ -480,7 +505,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [4, 4]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
 				//Out of power.
 				{
@@ -523,4 +548,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
+	Features
+	[
+		CanBuffSWSensor
+	]
 }
