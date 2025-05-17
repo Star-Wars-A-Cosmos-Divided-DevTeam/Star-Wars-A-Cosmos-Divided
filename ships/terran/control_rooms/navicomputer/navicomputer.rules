@@ -32,7 +32,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
     //PartSpecific
 	AIValueFactor = 2
 	AutoDoorMaxPathLength = 5
-	SignificanceToggle = ScorchedToggle
+	//SignificanceToggle = ScorchedToggle
 
     //ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor]
@@ -60,10 +60,10 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
     //Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational// : ^/0/IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew, ScorchedToggle]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
 		// Not sure why this was here but I don't see any dependencies on it aside from sensor array which could be managed by the chain to IsOperational, then ASK.
@@ -85,14 +85,6 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			ToggleID = "on_off"
 			Default = 1
 			RequiresCommand = false
-		}
-
-		ScorchedToggle
-		{
-			Type = StatusToggle
-			StatusType = cosmoteer.scorched
-			MinStatusValue = 1
-			Invert = true
 		}
 
 		CommandConsumer
@@ -299,19 +291,10 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
 
-		ScorchedTrigger
+		ScorchedEffects : ^/0/ScorchedEffects
 		{
-			Type = ToggleTrigger
-			Toggle = ScorchedToggle
-			TriggerWhenOn = false
-		}
-
-		ScorchedEffects
-		{
-			Type = TriggeredEffects
-			Trigger = ScorchedTrigger
 			Location = &../DestroyedEffects/Location
-			MediaEffects = &/COMMON_EFFECTS/MedPartScorched
+			MediaEffects = &/COMMON_EFFECTS/MedPartScorched //Small Med Huge
 		}
 
 		DestroyedEffects
@@ -321,11 +304,11 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			Location = [1, 1]
 		}
 
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [1, 1]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{
@@ -335,7 +318,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [2,3]
+					HidesIndicators = [1,2]
 				}
 				// Out of power.
 				{
