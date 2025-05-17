@@ -157,87 +157,7 @@ Part : <base_part_terran_shields.rules>/Part
 			MinFromQuantityForConversion = 1
 			Interval = 1
 		}
-/**
-		OverloadStorage
-		{
-			Type = ResourceStorage
-			ResourceType = SW.fake
-			MaxResources = 4000
-			ToggleOnResources = 2000
-			ToggleOffResources = 0
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-		}
-		OverloadStorageBar
-		{
-			Type = ProgressBar
-			OperationalToggle = OverloadStorage
-			ShowProgressFor = OverloadStorage
-			LowColor = [48, 0, 64]
-			HighColor = [192, 0, 255]
-			Full = [192, 0, 255]
-			Height = 10
-		}
-		OverloadCooler
-		{
-			Type = ResourceConverter
-			FromStorage = OverloadStorage
-			OperationalToggle = OverloadStorage
-			FromQuantity = 200
-			MinFromQuantityForConversion = 100
-			Interval = 10/9
-		}
-		IsOverloadedToggle
-		{
-			Type = MultiToggle
-			Toggles = [OverloadStorage]
-			Mode = Any
-		}
 
-		OverloadTimer
-		{
-			Type = Timer
-			Duration = 10
-			AutoStart = true
-			StartTrigger = OverloadStorageIsOverloadingTrigger
-		}
-		
-		OverloadStorageIsOverloadingTrigger
-		{
-			Type = ThresholdTrigger
-			AmountFrom = OverloadStorage
-			MinAmount = 49%
-		}
-		OverloadStorageIsCooledOffTrigger
-		{
-			Type = ThresholdTrigger
-			AmountFrom = OverloadStorage
-			MaxAmount = 0%
-		}
-
-		IsOverloadedAndShouldExplode
-		{
-			Type = MultiToggle
-			Toggles = [IsOverloadedToggle, {Toggle = OverloadTimer, Invert = true}]
-			Mode = All
-		}
-
-		IsOverloadedAndShouldExplodeTrigger
-		{
-			Type = ToggleTrigger
-			Toggle = IsOverloadedAndShouldExplode
-			TriggerWhenOn = true
-			TriggerWhenOff = false
-			OperationalToggle = OverloadTimer
-			InvertOperationalToggle = true
-		}
-
-		OverloadDmgMultiplierValue
-		{
-			Type = MultiValue
-			Values = [BatteryStorage, OverloadStorage]
-			Mode = Add
-		}
-*/
 		ShieldColorType
 		{
 			Type = UIToggle
@@ -661,65 +581,24 @@ Part : <base_part_terran_shields.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
 
+		ScorchedEffects : ^/0/ScorchedEffects
+		{
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/MedPartScorched //Small Med Huge
+		}
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 			Location = [1, 1]
 		}
-/*
-		DestroyedEffects_Overload
-		{
-			Type = TriggeredEffects
-			ChainedTo = DestroyedEffects
-			Trigger = IsOverloadedAndShouldExplodeTrigger
-			IncludeWhenUnderConstruction = false
 
-			MediaEffects
-			[
-
-			]
-
-			FactorHitEffectsWith = OverloadDmgMultiplierValue
-			HitEffects
-			[
-				{
-					Type = ExplosiveDamage
-					TotalDamage = 32000
-					Radius = 3
-					Delay = .05
-					FireChancePerNDamage = 50%
-					ImpulsePerNDamage = 10
-					NDamage = 1000
-					Filter
-					{
-						OperationalHealth = true
-						StructuralHealth = false
-						Friendlies = true
-					}
-				}
-				{
-					Type = ExplosiveDamage
-					TotalDamage = 6400
-					Radius = 1
-					Delay = .05
-					ImpulsePerNDamage = 5
-					NDamage = 1000
-					Filter
-					{
-						OperationalHealth = false
-						StructuralHealth = true
-						Friendlies = true
-					}
-				}
-			]
-		}
-*/
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [1, 1]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{
