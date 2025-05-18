@@ -1,0 +1,79 @@
+BASE = &<mining_beam_huge_pink.rules>
+
+RANGE = (&~/BASE/Range) + 100
+RADIUS = 2
+DAMAGE_FACTOR = 75%
+SHIELD_DAMAGE_FACTOR = 200% / ((&RADIUS) * 2)
+RADIUS_FALLOFF = 0 
+
+Beam : BASE
+{
+	Range = &~/Range
+	IdealRange = ((&Range)*4/5)
+	
+	HitShield = &HitOperational
+	HitStructural = &HitOperational
+	HitOperational : ^/0/HitOperational
+	{
+		HitEffects
+		[
+			//Damage to enemy ships
+			: ~/BASE/HitOperational/HitEffects/0
+			{
+				Type = AreaDamage
+				Damage : ^/0/Damage { BaseValue = ceil((&^/0/BaseValue) * (&~/DAMAGE_FACTOR)) }
+				Radius = &~/RADIUS
+				RectType = Normal
+				Falloff = &~/RADIUS_FALLOFF
+				Filter : ^/0/Filter
+				{
+					Shields = false
+				}
+			}
+			//Damage to enemy shields
+			: ~/BASE/HitOperational/HitEffects/0
+			{
+				Type = AreaDamage
+				Damage : ^/0/Damage { BaseValue = ceil((&^/0/BaseValue) * (&~/SHIELD_DAMAGE_FACTOR)) }
+				Radius = &~/RADIUS
+				Falloff = &~/RADIUS_FALLOFF
+				Filter : ^/0/Filter
+				{
+					OperationalHealth = false
+					StructuralHealth = false
+				} 
+			}
+			//Damage to junk
+			: ~/BASE/HitOperational/HitEffects/1
+			{
+				Type = AreaDamage
+				Damage : ^/0/Damage { BaseValue = ceil((&^/0/BaseValue) * (&~/DAMAGE_FACTOR)) }
+				Radius = &~/RADIUS
+				RectType = Normal
+				Falloff = &~/RADIUS_FALLOFF
+			}
+			//Damage to junk armor
+			: ~/BASE/HitOperational/HitEffects/2
+			{
+				Type = AreaDamage
+				Damage : ^/0/Damage { BaseValue = ceil((&^/0/BaseValue) * (&~/DAMAGE_FACTOR)) }
+				Radius = &~/RADIUS
+				RectType = Normal
+				Falloff = &~/RADIUS_FALLOFF
+			}
+			//Damage to asteroids
+			: ~/BASE/HitOperational/HitEffects/3
+			{
+				Type = AreaDamage
+				Damage : ^/0/Damage { BaseValue = ceil((&^/0/BaseValue) * (&~/DAMAGE_FACTOR)) }
+				Radius = &~/RADIUS
+				RectType = Normal
+				Falloff = &~/RADIUS_FALLOFF
+			}
+		]
+		MediaEffects
+		[
+			&/SW_PARTICLES/Beam/Mining/RadialHit/Sparks/Pink
+		]
+	}
+}
