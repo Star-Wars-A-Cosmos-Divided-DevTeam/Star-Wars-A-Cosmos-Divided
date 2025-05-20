@@ -5,6 +5,7 @@ Components
 			Type = ArcShield
 			Radius = &<../ShieldTuner.rules>/Giga/Radius
 			Arc = &<../ShieldTuner.rules>/All/Arc
+			Rotation = -90d
 			OperationalToggle = IsOperational
 			BlockedByOperationalParts = &<../ShieldTuner.rules>/All/BlockedByOperationalParts
 			DrainResourcesFrom = BatteryStorage
@@ -21,6 +22,7 @@ Components
 					SampleMode = Linear
 					MipLevels = 1
 				}
+				_xScale = &<ShieldTuner.rules>/Giga/_xScale
 				Size = &<../ShieldTuner.rules>/Giga/Size
 				Color = [0, 0, 255, 127]
 			}
@@ -39,7 +41,6 @@ Components
 				Color = [255, 255, 255, 127]
 			}
 			CoverageArcSpriteSegments = 64
-			Rotation = -90d
 
 			ShieldMediaEffects
 			[
@@ -50,6 +51,8 @@ Components
 					FadeInTime = .25
 					FadeOutTime = .25
 					FadeFromScale = .8
+					//ArcAngleAffectsUVs = true
+					UPerNinetyDegrees = 1
 					ArcSprite
 					{
 						Texture
@@ -84,12 +87,13 @@ Components
 						_fullPowerColor2 = &<../ShieldTuner.rules>/Purple/_fullPowerColor2
 						_lowPowerColor2 = &<../ShieldTuner.rules>/Purple/_lowPowerColor2
 						_lowPowerThicknessExponent = &<../ShieldTuner.rules>/All/_lowPowerThicknessExponent
-						TargetBlendMode = Add
 						_xScale = &<../ShieldTuner.rules>/Giga/_xScale
+						_hexDamageIntensity = 0.5
+						TargetBlendMode = Add
 						Size = &<../ShieldTuner.rules>/Giga/Size
 					}
 					ArcSpriteSegments = 64
-					Bucket = Lower1
+					Bucket = Lower2
 				}
 
 				: /BASE_SOUNDS/AudioExteriorDetail
@@ -107,7 +111,7 @@ Components
 					IgnoreIntensity = true
 				}
 			]
-			
+
 			HitMediaEffects
 			[
 				{
@@ -144,15 +148,15 @@ Components
 						_waveAlpha = 0.75*(&<../ShieldTuner.rules>/All/_waveAlpha)
 						_waveCurveInterval = &<../ShieldTuner.rules>/Giga/_waveCurveInterval
 						_waveCurveMagnitude = (5/7)*(&<../ShieldTuner.rules>/Giga/_waveCurveMagnitude)
+						_waveCurveUOffsetPerSecond = 0
 						_fullPowerColor1 = &<../ShieldTuner.rules>/Purple/_fullPowerColor1
 						_lowPowerColor1 = &<../ShieldTuner.rules>/Purple/_lowPowerColor1
 						_fullPowerColor2 = &<../ShieldTuner.rules>/Purple/_fullPowerColor2
 						_lowPowerColor2 = &<../ShieldTuner.rules>/Purple/_lowPowerColor2
-						_waveCurveUOffsetPerSecond = 0
 						_lowPowerThicknessExponent = &<../ShieldTuner.rules>/All/_lowPowerThicknessExponent
-						TargetBlendMode = Add
 						_xScale = &<../ShieldTuner.rules>/Giga/_xScale
 						Size = &<../ShieldTuner.rules>/Giga/Size
+						TargetBlendMode = Add
 					}
 					ArcSpriteSegments = 6
 					Bucket = Upper3
@@ -160,10 +164,139 @@ Components
 				&/SW_SOUNDS/ShieldHit
 			]
 		}
-
-		ArcShield90 : ArcShield
+		
+		OverclockEffect
 		{
-			Rotation = 90d
+			Type = ShieldArcsMimic
+			Shield = ArcShield
+			ChainedTo = ArcShield
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			MimicFadeInStartTime = false
+			OperationalToggle = OverclockedEffectToggle
+			ContinuousEffects
+			[
+				{
+					Type = ArcShield
+					Radius = &~/Components/ArcShield/Radius
+					Arc = &~/Components/ArcShield/Arc
+					FadeInTime = .25
+					FadeOutTime = .25
+					FadeFromScale = 1.025
+					ArcSprite
+					{
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_oc.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
+						_waveTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_maskTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_mask_oc.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						_waveSpeed = 1*(&<../ShieldTuner.rules>/Giga/_waveSpeed)
+						_waveAlpha = 1*(&<../ShieldTuner.rules>/All/_waveAlpha)
+						_waveCurveInterval = &<../ShieldTuner.rules>/Giga/_waveCurveInterval
+						_waveCurveMagnitude = (5/7)*(&<../ShieldTuner.rules>/Giga/_waveCurveMagnitude)
+						_waveCurveUOffsetPerSecond = .2
+						_fullPowerColor1 = [203, 80, 33, 127]
+						_lowPowerColor1 = [255, 0, 0, 127]
+						_fullPowerColor2 = [255, 134, 36, 255]
+						_lowPowerColor2 = [255, 50, 0, 127]
+						_lowPowerThicknessExponent = &<../ShieldTuner.rules>/All/_lowPowerThicknessExponent
+						_xScale = &<../ShieldTuner.rules>/Giga/_xScale
+						Size = &<../ShieldTuner.rules>/Giga/Size
+						_hexDamageIntensity = 0.8
+						TargetBlendMode = Add
+					}
+					ArcSpriteSegments = 64
+					Bucket = Lower1
+				}
+			]
+		}
+		
+		OverloadEffect
+		{
+			Type = ShieldArcsMimic
+			Shield = ArcShield
+			ChainedTo = ArcShield
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			FactorRedVertexColorWith = OverloadValue
+			OperationalToggle = IsOperationalOverloaded
+			ContinuousEffects
+			[
+				{
+					Type = ArcShield
+					Radius = &~/Components/ArcShield/Radius
+					Arc = &~/Components/ArcShield/Arc
+					FadeInTime = 0.5
+					FadeOutTime = 0.5
+					FadeFromScale = .8
+					//ArcAngleAffectsUVs = true
+					//UPerNinetyDegrees = 1
+					ArcSprite
+					{
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_overload.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						Shader = "./Data/ships/terran/shield_gen_small/shield_overload.shader"
+						_noiseTex1
+						{
+							File = "./Data/statuses/fire/particles/fire_noise.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_noiseTex2
+						{
+							File = "./Data/statuses/fire/particles/fire_noise.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_baseShieldTex
+						{
+							File = ./Data/ships/terran/shield_gen_small/shield_mask.png
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						_waveSpeed = 1*(&<../ShieldTuner.rules>/Giga/_waveSpeed)
+						_waveAlpha = 1*(&<../ShieldTuner.rules>/All/_waveAlpha)
+						_waveCurveInterval = &<../ShieldTuner.rules>/Giga/_waveCurveInterval
+						_waveCurveMagnitude = (5/7)*(&<../ShieldTuner.rules>/Giga/_waveCurveMagnitude)
+						_waveCurveUOffsetPerSecond = .2
+						
+						_color1 = [255, 0, 255 * 0.31, 0]
+						_color2 = [255, 255 * 0.41, 0, 0]
+						_maxGreen = 0.9
+						
+						_xScale = &<../ShieldTuner.rules>/Giga/_xScale
+						_gradientXWidth = 1.05
+						Size = &<../ShieldTuner.rules>/Giga/Size
+						_hexDamageIntensity = 0.8
+						TargetBlendMode = Add
+					}
+					ArcSpriteSegments = 64
+					Bucket = Lower1
+				}
+			]
 		}
 
 		EmitterEffect
@@ -175,7 +308,7 @@ Components
 			MaxMediaEffectsZoom = 20
 			Location = [0, (&<../ShieldTuner.rules>/Giga/Size/1)/2]
 			OperationalToggle = ShieldEmitterEffectToggleAndIsOperational
-			BlockedByOperationalParts = &<../ShieldTuner.rules>/All/BlockedByOperationalParts
+			//BlockedByOperationalParts = &<../ShieldTuner.rules>/All/BlockedByOperationalParts
 			ParentToShip = true
 			MediaEffects
 			[
@@ -220,6 +353,7 @@ Components
 						_fullPowerColor2 = &<../ShieldTuner.rules>/Purple/_fullPowerColor2
 						_lowPowerColor2 = &<../ShieldTuner.rules>/Purple/_lowPowerColor2
 						_lowPowerThicknessExponent = &<../ShieldTuner.rules>/All/_lowPowerThicknessExponent
+						_hexDamageIntensity = 0.5
 						TargetBlendMode = Add
 						_xScale = (&<../ShieldTuner.rules>/Giga/_xScale)/8
 						Size = [0, (&<../ShieldTuner.rules>/Giga/Size/1)/2]
@@ -228,6 +362,23 @@ Components
 					Bucket = Upper1
 				}
 			]
+		}
+
+		ArcShield90 : ArcShield
+		{
+			Rotation = 90d
+		}
+
+		OverclockEffect90 : OverclockEffect
+		{
+			Shield = ArcShield90
+			ChainedTo = ArcShield90
+		}
+
+		OverloadEffect90 : OverloadEffect
+		{
+			Shield = ArcShield90
+			ChainedTo = ArcShield90
 		}
 
 		EmitterEffect90 : EmitterEffect
