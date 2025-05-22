@@ -66,7 +66,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
-		// Not sure why this was here but I don't see any dependencies on it aside from sensor array which could be managed by the chain to IsOperational, then ASK.
+
 		IsOperationalAndCommandToggle
 		{
 			Type = MultiToggle
@@ -94,21 +94,31 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			CommandPoints = 0
 		}
 
-		BuffProvider
+		GridBuffProvider
 		{
 			Type = GridBuffProvider
 			BuffType = SW_Sensor
-			BuffAmount = 50%
+			BuffAmount = 40%
 			GridDistance = 1000
 			OperationalToggle = IsOperational
+		}
+
+		SelfBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType =	SW_Sensor
+			ChainsFromBuffType = SW_Sensor
+			BuffAmount = { BaseValue=100%; BuffType=SW_Sensor; BuffMode=Add; }
 		}
 
 		Sensor
 		{
 			Type = Sensor
 			OperationalToggle = IsOperationalAndCommandToggle
-			SightRadius = { BaseValue=480; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 960 } //640
-			RadarRadius = { BaseValue=1600; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 3200} //2100
+			SightRadius 
+			{ BaseValue=400; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 1200 } //640
+			RadarRadius
+			{ BaseValue=1200; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 3600 } //2100
 		}
 
 		BatteryStorage
