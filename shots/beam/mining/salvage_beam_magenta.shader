@@ -3,22 +3,22 @@
 struct VERT_OUTPUT_BEAM
 {
 	float4 location : SV_POSITION;
-	float length : POSITION3;
+    float length : POSITION3;
 	float4 color : COLOR0;
-	float intensity : COLOR1;
+    float intensity : COLOR1;
 	float2 uv : TEXCOORD0;
 	float beamTime : TEXCOORD1;
 };
 
 VERT_OUTPUT_BEAM vert(in VERT_INPUT_BEAM input)
 {
-	VERT_OUTPUT_BEAM output;
-	float4 vertexLoc = calculateWorldVertexLoc(input);
+    VERT_OUTPUT_BEAM output;
+    float4 vertexLoc = calculateWorldVertexLoc(input);
 	output.location = mul(vertexLoc, _transform);
-	output.length = input.length;
+    output.length = input.length;
 	output.color = input.color * _color;
-	output.color.a *= input.fadeAlpha;
-	output.intensity = input.intensity;
+    output.color.a *= input.fadeAlpha;
+    output.intensity = input.intensity;
 	output.uv = input.uv;
 	output.beamTime = input.beamTime;
 	return output;
@@ -54,8 +54,8 @@ PIX_OUTPUT pix(in VERT_OUTPUT_BEAM input) : SV_TARGET
 
 
 	const float3 COLOR_A = float3(1, 0, 0.39); //float3(1, 0.34, 0);
-	const float3 COLOR_B = float3(1, 0.32, 0.49); //float3(1, 0.45, 0.23);
-	float3 gradientColor = float3(1, 0.64, 0.92) * gradient * _gradientIntensity;
+	const float3 COLOR_B = float3(1, 0.26, 0.52); //float3(1, 0.45, 0.23);
+	float3 gradientColor = float3(1, 0.71, 1.06) * gradient * _gradientIntensity; //float3(1, 0.92, 0.62);
 	float2 texUVs;
 	if (input.uv.y >= 0.5)
 	{
