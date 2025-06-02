@@ -1,0 +1,229 @@
+Part : <../base_part_terran.rules>/Part
+{
+	NameKey = "Parts/HeatPipeCrossing"
+	IconNameKey = "Parts/HeatPipeCrossingIcon"
+	ID = cosmoteer.heat_pipe_crossing
+	EditorGroup = "Thermal"
+	EditorParentParts = [ "cosmoteer.resonance_beam_turret" ]
+	DescriptionKey = "Parts/HeatPipeCrossingDesc"
+	Resources
+	[
+		[steel, 4]
+		[coil, 2]
+	]
+	Size = [1, 1]
+	IsRotateable = true
+	SelectionPriority = 0
+	MaxHealth = 1000
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	AllowedDoorLocations
+	[
+		[-1, 0], [1, 0]
+	]
+	CrewSpeedFactor = .8
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+	Components : ^/0/Components
+	{
+		Port_Up
+		{
+			Type = NetworkPort
+			Location = [0, 0]
+			Direction = Up
+			Types = [ thermal ]
+		}
+		
+		Port_Down : Port_Up
+		{
+			Direction = Down
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [.5, .5]
+		}
+
+		Router
+		{
+			Type = NetworkRouter
+			RouteGenerators
+			[
+				{
+					Type = Bidirectional
+					Routes
+					[
+						[Port_Up, Port_Down, 0]
+						
+						[Port_Up, NetworkAverageThermalDissipationLoadValue, 0]
+					]
+				}
+			]
+		}
+
+		NetworkAverageThermalDissipationLoadValue
+		{
+			Type = NetworkValueReceiver
+			Mode = Average
+			Categories = [ thermal_load_dissipation ]
+			AllowUncategorized = false
+		}
+		
+		ThermalLoadGlowColorFactor
+		{
+			Type = ValueColor
+			AlphaFrom = NetworkAverageThermalDissipationLoadValue
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "doodads.png"
+						Size = [1, 1]
+					}
+					{
+						File = "doodads_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "doodads_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [1, 1]
+					}
+					{
+						File = "walls_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "walls_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+
+		HeatGlow_Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			GetColorFrom = ThermalLoadGlowColorFactor
+			OperationalDoodad
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "pipe_glows.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "roof_glows.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_glows_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_glows_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+
+		//------------------------ PIPE CONNECTOR ------------------------
+		Dont_Draw_Pipe_Connector_Into_This_Part { Type = Graphics }	//When this fake component is present, the Heat Pipes dont draw a Pipe Conector to this part.
+
+		//Draw a Pipe Connector Up if possible
+		PipeConnectorUp_DrawToggle : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorUp_DrawToggle {}
+		PipeConnectorUp_Toggle : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorUp_Toggle {}
+		PipeConnectorUp_Components : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorUp_Components {}
+
+		//Draw a Pipe Connector Down if possible
+		PipeConnectorDown_DrawToggle : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorDown_DrawToggle {}
+		PipeConnectorDown_Toggle : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorDown_Toggle {}
+		PipeConnectorDown_Components : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorDown_Components {}
+		//---------------------- END PIPE CONNECTOR ----------------------
+	}
+}
