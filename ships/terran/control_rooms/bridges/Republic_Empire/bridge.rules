@@ -122,7 +122,7 @@ Part : &<../base_part_terran_bridges.rules>/Part
 			MinFromQuantityForConversion = 1
 			Interval = 10 // Drains 1 power every 10 seconds.
 		}
-
+		/*
 		BuffProvider
 		{
 			Type = GridBuffProvider
@@ -138,6 +138,14 @@ Part : &<../base_part_terran_bridges.rules>/Part
 			OperationalToggle = IsOperationalAndCommandToggle
 			SightRadius = { BaseValue=1200; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=2400; } //was 1500
 			RadarRadius = { BaseValue=2100; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=4200;  } //was 6750
+		}
+		*/
+		Sensor
+		{
+			Type = Sensor
+			OperationalToggle = IsOperationalAndCommandToggle
+			SightRadius = 1500
+			RadarRadius = 6750
 		}
 
 		CrewLocation1 //Front "Captian"
@@ -617,8 +625,8 @@ Part : &<../base_part_terran_bridges.rules>/Part
 		CrewRequired = (&~/Part/Components/PartCrewCaptian/Crew) + (&~/Part/Components/PartCrewNavigatorsL/Crew) + (&~/Part/Components/PartCrewNavigatorsR/Crew) + (&~/Part/Components/PartCrewOfficers/Crew)
 		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		SightRange = &~/Part/Components/Sensor/SightRadius/BaseValue
-		RadarRange = &~/Part/Components/Sensor/RadarRadius/BaseValue
+		SightRange = &~/Part/Components/Sensor/SightRadius // /BaseValue
+		RadarRange = &~/Part/Components/Sensor/RadarRadius // /BaseValue
 
 		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
