@@ -93,7 +93,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			OperationalToggle = PowerToggle
 			CommandPoints = 0
 		}
-
+		/*
 		GridBuffProvider
 		{
 			Type = GridBuffProvider
@@ -119,6 +119,14 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			{ BaseValue=400; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 1200 } //640
 			RadarRadius
 			{ BaseValue=1200; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 3600 } //2100
+		}
+		*/
+		Sensor
+		{
+			Type = Sensor
+			OperationalToggle = IsOperationalAndCommandToggle
+			SightRadius = 640
+			RadarRadius = 2100
 		}
 
 		BatteryStorage
@@ -364,8 +372,8 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		SightRange = &~/Part/Components/Sensor/SightRadius/BaseValue
-		RadarRange = &~/Part/Components/Sensor/RadarRadius/BaseValue
+		SightRange = &~/Part/Components/Sensor/SightRadius // /BaseValue
+		RadarRange = &~/Part/Components/Sensor/RadarRadius // /BaseValue
 
 		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
