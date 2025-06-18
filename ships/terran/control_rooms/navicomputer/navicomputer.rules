@@ -1,20 +1,20 @@
 Part : &<../base_part_terran_control_rooms.rules>/Part
 {
-    //IDs
+	//IDs
 	ID = SW.navicomputer
 	OtherIDs = ["navicomputer"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/Navicomputer"
 	IconNameKey = "Parts/NavicomputerIcon"
 	DescriptionKey = "Parts/NavicomputerDesc"
 
-    //Groups&Categories
+	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechII"]
 	TypeCategories : ^/0/TypeCategories [navicomputer, uses_power, is_crewed, SW_Navicomputer, SW_Tech_II]
 	RequiresCategories = []
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 32]
@@ -25,16 +25,16 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 	Size = [2, 2]
 	MaxHealth = 4000
 
-    //Selections
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeID = "SW_navicomputer"
 
-    //PartSpecific
+	//PartSpecific
 	AIValueFactor = 2
 	AutoDoorMaxPathLength = 5
-	SignificanceToggle = ScorchedToggle
+	
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor]
 
 	//Doors&Etc
@@ -42,8 +42,8 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 	[
 		[-1, 1]
 		[2, 1]
-        [1, 2]
-        [0, 2]
+		[1, 2]
+		[0, 2]
 	]
 
 	//Editor
@@ -57,16 +57,16 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		Size = [48, 48]
 	}
 
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational// : ^/0/IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew, ScorchedToggle]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
-		// Not sure why this was here but I don't see any dependencies on it aside from sensor array which could be managed by the chain to IsOperational, then ASK.
+
 		IsOperationalAndCommandToggle
 		{
 			Type = MultiToggle
@@ -87,36 +87,46 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			RequiresCommand = false
 		}
 
-		ScorchedToggle
-		{
-			Type = StatusToggle
-			StatusType = cosmoteer.scorched
-			MinStatusValue = 1
-			Invert = true
-		}
-
 		CommandConsumer
 		{
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
 			CommandPoints = 0
 		}
-
-		BuffProvider
+		/*
+		GridBuffProvider
 		{
 			Type = GridBuffProvider
 			BuffType = SW_Sensor
-			BuffAmount = 50%
+			BuffAmount = 40%
 			GridDistance = 1000
 			OperationalToggle = IsOperational
+		}
+
+		SelfBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType =	SW_Sensor
+			ChainsFromBuffType = SW_Sensor
+			BuffAmount = { BaseValue=100%; BuffType=SW_Sensor; BuffMode=Add; }
 		}
 
 		Sensor
 		{
 			Type = Sensor
 			OperationalToggle = IsOperationalAndCommandToggle
-			SightRadius = { BaseValue=480; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 960 } //640
-			RadarRadius = { BaseValue=1600; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 3200} //2100
+			SightRadius 
+			{ BaseValue=400; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 1200 } //640
+			RadarRadius
+			{ BaseValue=1200; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 3600 } //2100
+		}
+		*/
+		Sensor
+		{
+			Type = Sensor
+			OperationalToggle = IsOperationalAndCommandToggle
+			SightRadius = 640
+			RadarRadius = 2100
 		}
 
 		BatteryStorage
@@ -299,19 +309,10 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
 
-		ScorchedTrigger
+		ScorchedEffects : ^/0/ScorchedEffects
 		{
-			Type = ToggleTrigger
-			Toggle = ScorchedToggle
-			TriggerWhenOn = false
-		}
-
-		ScorchedEffects
-		{
-			Type = TriggeredEffects
-			Trigger = ScorchedTrigger
 			Location = &../DestroyedEffects/Location
-			MediaEffects = &/COMMON_EFFECTS/MedPartScorched
+			MediaEffects = &/COMMON_EFFECTS/MedPartScorched //Small Med Big Huge
 		}
 
 		DestroyedEffects
@@ -321,11 +322,11 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			Location = [1, 1]
 		}
 
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [1, 1]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{
@@ -335,7 +336,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [2,3]
+					HidesIndicators = [1,2]
 				}
 				// Out of power.
 				{
@@ -371,8 +372,8 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		SightRange = &~/Part/Components/Sensor/SightRadius/BaseValue
-		RadarRange = &~/Part/Components/Sensor/RadarRadius/BaseValue
+		SightRange = &~/Part/Components/Sensor/SightRadius // /BaseValue
+		RadarRange = &~/Part/Components/Sensor/RadarRadius // /BaseValue
 
 		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4

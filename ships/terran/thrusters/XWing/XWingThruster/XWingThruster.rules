@@ -4,16 +4,16 @@ Part : &<../base_part_terran_thrusters_xwing.rules>/Part
 	ID = SW.XWingThruster
 	OtherIDs = ["XWingThruster"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/XWingThrusterDual"
 	IconNameKey = "Parts/XWingThrusterDualIcon"
 	DescriptionKey = "Parts/XWingThrusterDualDesc"
 
-    //Groups&Categories
+	//Groups&Categories
 	EditorGroups = ["Flight", "SWTechI"]
 	TypeCategories = [thruster, ion_thruster, uses_power, XWingThruster]
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 50]//125%*40 of vanilla
@@ -22,7 +22,7 @@ Part : &<../base_part_terran_thrusters_xwing.rules>/Part
 	Size = [5, 1]
 	MaxHealth = 7200 //80%*9000 of vanilla
 
-    //Rects
+	//Rects
 	GenerateRectCollider = true
 	ExternalWallsByCell
 	[
@@ -83,13 +83,13 @@ Part : &<../base_part_terran_thrusters_xwing.rules>/Part
 		[default, [3, 1, 2, 8]]
 	]
 
-    //Selections
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	//SelectionTypeRotations = [0, 1, 3]
 	SelectionTypeID = "ion_thrusters"
 
-    //PartSpecific
+	//PartSpecific
 	AllowedContiguity = [Top]
 	IsWalled = true
 	IsSelfDestructible = false
@@ -97,19 +97,20 @@ Part : &<../base_part_terran_thrusters_xwing.rules>/Part
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
 	ThrusterForce = 12800/2 //160%*8000 of vanilla
 	ThrustIncreaseTime = 4.8 //custom
+	ThrustDecreaseTime = 2.7 //custom
 	ThrustRecoveryTime = 2.1 //custom
 	FuelUsage = 256/2 //160%*40%*400 of vanilla
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution]
 
-    //Doors&Etc
+	//Doors&Etc
 	AllowedDoorLocations
 	[
 		[2, -1]
 	]
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -120,7 +121,7 @@ Part : &<../base_part_terran_thrusters_xwing.rules>/Part
 		Size = [64, 89.66]
 	}
 
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 		Collider
@@ -184,7 +185,7 @@ Part : &<../base_part_terran_thrusters_xwing.rules>/Part
 			Toggle = EngineBuffToggle
 			Invert = true
 			IncludeInBlueprints = true
-			//IncludeInBlueprints = true //added 0.27.0_rc2_steam - unsure if this applies
+			//IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -650,6 +651,7 @@ Part : &<../base_part_terran_thrusters_xwing.rules>/Part
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
 			AllowAutoFire = false
@@ -663,6 +665,7 @@ Part : &<../base_part_terran_thrusters_xwing.rules>/Part
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelUsagePerSecond = (&../../FuelUsage)*0.81//Penalty for reverse Thrust
 			AllowAutoFire = false
@@ -812,11 +815,11 @@ Part : &<../base_part_terran_thrusters_xwing.rules>/Part
 			Location = [2.5, 0.5]
 		}
 
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [2.5, 0.5]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{
