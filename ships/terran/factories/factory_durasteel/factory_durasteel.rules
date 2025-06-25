@@ -1161,23 +1161,29 @@ Part : &<../base_part_terran_factories.rules>/Part
 	Stats
 	{
 		DuraSteelProduction = (&~/Part/Components/ResourceConverter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+
 		DuraSteelCapacity = (&~/Part/Components/DuraSteelStorage/GridRect/2) * (&~/Part/Components/DuraSteelStorage/GridRect/3) * (&<../../../../Resources/durasteel/durasteel.rules>/MaxStackSize)
 		SteelCapacity = (&~/Part/Components/SteelStorage/GridRect/2) * (&~/Part/Components/SteelStorage/GridRect/3) * (&<./Data/resources/steel/steel.rules>/MaxStackSize)
-		SteelPerDuraSteel = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
-		SteelPerSecond = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
-		DuraSteelSteelUsage = [&../SteelPerDuraSteel, &../SteelPerSecond]
 		CarbonCapacity = (&~/Part/Components/CarbonStorage/GridRect/2) * (&~/Part/Components/CarbonStorage/GridRect/3) * (&<./Data/resources/carbon/carbon.rules>/MaxStackSize)
-		CarbonPerDuraSteel = (&~/Part/Components/CarbonSplitter/FromQuantity) / (&~/Part/Components/CarbonSplitter/ToQuantity)
-		CarbonPerSecond = (&~/Part/Components/CarbonSplitter/FromQuantity) / (&~/Part/Components/CarbonSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
-		DuraSteelCarbonUsage = [&../CarbonPerDuraSteel, &../CarbonPerSecond]
 		ZersiumCapacity = (&~/Part/Components/ZersiumStorage/GridRect/2) * (&~/Part/Components/ZersiumStorage/GridRect/3) * (&<../../../../Resources/zersium/zersium.rules>/MaxStackSize)
-		ZersiumPerDuraSteel = (&~/Part/Components/ZersiumSplitter/FromQuantity) / (&~/Part/Components/ZersiumSplitter/ToQuantity)
-		ZersiumPerSecond = (&~/Part/Components/ZersiumSplitter/FromQuantity) / (&~/Part/Components/ZersiumSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+
+		SteelPerDuraSteel = (&~/Part/Components/SteelSplitter/Quantity) / (&~/Part/Components/SteelSplitter/ToQuantity) * (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+		CarbonPerDuraSteel = (&~/Part/Components/CarbonSplitter/FromQuantity) / (&~/Part/Components/CarbonSplitter/ToQuantity) * (&~/Part/Components/ResourceConverter/From/1/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+		ZersiumPerDuraSteel = (&~/Part/Components/ZersiumSplitter/FromQuantity) / (&~/Part/Components/ZersiumSplitter/ToQuantity) * (&~/Part/Components/ResourceConverter/From/1/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+
+		SteelPerSecond = SteelPerDuraSteel / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+		CarbonPerSecond = CarbonPerDuraSteel / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+		ZersiumPerSecond = ZersiumPerDuraSteel / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+
+		DuraSteelSteelUsage = [&../SteelPerDuraSteel, &../SteelPerSecond]
+		DuraSteelCarbonUsage = [&../CarbonPerDuraSteel, &../CarbonPerSecond]
 		DuraSteelZersiumUsage = [&../ZersiumPerDuraSteel, &../ZersiumPerSecond]
+
 		PowerPerDuraSteel = (&~/Part/Components/ResourceConverter/From/2/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity) / 1000
 		PowerPerSecond = (&~/Part/Components/ResourceConverter/From/2/Quantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue) / 1000
 		DuraSteelPowerUsage = [&../PowerPerDuraSteel, &../PowerPerSecond]
 		PowerCapacity = (&~/Part/Components/CombinedBatteryStorage/MaxResources) / 1000
+
 		FactoryBuff = (&~/Part/Components/BuffProvider/BuffAmount) * 100
 
 		RecPower = &PowerPerSecond
