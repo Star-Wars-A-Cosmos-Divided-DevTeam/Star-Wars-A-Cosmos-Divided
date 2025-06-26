@@ -17,7 +17,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 	//Resources&Size&Health
 	Resources
 	[
-		[steel, 32]
+		[steel, 48]
 	]
 	Size = [2, 2]
 	MaxHealth = 1000
@@ -44,7 +44,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [32, 32]
+		Size = [64, 64]
 	}
 
 	//Components&Inheritance
@@ -55,15 +55,18 @@ Part : &<../base_part_terran_storages.rules>/Part
 			Type = FlexResourceGrid
 			GridRect = [0, 0, 2, 2]
 			Layer = "doodads_low"
-			SpriteInset = 8/64
+			SpriteInset = 0/64
 			RandomSpriteRotation = true
 			AllowExternalPickupAndDelivery = false
 		}
 
 		WallsBlend : <./Data/ships/terran/walls/walls.rules>
 		{
-			Type = BlendSprite
-			Location = [.5, .5]
+			Type = BlendSpriteGrid
+			Location = [0.5, 0.5]
+			GridSize = &~/Part/Size
+			AllowUndefinedBlendSprites = true
+			AlwaysBlendWithSelf = true
 			BlendsWithCategories = [corridor]
 		}
 
@@ -72,33 +75,16 @@ Part : &<../base_part_terran_storages.rules>/Part
 			GridSize = &~/Part/Size
 		}
 
+		RoofGrid : &/SW_GRAPHICS/RoofGrid/GridSize_1x1/Roof_Vanilla/RDL
+		{
+			GridSize = &~/Part/Size
+		}
+
 		Graphics
 		{
 			Type = Graphics
-			Location = [0.5, 0.5]
-			Roof
-			{
-				Layer = "roofs"
-				RandomUVRotation = true
-				DamageLevels
-				[
-					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
-						Size = [2, 2]
-					}
-					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
-						Size = [2, 2]
-					}
-				]
-			}
+			OperationalToggle = IsOperational
+			Location = [1, 1]
 			NonOperationalDoodad
 			{
 				Layer = "doodads_high"
@@ -116,7 +102,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
-			Location = [2, 2]
+			Location = [1, 1]
 		}
 
 		Blueprints
@@ -124,12 +110,6 @@ Part : &<../base_part_terran_storages.rules>/Part
 			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [2, 2]
-		}
-
-		BlueprintWalls : &<./Data/ships/terran/walls/blueprint_walls.rules>
-		{
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [corridor]
 		}
 	}
 
