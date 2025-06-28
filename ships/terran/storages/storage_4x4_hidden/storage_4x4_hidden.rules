@@ -1,13 +1,13 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_storages.rules>/Part
 {
 	//IDs
-	ID = SW.storage_1x1_rojama
+	ID = SW.storage_4x4_hidden
 	OtherIDs = []
 
 	//StringKeys
-	NameKey = "Parts/Storage1x1Int"
-	IconNameKey = "Parts/Storage1x1IntIcon"
-	DescriptionKey = "Parts/Storage1x1IntDesc"
+	NameKey = "Parts/Storage4x4Int"
+	IconNameKey = "Parts/Storage4x4IntIcon"
+	DescriptionKey = "Parts/Storage4x4IntDesc"
 
 	//Groups&Categories
 	EditorGroups = ["Storage", "SWTechI"]
@@ -17,9 +17,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Resources&Size&Health
 	Resources
 	[
-		[steel, 8]
+		[steel, 192]
 	]
-	Size = [1, 1]
+	Size = [4, 4]
 	MaxHealth = 1000
 
 	//Selections
@@ -44,7 +44,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [32, 32]
+		Size = [72, 72]
 	}
 
 	//Components&Inheritance
@@ -53,64 +53,46 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Storage
 		{
 			Type = FlexResourceGrid
-			GridRect = [0, 0, 1, 1]
+			GridRect = [0, 0, 4, 4]
 			Layer = "doodads_low"
-			SpriteInset = 8/64
+			SpriteInset = 0/64
 			RandomSpriteRotation = true
 			AllowExternalPickupAndDelivery = false
 		}
 
 		WallsBlend : <./Data/ships/terran/walls/walls.rules>
 		{
-			Type = BlendSprite
-			Location = [.5, .5]
+			Type = BlendSpriteGrid
+			Location = [0.5, 0.5]
+			GridSize = &~/Part/Size
+			AllowUndefinedBlendSprites = true
+			AlwaysBlendWithSelf = true
 			BlendsWithCategories = [corridor]
+		}
+
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_Storage_Hidden/RDL
+		{
+			GridSize = &~/Part/Size
+		}
+
+		RoofGrid : &/SW_GRAPHICS/RoofGrid/GridSize_1x1/Roof_Vanilla/RDL
+		{
+			GridSize = &~/Part/Size
 		}
 
 		Graphics
 		{
 			Type = Graphics
-			Location = [0.5, 0.5]
-			Floor
+			OperationalToggle = IsOperational
+			Location = [2, 2]
+			NonOperationalDoodad
 			{
-				Layer = "floors"
-				RandomUVRotation = true
+				Layer = "doodads_high"
 				DamageLevels
 				[
 					{
-						File = "floor.png"
-						Size = [1, 1]
-					}
-					{
-						File = "floor_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "floor_66.png"
-						Size = [1, 1]
-					}
-				]
-			}
-			Roof
-			{
-				Layer = "roofs"
-				RandomUVRotation = true
-				DamageLevels
-				[
-					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
-						Size = [1, 1]
+						File = "./Data/Ships/terran/darkness/darkness4x4.png"
+						Size = [4, 4]
 					}
 				]
 			}
@@ -120,20 +102,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
-			Location = [1, 1]
+			Location = [2, 2]
 		}
 
 		Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [1, 1]
-		}
-
-		BlueprintWalls : &<./Data/ships/terran/walls/blueprint_walls.rules>
-		{
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [corridor]
+			Size = [4, 4]
 		}
 	}
 
