@@ -1,0 +1,122 @@
+Part : &<../base_part_terran_storages.rules>/Part
+{
+	//IDs
+	ID = SW.storage_4x1_hidden
+	OtherIDs = []
+
+	//StringKeys
+	NameKey = "Parts/Storage4x1Int"
+	IconNameKey = "Parts/Storage4x1IntIcon"
+	DescriptionKey = "Parts/Storage4x1IntDesc"
+
+	//Groups&Categories
+	EditorGroups = ["Storage", "SWTechI"]
+	TypeCategories : ^/0/TypeCategories [corridor, storage, SW_Hidden, SW_Storage, SW_Tech_I]
+	RequiresCategories = []
+
+	//Resources&Size&Health
+	Resources
+	[
+		[steel, 48]
+	]
+	Size = [4, 1]
+	MaxHealth = 1000
+
+	//Selections
+	SelectionTypeID = "storage"
+	IgnoreRotationForMirroredSelection = true
+
+	//PartSpecific
+	//IsRotateable = true
+	FlipHRotate = [0, 1, 2, 3] // Disable flipping UI.
+	FlipVRotate = [0, 1, 2, 3] // Disable flipping UI.
+	CrewSpeedFactor = 1
+	CrewCongestedSpeedFactor = .5
+	IsWalled = false
+	GeneratorRequiresDoor = false
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [64, 16]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		Storage
+		{
+			Type = FlexResourceGrid
+			GridRect = [0, 0, 4, 1]
+			Layer = "doodads_low"
+			SpriteInset = 0/64
+			RandomSpriteRotation = true
+			AllowExternalPickupAndDelivery = false
+		}
+
+		WallsBlend : <./Data/ships/terran/walls/walls.rules>
+		{
+			Type = BlendSpriteGrid
+			Location = [0.5, 0.5]
+			GridSize = &~/Part/Size
+			AllowUndefinedBlendSprites = true
+			AlwaysBlendWithSelf = true
+			BlendsWithCategories = [corridor]
+		}
+
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_Storage_Hidden/RDL
+		{
+			GridSize = &~/Part/Size
+		}
+
+		RoofGrid : &/SW_GRAPHICS/RoofGrid/GridSize_1x1/Roof_Vanilla/RDL
+		{
+			GridSize = &~/Part/Size
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [2.0, 0.5]
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "./Data/Ships/terran/darkness/darkness1x2.png"
+						Size = [4, 1]
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [2.0, 0.5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [4, 1]
+		}
+	}
+
+	Stats
+	{
+		StorageTiles = (&~/Part/Components/Storage/GridRect/2) * (&~/Part/Components/Storage/GridRect/3)
+	}
+}

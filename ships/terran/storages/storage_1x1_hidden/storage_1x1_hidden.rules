@@ -1,8 +1,8 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_storages.rules>/Part
 {
 	//IDs
-	ID = SW.storage_1x1_rojama
-	OtherIDs = [SW.Modular_Storage_Floor,SW_Modular_Storage_Floor]
+	ID = SW.storage_1x1_hidden
+	OtherIDs = [SW.storage_1x1_rojama, SW.Modular_Storage_Floor,SW_Modular_Storage_Floor]
 
 	//StringKeys
 	NameKey = "Parts/Storage1x1Int"
@@ -11,7 +11,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Groups&Categories
 	EditorGroups = ["Storage", "SWTechI"]
-	TypeCategories = [corridor, storage, SW_Tech_I]
+	TypeCategories : ^/0/TypeCategories [corridor, storage, SW_Hidden, SW_Storage, SW_Tech_I]
 	RequiresCategories = []
 
 	//Resources&Size&Health
@@ -44,7 +44,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [32, 32]
+		Size = [64, 64]
 	}
 
 	//Components&Inheritance
@@ -55,72 +55,35 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = FlexResourceGrid
 			GridRect = [0, 0, 1, 1]
 			Layer = "doodads_low"
-			SpriteInset = 8/64
+			SpriteInset = 0/64
 			RandomSpriteRotation = true
 			AllowExternalPickupAndDelivery = false
 		}
-		
-		WallsBlend : &<./Data/ships/terran/walls/walls.rules>
+
+		WallsBlend : <./Data/ships/terran/walls/walls.rules>
 		{
 			Type = BlendSprite
 			Location = [0.5, 0.5]
 			BlendsWithCategories = [corridor]
 		}
 
-		Graphics
+		Darkness_Components : <./Data/ships/terran/corridor/corridor.rules>/Part/Components/Darkness_Components {}
+
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_Storage_Hidden/DL
 		{
-			Type = Graphics
-			Location = [0.5, 0.5]
-			Floor
-			{
-				Layer = "floors"
-				RandomUVRotation = true
-				DamageLevels
-				[
-					{
-						File = "floor.png"
-						Size = [1, 1]
-					}
-					{
-						File = "floor_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "floor_66.png"
-						Size = [1, 1]
-					}
-				]
-			}
-			Roof
-			{
-				Layer = "roofs"
-				RandomUVRotation = true
-				DamageLevels
-				[
-					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
-						Size = [1, 1]
-					}
-				]
-			}
+			GridSize = &~/Part/Size
+		}
+
+		RoofGrid : &/SW_GRAPHICS/RoofGrid/GridSize_1x1/Roof_Vanilla/DL
+		{
+			GridSize = &~/Part/Size
 		}
 
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
-			Location = [1, 1]
+			Location = [0.5, 0.5]
 		}
 
 		Blueprints
@@ -130,7 +93,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Size = [1, 1]
 		}
 
-		BlueprintWalls : &<./Data/ships/terran/walls/blueprint_walls.rules>
+		BlueprintWallsX0Y0 : &<./Data/ships/terran/walls/blueprint_walls.rules>
 		{
 			Location = [0.5, 0.5]
 			BlendsWithCategories = [corridor]
