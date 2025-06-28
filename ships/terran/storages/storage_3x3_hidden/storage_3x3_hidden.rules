@@ -1,0 +1,120 @@
+Part : &<../base_part_terran_storages.rules>/Part
+{
+	//IDs
+	ID = SW.storage_3x3_hidden
+	OtherIDs = []
+
+	//StringKeys
+	NameKey = "Parts/Storage3x3Int"
+	IconNameKey = "Parts/Storage3x3IntIcon"
+	DescriptionKey = "Parts/Storage3x3IntDesc"
+
+	//Groups&Categories
+	EditorGroups = ["Storage", "SWTechI"]
+	TypeCategories : ^/0/TypeCategories [corridor, storage, SW_Hidden, SW_Storage, SW_Tech_I]
+	RequiresCategories = []
+
+	//Resources&Size&Health
+	Resources
+	[
+		[steel, 108]
+	]
+	Size = [3, 3]
+	MaxHealth = 1000
+
+	//Selections
+	SelectionTypeID = "storage"
+	IgnoreRotationForMirroredSelection = true
+
+	//PartSpecific
+	IsRotateable = false
+	CrewSpeedFactor = 1
+	CrewCongestedSpeedFactor = .5
+	IsWalled = false
+	GeneratorRequiresDoor = false
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [64, 64]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		Storage
+		{
+			Type = FlexResourceGrid
+			GridRect = [0, 0, 3, 3]
+			Layer = "doodads_low"
+			SpriteInset = 0/64
+			RandomSpriteRotation = true
+			AllowExternalPickupAndDelivery = false
+		}
+
+		WallsBlend : <./Data/ships/terran/walls/walls.rules>
+		{
+			Type = BlendSpriteGrid
+			Location = [0.5, 0.5]
+			GridSize = &~/Part/Size
+			AllowUndefinedBlendSprites = true
+			AlwaysBlendWithSelf = true
+			BlendsWithCategories = [corridor]
+		}
+
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_Storage_Hidden/RDL
+		{
+			GridSize = &~/Part/Size
+		}
+
+		RoofGrid : &/SW_GRAPHICS/RoofGrid/GridSize_1x1/Roof_Vanilla/RDL
+		{
+			GridSize = &~/Part/Size
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [1.5, 1.5]
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "./Data/Ships/terran/darkness/darkness3x3.png"
+						Size = [3, 3]
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [1.5, 1.5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [3, 3]
+		}
+	}
+
+	Stats
+	{
+		StorageTiles = (&~/Part/Components/Storage/GridRect/2) * (&~/Part/Components/Storage/GridRect/3)
+	}
+}
