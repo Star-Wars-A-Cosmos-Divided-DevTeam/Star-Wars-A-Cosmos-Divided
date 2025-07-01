@@ -1,6 +1,6 @@
 SCALE = (1)
 SIZE = [2, 2]
-MULTIPLIKATOR = (&~SCALE) * (&~/Size/0) * (&~/Size/1)
+MULTIPLIKATOR = (&~/SCALE) * (&~/Size/0) * (&~/Size/1)
 LOCATION = [((&~/Size/0)/2), ((&~/Size/1)/2)]
 
 Part : &<../base_part_terran_doonium.rules>/Part
@@ -16,7 +16,6 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	//Groups&Categories
 	//EditorGroups : ^/0/EditorGroups []
 	//TypeCategories : ^/0/TypeCategories []
-	//RequiresCategories : ^/0/RequiresCategories = []
 
 	//Resources&Size&Health
 	Resources
@@ -25,6 +24,7 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	]
 	Size = [&~/SIZE/0, &~/SIZE/1]
 	MaxHealth = floor((&<../base_part_terran_doonium.rules>/MaxHealth) * (&~/MULTIPLIKATOR))
+	FractionalCostToRepair = (ceil((&Resources/0/1)/5)/(&Resources/0/1))
 
 	//Selections
 	IgnoreRotationForMirroredSelection = true
@@ -32,7 +32,9 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	//PartSpecific
 	EditorReplacementPartID = corridor //""
 	GenerateRectCollider = true
-	UnderlyingPart = SW.structure_doonium
+	UnderlyingPart = ""
+	UnderlyingPartPerTile = SW.structure_doonium
+
 	InitialPenetrationResistance = floor((&<../base_part_terran_doonium.rules>/InitialPenetrationResistance) * (&~/MULTIPLIKATOR))
 
 	IsRotateable = false //

@@ -1,6 +1,6 @@
 SCALE = (1)
 SIZE = [1, 1]
-MULTIPLIKATOR = (&~SCALE) * (&~/Size/0) * (&~/Size/1)
+MULTIPLIKATOR = (&~/SCALE) * (&~/Size/0) * (&~/Size/1)
 LOCATION = [((&~/Size/0)/2), ((&~/Size/1)/2)]
 
 Part : &<../base_part_terran_doonium.rules>/Part
@@ -14,9 +14,10 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	IconNameKey = "Parts/DooniumArmorIcon"
 
 	//Groups&Categories
-	EditorGroups : ^/0/EditorGroups []
+	EditorGroups : ^/0/EditorGroups [Defenses]
 	TypeCategories : ^/0/TypeCategories []
-	//RequiresCategories : ^/0/RequiresCategories = []
+	DontStackInEditorGroups = [SWDoonium]
+	EditorParentParts = []
 
 	//Resources&Size&Health
 	Resources
@@ -25,11 +26,10 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	]
 	Size = [&~/SIZE/0, &~/SIZE/1]
 	MaxHealth = floor((&<../base_part_terran_doonium.rules>/MaxHealth) * (&~/MULTIPLIKATOR))
-	FractionalCostToRepair = 20%
+	FractionalCostToRepair = (ceil((&Resources/0/1)/5)/(&Resources/0/1))
 
 	//PartSpecific
 	EditorReplacementPartID = corridor //""
-	GenerateRectCollider = true //recheck vanilla armor!
 
 	UnderlyingPartPerTile = "" //SW.structure_doonium
 	UnderlyingPart = SW.structure_doonium
@@ -38,10 +38,9 @@ Part : &<../base_part_terran_doonium.rules>/Part
 	IsFlippable = false	//base true
 
 	InitialPenetrationResistance = floor((&<../base_part_terran_doonium.rules>/InitialPenetrationResistance) * (&~/MULTIPLIKATOR))
-	ContinuingPenetrationResistance : ^/0/ContinuingPenetrationResistance
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs []
+	//ReceivableBuffs : ^/0/ReceivableBuffs []
 
 	//Editor
 	EditorIcon
