@@ -1,10 +1,10 @@
 import os
 
 # Define the base files and their corresponding normals files
-base_files = [f"roof_{i}.png" for i in range(4)] + \
-			 [f"roof_{i}_33.png" for i in range(4)] + \
-			 [f"roof_{i}_66.png" for i in range(4)] + \
-			 [f"roof_{i}_50.png" for i in range(4)]
+base_files = 	[f"roof_{i}.png" for i in range(4)] + \
+				[f"roof_{i}_33.png" for i in range(4)] + \
+				[f"roof_{i}_66.png" for i in range(4)] + \
+				[f"roof_{i}_50.png" for i in range(4)]
 
 normals_files = [f"roof_{i}_normals.png" for i in range(4)] + \
 				[f"roof_{i}_normals_33.png" for i in range(4)] + \
