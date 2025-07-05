@@ -137,19 +137,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = All
 		}
 
-		PowerToggle
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
 		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-			RequiresCommand = false
-		}
-
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 70 //1 per tile
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
+			Mode = All
 		}
 
 		IsOperationalAndHypernodeConnectedToggle
@@ -164,6 +156,26 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = MultiToggle
 			Toggles = [IsOperational, {Toggle = FtlDrive, Invert = true}]
 			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = IsOperationalAndCommandToggle
+			CommandPoints = 140 //1 per tile
 		}
 
 		HypernodeConnectedToggle
@@ -320,6 +332,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
+
 		NozzleRoofCoverOptionToggle
 		{
 			Type = UIToggle
@@ -451,7 +464,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 
 		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
 		{
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalAndCommandToggle
 			InvertOperationalToggle = true
 		}
 
@@ -850,7 +863,6 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-		
 			Location = [5, 2.5]
 			OperationalDoodad
 			{
@@ -865,7 +877,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 			NonOperationalDoodad = &OperationalDoodad
 		}
-		
+
 		BatterySprites
 		{
 			Type = ResourceSprites

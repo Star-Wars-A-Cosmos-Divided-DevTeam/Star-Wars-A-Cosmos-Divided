@@ -94,10 +94,19 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components, &<nozzles.rules>, &<nozzle_covers.rules>
 	{
+
+
 		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
 			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage]
+			Mode = All
+		}
+
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
 			Mode = All
 		}
 
@@ -106,6 +115,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = MultiToggle
 			Toggles = [IsOperational, HypernodeConnectedToggle]
 			Mode = All
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
 		}
 
 		PowerToggle
@@ -387,7 +401,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 
 		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
 		{
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalAndCommandToggle
 			InvertOperationalToggle = true
 		}
 		

@@ -1,52 +1,95 @@
+SCALE = (7/8)
+SIZE = [1, 1]
+MULTIPLIKATOR = (&~/SCALE) * (&~/Size/0) * (&~/Size/1)
+LOCATION = [((&~/Size/0)/2), ((&~/Size/1)/2)]
+COST = &<../base_part_terran_doonium.rules>/COST
+MAXHEALTH = &<../base_part_terran_doonium.rules>/MAXHEALTH
+PENRESIS = &<../base_part_terran_doonium.rules>/InitialPenetrationResistance
+
 Part : &<../base_part_terran_doonium.rules>/Part
 {
-	NameKey = "Parts/DooniumArmor_1x1_Wedge_4B_A01_L"
-	IconNameKey = "Parts/DooniumArmor_1x1_Wedge_4B_A01_LIcon"
+	//IDs
 	ID = SW.doonium_armor_1x1_Wedge_4B_D04_L
 	OtherIDs = [SW.doonium_armor_1x1_Wedge_4B_D04_R]
 	FlipWhenLoadingIDs = [SW.doonium_armor_1x1_Wedge_4B_D04_R]
-	//EditorGroup = "DefensesSWACD"
-	//DescriptionKey = "Parts/DooniumArmorDesc"
-	//EditorReplacementPartID = ""
-	MaxHealth = floor((&<../base_part_terran_doonium.rules>/MaxHealth) * (&~/Scale))	
-	InitialPenetrationResistance = floor((&<../base_part_terran_doonium.rules>/InitialPenetrationResistance) * (&~/Scale))
-	//Density = (^/0/Density)
 
+	//StringKeys
+	NameKey = "Parts/DooniumArmor_1x1_Wedge_4B_A01_L"
+	IconNameKey = "Parts/DooniumArmor_1x1_Wedge_4B_A01_LIcon"
+
+	//Resources&Size&Health
 	Resources
 	[
-		[SW.doonium_ingot, ceil((&<../base_part_terran_doonium.rules>/Cost)*(&~/Scale))]
+		[SW.doonium_ingot, ceil((&~/COST)*(&~/MULTIPLIKATOR))]
 	]
-	//AIValueFactor = 0
-	Size = [1, 1]
+	Size = [&~/SIZE/0, &~/SIZE/1]
+	MaxHealth = ceil((&~/MAXHEALTH) * (&~/MULTIPLIKATOR))
+	FractionalCostToRepair = (ceil((&Resources/0/1)/5)/(&Resources/0/1))
+
+	//PartSpecific
+
+	UnderlyingPartPerTile = SW.structure_doonium
+	UnderlyingPart = "" //SW.structure_doonium
+
+	//IsRotateable = true //base true
 	IsFlippable = true
-	AllowedContiguity = [Top, Right, Bottom]
-	//SelectionTypeID = "armor"
-	//MaxHealth = 7000 //4000*7/8*2
-	//ExplosiveDamageAbsorption = 100%
-	//ExplosiveDamageResistance = 50%
-	//TypeCategories : ^/0/TypeCategories [armor]
-	//ReceivableBuffs : ^/0/ReceivableBuffs []
-	
-	//UnderlyingPartPerTile = ""
-	//UnderlyingPart = ""
-	//CreatePartPerTileWhenGrabbed = ""
-	//InitialPenetrationResistance = 9
+
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
+
+	InitialPenetrationResistance = floor((&~/PENRESIS) * (&~/MULTIPLIKATOR))
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
-	//CrewSpeedFactor = 0
-	//Density = 4 //v:3?
-	//IsRotateable = true
-	//IsWalled = true
-	//IsSelfDestructible = false
+
+	AllowedContiguity = [Top, Right, Bottom]
+
 	ExternalWalls = [/*Top,*/ TopRight, Right, BottomRight, Bottom, BottomLeft]
+	//
+		//
+			//
+				//
+		//
+		//
+			//
+				//
+		//
+		//
+			//
+				//
+		//
+		//
+			//
+				//
+		//
+	//
 	InternalWalls = [Left/*, TopLeft, Top*/]
+	//
+		//
+			//
+				//
+		//
+		//
+			//
+				//
+		//
+		//
+			//
+				//
+		//
+		//
+			//
+				//
+		//
+	//
 	VirtualInternalCells
 	[
 		{ExternalCell=[-1, 0]; InternalCell=[0, 1]}
+			//
 	]
-	//AllowedDoorLocations = []
-	//GeneratorRequiresDoor = false
-	FlipHRotate = [0, 3, 2, 1]
-	FlipVRotate = [2, 1, 0, 3]
+
+	//ReceivableBuffs&Prohibits
+	//ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -57,6 +100,8 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		}
 		Size = [32, 32]
 	}
+
+	//Components&Inheritance
 	Components : ^/0/Components //, &<roof_toggles.rules>
 	{
 		Collider
@@ -149,8 +194,8 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = ceil((&~/Part/MaxHealth)/4) // 1750
-			RecoveryRate = ceil(&AbsorbsResourceDrain) * 0.1
+			AbsorbsResourceDrain = ceil((&~/Part/MaxHealth)/4)
+			RecoveryRate = ceil(&AbsorbsResourceDrain)* 0.1
 		}
 
 		Graphics
@@ -181,7 +226,7 @@ Part : &<../base_part_terran_doonium.rules>/Part
 			}
 			Walls
 			{
-				Layer = "external_walls"//external_
+				Layer = "external_walls"
 				DamageLevels
 				[
 					{
@@ -252,4 +297,3 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		AOEResist = (&~/Part/DamageResistances/explosive) * 100
 	}
 }
-Scale = (1*7/8)
