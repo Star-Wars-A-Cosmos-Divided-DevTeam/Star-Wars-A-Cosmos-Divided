@@ -1,6 +1,81 @@
+VANILLA_REF = &<./Data/ships/terran/structure/structure.rules>/Part
+COST = &~/VANILLA_REF/Resources/1
+MAXHEALTH = &~/VANILLA_REF/MaxHealth
+DENSITY = &~/VANILLA_REF/Density
+
 Part : &<./Data/ships/terran/base_part_terran_structure.rules>/Part
 {
-	EditorGroups = []
+	//NameKey
+	//IconNameKey
+	//ID
+	//OtherIDs
+	//FlipWhenLoadingIDs
+	EditorGroups : ^/0/EditorGroups [Structure]
+	DescriptionKey = "Parts/StructureDesc"
+	Resources
+	[
+		[steel, (&~/COST)]
+	]
+	AIValueFactor = 0
+	//
+	SelectionTypeID = "structure"
+	Density = (&~/DENSITY) //bp: 1.00
+	MaxHealth = (&~/MAXHEALTH)
+	ConstructionWork = 0.25
+	WorkPerRepairedHealth = 0.25 / 1000
+	HealthType = Structural //bp: Operational
+	DamageResistances : ^/0/DamageResistances {}
+	TypeCategories : ^/0/TypeCategories [structure, non_flammable, SW_STRUCTURE]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	UnderlyingPartPerTile = "" //bp: cosmoteer.structure
+	CreatePartPerTileWhenGrabbed = "" //bp: cosmoteer.corridor
+	InitialPenetrationResistance = 0 //v:0
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	CrewSpeedFactor = 0 //v:0
+	AllowedDoorLocations = [] //v: EMPTY
+	IsExternal = true //v: true
+	ExternalWalls = [None] //v: NONE
+	InternalWalls = [All] //v: ALL
+	IsRotateable = false  //v: false
+	IsWalled = false //v: false
+	IsSelfDestructible = false //v: false
+	GeneratorRequiresDoor = false //v: false
+	NoAutoDoors = true //v: true
+	IgnoreRotationForMirroredSelection = true //v: true
 
-	TypeCategories : ^/0/TypeCategories [SW_STRUCTURE]
+	Components : ^/0/Components
+	{
+		ConstructionEffects
+		{
+			Type = Sprite
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			GetColorFrom = ConstructionTracker
+			Location = [.5, .5]
+			AtlasSprite
+			{
+				File = "./Data/ships/terran/structure/structure_mask_combined.png"
+				NormalsFile = "./Data/ships/terran/structure/structure_normals.png"
+				Size = [1, 1]
+				//VertexColor = [255, 0, 0, 255]
+			}
+			RandomUVRotation = false
+			Layer = "structure_construction"
+			UseConstructionProgressAsDamage = true
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/StructureDestroyed
+			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "./Data/ships/terran/structure/blueprints.png"
+			Size = [1, 1]
+		}
+	}
 }
