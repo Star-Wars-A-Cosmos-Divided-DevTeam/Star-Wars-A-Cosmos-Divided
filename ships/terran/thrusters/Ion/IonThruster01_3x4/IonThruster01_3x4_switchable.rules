@@ -41,6 +41,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	ThrustDecreaseTime = 4.8	//v:2		//softer deccel
 	ThrustRecoveryTime = 3.2	//v:2		//160% of vanilla
 	FuelUsage = 340 			//v: 532	// 64% of vanilla
+	//
 
 	//ReceivableBuffs&Prohibits
 	//ProhibitRects
@@ -105,6 +106,18 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = All
 		}
 
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
+			Mode = All
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
 		IsOperationalAndHypernodeConnectedToggle
 		{
 			Type = MultiToggle
@@ -152,6 +165,20 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			MaxResources = 12000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+		//
+		//
+			//
+			//
+			//
+			//
+			//
+		//
+		//
+		//
+			//
+			//
+		//
+
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
@@ -180,7 +207,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
 		}
-		
+
 		ColorPickerThruster
 		{
 			Type = UIColor
@@ -361,7 +388,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		{
 			Type = SelfBuffProvider
 			BuffType = SW_Ion_Thruster_Overdrive
-			BuffAmount = 150%
+			BuffAmount = 180%
 			BuffMultiplier = ThrusterIsFiringTween
 			OperationalToggle = ThrusterIsFiringThresholdToggle
 		}
@@ -369,7 +396,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		{
 			Type = ValueTween
 			OffValue = 0
-			OnValue = 1 //+150% Boost if on for OnTweenDuration
+			OnValue = 1 //+180% Boost if on for OnTweenDuration
 			OnTweenDuration = (12*2.5) //target is to reward continous flight and NOT provide burst buffing
 			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
 			IsOnToggle = ThrusterIsFiringThresholdToggle
@@ -394,16 +421,16 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		}
 
 		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
-		{	
+		{
 			
 		}
 
 		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
 		{
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalAndCommandToggle
 			InvertOperationalToggle = true
 		}
-		
+
 		LightGraphics
 		{
 			Type = Graphics
@@ -516,7 +543,6 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 				]
 			}
 			*/
-			
 		}
 
 		Graphics
