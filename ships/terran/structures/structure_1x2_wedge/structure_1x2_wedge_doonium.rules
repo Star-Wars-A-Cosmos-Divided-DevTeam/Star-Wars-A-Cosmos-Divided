@@ -1,0 +1,128 @@
+Part : &<../base_part_terran_structure_doonium.rules>/Part
+{
+	ID = SW.structure_1x2_wedge_doonium
+	OtherIDs = [structure_1x2_wedge_doonium]
+	NameKey = "Parts/DooniumStructure1x2Wedge"
+	IconNameKey = "Parts/DooniumStructure1x2WedgeIcon"
+	DescriptionKey = "Parts/DooniumStructure1x2WedgeDesc"
+	EditorGroups : ^/0/EditorGroups [SWDoonium, "Structure"]
+	EditorReplacementPartID = ""
+	Resources
+	[
+		[SW.doonium_ingot, 2]
+	]
+	AIValueFactor = 0
+	Size = [1, 2]
+	IsFlippable = true
+	SelectionTypeID = "structure"
+	AllowedContiguity = [Right, Bottom]
+	Density = .333*2
+	MaxHealth = 1000*2
+	ConstructionDuration = 0.5
+	RepairDuration = 0.5
+	HealthType = Structural
+	TypeCategories : ^/0/TypeCategories [structure, doonium_structure]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	
+	UnderlyingPartPerTile = ""
+	TempConstructionPartPerTile = SW.structure_doonium
+	CreatePartPerTileWhenGrabbed = ""
+	InitialPenetrationResistance = 0
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	CrewSpeedFactor = 0
+	IsExternal = true
+	ExternalWalls = [None]
+	InternalWalls = [All]
+	IsRotateable = true
+	IsWalled = false
+	IsSelfDestructible = false
+	AllowedDoorLocations = []
+	GeneratorRequiresDoor = false
+	NoAutoDoors = true
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "structure_doonium.png"
+			SampleMode = Point
+			MipLevels = max
+		}
+		Size = [32, 64]
+	}
+	Components : ^/0/Components
+	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[1, 0]
+				[1, 2]
+				[0, 2]
+			]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 1]
+			Floor
+			{
+				Layer = "structure"
+				DamageLevels
+				[
+					{
+						File = "structure_doonium.png"
+						NormalsFile = "structure_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "structure_doonium_33.png"
+						NormalsFile = "structure_normals_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "structure_doonium_66.png"
+						NormalsFile = "structure_normals_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+
+		ConstructionEffects
+		{
+			Type = Sprite
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			GetColorFrom = ConstructionTracker
+			Location = [0.5, 1]
+			AtlasSprite
+			{
+				File = "structure_doonium_mask_combined.png"
+				NormalsFile = "structure_normals.png"
+				Size = [1, 2]
+				//VertexColor = [255, 255, 255, 255*1.5]
+			}
+			RandomUVRotation = false
+			Layer = "structure_construction"
+			UseConstructionProgressAsDamage = true
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/StructureDestroyed
+			Location = [0.5, 1]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
+		}
+	}
+}
