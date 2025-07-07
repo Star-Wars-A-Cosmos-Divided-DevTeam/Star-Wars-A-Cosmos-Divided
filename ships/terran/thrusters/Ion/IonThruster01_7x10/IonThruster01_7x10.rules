@@ -98,8 +98,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		[4, 9]
 		[5, 9]
 		[6, 9]
-
-	] 
+	]
 	AllowedDoorLocations
 	[
 		[-1, 0]
@@ -184,19 +183,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = All
 		}
 
-		PowerToggle
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
 		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-			RequiresCommand = false
-		}
-
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 70 //1 per tile
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
+			Mode = All
 		}
 
 		IsOperationalAndHypernodeConnectedToggle
@@ -211,6 +202,26 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = MultiToggle
 			Toggles = [IsOperational, {Toggle = FtlDrive, Invert = true}]
 			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = IsOperationalAndCommandToggle
+			CommandPoints = 70 //1 per tile
 		}
 
 		HypernodeConnectedToggle
@@ -479,7 +490,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 
 		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
 		{
-			
+
 		}
 
 		RoofGridFlat
@@ -496,7 +507,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 
 		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
 		{
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalAndCommandToggle
 			InvertOperationalToggle = true
 		}
 

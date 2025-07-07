@@ -1,4 +1,4 @@
-/* Skipper do we need something like this?
+/* Skipper do we need something like this? YES FOR LATER
 		ToggledExtendableBatteryStorage
 		{
 			Type = ResourceStorageProxy
@@ -159,19 +159,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = All
 		}
 
-		PowerToggle
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
 		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-			RequiresCommand = false
-		}
-
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 260 //1 per tile
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
+			Mode = All
 		}
 
 		IsOperationalAndHypernodeConnectedToggle
@@ -186,6 +178,26 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = MultiToggle
 			Toggles = [IsOperational, {Toggle = FtlDrive, Invert = true}]
 			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = IsOperationalAndCommandToggle
+			CommandPoints = 260 //1 per tile
 		}
 
 		HypernodeConnectedToggle
@@ -322,6 +334,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Toggle = ThrusterEffectRocketToggle
 			Components = &<particles/thruster_colorable_rocketset.rules>/Components
 		}
+
 		EngineRoofDoodadsOptionToggle
 		{
 			Type = UIToggle
@@ -451,6 +464,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			OperationalToggle = SWIonAcceleratorBuffToggle
 			BuffMultiplier = DoodadAnimationSpeedFactorValue
 		}
+
+		//
+		//
+		//
+		//
+		//
 
 		RoofGridFlat
 		{
@@ -832,7 +851,6 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-
 			Location = [10, 5]
 			OperationalDoodad
 			{
@@ -920,6 +938,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [8, 8]
 					}
+					HidesIndicators = [1]
 				}
 
 				// Out of power.
