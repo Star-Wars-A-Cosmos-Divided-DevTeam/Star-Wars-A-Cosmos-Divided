@@ -7,20 +7,10 @@ OVERCLOCK
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
 
-MODIFIERS
-{
-	OVERCLOCK_LERP
-	{
-		Type = Buff
-		BuffType = Overclock
-		ModificationMode = Lerp
-	}
-}
-
 Size = Big
 MaxResources = 8000
 
-Part : &<../base_part_terran_factories.rules>/Part
+Part : &<./Data/ships/terran/base_part_terran_overclock.rules>/Part, &<../base_part_terran_factories.rules>/Part 
 {
 	//IDs
 	ID = SW.factory_durasteel
@@ -32,7 +22,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 	DescriptionKey = "Parts/FactoryDuraSteelDesc"
 
 	//Groups&Categories
-	EditorGroups : ^/0/EditorGroups ["Production", SWTechII]
+	EditorGroups = /* : ^/0/EditorGroups */ ["Production", SWTechII]
 	TypeCategories : ^/0/TypeCategories [provides_SW.durasteel, uses_carbon, uses_SW.zersium, uses_steel, uses_power, SW_Tech_II]
 	//RequiresCategories = []
 
@@ -103,17 +93,23 @@ Part : &<../base_part_terran_factories.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational : ^/0/IsOperational
+		IsOperational//  : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles [PowerToggle, CarbonSplitter, ZersiumSplitter, SteelSplitter, CombinedBatteryStorage]
+			Toggles = [PowerToggle, NonJunkToggle, CarbonSplitter, ZersiumSplitter, SteelSplitter, CombinedBatteryStorage, ScorchedToggle, &~/Part/^/0/OVERCLOCK_OPERATIONAL]
 			Mode = All
 		}
 
-		CommandConsumptionToggle : ^/0/CommandConsumptionToggle
+		NonJunkToggle
+		{
+			Type = JunkToggle
+			OnWhenJunk = false
+		}
+
+		CommandConsumptionToggle
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles [PowerToggle]
+			Toggles = [PowerToggle, ScorchedToggle]
 			Mode = All
 		}
 		
@@ -132,6 +128,14 @@ Part : &<../base_part_terran_factories.rules>/Part
 			RequiresCommand = false
 		}
 
+		ScorchedToggle
+		{
+			Type = StatusToggle
+			StatusType = cosmoteer.scorched
+			MinStatusValue = 1
+			Invert = true
+		}
+
 		CommandConsumer
 		{
 			Type = CommandConsumer
@@ -139,6 +143,112 @@ Part : &<../base_part_terran_factories.rules>/Part
 			CommandPoints = 1
 		}
 
+		SteelStorage
+		{
+			Type = TypedResourceGrid
+			ResourceType = steel
+			GridRect = [4, 2, 2, 2]
+			Layer = "doodads_low"
+			SpriteInset = [2/64, 6/64, 8/64, 9/64]
+			ToggleOnResources = &../ResourceConverter/From/0/Quantity
+			ToggleOffResources = (&ToggleOnResources) - 1
+			RandomSpriteRotation = true
+		}
+
+		SteelConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = steel
+			Storage = SteelStorage
+			DefaultPriority = &/PRIORITIES/Factory_Supply
+			OperationalToggle = CommandConsumptionToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+
+		SteelSplitter
+		{
+			Type = InlineResourceConverter
+			ResourceType = steel
+			FromStorage = SteelStorage
+			FromQuantity = 1
+			ToQuantity = 3
+		}
+
+		CarbonStorage
+		{
+			Type = TypedResourceGrid
+			ResourceType = carbon
+			GridRect = [0, 2, 1, 2]
+			Layer = "doodads_low"
+			SpriteInset = [16/64, 6/64, 2/64, 9/64]
+			ToggleOnResources = &../ResourceConverter/From/1/Quantity
+			ToggleOffResources = (&ToggleOnResources) - 1
+			RandomSpriteRotation = true
+		}
+
+		CarbonConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = carbon
+			Storage = CarbonStorage
+			DefaultPriority = &/PRIORITIES/Factory_Supply
+			OperationalToggle = CommandConsumptionToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+
+		CarbonSplitter
+		{
+			Type = InlineResourceConverter
+			ResourceType = carbon
+			FromStorage = CarbonStorage
+			FromQuantity = 1
+			ToQuantity = 40
+		}
+
+		ZersiumStorage
+		{
+			Type = TypedResourceGrid
+			ResourceType = SW.zersium
+			GridRect = [1, 2, 1, 2]
+			Layer = "doodads_low"
+			SpriteInset = [16/64, 6/64, 2/64, 9/64]
+			ToggleOnResources = &../ResourceConverter/From/2/Quantity
+			ToggleOffResources = (&ToggleOnResources) - 1
+			RandomSpriteRotation = true
+		}
+
+		ZersiumConsumer
+		{
+			Type = TypedResourceGridConsumer
+			ResourceType = SW.zersium
+			Storage = ZersiumStorage
+			DefaultPriority = &/PRIORITIES/Factory_Supply
+			OperationalToggle = CommandConsumptionToggle
+			ConsumptionToggleButtonOffset = [0, -.4]
+		}
+
+		ZersiumSplitter
+		{
+			Type = InlineResourceConverter
+			ResourceType = SW.zersium
+			FromStorage = ZersiumStorage
+			FromQuantity = 1
+			ToQuantity = 2
+		}
+
+		DuraSteelStorage
+		{
+			Type = TypedResourceGrid
+			ResourceType = SW.durasteel
+			GridRect = [2, 2, 2, 2]
+			Layer = "doodads_low"
+			SpriteInset = [2/64, 6/64, 8/64, 9/64]
+			SuppliesResources = true
+			SupplyToggleButtonOffset = [0, -.4]
+			RandomSpriteRotation = true
+			InitToMaxResources = 0
+			//AllowExternalPickupAndDelivery = true
+		}
 		IsBatteryStorageLeftAndPowerToggle
 		{
 			Type = MultiToggle
@@ -199,114 +309,13 @@ Part : &<../base_part_terran_factories.rules>/Part
 			Storage = BatteryStorageLeft
 			DefaultPriority = &/PRIORITIES/Defense_Supply
 			AdditionalStorageForJobPriority = [CombinedBatteryStorage]
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 			ResupplyThreshold = 1
 		}
 		BatteryConsumerRight : BatteryConsumerLeft
 		{
 			Storage = BatteryStorageRight
 			OperationalToggle = IsBatteryStorageLeftAndPowerToggle
-		}
-
-		SteelStorage
-		{
-			Type = TypedResourceGrid
-			ResourceType = steel
-			GridRect = [4, 2, 2, 2]
-			Layer = "doodads_low"
-			SpriteInset = [2/64, 6/64, 8/64, 9/64]
-			ToggleOnResources = &../ResourceConverter/From/0/Quantity
-			ToggleOffResources = (&ToggleOnResources) - 1
-			RandomSpriteRotation = true
-		}
-		SteelConsumer
-		{
-			Type = ResourceConsumer
-			ResourceType = steel
-			Storage = SteelStorage
-			DefaultPriority = &/PRIORITIES/Factory_Supply
-			OperationalToggle = PowerToggle
-			ConsumptionToggleButtonOffset = [0, -.4]
-		}
-		SteelSplitter
-		{
-			Type = InlineResourceConverter
-			ResourceType = steel
-			FromStorage = SteelStorage
-			FromQuantity = 1
-			ToQuantity = 3
-		}
-
-		CarbonStorage
-		{
-			Type = TypedResourceGrid
-			ResourceType = carbon
-			GridRect = [0, 2, 1, 2]
-			Layer = "doodads_low"
-			SpriteInset = [16/64, 6/64, 2/64, 9/64]
-			ToggleOnResources = &../ResourceConverter/From/1/Quantity
-			ToggleOffResources = (&ToggleOnResources) - 1
-			RandomSpriteRotation = true
-		}
-		CarbonConsumer
-		{
-			Type = ResourceConsumer
-			ResourceType = carbon
-			Storage = CarbonStorage
-			DefaultPriority = &/PRIORITIES/Factory_Supply
-			OperationalToggle = PowerToggle
-			ConsumptionToggleButtonOffset = [0, -.4]
-		}
-		CarbonSplitter
-		{
-			Type = InlineResourceConverter
-			ResourceType = carbon
-			FromStorage = CarbonStorage
-			FromQuantity = 1
-			ToQuantity = 40
-		}
-
-		ZersiumStorage
-		{
-			Type = TypedResourceGrid
-			ResourceType = SW.zersium
-			GridRect = [1, 2, 1, 2]
-			Layer = "doodads_low"
-			SpriteInset = [16/64, 6/64, 2/64, 9/64]
-			ToggleOnResources = &../ResourceConverter/From/2/Quantity
-			ToggleOffResources = (&ToggleOnResources) - 1
-			RandomSpriteRotation = true
-		}
-		ZersiumConsumer
-		{
-			Type = TypedResourceGridConsumer
-			ResourceType = SW.zersium
-			Storage = ZersiumStorage
-			DefaultPriority = &/PRIORITIES/Factory_Supply
-			OperationalToggle = PowerToggle
-			ConsumptionToggleButtonOffset = [0, -.4]
-		}
-		ZersiumSplitter
-		{
-			Type = InlineResourceConverter
-			ResourceType = SW.zersium
-			FromStorage = ZersiumStorage
-			FromQuantity = 1
-			ToQuantity = 2
-		}
-
-		DuraSteelStorage
-		{
-			Type = TypedResourceGrid
-			ResourceType = SW.durasteel
-			GridRect = [2, 2, 2, 2]
-			Layer = "doodads_low"
-			SpriteInset = [2/64, 6/64, 8/64, 9/64]
-			SuppliesResources = true
-			SupplyToggleButtonOffset = [0, -.4]
-			RandomSpriteRotation = true
-			InitToMaxResources = 0
-			//AllowExternalPickupAndDelivery = true
 		}
 
 		ResourceConverter
@@ -411,6 +420,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 			ComponentID = ResourceConverter
 		}
 
+/*
 		Router
 		{
 			Type = NetworkRouter
@@ -435,7 +445,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 				}
 			]
 		}
-
+*/
 		Port_Thermal_Left0 : ~/Part/^/0/BASE_THERMAL_PORT
 		{
 			Location = [0, 2]
@@ -1050,17 +1060,26 @@ Part : &<../base_part_terran_factories.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
 
+		ScorchedTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = ScorchedToggle
+			TriggerWhenOn = false
+		}
+
+		ScorchedEffects
+		{
+			Type = TriggeredEffects
+			Trigger = ScorchedTrigger
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/HugePartScorched
+		}
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
 			Location = [2, 1.5]
-		}
-
-		ScorchedEffects : ^/0/ScorchedEffects
-		{
-			Location = &../DestroyedEffects/Location
-			MediaEffects = &/COMMON_EFFECTS/BigPartScorched //Small Med Big Huge
 		}
 
 		Indicators
@@ -1211,4 +1230,14 @@ Part : &<../base_part_terran_factories.rules>/Part
 			}
 		}
 	]
+}
+
+MODIFIERS
+{
+	OVERCLOCK_LERP
+	{
+		Type = Buff
+		BuffType = Overclock
+		ModificationMode = Lerp
+	}
 }

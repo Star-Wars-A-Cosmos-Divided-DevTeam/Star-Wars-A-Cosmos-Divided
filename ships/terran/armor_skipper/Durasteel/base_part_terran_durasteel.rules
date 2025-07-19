@@ -1,0 +1,88 @@
+/**
+ * Durasteel armor base part definition.
+ *  
+ * @EditorGroup Durasteel - Editor group name
+ * @DescriptionKey Parts/DurasteelArmorDesc - Common Shared Localization key for description text
+ * @Resources [[SW.durasteel, 8]] - Resources required to construct this part
+ * @FractionalCostToRepair 20% - Fraction of full cost to repair when damaged
+ * @Density 6 - Part density
+ * @ExplosiveDamageAbsorption 100% - Percentage of explosive damage absorbed
+ * @ExplosiveDamageResistance 60% - Resistance to remaining explosive damage
+ * @IsRotateable true - Part can be rotated
+ * @IsFlippable true - Part can be flipped
+ * @IsWalled true - Part is walled
+ * @TypeCategories [durasteelarmor, armor] - Part type category tags 
+ * @InitialPenetrationResistance 8 - Initial penetration resistance 
+ * @ContinuingPenetrationResistance 4 - Continuing penetration resistance
+ * @Components - Shared Components definitions 
+*/
+
+
+MaxHealth = 6000
+Density = 1.5
+InitialPenetrationResistance = 14
+Cost = 10
+SCALE = (1)
+SIZE = [1, 1]
+MULTIPLIKATOR = (&~/SCALE) * (&~/Size/0) * (&~/Size/1)
+LOCATION = [((&~/Size/0)/2), ((&~/Size/1)/2)]
+
+Part : &<../base_part_terran_armor.rules>/Part
+{
+	//IDs
+
+	//StringKeys
+	DescriptionKey = "Parts/DurasteelArmorDesc"
+
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups [SWDurasteel]
+	EditorParentParts = [ "SW.durasteel_armor" ]
+	TypeCategories : ^/0/TypeCategories [durasteel_armor] //own type
+
+	//Resources&Size&Health
+	Resources
+	[
+		[SW.durasteel, 10]
+	]
+	MaxHealth = 6000 //v:4000
+	FractionalCostToRepair = (ceil((&Resources/0/1)/5)/(&Resources/0/1))
+
+	//Selections
+	SelectionTypeID = "durasteel_armor" //armor stuff
+	IgnoreRotationForMirroredSelection = true
+
+	//PartSpecific
+
+	UnderlyingPartPerTile = SW.structure_durasteel
+	UnderlyingPart = "" //SW.structure_durasteel
+
+	InitialPenetrationResistance = 14 //common value// most files use own def
+	ContinuingPenetrationResistance = (floor((&InitialPenetrationResistance)/2)) //shared scaler //shared across all
+
+	FlipHRotate = [0, 3, 2, 1] //using vanila def mostly
+	FlipVRotate = [2, 1, 0, 3] //using vanila def mostly
+
+	ConstructionDuration = 0.5 //Buff
+	RepairDuration = 0.5 //Buff
+
+	Density = 1.5 //v:3? //0.5*v
+
+	ExplosiveDamageAbsorption = 100%
+	DamageResistances
+	{
+		explosive = 40%
+		thermal = -20%
+	}
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		ConstructionStructureSprites : ^/0/ConstructionStructureSprites
+		{
+			AtlasSprite = &<../../structures/structure_1x1/structure_durasteel.rules>/Part/Components/Graphics/Floor/DamageLevels/0
+		}
+	}
+}

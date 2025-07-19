@@ -1,0 +1,298 @@
+SCALE = (6/10) ///(1/2 + ((2*(1/2))/(&~COST)))
+SIZE = [1, 3]
+MULTIPLIKATOR = (&~/SCALE) * (&~/Size/0) * (&~/Size/1)
+LOCATION = [((&~/Size/0)/2), ((&~/Size/1)/2)]
+COST = &<../base_part_terran_doonium.rules>/COST
+MAXHEALTH = &<../base_part_terran_doonium.rules>/MAXHEALTH
+PENRESIS = &<../base_part_terran_doonium.rules>/InitialPenetrationResistance
+
+Part : &<../base_part_terran_doonium.rules>/Part
+{
+	//IDs
+	ID = SW.doonium_armor_structure_hybrid_1x3
+
+	//StringKeys
+	NameKey = "Parts/DooniumArmorStructureHybrid1x3"
+	IconNameKey = "Parts/DooniumArmorStructureHybrid1x3Icon"
+	DescriptionKey = "Parts/DooniumArmorStructureHybrid1x3Desc"
+
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups [Structure]
+
+	//Resources&Size&Health
+	Resources
+	[
+		[SW.doonium_ingot, ceil((&~/COST)*(&~/MULTIPLIKATOR))]
+	]
+	Size = [&~/SIZE/0, &~/SIZE/1]
+	MaxHealth = ceil((&~/MAXHEALTH) * (&~/MULTIPLIKATOR))
+	FractionalCostToRepair = (ceil((&Resources/0/1)/5)/(&Resources/0/1))
+
+	//PartSpecific
+
+	UnderlyingPartPerTile = SW.structure_doonium
+	UnderlyingPart = "" //SW.structure_doonium
+
+	//IsRotateable = true //base true
+	//IsFlippable = true //base true
+
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
+
+	InitialPenetrationResistance = floor((&~/PENRESIS) * (&~/MULTIPLIKATOR))
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+
+	//
+
+	ExternalWallsByCell
+	[
+		{
+			Key = [0, 0]
+			Value = [TopRight, Right]
+		}
+		{
+			Key = [0, 1]
+			Value = [Right]
+		}
+		{
+			Key = [0, 2]
+			//
+		//
+		//
+			//
+			Value = [Right, BottomRight, Bottom, BottomLeft]
+		}
+	]
+	InternalWallsByCell
+	[
+		{
+			Key = [0, 0]
+			Value = [BottomLeft, Left, TopLeft, Top]
+		}
+		{
+			Key = [0, 1]
+			Value = [TopLeft, Left, BottomLeft]
+		}
+		{
+			Key = [0, 2]
+			//
+		//
+		//
+			//
+			Value = [Left, TopLeft]
+		}
+	]
+	VirtualInternalCells
+	[
+		{ExternalCell=[0, -1]; InternalCell=[1, 0]}
+		{ExternalCell=[-1, ((&~/SIZE/1)-1)]; InternalCell=[0, &~/SIZE/1]}
+	]
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Point
+			MipLevels = max
+		}
+		Size = [27, 80]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components //, &<roof_toggles.rules>
+	{
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[&~/SIZE/0, 0]
+				//
+				[&~/SIZE/0, &~/SIZE/1]
+				[0, &~/SIZE/1]
+			]
+		}
+/*
+		ArmorRoofType
+		{
+			Type = UIToggle
+			ToggleID = "SW.armor_roof_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2, 3]
+			RequiresCommand = false
+		}
+
+		VanillaArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 0
+		}
+
+		OldArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 1
+		}
+
+		BlankArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 2
+		}
+
+		BoxedArmorRoofToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofType
+			OnMode = 3
+		}
+
+		ArmorRoofNormalType
+		{
+			Type = UIToggle
+			ToggleID = "SW.armor_roof_normal_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2, 3]
+			RequiresCommand = false
+		}
+
+		VanillaArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 0
+		}
+
+		OldArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 1
+		}
+
+		BlankArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 2
+		}
+
+		BoxedArmorRoofNormalToggle
+		{
+			Type = ModeToggle
+			Mode = ArmorRoofNormalType
+			OnMode = 3
+		}
+*/
+		EmpAbsorber
+		{
+			Type = ExplosiveResourceDrainSink
+			ResourceType = battery
+			AbsorbsResourceDrain = ceil((&~/Part/MaxHealth)/4)
+			RecoveryRate = ceil(&AbsorbsResourceDrain) * 0.1
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
+			Floor // This is needed so that armor shows up in ship ghosts.
+			{
+				Layer = "structure"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+						UVRotation = 0
+					}
+					{
+						File = "floor_33.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+						UVRotation = 0
+					}
+					{
+						File = "floor_66.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+						UVRotation = 0
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "external_walls"
+				DamageLevels
+				[
+					{
+						File = "../doonium_armor_1x3_wedge/armor.png"
+						NormalsFile = "external_wall_normals.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+						UVRotation = 0
+					}
+					{
+						File = "../doonium_armor_1x3_wedge/armor_33.png"
+						NormalsFile = "external_wall_normals_33.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+						UVRotation = 0
+					}
+					{
+						File = "../doonium_armor_1x3_wedge/armor_66.png"
+						NormalsFile = "external_wall_normals_66.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+						UVRotation = 0
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "../doonium_armor_1x3_wedge/roof.png"
+						NormalsFile = "../doonium_armor_1x3_wedge/roof_normals.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+						UVRotation = 0
+					}
+					{
+						File = "../doonium_armor_1x3_wedge/roof_33.png"
+						NormalsFile = "../doonium_armor_1x3_wedge/roof_normals_33.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+						UVRotation = 0
+					}
+					{
+						File = "../doonium_armor_1x3_wedge/roof_66.png"
+						NormalsFile = "../doonium_armor_1x3_wedge/roof_normals_66.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+						UVRotation = 0
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [&~/SIZE/0, &~/SIZE/1]
+		}
+	}
+	//Stats
+	Stats
+	{
+		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
+		AOEResist = (&~/Part/DamageResistances/explosive) * 100
+	}
+}

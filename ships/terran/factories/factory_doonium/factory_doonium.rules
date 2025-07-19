@@ -7,17 +7,7 @@ OVERCLOCK
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
 
-MODIFIERS
-{
-	OVERCLOCK_LERP
-	{
-		Type = Buff
-		BuffType = Overclock
-		ModificationMode = Lerp
-	}
-}
-
-Part : &<../base_part_terran_factories.rules>/Part
+Part : &<./Data/ships/terran/base_part_terran_overclock.rules>/Part, &<../base_part_terran_factories.rules>/Part
 {
 	//IDs
 	ID = SW.factory_doonium
@@ -29,7 +19,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 	DescriptionKey = "Parts/FactoryDooniumDesc"
 
 	//Groups&Categories
-	EditorGroups : ^/0/EditorGroups ["Production", SWTechII]
+	EditorGroups = /* : ^/0/EditorGroups */ ["Production", SWTechII]
 	TypeCategories : ^/0/TypeCategories [provides_SW.doonium_ingots, uses_SW.doonium, uses_power, SW_Tech_II]
 	//RequiresCategories = []
 
@@ -94,17 +84,23 @@ Part : &<../base_part_terran_factories.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational : ^/0/IsOperational
+		IsOperational//  : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles [PowerToggle, DooniumStorage, BatteryStorage]
+			Toggles = [PowerToggle, NonJunkToggle, DooniumStorage, BatteryStorage, ScorchedToggle, &~/Part/^/0/OVERCLOCK_OPERATIONAL]
 			Mode = All
 		}
 
-		CommandConsumptionToggle : ^/0/CommandConsumptionToggle
+		NonJunkToggle
+		{
+			Type = JunkToggle
+			OnWhenJunk = false
+		}
+
+		CommandConsumptionToggle
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles [PowerToggle]
+			Toggles = [PowerToggle, ScorchedToggle]
 			Mode = All
 		}
 
@@ -116,31 +112,12 @@ Part : &<../base_part_terran_factories.rules>/Part
 			RequiresCommand = false
 		}
 
-		BatteryStorage
+		ScorchedToggle
 		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 4000
-			DeliveryLocation = [1.5, 1.5]
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-		}
-		BatteryConsumer
-		{
-			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Factory_Supply
-			ResupplyThreshold = 500
-			OperationalToggle = PowerToggle
-		}
-		BatteryStorageBar
-		{
-			Type = ProgressBar
-			OperationalToggle = BatteryStorage
-			ShowProgressFor = BatteryStorage
-			LowColor = [64, 64, 0]
-			HighColor = [250, 250, 0]
-			FullColor = [255, 255, 0]
+			Type = StatusToggle
+			StatusType = cosmoteer.scorched
+			MinStatusValue = 1
+			Invert = true
 		}
 
 		CommandConsumer
@@ -168,7 +145,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 			ResourceType = SW.doonium
 			Storage = DooniumStorage
 			DefaultPriority = &/PRIORITIES/Factory_Supply
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 			ConsumptionToggleButtonOffset = [0, -.4]
 		}
 
@@ -184,6 +161,35 @@ Part : &<../base_part_terran_factories.rules>/Part
 			RandomSpriteRotation = true
 			InitToMaxResources = 0
 			AllowExternalPickupAndDelivery = true
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 4000
+			DeliveryLocation = [1.5, 1.5]
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Factory_Supply
+			ResupplyThreshold = 500
+			OperationalToggle = CommandConsumptionToggle
+		}
+	
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = BatteryStorage
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
 		}
 
 		ResourceConverter
@@ -203,7 +209,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 						BaseValue = 40
 						Modifiers
 						[
-							: ~/MODIFIERS/OVERCLOCK_LERP 
+							: ~/MODIFIERS/OVERCLOCK_LERP
 							{
 								MinValue = &../../BaseValue
 								MaxValue = (&MinValue) * (&~/OVERCLOCK/POWER_USE_FACTOR)
@@ -272,7 +278,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 			Trigger = Overclock_ResourceConverterProxy
 			Amount = (&~/OVERCLOCK/HEAT_PER_CONVERSION) * (&~/HEAT_TO_RESOURCE)
 		}
-		
+
 		Overclock_ResourceConverterProxy
 		{
 			Type = TriggerProxy
@@ -280,6 +286,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 			ComponentID = ResourceConverter
 		}
 
+/*
 		Router
 		{
 			Type = NetworkRouter
@@ -302,7 +309,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 				}
 			]
 		}
-
+*/
 		Port_Thermal_Left0 : ~/Part/^/0/BASE_THERMAL_PORT
 		{
 			Location = [0, 2]
@@ -793,17 +800,26 @@ Part : &<../base_part_terran_factories.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
 
+		ScorchedTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = ScorchedToggle
+			TriggerWhenOn = false
+		}
+
+		ScorchedEffects
+		{
+			Type = TriggeredEffects
+			Trigger = ScorchedTrigger
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/HugePartScorched
+		}
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
 			Location = [2, 2]
-		}
-
-		ScorchedEffects : ^/0/ScorchedEffects
-		{
-			Location = &../DestroyedEffects/Location
-			MediaEffects = &/COMMON_EFFECTS/MedPartScorched //Small Med Big Huge
 		}
 
 		Indicators
@@ -938,4 +954,14 @@ Part : &<../base_part_terran_factories.rules>/Part
 			}
 		}
 	]
+}
+
+MODIFIERS
+{
+	OVERCLOCK_LERP
+	{
+		Type = Buff
+		BuffType = Overclock
+		ModificationMode = Lerp
+	}
 }
