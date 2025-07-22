@@ -1,8 +1,8 @@
 Part : &<../base_part_terran_automagic_cockpits.rules>/Part 
 {
 	//IDs
-	ID = SW.cockpitT85
-	OtherIDs = [] //Clears the array
+	ID = SW.cockpit_T85
+	OtherIDs = [SW.cockpitT85, cockpitT85] //Clears the array
 
 	//StringKeys
 	NameKey = "Parts/CockpitT85"
@@ -10,8 +10,8 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	DescriptionKey = "Parts/CockpitT85Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits, provides_power, reactor]
+	EditorGroups : ^/0/EditorGroups [SWTechI]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits, provides_power, reactor]
 
 	//Resources&Size&Health
 	Resources
@@ -53,7 +53,8 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [32, 64]
 	}
@@ -353,7 +354,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			ActivationIncreaseTime = 0.1
 			ActivationRecoveryTime = 0.1
 			AllowAutoFire = false
-		}	
+		}
 		// Maneuvering Thrusters - End
 
 
@@ -411,12 +412,12 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 				}
 			]
 		}
-		// Indicators - Start
-		Indicators : ^/0/Indicators
+
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [0.5, 1]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{
@@ -426,7 +427,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [2,3]
+					HidesIndicators = [1,2]
 				}
 				// Out of power.
 				{
@@ -449,7 +450,6 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 				}
 			]
 		}
-		// Indicators - End
 
 		// Extinguisher Graphics - Start
 		ExtinguisherSprite

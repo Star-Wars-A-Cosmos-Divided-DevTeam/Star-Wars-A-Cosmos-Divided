@@ -4,16 +4,16 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	ID = SW.eta2cockpit
 	OtherIDs = ["etacockpit"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/Eta2"
 	IconNameKey = "Parts/Eta2Icon"
 	DescriptionKey = "Parts/Eta2Desc"
 
-    //Groups&Categories
-	EditorGroups = [/*"WeaponsEnergy",*/ "Flight", "SWTechI"]
-	TypeCategories = [command, weapon, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits, provides_power, reactor]
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups [/*"WeaponsEnergy",*/ SWTechI]
+	TypeCategories : ^/0/TypeCategories [command, weapon, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits, provides_power, reactor]
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[SW.durasteel, 76]
@@ -24,26 +24,27 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	Size = [1, 2]
 	MaxHealth = 10000
 
-    //Rects
+	//Rects
 
-    //Selections
+	//Selections
 	SelectionPriority = 0
 	SelectionTypeID = "control_room"
 
-    //PartSpecific
+	//PartSpecific
 	AIValueFactor = 5
 	InitialPenetrationResistance = 2
 	IsContiguityOrigin = true
 	IsShipForward = true
 	ThrusterForce = 110
 	ThrustIncreaseTime = 0
+	ThrustDecreaseTime = 0
 	ThrustRecoveryTime = 0
 	FuelUsage = 10
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	ProhibitAbove = 3
 
-    //Doors&Etc
+	//Doors&Etc
 	AllowedDoorLocations
 	[
 		[1, 1]
@@ -51,34 +52,35 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		[0, 2]
 	]
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [32, 64]
 	}
 
 	
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		PowerToggle
-		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-			RequiresCommand = false
-		}
 
 		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
 			Toggles : ^/0/Toggles [PowerToggle, /*BatteryStorage,*/ PartCrew]
 			Mode = All
+		}
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
 		}
 
 		ProgressBar
@@ -103,6 +105,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -163,6 +166,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
 			AllowAutoFire = false
@@ -416,6 +420,13 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 				ClampAnimation = true
 			}
 		}
+
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -673,11 +684,11 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			Location = [0.5, 1]
 		}
 
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [0.5, 1]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{
@@ -687,7 +698,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [2,3]
+					HidesIndicators = [1,2]
 				}
 				// Out of power.
 				{

@@ -1,0 +1,708 @@
+Part : &<../base_part_terran_utilities.rules>/Part
+{
+	NameKey = "Parts/Radiator"
+	IconNameKey = "Parts/RadiatorIcon"
+	ID = SW.radiator
+	EditorGroups = ["Thermal"]
+	EditorParentParts = [ "cosmoteer.resonance_beam_turret" ]
+	DescriptionKey = "Parts/RadiatorDesc"
+	Resources
+	[
+		[steel, 48]
+		[coil, 52]
+		[coil2, 12]
+	]
+	Size = [1, 4]
+	PhysicalRect = [0, 1, 1, 3]
+	SaveRect = &PhysicalRect
+	IsRotateable = true
+	SelectionPriority = 0
+	MaxHealth = 4000
+	ReceivableBuffs : ^/0/ReceivableBuffs [ HeatDissipation ]
+	Flammable = false
+	AllowedDoorLocations = []
+	GeneratorRequiresDoor = false
+	IgnoreRotationForMirroredSelection = true
+	CrewSpeedFactor = 0
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Point
+			MipLevels = max
+		}
+		Size = [21.33,70.65]
+	}
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, IsConnected]
+			Mode = All
+		}
+
+		IsConnected
+		{
+			Type = MultiToggle
+			Toggles = [Port_Right, Port_Left]
+			Mode = Any
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		Port_Left
+		{
+			Type = NetworkPort
+			Location = [0, 2]
+			Direction = Left
+			Types = [ thermal ]
+		}
+		Port_Right : Port_Left
+		{
+			Direction = Right
+		}
+
+		Router
+		{
+			Type = NetworkRouter
+			RouteGenerators
+			[
+				{
+					Type = Bidirectional
+					Routes
+					[
+						[Port_Left, Port_Right, 0]
+						[Port_Left, NetworkedHeatBuffer, 0]
+						[Port_Left, NetworkHeatOutput, 0]
+						[Port_Left, NetworkedThermalDissipationLoadValue, 0]
+					]
+				}
+			]
+		}
+	
+		HeatBuffer
+		{
+			Type = ResourceStorage
+			ResourceType = heat
+			MaxResources = (&../DissipationScore/MAX_SCORE) * 2
+			ProvidedValueRange = 0
+			ProvidedValuePerResource = 1
+			InitToMaxResources = 0
+			IgnoreResourcesForInitToMax = true
+		}
+
+		NetworkedHeatBuffer
+		{
+			Type = NetworkResourceStore
+			ResourceType = heat
+			ResourceStorage = HeatBuffer
+			Categories = [ thermal_storage ]
+		}
+		
+		NetworkHeatOutput
+		{
+			Type = NetworkResourceOutput
+			ResourceType = heat
+			Mode = DistributeProportionallyByAvailable
+			ProvidedValueRange = 0
+			ProvidedValuePerResource = 1
+			Categories = [ thermal_storage ]
+		}
+		
+		NormalizedDissipationValue
+		{
+			Type = ValueOperation
+			Operator = Divide
+			ValueOne
+			{
+				ID = HeatDissipationConverter
+				ValueID = "LastConversion"
+			}
+			ValueTwo = DissipationScore
+		}
+		Zero { Type = StaticValue; Value = 0 }
+		DissipationSmoothingTargetValue
+		{
+			Type = ToggleValueSelector
+			Toggle = PowerToggle
+			ToggleOffValue = Zero
+			ToggleOnValue = NormalizedDissipationValue
+		}
+		NormalizedDissipationValueSmoothed
+		{
+			Type = SmoothedValue
+			ValueSource = NormalizedDissipationValue
+			MaxDelta = 0.25
+			Deterministic = false
+		}
+
+		NetworkedThermalDissipationLoadValue
+		{
+			Type = NetworkValue
+			ValueSource = NormalizedDissipationValueSmoothed
+			Categories = [ thermal_load_dissipation ]
+		}
+
+		DissipationScore
+		{
+			Type = TileLineScoreValue
+			OperationalToggle = HeatDissipationConverter
+			PartRectType = Physical
+			Line
+			{
+				Location = [0, 0]
+				Direction = Up
+				MaxTiles = 120
+				MaxOcclusionDistance = 10
+			}
+			
+			HEAT_PER_SECOND = 550
+			MAX_SCORE = (&HEAT_PER_SECOND) * (&~/Part/Components/HeatDissipationConverter/Interval) * (&<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO)
+			TILE_SCORE = (2 * (&MAX_SCORE)) / ((&Line/MaxTiles) + 1)
+			EmptyTileScore = &TILE_SCORE
+			PartCategoryTileScores
+			{
+				structure = (&../EmptyTileScore)
+			}
+			ZeroScoreTilesBlock = true
+			Falloff = 1
+			CustomShapeMediaEffects
+			[
+				//&<particles/heat_sink_radiation.rules>
+				//&<particles/heat_sink_radiation_base2.rules>
+			]
+			OcclusionCheckInterval = (&~/Part/Components/HeatDissipationConverter/Interval) / 4;
+			OcclusionHitEffects 
+			[
+				{
+					Type = StatusApplication
+					StatusType = cosmoteer.heat
+					StatusValue
+					{
+						BaseValue = (&<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO) / 4
+						EffectScaleExponent = 1
+					}
+					Filter
+					{
+						Friendlies = true
+						Neutrals = false
+						Junk = true
+						Enemies = true
+					}
+				}
+			]
+			OcclusionContinuousMediaEffects
+			[
+				&<particles/hit_sparks.rules>
+			]
+			MediaIntensity
+			{
+				BaseValue = 1
+				Modifiers
+				[
+					{
+						Type = ScaledEffectScale
+						ModificationMode = Multiply
+						Scale = (&<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO) / 4
+					}
+				]
+			}
+			BlueprintLineWidthScale = 0.1
+			BlueprintMaterial
+			{
+				Shader = "radiator_line.shader"
+				Color = [255, 230, 0, 200]
+				_alphaExponent = &../Falloff
+			}
+			ValueTextFormatKey = "Parts/RadiatorDissipationScoreFmt"
+			TextValueScaleFactor = 1 / (&~/Part/Components/HeatDissipationConverter/Interval) / (&<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO)
+			FractionalTextValueBasis = &MAX_SCORE
+			FractionalTextValueScaleFactor = 100
+		}
+		
+		DissipationBuff
+		{
+			Type = SelfBuffProvider
+			BuffType = HeatDissipation
+			BuffAmount = 1
+			BuffMultiplier = DissipationScore
+		}
+		
+		HeatDissipationConverter
+		{
+			Type = ResourceConverter
+			OperationalToggle = PowerToggle
+			FromStorage = NetworkHeatOutput
+			MinFromQuantityForConversion = 1
+			FromQuantity 
+			{
+				BaseValue = 1
+				BuffType = HeatDissipation
+				BuffMode = Multiply
+			}
+			Interval = 0.5
+		}
+		
+		SteamEffects
+		{
+			Type = ContinuousEffects
+			Location = [0.5, 3.75]
+			OperationalToggle = PowerToggle
+			//OperationalToggle = HeatDissipationConverter
+			//FactorMediaEffectsIntensityWith = NetworkHeatOutput
+			FactorMediaEffectsIntensityWith = NormalizedDissipationValueSmoothed
+			MediaEffects
+			[
+				//&<particles/radiator_steam.rules>
+				&<particles/radiator_steam_distortion.rules>
+				&<particles/radiator_heat_base.rules>
+				&<particles/radiator_heat_scaling.rules>
+				&<particles/radiator_heat_sparks.rules>
+				
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/radiator_venting.wav"
+					RampUpTime = .2
+					RampDownTime = .4
+				
+					DynamicVolume
+					{
+						MinDistance = 0
+						MaxDistance = 10
+						DistanceFalloff = 1.5
+
+						MinZoom = 1
+						MaxZoom = 50
+						ZoomFalloff = 3
+					}
+
+					DynamicFilter
+					{
+						MinDistance = 0
+						MaxDistance = 2
+						DistanceFalloff = 1
+
+						MinZoom = 1
+						MaxZoom = 12
+						ZoomFalloff = 2
+						
+						Filter
+						{
+							FilterType = LowPassAmplify
+							FromFrequency = 7350
+							ToFrequency = 250
+							FrequencyFactorExponent = 0.25
+						}
+					}
+				}
+			]
+		}
+	
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [.5, 2.5]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 2.5]
+			OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 3]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 3]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 3]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [1, 3]
+					}
+					{
+						File = "lights_33.png"
+						Size = [1, 3]
+					}
+					{
+						File = "lights_66.png"
+						Size = [1, 3]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 3]
+					}
+
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 3]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 3]
+					}
+				]
+			}
+		}
+
+		Exhaust_Port_Graphics
+		{
+			Type = Graphics
+			Location = [.5, 0.5]
+			Floor
+			{
+				Layer = "weapons"
+				DamageLevels
+				[
+					{
+						File = "exhaust_port.png"
+						NormalsFile = "exhaust_port_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "exhaust_port_33.png"
+						NormalsFile = "exhaust_port_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "exhaust_port_66.png"
+						NormalsFile = "exhaust_port_normals.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+		
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [0.5,2.5]
+			Layer = "indicators"
+			Indicators
+			[
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [1, 1]
+					}
+				}
+			]
+		}
+		
+		Left_Pipe_Components
+		{
+			Type = ToggledComponents
+			Toggle = Port_Left
+			Components
+			{
+				Left_Pipes_Graphics
+				{
+					Type = Graphics
+					Location = [0.5, 2.5]
+					Floor
+					{
+						Layer = "doodads_low"
+						DamageLevels
+						[
+							{
+								File = "pipe.png"
+								Size = [1, 1]
+								MirrorU = true
+							}
+							{
+								File = "pipe_33.png"
+								Size = [1, 1]
+								MirrorU = true
+							}
+							{
+								File = "pipe_66.png"
+								Size = [1, 1]
+								MirrorU = true
+							}
+						]
+					}
+					Roof
+					{
+						Layer = "roof_doodads"
+						Offset = [-0.5, 0]
+						DamageLevels
+						[
+							{
+								File = "pipe_roof.png"
+								NormalsFile = "pipe_roof_normals.png"
+								Size = [1, 1]
+								MirrorU = true
+							}
+							{
+								File = "pipe_roof_33.png"
+								NormalsFile = "pipe_roof_normals.png"
+								Size = [1, 1]
+								MirrorU = true
+							}
+							{
+								File = "pipe_roof_66.png"
+								NormalsFile = "pipe_roof_normals.png"
+								Size = [1, 1]
+								MirrorU = true
+							}
+						]
+					}
+				}
+			}
+		}
+
+		Right_Pipe_Components
+		{
+			Type = ToggledComponents
+			Toggle = Port_Right
+			Components
+			{
+				Right_Pipes_Graphics
+				{
+					Type = Graphics
+					Location = [0.5, 2.5]
+					Floor
+					{
+						Layer = "doodads_low"
+						DamageLevels
+						[
+							{
+								File = "pipe.png"
+								Size = [1, 1]
+							}
+							{
+								File = "pipe_33.png"
+								Size = [1, 1]
+							}
+							{
+								File = "pipe_66.png"
+								Size = [1, 1]
+							}
+						]
+					}
+					Roof
+					{
+						Layer = "roof_doodads"
+						Offset = [0.5, 0]
+						DamageLevels
+						[
+							{
+								File = "pipe_roof.png"
+								NormalsFile = "pipe_roof_normals.png"
+								Size = [1, 1]
+							}
+							{
+								File = "pipe_roof_33.png"
+								NormalsFile = "pipe_roof_normals.png"
+								Size = [1, 1]
+							}
+							{
+								File = "pipe_roof_66.png"
+								NormalsFile = "pipe_roof_normals.png"
+								Size = [1, 1]
+							}
+						]
+					}
+				}
+			}
+		}
+		
+		One { Type=StaticValue; Value=1; }
+		ThermalLoadFactor
+		{
+			Type = MultiValue
+			Mode = Min
+			Values = [ NormalizedDissipationValueSmoothed, One ]
+		}
+		ThermalLoadGlowColorFactor
+		{
+			Type = ValueColor
+			AlphaFrom = ThermalLoadFactor
+		}
+		Heat_Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 2.5]
+			OperationalToggle = IsOperational
+			GetColorFrom =  ThermalLoadGlowColorFactor
+			OperationalDoodad
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "heat.png"
+						Size = [1, 3]
+					}
+				]
+			}
+		}
+		RoofGlowHeat_Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 2.5]
+			GetColorFrom =  ThermalLoadGlowColorFactor
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "roof_glows.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_glows_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_glows_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+
+		Left_Pipe_Connected_Blueprints
+		{
+			Type = BlueprintSprite
+			Toggle = Port_Left
+			File = "blueprints_connected.png"
+			Size = [1, 4]
+			Offset = [0, 0]
+		}
+/*		Left_Pipe_Unconnected_Blueprints
+		{
+			Type = BlueprintSprite
+			Toggle = Port_Left
+			Invert = true
+			File = "blueprints_unconnected.png"
+			Size = [1, 4]
+			Offset = [0, -.5]
+		}
+*/		Right_Pipe_Connected_Blueprints
+		{
+			Type = BlueprintSprite
+			Toggle = Port_Right
+			File = "blueprints_connected.png"
+			Size = [1, 4]
+			Offset = [0, 0]
+			MirrorU = true
+		}
+/*		Right_Pipe_Unconnected_Blueprints
+		{
+			Type = BlueprintSprite
+			Toggle = Port_Right
+			Invert = true
+			File = "blueprints_unconnected.png"
+			Size = [1, 4]
+			Offset = [0, -.5]
+			MirrorU = true
+		}
+*/
+
+		//------------------------ PIPE CONNECTOR ------------------------
+		Dont_Draw_Pipe_Connector_Into_This_Part { Type = Graphics }//When this fake component is present, the Heat Pipes dont draw a Pipe Conector to this part.
+
+		//Draw a Pipe Connector Left if possible
+		PipeConnectorLeft_DrawToggle : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorLeft_DrawToggle
+		{
+			PartLocation = [-1, 2]
+		}
+		PipeConnectorLeft_Toggle : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorLeft_Toggle {}
+		PipeConnectorLeft_Components : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorLeft_Components
+		{
+			Components
+			{
+				PipesConnectorLeft_Graphics : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorLeft_Components/Components/PipesConnectorLeft_Graphics
+				{
+					Location = [-0.5, 2.5]
+				}
+			}
+		}
+
+		//Draw a Pipe Connector Right if possible
+		PipeConnectorRight_DrawToggle : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorRight_DrawToggle
+		{
+			PartLocation = [1, 2]
+		}
+		PipeConnectorRight_Toggle : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorRight_Toggle {}
+		PipeConnectorRight_Components : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorRight_Components
+		{
+			Components
+			{
+				PipesConnectorRight_Graphics : <./Data/ships/terran/heat_pipe_adaptive/pipe_connector/heat_pipe_connector_toggles.rules>/PipeConnectorRight_Components/Components/PipesConnectorRight_Graphics
+				{
+					Location = [1.5, 2.5]
+				}
+			}
+		}
+		//---------------------- END PIPE CONNECTOR ----------------------
+
+		HeatDissipationStatDenominator
+		{
+			Type = StaticValue
+			Value = (&<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO) * (&~/Part/Components/HeatDissipationConverter/Interval)
+		}
+		HeatDissipationStatValue
+		{
+			Type = ValueOperation
+			Operator = Divide
+			ValueOne = DissipationScore
+			ValueTwo = HeatDissipationStatDenominator
+			NaNFallbackValue = 0
+			IncludeInBlueprints = true
+		}
+		HeatDissipationStatProvider
+		{
+			Type = StatProvider
+			Stat = HeatDissipation
+			ValueFrom = HeatDissipationStatValue
+		}
+	}
+	
+	Stats 
+	{
+		DISSIPATION_RESOURCE = (&~/Part/Components/DissipationScore/MAX_SCORE) / (&~/Part/Components/HeatDissipationConverter/Interval)
+		HeatDissipation = (&DISSIPATION_RESOURCE) * (&<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO)
+//		DeathFireSizeByHeat =
+	}
+}

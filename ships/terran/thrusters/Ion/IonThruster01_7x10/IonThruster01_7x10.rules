@@ -10,8 +10,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	DescriptionKey = "Parts/IonThrusterBigDesc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechIII"]
-	TypeCategories = [ftl, thruster, ion_thruster, uses_power, SW_Hypernodes, SW_Tech_III]
+	EditorGroups : ^/0/EditorGroups ["Flight", SWTechIII]
+	TypeCategories : ^/0/TypeCategories [ftl, thruster, ion_thruster, uses_power, SW_Hypernodes, SW_Tech_III]
 	RequiresCategories = [SW_Bridge]
 
 	//Resources&Size&Health
@@ -47,59 +47,58 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	ProhibitBelow = 8 // 11 //17
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Thrust, SW_Ion_Thruster_To_Accelerator, SW_Ion_Thruster_Accelerator_RampUp, SW_Ion_Thruster_Accelerator_RampUpFinal, SW_Display] 
 
-    //Doors&Etc
+	//Doors&Etc
 	ForceManhattenPathInPart = true
-    BlockedTravelCells
-    [
-        //[2, 1]
-        //[3, 1] //battery drop off point
-        //[4, 1]
-        //[1, 2]
-        //[2, 2]
-        //[3, 2]
-        //[4, 2]
-        //[5, 2]
-        //[1, 3]
-        //[2, 3]
-        //[3, 3]
-        //[4, 3]
-        //[5, 3]
-        //[1, 4]
-        //[2, 4]
-        //[3, 4]
-        //[4, 4]
-        //[5, 4]
-        //[1, 5]
-        //[2, 5]
-        //[3, 5]
-        //[4, 5]
-        //[5, 5]
-        //[1, 6]
-        //[2, 6]
-        //[3, 6]
-        //[4, 6]
-        //[5, 6]
-        [1, 7]
-        [2, 7]
-        [3, 7]
-        [4, 7]
-        [5, 7]
-        [0, 8]
-        [1, 8]
-        [2, 8]
-        [3, 8]
-        [4, 8]
-        [5, 8]
-        [6, 8]
-        [0, 9]
-        [1, 9] //Bottom Left?
-        [2, 9]
-        [3, 9]
-        [4, 9]
-        [5, 9]
-        [6, 9]
-
-    ] 
+	BlockedTravelCells
+	[
+		//[2, 1]
+		//[3, 1] //battery drop off point
+		//[4, 1]
+		//[1, 2]
+		//[2, 2]
+		//[3, 2]
+		//[4, 2]
+		//[5, 2]
+		//[1, 3]
+		//[2, 3]
+		//[3, 3]
+		//[4, 3]
+		//[5, 3]
+		//[1, 4]
+		//[2, 4]
+		//[3, 4]
+		//[4, 4]
+		//[5, 4]
+		//[1, 5]
+		//[2, 5]
+		//[3, 5]
+		//[4, 5]
+		//[5, 5]
+		//[1, 6]
+		//[2, 6]
+		//[3, 6]
+		//[4, 6]
+		//[5, 6]
+		[1, 7]
+		[2, 7]
+		[3, 7]
+		[4, 7]
+		[5, 7]
+		[0, 8]
+		[1, 8]
+		[2, 8]
+		[3, 8]
+		[4, 8]
+		[5, 8]
+		[6, 8]
+		[0, 9]
+		[1, 9] //Bottom Left?
+		[2, 9]
+		[3, 9]
+		[4, 9]
+		[5, 9]
+		[6, 9]
+	]
 	AllowedDoorLocations
 	[
 		[-1, 0]
@@ -168,7 +167,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [54, 108]
 	}
@@ -183,19 +183,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = All
 		}
 
-		PowerToggle
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
 		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-			RequiresCommand = false
-		}
-
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 70 //1 per tile
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
+			Mode = All
 		}
 
 		IsOperationalAndHypernodeConnectedToggle
@@ -210,6 +202,26 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = MultiToggle
 			Toggles = [IsOperational, {Toggle = FtlDrive, Invert = true}]
 			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = IsOperationalAndCommandToggle
+			CommandPoints = 70 //1 per tile
 		}
 
 		HypernodeConnectedToggle
@@ -249,7 +261,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = ToggledComponents
 			Toggle = PowerDistributionBuffToggle
 			Invert = true
-			IncludeInBlueprints = true //added 0.27.0_rc2_steam - unsure if this applies
+			IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -478,7 +490,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 
 		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
 		{
-			
+
 		}
 
 		RoofGridFlat
@@ -492,6 +504,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Layer = "roofs"
 			AmbiguousSprites = &<../Ion_Common/RoofGrid/roof_grid_blank.rules>/AmbiguousSprites
 		}
+
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
 
 		LightGraphics
 		{
@@ -648,6 +666,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -810,11 +829,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
 		}
 
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [3.5, 5]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{

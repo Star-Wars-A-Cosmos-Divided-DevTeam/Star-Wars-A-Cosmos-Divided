@@ -1,6 +1,17 @@
+OVERCLOCK
+{
+	ARC_FACTOR = 1
+	DAMAGE_DRAIN_FACTOR = 1 / 3
+	EMP_RESIST = 50%
+	HEAT_PER_SECOND = 20
+	HEAT_PER_DAMAGE = 0.5
+}
+HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
+HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
+
 Part : <base_part_terran_shields.rules>/Part
 {
-    //IDs
+	//IDs
 	ID = SW.bubble_generator_giga_switchable
 	OtherIDs = [SW.bubble_generator_omega_switchable]
 
@@ -10,11 +21,11 @@ Part : <base_part_terran_shields.rules>/Part
 	DescriptionKey = "Parts/BubbleGeneratorGigaDesc"
 
 	//Groups&Categories
-	EditorGroups = ["Defenses", "SWTechIII"]
-	TypeCategories = [defense, uses_power, SW_Shield, SW_Tech_III]
+	EditorGroups : ^/0/EditorGroups ["Defenses", SWTechIII]
+	TypeCategories : ^/0/TypeCategories [defense, uses_power, SW_Shield, SW_Tech_III]
 	//RequiresCategories = []
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 1024]
@@ -27,7 +38,7 @@ Part : <base_part_terran_shields.rules>/Part
 	Size = [8, 8]
 	MaxHealth = 64000
 
-    //Selections
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeID = "bubble_shield_gen"
 	SelectionTypeByRotation = true
@@ -35,13 +46,14 @@ Part : <base_part_terran_shields.rules>/Part
 	//PartSpecific
 	AIValueFactor = 3.75		//equals ~1mil ai value
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [ElectronDebuff]
 
 	//Doors&Etc
 	ForceManhattanPathInPart = true
 	BlockedTravelCells = &<shield_8/shield_8_additional.rules>/Part/BlockedTravelCells
 	BlockedTravelCellDirections = &<shield_8/shield_8_additional.rules>/Part/BlockedTravelCellDirections
+
 	MaxDoors = 12
 	AllowedDoorLocations
 	[
@@ -67,18 +79,26 @@ Part : <base_part_terran_shields.rules>/Part
 		Texture
 		{
 			File = "Shield_Roasted_4x4/icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [80, 80]
 	}
 
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
 			Toggles : ^/0/Toggles [PowerToggle, CombinedBatteryStorage]
+			Mode = All
+		}
+
+		CommandConsumptionToggle : ^/0/CommandConsumptionToggle
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [PowerToggle]
 			Mode = All
 		}
 
@@ -93,7 +113,7 @@ Part : <base_part_terran_shields.rules>/Part
 		CommandConsumer
 		{
 			Type = CommandConsumer
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 			CommandPoints = 96
 			//Requires 0 Stationary Crew so
 		}
@@ -111,12 +131,6 @@ Part : <base_part_terran_shields.rules>/Part
 			Type = MultiToggle
 			Toggles = [BatteryStorageLeft, PowerToggle]
 			Mode = All
-		}
-		IsBatteryStorageRightAndNotCombinedStorage
-		{
-			Type = MultiToggle
-			Toggles = [BatteryStorageRight, {Toggle = CombinedBatteryStorage; Invert = true}]
-			Mode = Any
 		}
 
 		ShieldEmitterEffectToggleAndIsOperational
@@ -206,7 +220,7 @@ Part : <base_part_terran_shields.rules>/Part
 			Type = ResourceConverter
 			FromStorage = CombinedBatteryStorage
 			OperationalToggle = IsOperational
-			FromQuantity = 2000
+			FromQuantity = 1000
 			MinFromQuantityForConversion = 1
 			Interval = 1
 		}
@@ -360,13 +374,206 @@ Part : <base_part_terran_shields.rules>/Part
 			Components = &<shield_8/shield_8_pink.rules>/Components
 		}
 
+		OverclockTweenToggle
+		{
+			Type = ThresholdToggle
+			ValueFrom = OverclockStateValue
+			MinAmount = 1
+		}
+		
+		OverclockedEffectToggle
+		{
+			Type = MultiToggle
+			Toggles = [OverclockTweenToggle, IsOperationalOverclocked]
+			Mode = All
+		}
+		
+		IsOperationalOverloaded
+		{
+			Type = MultiToggle
+			Toggles = [ IsOperational, IsOverloaded ]
+			Mode = All
+		}
+		
+		IsOperationalOverclockedOverloaded
+		{
+			Type = MultiToggle
+			Toggles = [ IsOperational, IsOverloaded, OverclockedEffectToggle ]
+			Mode = All
+		}
+
+		OverloadValue
+		{
+			Type = BuffableValue
+			Value
+			{
+				BaseValue = 0
+				Modifiers
+				[
+					{
+						Type = Status
+						StatusType = cosmoteer.shield_overload
+						ModificationMode = Replace
+						BaseStatusValue = 0
+					}
+				]
+			}
+		}
+		
+		IsOverloaded
+		{
+			Type = ThresholdToggle
+			ValueFrom = OverloadValue
+			MinAmount = 0.01
+		}
+
+		// Overclock / Thermal network
+		OverclockHeatProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperationalOverclocked
+			HEAT_PER_INTERVAL = ceil((&~/OVERCLOCK/HEAT_PER_SECOND) * (&Interval))
+			ToQuantity = (&HEAT_PER_INTERVAL) * (&~/HEAT_TO_RESOURCE)
+			ToStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Interval = 0.5
+		}
+		OverclockHitHeatProducer
+		{
+			Type = ResourceChange
+			ResourceStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			// Provides the post-resistance damage value as EffectScale
+			Trigger = Overclock_ArcShieldProxy
+			Amount
+			{
+				BaseValue = "round((&~/OVERCLOCK/HEAT_PER_DAMAGE) * (&~/HEAT_TO_RESOURCE), 0)"
+				Modifiers
+				[
+					{
+						Type = EffectScale
+						ModificationMode = Multiply
+					}
+					{
+						Type = Status
+						StatusType = cosmoteer.shield_overload
+						ModificationMode = Multiply
+						BaseStatusValue = 1
+					}
+					{
+						Type = Buff
+						BuffType = Overclock
+						ModificationMode = Multiply
+					}
+				]
+			}
+		}
+		Overclock_ArcShieldProxy
+		{
+			Type = TriggerProxy
+			ComponentID = ArcShield
+			ProxyToggle = IsOperationalOverclocked
+		}
+		OverheatEffects : ^/0/OverheatEffects
+		{
+			Location = [0.5, 0.5]
+		}
+
+		Router
+		{
+			Type = NetworkRouter
+			RouteGenerators
+			[
+				{
+					Type = Simple
+					HEAT_INPUT = &~/Part/^/0/HEAT_NETWORK_INPUT
+					Routes
+					[
+						[&../../HEAT_INPUT, Port_Thermal_Left0, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Left1, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Left2, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down0, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down1, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down2, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down3, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down4, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down5, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down6, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down7, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Right0, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Right1, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Right2, 0]
+					]
+				}
+			]
+		}
+
+		Port_Thermal_Left0 : ~/Part/^/0/BASE_THERMAL_PORT
+		{
+			Location = [0, 5]
+			Direction = Left
+		}
+		Port_Thermal_Left1 : Port_Thermal_Left0
+		{
+			Location = [0, 6]
+		}
+		Port_Thermal_Left2 : Port_Thermal_Left0
+		{
+			Location = [0, 7]
+		}
+		Port_Thermal_Down0 : Port_Thermal_Left0
+		{
+			Location = [0, 7]
+			Direction = Down
+		}
+		Port_Thermal_Down1 : Port_Thermal_Down0
+		{
+			Location = [1, 7]
+		}
+		Port_Thermal_Down2 : Port_Thermal_Down0
+		{
+			Location = [2, 7]
+		}
+		Port_Thermal_Down3 : Port_Thermal_Down0
+		{
+			Location = [3, 7]
+		}
+		Port_Thermal_Down4 : Port_Thermal_Down0
+		{
+			Location = [4, 7]
+		}
+		Port_Thermal_Down5 : Port_Thermal_Down0
+		{
+			Location = [5, 7]
+		}
+		Port_Thermal_Down6 : Port_Thermal_Down0
+		{
+			Location = [6, 7]
+		}
+		Port_Thermal_Down7 : Port_Thermal_Down0
+		{
+			Location = [7, 7]
+		}
+		Port_Thermal_Right0 : Port_Thermal_Left0
+		{
+			Location = [7, 5]
+			Direction = Right
+		}
+		Port_Thermal_Right1 : Port_Thermal_Right0
+		{
+			Location = [7, 6]
+		}
+		Port_Thermal_Right2 : Port_Thermal_Right0
+		{
+			Location = [7, 7]
+		}
+
 		ShieldEmitterLoop
 		{
 			Type = ContinuousEffects
 			Location = [4, 4]
 			OperationalToggle = IsOperational
 			FactorMediaEffectsIntensityWith = CombinedBatteryStorage
-			MaxMediaEffectsZoom = 20
+			MaxMediaEffectsZoom = 12
+			//ParentToShip = true
 			MediaEffects
 			[
 				: /BASE_SOUNDS/AudioExteriorDetail
@@ -596,27 +803,20 @@ Part : <base_part_terran_shields.rules>/Part
 		
 		BatterySpritesLeft : &<shield_4.rules>/Part/Components/BatterySpritesLeft
 		{
-			//Type = ResourceSprites
 			Location = [2.5, 5.5]
 			ResourceStorage = BatteryStorageLeft
-			//Layer = "doodads_low"
-			//HasZeroResourceSprite = false
 		}
 		
 		BatterySpritesRight : BatterySpritesLeft
 		{
-			//Type = ResourceSprites
 			Location = [8- (&~/Part/Components/BatterySpritesLeft/Location/0), &~/Part/Components/BatterySpritesLeft/Location/1]
 			ResourceStorage = BatteryStorageRight
 		}
 
 		BatterySpritesMid : &<shield_4.rules>/Part/Components/BatterySpritesMid
 		{
-			//Type = ResourceSprites
 			Location = [4, 4 + 35/64]
 			ResourceStorage = CombinedBatteryStorage
-			//Layer = "doodads_low"
-			//HasZeroResourceSprite = true
 		}
 
 		OperationEffects
@@ -627,18 +827,24 @@ Part : <base_part_terran_shields.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
 
+		ScorchedEffects : ^/0/ScorchedEffects
+		{
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/HugePartScorched //Small Med Big Huge
+		}
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
-			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
 			Location = [4, 4]
 		}
 
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [4, 4]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{
@@ -669,6 +875,33 @@ Part : <base_part_terran_shields.rules>/Part
 			File = "Shield_Roasted_4x4/blueprints.png"
 			Size = [8, 8]
 		}
+		
+		Overclock_BlueprintArc
+		{
+			Type = ArcSprite
+			Radius = &<ShieldTuner.rules>/Giga/Radius
+			Arc = &<ShieldTuner.rules>/All/Arc
+			Rotation = -90d
+			Location = &<ShieldTuner.rules>/Giga/Location
+			SpriteSegments = &~/ShieldStatBase/BlueprintArcSpriteSegments
+			Sprite
+			{
+				Texture
+				{
+					File = "./Data/ships/terran/shield_gen_small/shield_energy_oc.png"
+					UVMode = Wrap
+					SampleMode = Linear
+					MipLevels = 1
+				}
+				_xScale = &<ShieldTuner.rules>/Giga/_xScale
+				Size = &<ShieldTuner.rules>/Giga/Size
+				Color = [255, 134, 36, 127]
+			}
+		}
+		Overclock_BlueprintArc_2 : Overclock_BlueprintArc
+		{
+			Rotation = 90d
+		}
 	}
 
 	//Stats
@@ -690,6 +923,16 @@ Part : <base_part_terran_shields.rules>/Part
 				ShieldArc = deg(360d)
 				ShieldDist = (&~/ShieldStatBase/Radius)
 				PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
+			}
+		}
+		{
+			NameKey = "StatCategories/Overclocked"
+			Stats
+			{
+				ShieldHP = (&~/Part/StatsByCategory/0/Stats/ShieldHP) / (&~/OVERCLOCK/DAMAGE_DRAIN_FACTOR)
+				EMPResistPercentage = (&~/OVERCLOCK/EMP_RESIST) * 100
+				HeatGeneration = (&~/OVERCLOCK/HEAT_PER_SECOND)
+				HeatPerDamage = (&~/OVERCLOCK/HEAT_PER_DAMAGE)
 			}
 		}
 	]

@@ -10,8 +10,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_2x3_Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechII"]
-	TypeCategories = [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_II]
+	EditorGroups : ^/0/EditorGroups ["Flight", SWTechII]
+	TypeCategories : ^/0/TypeCategories [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_II]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -41,8 +41,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	ThrustDecreaseTime = 2.6 	//v:0			//softer deccel
 	ThrustRecoveryTime = { BaseValue=3.0; BuffType=SW_Ion_Thruster_Boost_RampUpFinal; BuffMode=Divide; }
 	FuelUsage = 128 			//v:200			// 64%*200 of vanilla
-    
-    //Boosted
+	
+	//Boosted
 	BoostedThrusterForce = 15360		//ONLY HERE FOR STAT DISPLAY
 	BoostedThrustIncreaseTime = 0		//ONLY HERE FOR STAT DISPLAY
 	BoostedThrustDecreaseTime = 0		//ONLY HERE FOR STAT DISPLAY
@@ -51,7 +51,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	BoostedPowerDrain = { BaseValue=-10; BuffType=Engine;  BuffMode=Multiply; MinValue=(&BaseValue)*10; MaxValue=(&BaseValue)/10; }
 	BoostedPowerDrainInterval = 0.1
 	
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	//
 	ProhibitBelow = 18			//v:18
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Boost, SW_Ion_Thruster_Boost_Thrust, SW_Ion_Thruster_Boost_RampUp, SW_Ion_Thruster_Boost_RampUpFinal]
@@ -60,33 +60,35 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	ForceManhattenPathInPart = true
 	BlockedTravelCells
 	[
-		[0, 1]
-		[1, 1]
-		//
+		//[0, 1]
+		//[1, 1]
+		//[2, 1]
 		[0, 2]
 		[1, 2]
-		//
-		//
-		//
-		//
-		//
-		//
-		//
+		//[2, 2]
+		//[0, 3]
+		//[1, 3]
+		//[2, 3]
+		//[0, 4]
+		//[1, 4]
+		//[2, 4]
 	]
 	AllowedDoorLocations
 	[
 		[-1, 0]
-		//
-		//
+		//[-1, 1]
+		//[-1, 2]
 		[0, -1]
 		[1, -1]
 		//
 		//[2, -1]
+		//[1, 0]
 		[2, 0]
-		//
-		//
-		//
+		//[3, 0]
+		//[3, 1]
+		//[3, 2]
 	]
+	//
 
 	//Editor
 	EditorIcon
@@ -94,7 +96,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [42.66, 106.66]
 	}
@@ -105,8 +108,20 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles [PowerToggle, RealBatteryStorage]
+			Toggles : ^/0/Toggles [PowerToggle, CommandToggle, RealBatteryStorage]
 			Mode = All
+		}
+
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
+			Mode = All
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
 		}
 
 		IsOperationalAndHypernodeConnectedToggle
@@ -141,6 +156,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		{
 			Type = BuffToggle
 			BuffType = Engine
+		}
+
+		PowerDistributionBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = EnginePowerDistribution
 		}
 
 		BoostToggle
@@ -215,120 +236,6 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			TriggerWhenOff = true
 		}
 
-		Graphics
-		{
-			Type = Graphics
-			Location = [1, 1.5]
-			OperationalToggle = IsOperational
-
-			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
-			AnimationSpeedFactorRenormalize = [0.64, 2.7]
-
-			Floor
-			{
-				Layer = "doodads_low"
-				DamageLevels
-				[
-					{
-						File = "doodads_base.png"
-						Size = [2, 3]
-					}
-					/*{
-						File = "doodads_base_33.png"
-						Size = [2, 3]
-					}
-					{
-						File = "doodads_base_66.png"
-						Size = [2, 3]
-					}*/
-				]
-			}
-			/*
-			OperationalDoodad
-			{
-				Layer = "doodads_high"
-				//
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"doodads_on_1.png"
-							"doodads_on_2.png"
-							"doodads_on_3.png"
-							"doodads_on_4.png"
-							"doodads_on_5.png"
-							"doodads_on_6.png"
-							"doodads_on_7.png"
-							"doodads_on_8.png"
-						]
-						Size = [2, 3]
-						AnimationInterval = 0.075
-					}
-				]
-			}
-			NonOperationalDoodad
-			{
-				Layer = "doodads_high"
-				//
-				DamageLevels
-				[
-					{
-						File = "doodads_off_0.png"
-						Size = [2, 3]
-					}
-				]
-			}
-			*/
-			Walls
-			{
-				Layer = "walls"
-				DamageLevels
-				[
-					{
-						File = "walls.png"
-						Size = [2, 3]
-					}
-					{
-						File = "walls_33.png"
-						Size = [2, 3]
-					}
-					{
-						File = "walls_66.png"
-						Size = [2, 3]
-					}
-				]
-			}
-			Roof
-			{
-				Layer = "roofs"
-				DamageLevels
-				[
-					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
-						Size = [2, 3]
-					}
-					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
-						Size = [2, 3]
-					}
-					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
-						Size = [2, 3]
-					}
-				]
-			}
-		}
-
-		PowerDistributionBuffToggle
-		{
-			Type = BuffToggle
-			BuffType = EnginePowerDistribution
-		}
-
 		BoostOffComponents
 		{
 			Type = ToggledComponents
@@ -349,7 +256,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 					Type = ToggledComponents
 					Toggle = PowerDistributionBuffToggle
 					Invert = true
-					IncludeInBlueprints = true //added 0.27.0_rc2_steam - unsure if this applies
+					IncludeInBlueprints = true
 					Components
 					{
 						BatteryConsumer
@@ -608,7 +515,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = SelfBuffProvider
 			BuffType = SW_Ion_Thruster_Boost
 			ChainsFromBuffType = Engine
-			BuffAmount = { BaseValue=0%; BuffType=Engine; BuffMode=Add; }
+			BuffAmount = { BaseValue=-100%; BuffType=Engine; BuffMode=Add; }
 			OperationalToggle = EngineBuffToggle
 		}
 
@@ -639,10 +546,124 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		}
 
 		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
-		{	
-            GridSize = [2, 3]
+		{
+			GridSize = [2, 3]
 		}
-		
+
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [1, 1.5]
+			OperationalToggle = IsOperational
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0.64, 2.7]
+
+			Floor
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads_base.png"
+						Size = [2, 3]
+					}
+					/*{
+						File = "doodads_base_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "doodads_base_66.png"
+						Size = [2, 3]
+					}*/
+				]
+			}
+			/*
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				//
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads_on_1.png"
+							"doodads_on_2.png"
+							"doodads_on_3.png"
+							"doodads_on_4.png"
+							"doodads_on_5.png"
+							"doodads_on_6.png"
+							"doodads_on_7.png"
+							"doodads_on_8.png"
+						]
+						Size = [2, 3]
+						AnimationInterval = 0.075
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				//
+				DamageLevels
+				[
+					{
+						File = "doodads_off_0.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			*/
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [2, 3]
+					}
+					{
+						File = "walls_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "walls_66.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [2, 3]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [2, 3]
+					}
+				]
+			}
+		}
+
 		LightGraphics
 		{
 			Type = Graphics
@@ -723,7 +744,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 						Size = [2, 3]
 					}
 				]
-			}	
+			}
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -800,7 +821,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 						Size = [1, 2]
 					}
 				]
-			}	*/
+			}*/
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -830,8 +851,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = PolygonCollider
 			Vertices
 			[
-				[0 + 32/64  , 4         ]
-				[1 + 32/64  , 4         ]
+				[0 + 32/64  , 4		 ]
+				[1 + 32/64  , 4		 ]
 				//
 				[1 + 56/64  , 4 + 0.7   ]
 				[0 +  8/64  , 4 + 0.7   ]
@@ -880,6 +901,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = RealBatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -1026,11 +1048,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 		}
 
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [1, 1.5]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{
