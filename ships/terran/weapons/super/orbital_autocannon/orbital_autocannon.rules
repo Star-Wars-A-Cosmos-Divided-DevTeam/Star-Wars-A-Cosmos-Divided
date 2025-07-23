@@ -16,13 +16,13 @@ Versions:
 
 ---------------------------------------------------------------------------- */
 
-Part : /BASE_PART_TERRAN
+Part : &<../base_part_terran_super.rules>/Part
 {
 	NameKey = "Parts/OrbitalAutocannon"
 	IconNameKey = "Parts/OrbitalAutocannonIcon"
 	ID = SW.orbital_autocannon
 	DescriptionKey = "Parts/OrbitalAutocannonDesc"
-	EditorGroup = "SWTechIII"
+	EditorGroups = [SWTechIII]
 	Resources
 	[
 		[steel, 8] //
@@ -32,7 +32,7 @@ Part : /BASE_PART_TERRAN
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	MaxHealth = 576000
-	TypeCategories = [weapon, uses_power, is_crewed,siege_cannon,axial_weapon]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power, is_crewed,siege_cannon,axial_weapon]
 	RequiresCategories = [SW_Bridge,SW_WarRoom]
 
 	ReceivableBuffs : ^/0/ReceivableBuffs [SWTurretPerimeter]
@@ -42,16 +42,17 @@ Part : /BASE_PART_TERRAN
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [46, 92]
 	}
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, PartCrew,{Toggle=PerimeterToggle; Invert=true}]
+			Toggles : ^/0/Toggles [PowerToggle, PartCrew,{Toggle=PerimeterToggle; Invert=true}]
 			Mode = All
 		}
 
@@ -724,7 +725,6 @@ Part : /BASE_PART_TERRAN
 		{
 			Type = IndicatorSprites
 			Location = [6, 24]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turret Perimeter

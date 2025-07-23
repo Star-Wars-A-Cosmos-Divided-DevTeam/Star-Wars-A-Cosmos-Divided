@@ -1,15 +1,15 @@
-Part : <./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_missile_launchers.rules>/Part
 {
-    //IDs
-    ID = SW.missile_launcher_small
-    //StringKeys
+	//IDs
+	ID = SW.missile_launcher_small
+	//StringKeys
 	NameKey = "Parts/MissileLauncherCompact"
 	IconNameKey = "Parts/MissileLauncherCompactIcon"
 	DescriptionKey = "Parts/MissileLauncherCompactDesc"
 
 	//Groups&Categories
-	EditorGroups = ["WeaponsProjectile", "SWTechI"]
-	TypeCategories = [weapon, uses_clusters, uses_concussions, uses_hexs, uses_intruders, uses_launcher_parts, /*is_crewed,*/ SW_Tech_I, SW_Laucher_S]
+	EditorGroups : ^/0/EditorGroups ["WeaponsProjectile", SWTechI]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_clusters, uses_concussions, uses_hexs, uses_intruders, uses_launcher_parts, /*is_crewed,*/ SW_Tech_I, SW_Laucher_S]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -26,7 +26,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 	//Rects
 	//PhysicalRect = [0, 3, 1, 1]
 	//RectColliderRectType = Normal
-    SaveRect = [0, 3, 1, 1]
+	SaveRect = [0, 3, 1, 1]
 
 	//Selections
 	SelectionPriority = 1
@@ -82,11 +82,11 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 
 	//Components&Inheritance
 	Components : ^/0/Components
-    {
-		IsOperational
+	{
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, FireModeToggle] /*, PartCrew]*/
+			Toggles : ^/0/Toggles [PowerToggle, FireModeToggle] /*, PartCrew]*/
 			Mode = All
 		}
 
@@ -272,7 +272,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		MissilesPreparingToFire
 		{
 			Type = OpenCloseSprite
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			OperationalToggle = LauchBayShouldOpen
 			Layer = "doodads_high"
 			OpenDamageLevels
@@ -331,7 +331,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		InternalLaunchBaySprite
 		{
 			Type = OpenCloseSprite
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			OperationalToggle = LauchBayShouldOpen
 			Layer = "roofs"
 			OpenDamageLevels
@@ -468,7 +468,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		LaunchBayDoorAnimation
 		{
 			Type = Sprite
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			Layer = "sprites/roofs"
 			ResetAnimationTrigger = CommonReloadResetTriggerProxy
 			AtlasSprite
@@ -521,34 +521,34 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = All
 		}
 
-        LaunchBayChangingValueTween
-        {
-            Type = ValueTween
-            OnTweenDuration = 0.6
-            OffTweenDuration = 0.6
-            IsOnToggle = LauchBayShouldOpen
-        }
+		LaunchBayChangingValueTween
+		{
+			Type = ValueTween
+			OnTweenDuration = 0.6
+			OffTweenDuration = 0.6
+			IsOnToggle = LauchBayShouldOpen
+		}
 
-        IsLaunchBayFullyOpen
-        {
-            Type = ThresholdToggle
-            ValueFrom = LaunchBayChangingValueTween
-            MinAmount = 100%
-        }
+		IsLaunchBayFullyOpen
+		{
+			Type = ThresholdToggle
+			ValueFrom = LaunchBayChangingValueTween
+			MinAmount = 100%
+		}
 
-        IsLauchBayFullyClosed
-        {
-            Type = ThresholdToggle
-            ValueFrom = LaunchBayChangingValueTween
-            MaxAmount = 0%
-        }
+		IsLauchBayFullyClosed
+		{
+			Type = ThresholdToggle
+			ValueFrom = LaunchBayChangingValueTween
+			MaxAmount = 0%
+		}
 
-        LauchBayShouldOpen
-        {
-            Type = MultiToggle
-            Toggles = [IsOperational, FireModeToggle, MissilesPrereqToggleProxy]
-            Mode = All
-        }
+		LauchBayShouldOpen
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, FireModeToggle, MissilesPrereqToggleProxy]
+			Mode = All
+		}
 */
  /*
  		IsOuterLaunchBayNotFullyOpen
@@ -558,34 +558,34 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			Mode = All
 		}
 
-        OuterLaunchBayChangingValueTween
-        {
-            Type = ValueTween
-            OnTweenDuration = 0.6
-            OffTweenDuration = 0.6
-            IsOnToggle = OuterLauchBayShouldOpen
-        }
+		OuterLaunchBayChangingValueTween
+		{
+			Type = ValueTween
+			OnTweenDuration = 0.6
+			OffTweenDuration = 0.6
+			IsOnToggle = OuterLauchBayShouldOpen
+		}
 
-        IsOuterLaunchBayFullyOpen
-        {
-            Type = ThresholdToggle
-            ValueFrom = OuterLaunchBayChangingValueTween
-            MinAmount = 100%
-        }
+		IsOuterLaunchBayFullyOpen
+		{
+			Type = ThresholdToggle
+			ValueFrom = OuterLaunchBayChangingValueTween
+			MinAmount = 100%
+		}
 
-        IsOuterLauchBayFullyClosed
-        {
-            Type = ThresholdToggle
-            ValueFrom = OuterLaunchBayChangingValueTween
-            MaxAmount = 0%
-        }
+		IsOuterLauchBayFullyClosed
+		{
+			Type = ThresholdToggle
+			ValueFrom = OuterLaunchBayChangingValueTween
+			MaxAmount = 0%
+		}
 
-        OuterLauchBayShouldOpen
-        {
-            Type = MultiToggle
-            Toggles = [IsOperational, FireModeToggle, MissilesPrereqToggleProxy]
-            Mode = All
-        }
+		OuterLauchBayShouldOpen
+		{
+			Type = MultiToggle
+			Toggles = [IsOperational, FireModeToggle, MissilesPrereqToggleProxy]
+			Mode = All
+		}
 */
 
 
@@ -625,7 +625,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			Floor
 			{
 				Layer = "floors"
-				//Offset = [0, .5]
+				//Offset = [0, 0.5]
 				DamageLevels
 				[
 					{
@@ -645,7 +645,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			Walls
 			{
 				Layer = "walls"
-				//Offset = [0, .5]
+				//Offset = [0, 0.5]
 				DamageLevels
 				[
 					{
@@ -698,7 +698,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			OperationalDoodad
 			{
 				Layer = "doodads_low"
-				//Offset = [0, .5]
+				//Offset = [0, 0.5]
 				DamageLevels
 				[
 					{
@@ -718,7 +718,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 			NonOperationalDoodad
 			{
 				Layer = "doodads_low"
-				//Offset = [0, .5]
+				//Offset = [0, 0.5]
 				DamageLevels
 				[
 					{
@@ -752,7 +752,7 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-            Location = [0.5, 2.5]
+			Location = [0.5, 2.5]
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
@@ -808,20 +808,20 @@ Part : <./Data/ships/terran/base_part_terran.rules>/Part
 				Mode = 2
 			}
 		}
-    }
+	}
 
-    Stats
-    {
-        CrewRequired = 0 //&~/Part/Components/PartCrew/Crew
-        MiniClusterCapacity = 6
-        IntruderMissileCapacity = 1
-        ConcussionMissileCapacity = 1
-        HEXMissileCapacity = 1
+	Stats
+	{
+		CrewRequired = 0 //&~/Part/Components/PartCrew/Crew
+		MiniClusterCapacity = 6
+		IntruderMissileCapacity = 1
+		ConcussionMissileCapacity = 1
+		HEXMissileCapacity = 1
 
-        RecCrew = (&CrewRequired) + (&<hex/missile_launcher_hex.rules>/MissileStats/Stats/ROF) * (&<hex/missile_launcher_hex.rules>/MissileStats/Stats/MissileParts) * 4
-    }
+		RecCrew = (&CrewRequired) + (&<hex/missile_launcher_hex.rules>/MissileStats/Stats/ROF) * (&<hex/missile_launcher_hex.rules>/MissileStats/Stats/MissileParts) * 4
+	}
 
-    StatsNotesKey = "Stats/MissileLauncherNotes"
+	StatsNotesKey = "Stats/MissileLauncherNotes"
 }
 
 /**
@@ -883,7 +883,7 @@ For example:
 		OuterLaunchBayDoorsSprite
 		{
 			Type = OpenCloseSprite
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			OperationalToggle = OuterLauchBayShouldOpen
 			Layer = "SW.roof_engines"
 			OpenDamageLevels

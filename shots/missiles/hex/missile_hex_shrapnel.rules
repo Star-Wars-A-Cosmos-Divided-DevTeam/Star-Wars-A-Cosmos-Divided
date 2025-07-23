@@ -1,5 +1,5 @@
 ID = "sw.missile_hex_shrapnel"
-Range = 40
+Range = 40 // Note: Actual lifetime is set below. Need to change that when modifying range.
 Speed = 35
 
 Components
@@ -63,14 +63,10 @@ Components
 							Filter
 							{
 								Friendlies = true
-	                            Ships = true
+								Ships = true
 								Crew = true
 							}
 						}
-						//{
-						//	Type = Fire
-						//	FireChance = 2
-						//}
 						{
 							Type = Impulse
 							Impulse = 10
@@ -100,12 +96,8 @@ Components
 					}
 				}
 				{
-					Type = Fire
-					FireChance = 2
-				}
-				{
 					Type = Impulse
-					Impulse = 40
+					Impulse = { BaseValue = 40; EffectScaleExponent = 1 }
 				}
 			]
 
@@ -116,6 +108,7 @@ Components
 				&<particles/missile_hex_shrapnel_flash_large.rules>
 				&<particles/sw_flak_large_green_smoke.rules>
 				//&<particles/chemical_hit_cloud.rules>
+
 				&/SW_SOUNDS/SW_Missile_Hex_Hit
 				: /BASE_SHAKE
 				{
@@ -152,16 +145,12 @@ Components
 							{
 								Friendlies = true
 								Crew = true
-	                            Ships = true
+								Ships = true
 							}
 						}
-						//{
-						//	Type = Fire
-						//	FireChance = 1
-						//}
 						{
 							Type = Impulse
-							Impulse = 10
+							Impulse = { BaseValue = 10; EffectScaleExponent = 1 }
 						}
 					]
 					MediaEffects
@@ -169,6 +158,7 @@ Components
 						&<particles/sw_flak_large_green_shrapnel.rules>
 						//&<particles/missile_hex_shrapnel_smoke_large.rules>
 						&<particles/missile_hex_shrapnel_flash_large.rules>
+
 						&/SW_SOUNDS/SW_Missile_Hex_Hit
 					]
 				}
@@ -218,6 +208,32 @@ Components
 		}
 		FinishedPenetratingOperational = &PenetratingOperational
 		FinishedPenetratingStructural = &PenetratingStructural
+
+		BulletCollisions
+		{
+			Enemies = true
+			Junk = true
+			Friendlies = true
+			Neutrals = true
+			OnlyBulletCategories = [mine]
+		}
+		PenetratesBullets = true
+		HitBullet
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = { BaseValue = 100000; EffectScaleExponent = 1 }
+					Filter
+					{
+						Friendlies = true
+					}
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
 	}
 
 	Sprite
@@ -256,6 +272,8 @@ Components
 			VertexColor = [255, 100, 0]
 			TargetBlendMode = Add
 			Shader = "./Data/common_effects/fancy_light.shader"
+			_z = 1
+			_nrmlStrengthLimit = 1
 			_litReflectiveStrength = 24
 			_litAdditiveStrength = 0.05
 			_unlitAdditiveStrength = 0.125
@@ -271,483 +289,3 @@ Components
 		]
 	}
 }
-
-
-/*
-ID = "sw.missile_hex_shrapnel"
-Range = 40
-Speed = 35
-
-Components
-{
-	Physics
-	{
-		Type = CirclePhysics
-		Radius = 0.25
-		Density = 1
-		RandomExtraSpeed = [-5, 5]
-	}
-
-	Death
-	{
-		Type = DeathByLifetime
-		Lifetime = [1, 1.3]
-	}
-
-	Hit
-	{
-		Type = PenetratingHit
-		Penetration = 20
-		PenetrationSpeed = 20
-		PenetratesFriendlies = true
-
-		CrewCollisions = { Enemies=true; Junk=true }
-		PenetratesCrew = false
-		HitCrew = &HitOperational
-
-		ShieldCollisions
-		{
-			HitsOwnShields = true
-			HitsFriendlyShields = true
-		}
-
-		HitShield = &HitOperational
-		HitOperational
-		{
-			ReduceEffectsByPenetration = true
-			Offset = [-0.15, 0]
-
-			HitEffects
-			[
-				{
-					Type = Repeating
-					Count = 3
-					Interval = 1
-					InitialDelay = 0.5
-					RequireHitPart = false
-					HitEffectsScaleOverIterations
-					{
-						Min = 0.5
-						Max = 1.5
-					}
-					HitEffects
-					[
-						{
-							Type = ExplosiveDamage
-							TotalDamage = 2000
-							Radius = 3
-							Filter
-							{
-								Friendlies = true
-							}
-						}
-						{
-							Type = Fire
-							FireChance = 2
-						}
-						{
-							Type = Impulse
-							Impulse = 10
-						}
-					]
-					MediaEffects
-					[
-						&<particles/missile_hex_shrapnel_hit_large_sparks.rules>
-						//&<particles/missile_hex_shrapnel_smoke_large.rules>
-						&<particles/missile_hex_shrapnel_flash_large.rules>
-					]
-				}
-				{
-					Type = ExplosiveDamage
-					TotalDamage = 20000
-					Radius = 6//1 
-					Filter
-					{
-						Friendlies = true
-					}
-				}
-				{
-					Type = Fire
-					FireChance = 2
-				}
-				{
-					Type = Impulse
-					Impulse = 40
-				}
-			]
-
-			MediaEffects
-			[
-				&<particles/missile_hex_shrapnel_hit_large_sparks.rules>
-				//&<particles/missile_hex_shrapnel_smoke_large.rules>
-				&<particles/missile_hex_shrapnel_flash_large.rules>
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/bullet_large/bullet_large_hit.wav"
-					Volume = .75
-					SpeedVariation = .4
-				}
-
-				: /BASE_SHAKE
-				{
-					ShakeAmount = .1
-					Duration = .75
-				}
-			]
-		}
-		HitStructural
-		{
-			ReduceEffectsByPenetration = true
-
-			HitEffects
-			[
-				{
-					Type = Repeating
-					Count = 3
-					Interval = 1
-					InitialDelay = 0.5
-					RequireHitPart = false
-					HitEffectsScaleOverIterations
-					{
-						Min = 0.5
-						Max = 1.5
-					}
-					HitEffects
-					[
-						{
-							Type = ExplosiveDamage
-							TotalDamage = 1000
-							Radius = 2
-							Filter
-							{
-								Friendlies = true
-							}
-						}
-						{
-							Type = Fire
-							FireChance = 2
-						}
-						{
-							Type = Impulse
-							Impulse = 5
-						}
-					]
-					MediaEffects
-					[
-						&<particles/missile_hex_shrapnel_hit_large_sparks.rules>
-						//&<particles/missile_hex_shrapnel_smoke_large.rules>
-						&<particles/missile_hex_shrapnel_flash_large.rules>
-					]
-				}
-			]
-
-			MediaEffects
-			[
-				&<particles/missile_hex_shrapnel_hit_large_sparks.rules>
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/bullet_large/bullet_large_hit_structure.wav"
-					Volume = .5
-					SpeedVariation = .4
-				}
-			]
-		}
-		PenetratingOperational
-		{
-			ReduceEffectsByPenetration = true
-
-			HitEffects
-			[
-				{
-					Type = ExplosiveDamage
-					TotalDamage = 10000
-					Radius = 2
-					Filter
-					{
-						Friendlies = true
-					}
-				}
-				{
-					Type = Fire
-					FireChance = 4
-					Filter
-					{
-						Friendlies = true
-					}
-				}
-				{
-					Type = Impulse
-					Impulse = 60
-				}
-			]
-
-			MediaEffects
-			[
-				&<particles/missile_hex_shrapnel_hit_large_sparks.rules>
-			]
-		}
-		PenetratingStructural
-		{
-			// No effect.
-		}
-		FinishedPenetratingOperational = &PenetratingOperational
-		FinishedPenetratingStructural = &PenetratingStructural
-	}
-
-	Sprite
-	{
-		Type = Sprite
-		ReduceScaleWith = Hit
-		ReduceScaleExponent = 0.5
-		Sprite
-		{
-			Texture
-			{
-				File = "mine_shrapnel.png"
-				SampleMode = Linear
-				MipLevels = max
-			}
-			Size = [1.5, 1.5]
-		}
-	}
-
-	GlowSprite
-	{
-		Type = Sprite
-		RenderBucket = BulletUpper2
-		Z = 0
-		IsLight = true
-		Offset = [-1, 0]
-		Sprite
-		{
-			Texture
-			{
-				File = "./Data/common_effects/particles/blob.png"
-				MipLevels = max
-				SampleMode = Linear
-			}
-			Size = [12, 6]
-			VertexColor = [0, 255, 0]
-			TargetBlendMode = Add
-			Shader = "./Data/common_effects/fancy_light.shader"
-			_litReflectiveStrength = 24
-			_litAdditiveStrength = 0.05
-			_unlitAdditiveStrength = 0.125
-		}
-	}
-
-	MediaEffects
-	{
-		Type = MediaEffects
-		MediaEffects
-		[
-			&<particles/missile_hex_shrapnel_trail.rules>
-		]
-	}
-}
-
-*/
-
-
-/*
-ID = "sw.missile_hex_shrapnel"
-Range = 40
-Speed = 35
-
-Components
-{
-	Physics
-	{
-		Type = CirclePhysics
-		Radius = 0.25
-		Density = 1
-		RandomExtraSpeed = [-5, 5]
-	}
-
-	Death
-	{
-		Type = DeathByLifetime
-		Lifetime = [1, 1.3]
-	}
-
-	Hit
-	{
-		Type = PenetratingHit
-		Penetration = 20
-		PenetrationSpeed = 20
-		PenetratesFriendlies = true
-
-		CrewCollisions = { Enemies=true; Junk=true }
-		PenetratesCrew = false
-		HitCrew = &HitOperational
-
-		ShieldCollisions
-		{
-			HitsOwnShields = true
-			HitsFriendlyShields = true
-		}
-
-		HitShield = &HitOperational
-		HitOperational
-		{
-			ReduceEffectsByPenetration = true
-			Offset = [-0.15, 0]
-
-			HitEffects
-			[
-				{
-					Type = ExplosiveDamage
-					TotalDamage = 20000
-					Radius = 6//1 
-					Filter
-					{
-						Friendlies = true
-					}
-				}
-				{
-					Type = Fire
-					FireChance = 2
-				}
-				{
-					Type = Impulse
-					Impulse = 40
-				}
-			]
-
-			MediaEffects
-			[
-				&<particles/missile_hex_shrapnel_hit_large_sparks.rules> //&<./Data/shots/bullet_large/particles/bullet_hit_large_sparks.rules>
-				//&<particles/missile_hex_shrapnel_smoke_large.rules> //&<./Data/shots/bullet_large/particles/bullet_smoke_large.rules>
-				&<particles/missile_hex_shrapnel_flash_large.rules> //&<./Data/shots/bullet_large/particles/bullet_flash_large.rules>
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/bullet_large/bullet_large_hit.wav"
-					Volume = .75
-					SpeedVariation = .4
-				}
-
-				: /BASE_SHAKE
-				{
-					ShakeAmount = .1
-					Duration = .75
-				}
-			]
-		}
-		HitStructural
-		{
-			ReduceEffectsByPenetration = true
-
-			HitEffects
-			[
-
-			]
-
-			MediaEffects
-			[
-				&<particles/missile_hex_shrapnel_hit_large_sparks.rules>
-
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/bullet_large/bullet_large_hit_structure.wav"
-					Volume = .5
-					SpeedVariation = .4
-				}
-			]
-		}
-		PenetratingOperational
-		{
-			ReduceEffectsByPenetration = true
-
-			HitEffects
-			[
-				{
-					Type = ExplosiveDamage
-					TotalDamage = 10000
-					Radius = 2
-					Filter
-					{
-						Friendlies = true
-					}
-				}
-				{
-					Type = Fire
-					FireChance = 4
-					Filter
-					{
-						Friendlies = true
-					}
-				}
-				{
-					Type = Impulse
-					Impulse = 60
-				}
-			]
-
-			MediaEffects
-			[
-				&<particles/missile_hex_shrapnel_hit_large_sparks.rules>
-			]
-		}
-		PenetratingStructural
-		{
-			// No effect.
-		}
-		FinishedPenetratingOperational = &PenetratingOperational
-		FinishedPenetratingStructural = &PenetratingStructural
-	}
-
-	Sprite
-	{
-		Type = Sprite
-		ReduceScaleWith = Hit
-		ReduceScaleExponent = 0.5
-		Sprite
-		{
-			Texture
-			{
-				File = "mine_shrapnel.png"
-				SampleMode = Linear
-				MipLevels = max
-			}
-			Size = [1.5, 1.5]
-		}
-	}
-
-	GlowSprite
-	{
-		Type = Sprite
-		RenderBucket = BulletUpper2
-		Z = 0
-		IsLight = true
-		Offset = [-1, 0]
-		Sprite
-		{
-			Texture
-			{
-				File = "./Data/common_effects/particles/blob.png"
-				MipLevels = max
-				SampleMode = Linear
-			}
-			Size = [12, 6]
-			VertexColor = [255, 100, 0]
-			TargetBlendMode = Add
-			Shader = "./Data/common_effects/fancy_light.shader"
-			_litReflectiveStrength = 24
-			_litAdditiveStrength = 0.05
-			_unlitAdditiveStrength = 0.125
-		}
-	}
-
-	MediaEffects
-	{
-		Type = MediaEffects
-		MediaEffects
-		[
-			&<particles/missile_hex_shrapnel_trail.rules>
-		]
-	}
-}
-*/

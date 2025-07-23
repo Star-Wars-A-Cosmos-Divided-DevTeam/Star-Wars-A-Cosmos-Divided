@@ -1,0 +1,24 @@
+ID = SW.ion_drain
+Layer = Part
+StatusCombineMode = ApplyNewInstance
+TickInterval = 0.5
+// TODO: add soft-repair for instant repair only
+TickingEffects
+[
+	{
+		Type = ResourceDrain
+		ResourceType = battery
+		Amount = { BaseValue = (&~/TickInterval) * 1000; EffectScaleExponent = 1 }
+		Filter
+		{
+			Friendlies = true
+			Self = true
+		}
+//		MediaEffectsOnDrain = &<./Data/shots/disruptor_bolt/disruptor_bolt.rules>/Components/Hit/HitOperational/HitEffects/0/MediaEffectsOnDrain
+	}
+]
+ParentMediaEffectsToShip = true
+ContinuousMediaEffects
+[
+	&<particles/electron_sizzle.rules>
+]

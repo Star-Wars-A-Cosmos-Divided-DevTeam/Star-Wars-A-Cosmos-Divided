@@ -1,4 +1,4 @@
-Part : /BASE_PART_TERRAN
+Part : &<../base_part_terran_super.rules>/Part
 {/* ----------------------------------------------------------------------------
 
 Introduction: SW:ACD 0.3.7
@@ -18,7 +18,7 @@ Versions:
 	NameKey = "Parts/IonImpulseAccelerator"
 	IconNameKey = "Parts/IonImpulseAcceleratorIcon"
 	DescriptionKey = "Parts/IonImpulseAcceleratorDesc"
-	EditorGroup = "SWTechIII"
+	EditorGroups = [SWTechIII]
 	Resources
 	[
 		[steel, 8] //
@@ -29,8 +29,8 @@ Versions:
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	MaxHealth = 48000
-	Flammable = false
-	TypeCategories = [uses_power, ion_impulse_accelerator,ion_impulse_weapon]
+	
+	TypeCategories : ^/0/TypeCategories [uses_power, ion_impulse_accelerator,ion_impulse_weapon]
 	ReceivableBuffs : ^/0/ReceivableBuffs [RailgunOperation,Railgun,RailgunReverseOperation]
 
 	AllowedDoorLocations
@@ -69,7 +69,8 @@ Versions:
 		Texture
 		{
 			File = "icon_ion_accelerator.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [69, 92]
 	}
@@ -81,10 +82,10 @@ Versions:
 			Toggles = [PowerToggle, BatteryStorage, IonCannonOperationToggle]
 			Mode = All
 		}
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [BuffOperational]
+			Toggles : ^/0/Toggles [BuffOperational]
 			Mode = All
 		}
 
@@ -434,7 +435,6 @@ Versions:
 		{
 			Type = IndicatorSprites
 			Location = [3, 4]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.

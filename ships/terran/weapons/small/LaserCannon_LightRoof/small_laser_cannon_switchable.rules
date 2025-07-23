@@ -1,19 +1,19 @@
-Part : &<../base_part_terran_sm_weapons.rules>/Part
+Part : &<../base_part_terran_small.rules>/Part
 {	
-    //IDs
+	//IDs
 	ID = SW.small_laser_cannon_switchable
 	OtherIDs = ["SW.small_laser_cannon","small_laser_cannon","SW.small_laser_cannonblue","small_laser_cannonblue","SW.small_laser_cannongreen","small_laser_cannongreen"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/SmallLaserCannonSwitchable"
 	IconNameKey = "Parts/SmallLaserCannonSwitchableIcon"
 	DescriptionKey = "Parts/SmallLaserCannonSwitchableDesc"
 
-    //Groups&Categories
-	EditorGroups = ["WeaponsEnergy", "SWTechI"]
-	TypeCategories = [weapon, uses_power]
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups ["WeaponsEnergy", SWTechI]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power]
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 32]
@@ -22,21 +22,21 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 	Size = [1, 1]
 	MaxHealth = 8000
 
-    //Rects
+	//Rects
 
-    //Selections
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "blasterlasers"
 
-    //PartSpecific
+	//PartSpecific
 	AIValueFactor = 2
 	InitialPenetrationResistance = 2
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
-    //Doors&Etc
+	//Doors&Etc
 	MaxDoors = 4
 /*	AllowedDoorLocations
 	[
@@ -44,24 +44,25 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		[0, 1] // Bottom
 		[1, 0] // Right
 	] */
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [32, 64]
 	}
 
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage]
 			Mode = All
 		}
 
@@ -368,7 +369,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 
 		ChargeEffect : &~/ChargeEffectBase
 		{
-			
+
 		}
 
 		CommonReloadResetTrigger
@@ -497,7 +498,6 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		{
 			Type = IndicatorSprites
 			Location = [0.5, 0.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.

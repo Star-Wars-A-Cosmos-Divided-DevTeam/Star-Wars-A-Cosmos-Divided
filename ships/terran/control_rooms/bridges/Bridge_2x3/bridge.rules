@@ -1,20 +1,20 @@
 Part : &<../base_part_terran_bridges.rules>/Part
 {
-    //IDs
+	//IDs
 	ID = SW.bridge_2x3
 	//OtherIDs = ["bridge_2x3"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/SWBridge2x3"
 	IconNameKey = "Parts/SWBridge2x3Icon"
 	DescriptionKey = "Parts/SWBridge2x3Desc"
 
-    //Groups&Categories
-	EditorGroups = ["Flight", "SWTechII"]
-	TypeCategories = [command, uses_power, is_crewed, fire_extinguisher, airlock]
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups [SWTechII]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, fire_extinguisher, airlock]
 	//RequiresCategories = []
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[SW.durasteel, 58] 
@@ -24,23 +24,23 @@ Part : &<../base_part_terran_bridges.rules>/Part
 	Size = [2, 3]
 	MaxHealth = 5500
 
-    //Selections
+	//Selections
 	SelectionPriority = 0
 	SelectionTypeID = "control_room"
 
-    //PartSpecific
+	//PartSpecific
 	AIValueFactor = 5
 	InitialPenetrationResistance = 2
 	//IsContiguityOrigin = true
 	//IsShipForward = true
 	ContiguityOriginPriority = 2
 	ExternalWalls = [None]
-	AllowedContiguity = [Right, Bottom, Left]//, Bottom Left, Bottom Right]
+	AllowedContiguity = [Right, Bottom, Left]//, Bottom Left, Bottom Right
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
-    //Doors&Etc
+	//Doors&Etc
 	MaxDoors = 4
 	AllowedDoorLocations
 	[
@@ -52,18 +52,19 @@ Part : &<../base_part_terran_bridges.rules>/Part
 
 
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [48, 64]
 	}
 
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components, &<roofs.rules>, &<roofs_exterior.rules>
 	{
 		/* SPECIAL COCKPIT TOGGLES */
@@ -161,10 +162,10 @@ Part : &<../base_part_terran_bridges.rules>/Part
 
 
 		
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
 		PowerToggle
@@ -226,7 +227,7 @@ Part : &<../base_part_terran_bridges.rules>/Part
 		CrewLocation2
 		{
 			Type = CrewLocation
-			Location = [.5, 1.95]i
+			Location = [0.5, 1.95]i
 			Rotation = 0d
 		}
 		CrewLocation3
@@ -258,6 +259,13 @@ Part : &<../base_part_terran_bridges.rules>/Part
 
 			]
 		}
+
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -276,9 +284,9 @@ Part : &<../base_part_terran_bridges.rules>/Part
 							"on3.png"
 							//"on4.png"
 							//"on5.png"
-						    //"on6.png"
-						    //"on7.png"
-						    //"on8.png"
+							//"on6.png"
+							//"on7.png"
+							//"on8.png"
 						]
 						Size = [2, 3]
 						AnimationInterval = 0.3
@@ -336,11 +344,11 @@ Part : &<../base_part_terran_bridges.rules>/Part
 //						File = "walls.png"
 //						Size = [2, 3]
 //					}
-//				    {
+//					{
 //						File = "walls_33.png"
 //						Size = [2, 3]
 //					}
-//				    {
+//					{
 //						File = "walls_66.png"
 //						Size = [2, 3]
 //					}
@@ -380,11 +388,11 @@ Part : &<../base_part_terran_bridges.rules>/Part
 						File = "Cockpit Window.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Cockpit Window_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Cockpit Window_66.png"
 						Size = [1, 2]
 					}
@@ -486,12 +494,10 @@ Part : &<../base_part_terran_bridges.rules>/Part
 			]
 		}
 
-		// Indicators - Start
 		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [1, 1.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.
@@ -525,7 +531,6 @@ Part : &<../base_part_terran_bridges.rules>/Part
 				}
 			]
 		}
-// Indicators - End
 
 		// Extinguisher Graphics - Start
 		ExtinguisherSprite

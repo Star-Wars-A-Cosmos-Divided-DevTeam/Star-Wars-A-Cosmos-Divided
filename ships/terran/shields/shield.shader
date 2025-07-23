@@ -52,6 +52,7 @@ float _waveCurveMagnitude;
 float _waveCurveUOffsetPerSecond;
 float _lowPowerThicknessExponent;
 float _xScale = 1;
+float _hexDamageIntensity;
 PIX_OUTPUT pix(in VERT_OUTPUT_SHIELD input) : SV_TARGET
 {
 	float waveVOffset = (_gameTime + input.randomWaveTimeOffset + wave(input.uv.x + input.randomWaveUOffset + _gameTime * _waveCurveUOffsetPerSecond, _waveCurveInterval) * _waveCurveMagnitude) * _waveSpeed;
@@ -63,7 +64,7 @@ PIX_OUTPUT pix(in VERT_OUTPUT_SHIELD input) : SV_TARGET
 	float hexMask = _maskTex.Sample(_maskTex_SS, float2(input.uv.x * _xScale, uvY)).r;
 	float currentHexes = saturate(saturate(hexMask - input.powerLevel) * 40) * (((1 - input.powerLevel) * 0.6) + 0.4);
 	float hexPow = pow(baseColor.r, (currentHexes * 7) + 3);
-	float newBase = saturate(1 - (currentHexes * 0.5)) * hexPow;
+	float newBase = saturate(1 - (currentHexes * _hexDamageIntensity)) * hexPow;
 	
 	baseColor.a += baseColor.a * waveColor.a * _waveAlpha;
 	float basePow = pow(baseColor.r, 3);

@@ -1,186 +1,180 @@
+// shots/missiles/discord/missile_discord.rules
 ID = SW.discord_missle
 OtherIDs = ["discord_missle"]
 
-Range = 150
+Range      = 150
 IdealRange = 125
-Speed = 65
+Speed      = 65
 
 Components
 {
-	Physics
-	{
-		Type = CirclePhysics
-		Density = 0.1
-		Radius = 0.4
+    Physics
+    {
+        Type          = CirclePhysics
+        Density       = 0.1
+        Radius        = 0.4
         LinearDamping = 1.1
     }
 
-	Homing
-	{
-		Type = TargetHoming
-		TurnVelocity = 360d
-		Delay = 1
-		AvoidanceRaycastDistance = 250
-		//RaycastForward = [1, 0]
-		//RaycastLeft = [1, -1]
-		//RaycastRight = [1, 1]
-		VelocityCompensation = 60%
-	}
+    Homing
+    {
+        Type                 = TargetHoming
+        TurnVelocity         = 360d
+        Delay                = 1
+        AvoidanceRaycastDistance = 250
+        VelocityCompensation = 60%
+    }
 
-	Retarget
-	{
-		Type = SameShipRetarget
-	}
+    Retarget
+    {
+        Type = SameShipRetarget
+    }
 
-//	Homing
-//	{
-//		Type = TargetHoming
-//		TurnVelocity = 360d
-//		Delay = 1
-//		RaycastForward = [1, 0]
-//		RaycastLeft = [1, -1]
-//		RaycastRight = [1, 1]
-//	}
+    Acceleration
+    {
+        Type         = Acceleration
+        Acceleration = 65
+    }
 
-	Acceleration
-	{
-		Type = Acceleration
-		Acceleration = 65//100
-	}
+    NegativeAcceleration
+    {
+        Type                = Acceleration
+        Acceleration        = [-90, 0]
+        AccelerationOverTime= [0, .75]
+        Direction           = FrameOfReferenceVelocity
+    }
 
-	NegativeAcceleration
-	{
-		Type = Acceleration
-		Acceleration = [-90, 0]
-		AccelerationOverTime = [0, .75]
-		Direction = FrameOfReferenceVelocity
-	}
+    // Stage 1 deploy: proximity spawn
+    DeathByEnemyProximity
+    {
+        Type           = DeathByEnemyProximity
+        Interval       = .05
+        Range          = 25
+        DetectsShips   = true
+        DetectsBullets = false
+        StartDelay     = .1
 
-	DeathByEnemyProximity
-	{
-		Type = DeathByEnemyProximity
-		Interval = .05
-		Range = 25
-		DetectsShips = true
-		DetectsBullets = false
-		StartDelay = .1
+        OnDeath
+        {
+            HitEffects
+            [
+                {
+                    Type            = SpawnBullets
+                    Bullet          = &<../buzz-droids/buzzdroid.rules>
+                    Count           = [5,7]
+                    Distance        = [0, 3]
+                    Arc             = [-0d, 0d]
+                    Spread          = [-50d, 50d]
+                    InheritVelocity = true
+                }
+            ]
+        }
+    }
 
-		OnDeath = &../Death/OnDeath
-	}
+    // Stage 1 fallback: lifetime spawn
+    DeathByLifetime
+    {
+        Type     = DeathByLifetime
+        Lifetime = 2
+        TargetHomingComponent = Homing
 
-	Death
-	{
-		Type = DeathByLifetime
-		Lifetime = 2
-		TargetHomingComponent = Homing
+        OnDeath
+        {
+            HitEffects
+            [
+                {
+                    Type            = SpawnBullets
+                    Bullet          = &<../buzz-droids/buzzdroid.rules>
+                    Count           = [5,7]
+                    Distance        = [0, 3]
+                    Arc             = [-0d, 0d]
+                    Spread          = [-50d, 50d]
+                    InheritVelocity = true
+                }
+            ]
+        }
+    }
 
-		OnDeath
-		{
-			HitEffects
-			[
-				{
-					Type = SpawnBullets
-					Bullet = &<../buzz-droids/buzzdroid.rules>
-					Count = [5,7]
-					Distance = [0, 3]
-					Arc = [-0d,0d]
-					Spread = [-50d, 50d]
-					InheritVelocity = true
-//					ScaleCount = true
-				}	
-			]
-		}
-	}
+    Sprite
+    {
+        Type         = Sprite
+        RenderBucket = BulletUpper3
+        Sprite
+        {
+            Texture
+            {
+                File       = "missile_discord.png"
+                SampleMode = Linear
+                MipLevels  = max
+            }
+            Size = [2, 1.5]
+        }
+        NormalsTexture
+        {
+            File      = "missile_discord_normals.png"
+            MipLevels = max
+        }
+    }
 
-	Sprite
-	{
-		Type = Sprite
-		RenderBucket = BulletUpper3
-		Sprite
-		{
-			Texture
-			{
-				File = "missile_discord.png"
-				SampleMode = Linear
-				MipLevels = max
-			}
-			Size = [2, 1.5]
-		}
-		NormalsTexture
-		{
-			File = "missile_discord_normals.png"
-			MipLevels = max
-		}
-	}
-//	MediaEffects
-//	{
-//		Type = MediaEffects
-//		MediaEffects
-//		[
-//		    &<particles/missile_discord_thruster_glow.rules>
-//		]
-//	}	
-	MediaEffects1
-	{
-		Type = MediaEffects
-		Offset = [-1.5, 0]
-		Rotation = 180d
-		MediaEffects
-		[
-			&<particles/missile_discord_thruster_plume_light.rules>
-			&<particles/missile_discord_thruster_smoke.rules>
-		]
-	}
+    MediaEffects1
+    {
+        Type     = MediaEffects
+        Offset   = [-1.5, 0]
+        Rotation = 180d
+        MediaEffects
+        [
+            &<particles/missile_discord_thruster_plume_light.rules>
+            &<particles/missile_discord_thruster_smoke.rules>
+        ]
+    }
 
-	MediaEffects2
-	{
-		Type = MediaEffects
-		Offset = [-1, 0]
-		MediaEffects
-		[
-			&/SW_PARTICLES/Shot/Ion/Trail/Med/Cyan
-		]
-	}
+    MediaEffects2
+    {
+        Type       = MediaEffects
+        Offset     = [-1, 0]
+        MediaEffects
+        [
+            &/SW_PARTICLES/Shot/Ion/Trail/Med/Cyan
+        ]
+    }
 
+    Targetable
+    {
+        Type           = Targetable
+        Health         = 7000
+        TargetCategory = "missile"
 
-	Targetable
-	{
-		Type = Targetable
-		Health = 7000
-		TargetCategory = "missile"
+        OnDeath
+        {
+            MediaEffects
+            [
+                &<./Data/shots/bullet_med/particles/bullet_hit_med.rules>
+                &<./Data/shots/bullet_med/particles/bullet_smoke_med.rules>
+                &<./Data/shots/bullet_med/particles/bullet_flash_med.rules>
 
-		OnDeath
-		{
-			MediaEffects
-			[
-				&<./Data/shots/bullet_med/particles/bullet_hit_med.rules>
-				&<./Data/shots/bullet_med/particles/bullet_smoke_med.rules>
-				&<./Data/shots/bullet_med/particles/bullet_flash_med.rules>
+                : /BASE_SOUNDS/AudioExterior
+                {
+                    Sound          = "./Data/shots/bullet_med/bullet_med_hit.wav"
+                    Volume         = .4
+                    SpeedVariation = .4
+                }
 
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/shots/bullet_med/bullet_med_hit.wav"
-					Volume = .4
-					SpeedVariation = .4
-				}
+                : /BASE_SHAKE
+                {
+                    ShakeAmount = .05
+                    Duration    = .5
+                }
+            ]
+        }
+    }
 
-				: /BASE_SHAKE
-				{
-					ShakeAmount = .05
-					Duration = .5
-				}
-			]
-		}
-	}
-
-	Hit
-	{
-		Type = SimpleHit
-		SourceShipCollisionDelay = .01
-
-		HitShield = &~/Components/Death/OnDeath
-		HitOperational = &~/Components/Death/OnDeath
-		HitStructural = &~/Components/Death/OnDeath
-	}
-
+    // simplified Hit: no circular refs
+    Hit
+    {
+        Type                    = SimpleHit
+        SourceShipCollisionDelay= .01
+		HitShield = &~/Components/DeathByEnemyProximity/OnDeath
+		HitOperational = &~/Components/DeathByEnemyProximity/OnDeath
+		HitStructural = &~/Components/DeathByEnemyProximity/OnDeath
+    }
 }

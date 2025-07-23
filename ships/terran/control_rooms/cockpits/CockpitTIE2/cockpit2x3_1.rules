@@ -3,17 +3,17 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	//IDs
 	ID = SW.tie_cockpit1
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/Cockpit2_1"
 	IconNameKey = "Parts/Cockpit2_1Icon"
 	DescriptionKey = "Parts/Cockpit2_1Desc"
 
-    //Groups&Categories
-	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [command, weapon, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits, provides_power, reactor]
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups [SWTechI]
+	TypeCategories : ^/0/TypeCategories [command, weapon, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits, provides_power, reactor]
 	RequiresCategories = []
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[SW.durasteel, 65]
@@ -24,15 +24,15 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	Size = [2, 3]
 	MaxHealth = 8500 //(17090/4096)*1000=4172.36328125
 
-    //Rects
+	//Rects
 	GenerateRectCollider = false 	//uses turret collider
 
 
-    //Selections
+	//Selections
 	SelectionPriority = 0
 	SelectionTypeID = "control_room"
 
-    //PartSpecific
+	//PartSpecific
 	AIValueFactor = 5
 	Density = 0.7
 	InitialPenetrationResistance = 7
@@ -41,31 +41,33 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	//IsShipForward = true
 	ThrusterForce = 110
 	ThrustIncreaseTime = 0
+	ThrustDecreaseTime = 0
 	ThrustRecoveryTime = 0
 	FuelUsage = 10
 	//IsBuildable = false
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Overdrive, SW_Ion_Thruster_Overdrive_Thrust]
 	ProhibitBelow = 3
 	ExternalWalls = [None]
 	InternalWalls = [All]
 	IsWalled = false
 
-    //Doors&Etc
+	//Doors&Etc
 	AllowedDoorLocations//doors on R & L sides
 	[
 		[-1,1]
 		[2,1]
 	]
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [61, 92]
 	}
@@ -83,10 +85,10 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			RequiresCommand = false
 		}
 
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, PartCrew]
 			Mode = All
 		}
 
@@ -115,15 +117,6 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			BuffType = EnginePowerDistribution
 		}
 
-
-/*
-		ThrusterIsOperational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, PartCrew]
-			Mode = All
-		}
-*/
 		//Command
 		CommandProvider
 		{
@@ -138,9 +131,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			Type = Sensor
 			SightRadius = 300
 			RadarRadius = ceil(300*4.5)
-
 		}
-
 
 		ProgressBar
 		{
@@ -324,7 +315,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		{
 			Type = Sprite
 			ChainedTo = Turret
-			Location = [.5, -1]
+			Location = [0.5, -1]
 			Rotation = 90d
 			Layer = "weapons"
 			ResetAnimationTrigger = BulletEmitterLeft
@@ -350,7 +341,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		{
 			Type = Sprite
 			ChainedTo = Turret
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			Rotation = 90d
 			Layer = "weapons"
 			ResetAnimationTrigger = BulletEmitterRight
@@ -407,6 +398,12 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			]
 		}
 
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -446,9 +443,9 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 							"on3.png"
 							"on4.png"
 							"on5.png"
-						    "on6.png"
-						    "on7.png"
-						    "on8.png"
+							"on6.png"
+							"on7.png"
+							"on8.png"
 						]
 						Size = [1, 2]
 						AnimationInterval = 0.100
@@ -476,11 +473,11 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 						File = "walls.png"
 						Size = [2, 3]
 					}
-				    {
+					{
 						File = "walls_33.png"
 						Size = [2, 3]
 					}
-				    {
+					{
 						File = "walls_66.png"
 						Size = [2, 3]
 					}
@@ -518,11 +515,11 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 						File = "windows.png"
 						Size = [2, 3]
 					}
-				    {
+					{
 						File = "windows_33.png"
 						Size = [2, 3]
 					}
-				    {
+					{
 						File = "windows_66.png"
 						Size = [2, 3]
 					}
@@ -555,7 +552,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 					{
 						File = "doodads_base_66.png"
 						Size = [1, 1]
-					}	*/
+					}*/
 				]
 			}
 
@@ -643,7 +640,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 						Size = [1, 1]
 					}
 				]
-			}	
+			}
 			OperationalRoofLighting 
 			{
 				Layer = "roof_lights_fancy"
@@ -721,6 +718,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -738,6 +736,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -755,6 +754,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -815,6 +815,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
 			AllowAutoFire = false
@@ -1135,7 +1136,6 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		{
 			Type = IndicatorSprites
 			Location = [1, 1.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.
@@ -1169,9 +1169,9 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 				}
 			]
 		}
-		BlueprintSprite
+		Blueprints
 		{
-			Type=BlueprintSprite
+			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [2, 3]
 		}

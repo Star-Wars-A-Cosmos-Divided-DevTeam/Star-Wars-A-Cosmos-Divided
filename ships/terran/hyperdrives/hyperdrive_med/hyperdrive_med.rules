@@ -10,8 +10,9 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 	DescriptionKey = "Parts/MedHyperdriveDesc"
 
 	//Groups&Categories
-	EditorGroups = [Flight, SWTechII]
-    TypeCategories = [ftl, uses_power, SW_Hyperdrive_Medium, SW_Hyperdrives, SW_Tech_II]
+	EditorGroups : ^/0/EditorGroups [SWTechII]
+	DontStackInEditorGroups = [SWDroids]
+	TypeCategories : ^/0/TypeCategories [ftl, uses_power, SW_Hyperdrive_Medium, SW_Hyperdrives, SW_Tech_II]
 	AffectsValidityOfCategories = [SW_Hyperdrive_Medium, SW_Hyperdrives]
 	RequiresCategories = [navicomputer]
 
@@ -44,7 +45,8 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [48, 48]
 	}
@@ -52,10 +54,10 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle]
+			Toggles : ^/0/Toggles [PowerToggle]
 			Mode = All
 		}
 
@@ -188,7 +190,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 
 		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_05/RDL
 		{	
-            GridSize = &~/Part/Size
+			GridSize = &~/Part/Size
 		}
 
 		Graphics
@@ -439,7 +441,6 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 		{
 			Type = IndicatorSprites
 			Location = [1, 1]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.

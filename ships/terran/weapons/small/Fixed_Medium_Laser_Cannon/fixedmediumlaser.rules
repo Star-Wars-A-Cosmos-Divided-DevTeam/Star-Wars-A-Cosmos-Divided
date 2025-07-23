@@ -1,19 +1,19 @@
-Part : &<../base_part_terran_sm_weapons.rules>/Part
+Part : &<../base_part_terran_small.rules>/Part
 {
  	//IDs
 	ID = SW.fixed_medium_laser
 	OtherIDs = ["fixed_medium_laser"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/FixedMediumLaser"
 	IconNameKey = "Parts/FixedMediumLaserIcon"
 	DescriptionKey = "Parts/FixedMediumLaserDesc"
 
-    //Groups&Categories
-	EditorGroups = ["WeaponsEnergy", "SWTechI", "SWTechII"]
-	TypeCategories = [weapon, uses_power,is_crewed]
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups ["WeaponsEnergy", SWTechI, SWTechII]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power,is_crewed]
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 32]
@@ -22,25 +22,25 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 	Size = [1, 2]
 	MaxHealth = 3000
 
-    //Rects
-	GenerateRectCollider = false
+	//Rects
+	//GenerateRectCollider = false
 	PhysicalRect = [0, 1, 1, 1]
 	SaveRect = &PhysicalRect
 	ProhibitAbove = 3
 
-    //Selections
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "blasterlasers"
 
-    //PartSpecific
+	//PartSpecific
 	AIValueFactor = 2
 	InitialPenetrationResistance = 1
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
-    //Doors&Etc
+	//Doors&Etc
 	MaxDoors = 2
 	AllowedDoorLocations
 	[
@@ -49,36 +49,26 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		[0, 2]
 	]
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [30, 90]
 	}
 
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		Collider
-		{
-			Type = PolygonCollider
-			Vertices
-			[
-				[0, 1]
-				[0, 2]
-				[1, 2]
-				[1, 1]
-			]
-		}
 
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage]
 			Mode = All
 		}
 
@@ -105,14 +95,12 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			AvailableChoices = [-1, 0, 1, 2]
 			ToggledOnChoices = [0, 1, 2]
 		}
-		
 		AutoTargetToggle
 		{
 			Type = ModeToggle
 			Mode = FireModeToggle
 			OnModes = [1, 2]
 		}
-
 		AutoFireToggle
 		{
 			Type = ModeToggle
@@ -174,17 +162,15 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
 		}
-		
+
 		Graphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [.5, 2]
-			Offset = [0, -0.5]
+			Location = [0.5, 1.5]
 			Floor
 			{
 				Layer = "floors"
-				Offset = [0, -0.5]
 				DamageLevels
 				[
 					{
@@ -219,7 +205,6 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 							"../common_graphics_1/doodads on8.png"
 						]
 						Size = [1, 1]
-						Offset = [0, -0.5]
 						AnimationInterval = 0.1
 					}
 				]
@@ -232,14 +217,12 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 					{
 						File = "../common_graphics_1/doodads off.png"
 						Size = [1, 1]
-						Offset = [0, -0.5]
 					}
 				]
 			}
 			OperationalLighting
 			{
 				Layer = "lights_add"
-				Offset = [0, -0.5]
 				DamageLevels
 				[
 					{
@@ -251,7 +234,6 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			Walls
 			{
 				Layer = "walls"
-				Offset = [0, -0.5]
 				DamageLevels
 				[
 					{
@@ -271,7 +253,6 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			Roof
 			{
 				Layer = "roofs"
-				Offset = [0, -0.5]
 				DamageLevels
 				[
 					{
@@ -305,9 +286,9 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			Rotation = -90d
 			Vertices
 			[
-				[4, 0]
-				[0.34, -0.16]
-				[0.34, 0.16]
+				[4-11/64, 0]
+				[-22/64, 16/64]
+				[-22/64, -16/64]
 			]
 			IsHigh = false
 			//InitialPenetrationResistance = 5
@@ -389,7 +370,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		{
 			Type = Sprite
 			ChainedTo = Turret
-			Location = [1.66, 0]
+			Location = [1.66, 83/3200] //yes thats correct, no u dont get to touch it without death.
 			Rotation = 90d
 			Layer = "weapons"
 			ResetAnimationTrigger = BulletEmitter
@@ -415,7 +396,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			Type = Graphics
 			OperationalToggle = IsOperational
 			ChainedTo = Turret
-			Location = [.5, 0]
+			Location = [0.5, 0]
 			Rotation = 90d
 			OperationalDoodad
 			{
@@ -470,7 +451,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_low"
 			HasZeroResourceSprite = true
@@ -514,12 +495,12 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 				}
 			]
 		}
-		
+
 		OperationEffects
 		{
 			Type = ToggleEffects
+			Location = [0.5, 1.5]
 			Toggle = IsOperational
-			Location = [.5, 1.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -528,14 +509,13 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 		}
 
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [.5, 1.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+			Location = [0.5, 1.5]
 			Indicators
 			[
 				// Turned off.
@@ -560,16 +540,16 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 				}
 			]
 		}
-		BlueprintSprite
+		Blueprints
 		{
+			Type = BlueprintSprite
 			File = "blueprint.png"
 			Size = [1, 4]
 			Offset = [0, -1]
-			Type=BlueprintSprite
 		}
 	}
 
-   //Stats
+	//Stats
 	Stats
 	{
 		CrewRequired = 0 //&~/Part/Components/PartCrew/Crew
@@ -631,7 +611,7 @@ BulletEmitterBase
 		ChainedTo = Turret
 		FireTrigger = Turret
 		GetTargetFrom = Turret
-		Location = [4, 0]
+		Location = [4-11/64, 0]
 		OperationalToggle = IsOperational
 		FireDelay = 0.01
 		ResourceStorage = BatteryStorage
@@ -642,7 +622,7 @@ BulletEmitterBase
 TurretBase
 		{
 			Type = TurretWeapon
-			Location = [0.5, 0.66]
+			Location = [0.5, 42/64]
 			Rotation = -90d
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle

@@ -1,0 +1,579 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = FpsCompensator
+			LocationInOut = location
+			VelocityIn = base_velocity
+			Mode = Uniform
+			Strength = 1
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Convert location to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = VelocityToWorldSpace
+			VelocityIn = velocity
+			VelocityOut = velocity
+			Name = "Convert velocity to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = base_scale
+			ScaleOut = base_scale
+			Name = "Base scale to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = sprite_index
+			ValueType = Int
+			FromValue = 0
+			ToValue = 125
+			Name = "Sprite Index"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvSprites
+			SpriteIndexIn = sprite_index
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 2048
+				Y = 2048
+			}
+			SpriteSize
+			{
+				X = 128
+				Y = 256
+			}
+			SpriteCount = 8
+			SpritesPerRow = 2
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = false
+			Name = "Sprite UV Rect"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 79.99999d
+			ToValue = 110d
+			Name = Rotation
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rot_vel
+			ValueType = Angle
+			FromValue = -180d
+			ToValue = 180d
+			Name = "Rot Velocity"
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rot
+			RotationOut = rot
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandomHsvColor
+			ColorOut = base_color
+			HueRange
+			{
+				Min = 200
+				Max = 220
+			}
+			SaturationRange
+			{
+				Min = 0.5
+				Max = 0.7
+			}
+			ValueRange
+			{
+				Min = 1
+				Max = 1
+			}
+			AlphaRange
+			{
+				Min = 1
+				Max = 1
+			}
+			Name = "Random base color"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.2
+			ToValue = 0.25
+			Name = "Random Lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetValue
+			DataOut = base_color
+			ValueType = Color
+			Value
+			{
+				Rf = 0.78431374
+				Gf = 0.78431374
+				Bf = 1
+				Af = 1
+			}
+			Name = "Set base color"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = intensity
+			ColorOut = base_color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0
+					Gf = 0
+					Bf = 0
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 0
+					Bf = 0
+					Af = 1
+				}
+			]
+			Name = "red from intensity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = "Variable Lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Angle
+			AIn = rot
+			BIn = rot_vel
+			ResultOut = rot
+			Operator = AddDt
+			Name = "Apply rot velocity."
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0
+				}
+			]
+			Name = "Alpha ramp"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Color
+			AIn = color
+			BIn = base_color
+			ResultOut = color
+			Operator = Multiply
+			Name = "Multiply base color with alpha"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 1.5
+			ToValue = 3
+			Name = "Scale lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = ParticleLightNormal
+			LocationIn = location
+			LightNormalOut = light_normal
+			Name = "Light normal"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = scale
+			BIn = base_scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "Apply base scale"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvAnimation
+			TimeIn = life
+			UvRectOut = uv_rect
+			Framerate = 32
+			TextureSize
+			{
+				X = 2048
+				Y = 2048
+			}
+			FrameSize
+			{
+				X = 128
+				Y = 256
+			}
+			FrameCount = 128
+			FramesPerRow = 16
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = false
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = sprite_add
+			Invert = false
+			ValueType = Int
+			FromValue = 0
+			ToValue = 3
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Int
+			AIn = sprite_index
+			BIn = sprite_add
+			ResultOut = sprite_index_final
+			Operator = Add
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvSprites
+			SpriteIndexIn = sprite_index_final
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 4096
+				Y = 4096
+			}
+			SpriteSize
+			{
+				X = 512
+				Y = 256
+			}
+			SpriteCount = 128
+			SpritesPerRow = 8
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = true
+			Name = "Sprite UV Rect"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = UvFlip
+			FlipXYIn = flip_xy
+			UvRectInOut = uv_rect
+			Name = ""
+			Enabled = false
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In = scale2
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn = uv_rect
+		BaseSize
+		{
+			X = 1.5
+			Y = 1
+		}
+		Offset
+		{
+			X = 0.4
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
+			File = radiator_heat_distortion.shader
+		}
+		_color1
+		{
+			Rf = 0.2509804
+			Gf = 1
+			Bf = 1.5019608
+			Af = 1
+		}
+		Texture
+		{
+			File = radiator_steam_motion.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+	}
+	DeleteMode = Fast
+	FpsCompensation = None
+	FpsCompensationStrength = 1
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 50
+	EmitPerOneShot
+	{
+		Min = 0
+		Max = 0
+	}
+	PreInitializers
+	[
+		{
+			Type = SetRandom
+			DataOut = base_scale
+			ValueType = Float
+			FromValue = 3
+			ToValue = 2
+			Name = "random base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 265d
+			ToValue = 275d
+			Name = "random rotation"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = flip_xy
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0
+				Y = 0
+			}
+			ToValue
+			{
+				X = 0
+				Y = 1
+			}
+			Name = "random flip"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetValue
+			DataOut = location
+			ValueType = Vector2
+			Value
+			{
+				X = 0
+				Y = -4
+			}
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = scale2
+			ValueType = Vector2
+			FromValue
+			{
+				X = 1
+				Y = 0.8
+			}
+			ToValue
+			{
+				X = 1.5
+				Y = 1.2
+			}
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleFromIntensity
+			ScaleOut = intensity
+			ScaleFactor = 1
+			IntensityExponent = 1
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = Upper5
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 1E-05
+IsFancy = true
+IsFancyLight = false
+IsSimpleLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 3
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 30
+MaxParticleCount = 2147483647
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = true
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	OnlyStatuses
+	ExcludeStatuses
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Neutrals = true
+	TargetedNeutrals
+	Junk = true
+	TargetedJunk
+	Deconstruction
+}
+Delay
+{
+	BaseValue = 0
+	Modifiers
+	MinValue = -1.7976931348623157E+308
+	MaxValue = 1.7976931348623157E+308
+}
+IgnoreIntensity = false

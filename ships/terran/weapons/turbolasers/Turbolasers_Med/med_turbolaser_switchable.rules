@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_turbolasers.rules>/Part
 {
 	//IDs
 	ID = SW.turbolaser_med_switchable
@@ -10,8 +10,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/MedturbolaserswitchableDesc"
 
 	//Groups&Categories
-	EditorGroups = ["WeaponsEnergy", "SWTechII"]
-	TypeCategories = [weapon, uses_power, is_crewed]
+	EditorGroups : ^/0/EditorGroups ["WeaponsEnergy", SWTechII]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power, is_crewed]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -67,7 +67,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [48, 60]
 	}
@@ -75,10 +76,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
 
@@ -324,9 +325,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						AnimationFiles
 						[
-							"console on1.png"
-							"console on2.png"
-							"console on3.png"
+							"console_on_1.png"
+							"console_on_2.png"
+							"console_on_3.png"
 						]
 						Size = [2, 2]
 						AnimationInterval = 0.50
@@ -339,7 +340,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				DamageLevels
 				[
 					{
-						File = "console off.png"
+						File = "console_off.png"
 						Size = [2, 2]
 					}
 				]
@@ -575,7 +576,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = IndicatorSprites
 			Location = [1, 1]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.
@@ -618,7 +618,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 	}
 
-   //Stats
+   	//Stats
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
@@ -631,20 +631,33 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	StatsByCategory
 	[
 		&~/TurretStats
-		&<med_turbolaser_red.rules>/LaserStats
-		&<med_turbolaser_blue.rules>/LaserStats
-		&<med_turbolaser_green.rules>/LaserStats
+		&~/RedLaserStats
+		&~/BlueLaserStats
+		&~/GreenLaserStats
+		//&<med_turbolaser_red.rules>/LaserStats
+		//&<med_turbolaser_blue.rules>/LaserStats
+		//&<med_turbolaser_green.rules>/LaserStats
 	]
 }
+//Shots
+RedLaserShot = &/SW_SHOTS/turretturbolasermediumlaserredshot
+BlueLaserShot = &/SW_SHOTS/turretturbolasermediumlaserblueshot
+GreenLaserShot = &/SW_SHOTS/turretturbolasermediumlasergreenshot
+
+//Stats
+Barrels = 2
+FireInterval = 2.1
+EmitterOffset = [1.9, 0.3]
+
 TurretStats
 {
 	NameKey = "StatCategories/Turret"
 	Stats
 	{
-		Barrels = 2
-		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
+		Barrels = &~/Barrels
+		ReloadTime = &~/FireInterval
 		Salvo = [&../Barrels, &../ReloadTime]
-		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		ROF = (&Barrels) / (&ReloadTime)
 		Range = &~/BulletEmitterBase/Bullet/Range
 		Arc = deg(&~/TurretBase/FiringArc)
 		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
@@ -655,9 +668,53 @@ TurretStats
 		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
 	}
 }
+
+RedLaserStats
+{
+	NameKey = "StatCategories/MedRedTurbolasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/RedLaserShot/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/FireInterval)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/RedLaserShot/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&~/FireInterval)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}
+
+BlueLaserStats
+{
+	NameKey = "StatCategories/MedBlueTurbolasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/BlueLaserShot/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/FireInterval)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/BlueLaserShot/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&~/FireInterval)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}
+
+GreenLaserStats
+{
+	NameKey = "StatCategories/MedGreenTurbolasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/GreenLaserShot/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/FireInterval)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/GreenLaserShot/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerSecond = (&DamagePerShot) * (&~/FireInterval)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+	}
+}
+
+
 OperationalRoofLightingBase
 {
-	Size = [3.0, 3.6] //X+0,6(Distance between Barrels)=Y
+	Size = [(&~/EmitterOffset/0)* 1.5, ((&~/EmitterOffset/0) + (&~/EmitterOffset/1) * 2)] //X+0,6(Distance between Barrels)=Y
 	Z = 1.65 // Controls the "height" of the light for the purposes of normal mapping.
 }
 BulletEmitterBase
