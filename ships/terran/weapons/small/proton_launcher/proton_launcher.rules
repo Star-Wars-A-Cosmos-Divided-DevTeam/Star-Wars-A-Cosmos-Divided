@@ -1,19 +1,19 @@
-Part : &<../base_part_terran_sm_weapons.rules>/Part
+Part : &<../base_part_terran_small.rules>/Part
 {
 	//IDs
 	ID = SW.proton_gun
 	OtherIDs = ["proton_gun"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/ProtonLauncher"
 	IconNameKey = "Parts/ProtonLauncherIcon"
 	DescriptionKey = "Parts/ProtonLauncherDesc"
 
-    //Groups&Categories
-	EditorGroups = ["WeaponsEnergy","WeaponsProjectile", "SWTechI"]
-	TypeCategories = [weapon, uses_power]
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups ["WeaponsEnergy","WeaponsProjectile", SWTechI]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power]
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 20]
@@ -24,23 +24,23 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 	Size = [1, 2]
 	MaxHealth = 2000
 
-    //Rects
+	//Rects
 	PhysicalRect = [0, 1, 1, 1]
 	SaveRect = &PhysicalRect
 
-    //Selections
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 
-    //PartSpecific
+	//PartSpecific
 	AIValueFactor = 1
 	InitialPenetrationResistance = 1
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	ProhibitAbove = 1
 
-    //Doors&Etc
+	//Doors&Etc
 	MaxDoors = 2
 	AllowedDoorLocations
 	[
@@ -49,26 +49,27 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		[0, 2]
 	]
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [21.33, 42.66]
 	}
 
 
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage]
 			Mode = All
 		}
 
@@ -144,7 +145,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
 			ResupplyThreshold = 0
-			OperatinalToggle = PowerToggle
+			OperationalToggle = PowerToggle
 		}
 		BatteryStorageBar
 		{
@@ -160,7 +161,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			Floor
 			{
 				Layer = "floors"
@@ -381,7 +382,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_low"
 			HasZeroResourceSprite = true
@@ -402,7 +403,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		{
 			Type = ToggleEffects
 			Toggle = IsOperational
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -411,14 +412,13 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyed
-			Location = [.5, 1.5]
+			Location = [0.5, 1.5]
 		}
 
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [.5, 1.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+			Location = [0.5, 1.5]
 			Indicators
 			[
 				// Turned off.
@@ -523,7 +523,7 @@ BulletEmitterBase
 		FireDelay = 0.03
 		ResourceStorage = BatteryStorage
 		ResourcesUsed = 20000 // Previously 400
-		Bullet = &/SW_SHOTS/proton_rocket
+		Bullet = &/SW_SHOTS/Missiles/proton_rocket
 		TargetLeadPrediction = true
 		Recoil = 10
 }

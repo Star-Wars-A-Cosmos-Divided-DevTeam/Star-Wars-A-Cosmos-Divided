@@ -1,20 +1,20 @@
-Part : &<../base_part_terran_sm_weapons.rules>/Part
+Part : &<../base_part_terran_small.rules>/Part
 {
   	//IDs
 	ID = SW.a_wing_laserL
 	OtherIDs = [SW.a_wing_laserR]
 	FlipWhenLoadingIDs = [SW.a_wing_laserR]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/AWFixedLaserL"
 	IconNameKey = "Parts/AWFixedLaserLIcon"
 	DescriptionKey = "Parts/AWFixedLaserLDesc"
 
-    //Groups&Categories
-	EditorGroups = ["WeaponsEnergy", "SWTechI"]
-	TypeCategories = [weapon, uses_power]//, is_crewed
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups ["WeaponsEnergy", SWTechI]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power]//, is_crewed
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 16]
@@ -23,27 +23,27 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 	Size = [1, 1]
 	MaxHealth = 1750
 
-    //Rects
+	//Rects
 	//PhysicalRect = [0, 1, 1, 1]
 	//SaveRect = &PhysicalRect
 	IsFlippable = true
 	FlipHRotate = [0, 3, 2, 1]
 	FlipVRotate = [2, 1, 0, 3]
 
-    //Selections
+	//Selections
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	SelectionTypeID = "blasterlasers"
 
-    //PartSpecific
+	//PartSpecific
 	AIValueFactor = 2
 	InitialPenetrationResistance = 1.2
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	ProhibitLeft = 1
 
-    //Doors&Etc
+	//Doors&Etc
 	//MaxDoors = 2
 	AllowedDoorLocations
 	[
@@ -53,26 +53,27 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		[0,-1]
 	]
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon2.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [96, 48]
 	}
 
 
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
 
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]//, PartCrew
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage]//, PartCrew
 			Mode = All
 		}
 
@@ -243,7 +244,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 			Type = Graphics
 			OperationalToggle = IsOperational
 			Rotation = 270d
-			Location = [.5, .5]
+			Location = [0.5, 0.5]
 			Floor
 			{
 				Layer = "floors"
@@ -452,7 +453,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, .5]
+			Location = [0.5, 0.5]
 			Rotation = 270d
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
@@ -520,7 +521,7 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		{
 			Type = ToggleEffects
 			Toggle = IsOperational
-			Location = [.5, .5]
+			Location = [0.5, 0.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -529,14 +530,13 @@ Part : &<../base_part_terran_sm_weapons.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [.5, .5]
+			Location = [0.5, 0.5]
 		}
 
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [.5, .5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+			Location = [0.5, 0.5]
 			Indicators
 			[
 				// Turned off.

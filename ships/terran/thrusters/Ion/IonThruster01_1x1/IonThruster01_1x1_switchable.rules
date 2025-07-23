@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_thrusters_ion.rules>/Part
 {
 	//IDs
 	ID = SW.IonThruster01_1x1_switchable
@@ -10,8 +10,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/IonThrusterDesc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_I]
+	EditorGroups : ^/0/EditorGroups ["Flight", SWTechI]
+	TypeCategories : ^/0/TypeCategories [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_I]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -23,7 +23,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		//[SW.durasteel, 0]//120%*0 of vanilla
 	]
 	Size = [1, 2]
-	MaxHealth = 800 //80%*1000 of vanilla 1000 per tile
+	MaxHealth = 810 //81%*1000 of vanilla 1000 per tile
 
 	//Rects
 	PhysicalRect = [0, 0, 1, 1]
@@ -36,11 +36,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	SelectionTypeID = "ion_thrusters"
 
 	//PartSpecific
-	ThrusterForce = 400 //640 managed thru ramping buff //160%*400 of vanilla
+	ThrusterForce = 400 //640	//v:400 	//160%*400 of vanilla = 640 managed thru ramping buff
 	ThrustIncreaseTime = 0.96 	//v:0 		//softer accel
 	ThrustDecreaseTime = 0.96 	//v:0 		//softer deccel
 	ThrustRecoveryTime = 0.96 	//v:0 		//softer recov
 	FuelUsage = 19.2 			//v:30		// 64%*30 of vanilla
+	FuelRecharge = 2			//v:3		// 64%*3 of vanilla
 
 	//ReceivableBuffs&Prohibits
 	//
@@ -71,13 +72,15 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		//[-1, 2]
 		[0, -1]
 		//[1, -1]
-		[1, 0]
+		//
 		//[2, -1]
+		[1, 0]
 		//[2, 0]
 		//[3, 0]
 		//[3, 1]
 		//[3, 2]
 	]
+	DoorAccessWarningLevel = Weak
 
 	//Editor
 	EditorIcon
@@ -85,7 +88,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [21.33, 42.66]
 	}
@@ -93,11 +97,23 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components, &<nozzles.rules>, &<nozzle_covers.rules>
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]
+			Toggles : ^/0/Toggles [PowerToggle, CommandToggle, BatteryStorage]
 			Mode = All
+		}
+
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
+			Mode = All
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
 		}
 
 		IsOperationalAndHypernodeConnectedToggle
@@ -147,12 +163,26 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxResources = 1000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+		BatteryProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = NonJunkToggle
+			ToStorage = BatteryStorage
+			ToQuantity = ceil(&~/Part/FuelUsage) // Not a typo! See math below.
+			Interval = ceil((&~/Part/FuelUsage)) / (&~/Part/FuelRecharge)
+		}
+		NonJunkToggle
+		{
+			Type = JunkToggle
+			OnWhenJunk = false
+		}
+
 		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
 			Toggle = PowerDistributionBuffToggle
 			Invert = true
-			IncludeInBlueprints = true //added 0.27.0_rc2_steam - unsure if this applies
+			IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -175,7 +205,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
 		}
-		
+
 		ColorPickerThruster
 		{
 			Type = UIColor
@@ -251,6 +281,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Components = &<particles/thruster_colorable_rocketset.rules>/Components
 		}
 
+		HypernodeEffectComponents
+		{
+			Type = ToggledComponents
+			Toggle = IsOperationalAndHypernodeConnectedToggle
+			Components = &<particles/thruster_cyan_hypernodeset.rules>/Components
+		}
+
 		NozzleArtOptionToggle
 		{
 			Type = UIToggle
@@ -269,13 +306,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AvailableChoices = [0,1,2 ,3,4,5,6,7,8,9,10,11/*,12,13,14,15,16,17,18*/]
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
-		}
-
-		HypernodeEffectComponents
-		{
-			Type = ToggledComponents
-			Toggle = IsOperationalAndHypernodeConnectedToggle
-			Components = &<particles/thruster_cyan_hypernodeset.rules>/Components
 		}
 
 		MainThrusterLocationProxy
@@ -380,10 +410,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 
 		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
-		{	
-            GridSize = [1, 1]
+		{
+			GridSize = [1, 1]
 		}
-		
+
 		LightGraphics
 		{
 			Type = Graphics
@@ -420,14 +450,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						AnimationFiles
 						[
-		                    "IonThruster_doodads02_S_on1.png" //"../Ion_Common/IonThruster_doodads02_S_on1.png"
-		                    "IonThruster_doodads02_S_on2.png" //"../Ion_Common/IonThruster_doodads02_S_on2.png"
-		                    "IonThruster_doodads02_S_on3.png" //"../Ion_Common/IonThruster_doodads02_S_on3.png"
-		                    "IonThruster_doodads02_S_on4.png" //"../Ion_Common/IonThruster_doodads02_S_on4.png"
-		                    "IonThruster_doodads02_S_on5.png" //"../Ion_Common/IonThruster_doodads02_S_on5.png"
-		                    "IonThruster_doodads02_S_on6.png" //"../Ion_Common/IonThruster_doodads02_S_on6.png"
-		                    "IonThruster_doodads02_S_on7.png" //"../Ion_Common/IonThruster_doodads02_S_on7.png"
-		                    "IonThruster_doodads02_S_on8.png" //"../Ion_Common/IonThruster_doodads02_S_on8.png"
+							"IonThruster_doodads02_S_on1.png" //"../Ion_Common/IonThruster_doodads02_S_on1.png"
+							"IonThruster_doodads02_S_on2.png" //"../Ion_Common/IonThruster_doodads02_S_on2.png"
+							"IonThruster_doodads02_S_on3.png" //"../Ion_Common/IonThruster_doodads02_S_on3.png"
+							"IonThruster_doodads02_S_on4.png" //"../Ion_Common/IonThruster_doodads02_S_on4.png"
+							"IonThruster_doodads02_S_on5.png" //"../Ion_Common/IonThruster_doodads02_S_on5.png"
+							"IonThruster_doodads02_S_on6.png" //"../Ion_Common/IonThruster_doodads02_S_on6.png"
+							"IonThruster_doodads02_S_on7.png" //"../Ion_Common/IonThruster_doodads02_S_on7.png"
+							"IonThruster_doodads02_S_on8.png" //"../Ion_Common/IonThruster_doodads02_S_on8.png"
 						]
 						Size = [1, 1]
 						AnimationInterval = 0.075
@@ -465,7 +495,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [1, 1]
 					}
 				]
-			}	
+			}
 			OperationalRoofLighting 
 			{
 				Layer = "roof_lights_fancy"
@@ -479,9 +509,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						//VertexColor = [16, 120, 255] // [6, 57, 113]
 					}
 				]
-			}			
-		
+			}
 		}
+
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
 
 		Graphics
 		{
@@ -508,7 +543,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					{
 						File = "doodads_base_66.png"
 						Size = [1, 1]
-					}	*/
+					}*/
 				]
 			}
 
@@ -554,6 +589,36 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				]
 			}
 		}
+/*
+		DynamoGraphics
+		{
+			Type = Graphics
+			Location = [.5, .5]
+			OperationalToggle = NonJunkToggle
+			OperationalDoodad
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"dynamo_on1.png"
+							"dynamo_on2.png"
+							"dynamo_on3.png"
+							"dynamo_on4.png"
+							"dynamo_on5.png"
+							"dynamo_on6.png"
+							"dynamo_on7.png"
+							"dynamo_on8.png"
+						]
+						Size = [1, 1]
+						AnimationInterval = 0.075
+					}
+				]
+			}
+		}
+*/
 
 		MainThruster
 		{
@@ -567,6 +632,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -588,8 +654,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MaxActivation = 0.20
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = &../../ThrustIncreaseTime
-			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
 			AllowAutoFire = false
 		}
@@ -663,31 +727,33 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			[
 				{
 					File = "batteries_1.png"
+					//
 					Size = [1, 1]
 				}
 				//
+					//
+					//
+					//
 				//
 				//
+					//
+					//
+					//
 				//
 				//
+					//
+					//
+					//
 				//
 				//
+					//
+					//
+					//
 				//
 				//
-				//
-				//
-				//
-				//
-				//
-				//
-				//
-				//
-				//
-				//
-				//
-				//
-				//
-				//
+					//
+					//
+					//
 				//
 			]
 		}
@@ -712,7 +778,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = IndicatorSprites
 			Location = [0.5, 0.5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.
@@ -754,10 +819,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		ThrusterRampDown = ceil(&~/Part/ThrustDecreaseTime)
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval) / 1000
 
 		RecPower = (&ThrusterPowerUsage) / 2
 		RecCrew = (&RecPower) * 4
 	}
+
 	StatsByCategory
 	[
 		{
@@ -814,7 +881,7 @@ Size = Small
 						Size = [1, 1]
 					}
 				]
-			}	*/
+			}*/
 			/*OperationalLighting
 			{
 				Layer = "lights_add"
@@ -853,7 +920,7 @@ Size = Small
 						Size = [1, 1]
 					}
 				]
-			}	*/
+			}*/
 		/*	OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -867,7 +934,7 @@ Size = Small
 						VertexColor = [16, 120, 255] // [6, 57, 113]
 					}
 				]
-			}	
+			}
 */
 /*
 		NozzleCollider

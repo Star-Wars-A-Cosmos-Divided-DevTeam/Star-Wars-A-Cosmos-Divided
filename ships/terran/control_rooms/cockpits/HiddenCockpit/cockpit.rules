@@ -1,20 +1,20 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_cockpits.rules>/Part
 {
-    //IDs
+	//IDs
 	ID = SW.cockpit2
 	OtherIDs = ["cockpit2"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/CockpitHid"
 	IconNameKey = "Parts/CockpitHidIcon"
 	DescriptionKey = "Parts/CockpitHidDesc"
 
-    //Groups&Categories
-	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [command, uses_power, is_crewed, fire_extinguisher]
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups [SWTechI]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, fire_extinguisher]
 	//RequiresCategories = []
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 24]
@@ -24,21 +24,21 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	Size = [1, 2]
 	MaxHealth = 3000
 
-    //Selections
+	//Selections
 	SelectionPriority = 0
 	SelectionTypeID = "control_room"
 
-    //PartSpecific
+	//PartSpecific
 	AIValueFactor = 5
 	InitialPenetrationResistance = 2
 	//IsContiguityOrigin = true
 	//IsShipForward = true
 	ContiguityOriginPriority = 1
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
-    //Doors&Etc
+	//Doors&Etc
 	MaxDoors = 2
 	AllowedDoorLocations
 	[
@@ -47,18 +47,19 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		[0,2]
 	]
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [32, 64]
 	}
 
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components, &<roofs.rules>
 	{
 		/* SPECIAL COCKPIT TOGGLES */
@@ -146,10 +147,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
 		Sensor
@@ -186,7 +187,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		CrewLocation
 		{
 			Type = CrewLocation
-			Location = [.5, 1.15]
+			Location = [0.5, 1.15]
 			Rotation = 0d
 		}
 		PartCrew
@@ -199,18 +200,25 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			AbandonWhenOnFire = false
 			CrewDestinations
 			[
-				[.5, 1.30]
+				[0.5, 1.30]
 			]
 			CrewLocations
 			[
 				CrewLocation
 			]
 		}
+
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
+
 		Graphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [.5,1]
+			Location = [0.5,1]
 			Floor
 			{
 				Layer = "floors"
@@ -243,9 +251,9 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 							"on3.png"
 							"on4.png"
 							"on5.png"
-						    "on6.png"
-						    "on7.png"
-						    "on8.png"
+							"on6.png"
+							"on7.png"
+							"on8.png"
 						]
 						Size = [1, 2]
 						AnimationInterval = 0.100
@@ -272,11 +280,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = "walls.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "walls_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "walls_66.png"
 						Size = [1, 2]
 					}
@@ -315,11 +323,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						File = "Cockpit Window.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Cockpit Window_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Cockpit Window_66.png"
 						Size = [1, 2]
 					}
@@ -330,7 +338,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			HasZeroResourceSprite = false
@@ -379,12 +387,10 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			]
 		}
 
-		// Indicators - Start
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [.5, 1]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+			Location = [0.5, 1]
 			Indicators
 			[
 				// Turned off.
@@ -406,7 +412,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 						Size = [.75, .75]
 					}
 				}
-
 				// No crew.
 				{
 					Toggle = PartCrew
@@ -418,13 +423,12 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 			]
 		}
-// Indicators - End
 
 		// Extinguisher Graphics - Start
 		ExtinguisherSprite
 		{
 			Type = ResourceSprites
-			Location = [.5, 1.2]
+			Location = [0.5, 1.2]
 			ResourceStorage = ExtinguisherStorage
 			Layer = "doodads_high"
 			HasZeroResourceSprite = false

@@ -16,7 +16,7 @@ Versions:
  o 1.0 Cosmoteer 0.15.14
 
 ---------------------------------------------------------------------------- */ 
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_turbolasers.rules>/Part
 {	
 	//IDs
 
@@ -46,14 +46,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	NameKey = "Parts/TurbolaserBallSmall03"
 	IconNameKey = "Parts/TurbolaserBallSmall03Icon"
 	DescriptionKey = "Parts/TurbolaserBallSmall03Desc"
-	EditorGroups = ["WeaponsEnergy", "SWTechII"]
+	EditorGroups : ^/0/EditorGroups ["WeaponsEnergy", SWTechII]
 	Resources
 	[
 		[steel, 8] //
 	]  //Cost = 8000
 	AIValueFactor = 1
 
-	TypeCategories = [weapon, uses_power, uses_laser_parts, is_crewed]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power, uses_laser_parts, is_crewed]
 	Size = [2, 2]
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
@@ -72,17 +72,18 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Texture
 		{
 			File = "icon03.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [47, 73]
 	}
 	
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
 			Mode = All
 		}
 		PowerToggle
@@ -367,7 +368,6 @@ LaserType
 		{
 			Type = IndicatorSprites
 			Location = [1, 1]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.

@@ -1,0 +1,110 @@
+SCALE = (1)
+SIZE = [1, 1]
+MULTIPLIKATOR = (&~/SCALE) * (&~/Size/0) * (&~/Size/1)
+LOCATION = [((&~/Size/0)/2), ((&~/Size/1)/2)]
+COST = &<../base_part_terran_storages_hidden.rules>/COST
+MAXHEALTH = &<../base_part_terran_storages_hidden.rules>/MAXHEALTH
+
+Part : &<../base_part_terran_storages_hidden.rules>/Part
+{
+	//IDs
+	ID = SW.storage_1x1_hidden
+	OtherIDs = [SW.storage_1x1_rojama, SW.Modular_Storage_Floor,SW_Modular_Storage_Floor]
+
+	//StringKeys
+	NameKey = "Parts/Storage1x1Int"
+	IconNameKey = "Parts/Storage1x1IntIcon"
+	DescriptionKey = "Parts/Storage1x1IntDesc"
+
+	//Resources&Size&Health
+	Resources
+	[
+		[steel, ceil((&~/COST)*(&~/MULTIPLIKATOR))]
+	]
+	Size = [&~/SIZE/0, &~/SIZE/1]
+	MaxHealth = ceil((&~/MAXHEALTH)*(&~/MULTIPLIKATOR))
+
+	//PartSpecific
+	IsRotateable = false
+	FlipHRotate = [0, 1, 2, 3] // Disable flipping UI.
+	FlipVRotate = [0, 1, 2, 3] // Disable flipping UI.
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Point
+			MipLevels = max
+		}
+		Size = [64, 64]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		Storage
+		{
+			Type = FlexResourceGrid
+			GridRect = [0, 0, &~/SIZE/0, &~/SIZE/1]
+			OverridePriorityPart = cosmoteer.storage_2x2
+			Layer = "doodads_low"
+			SpriteInset = 0/64
+			RandomSpriteRotation = true
+			AllowExternalPickupAndDelivery = false
+		}
+
+		WallsBlend : <./Data/ships/terran/walls/walls.rules>
+		{
+			Type = BlendSprite
+			Location = [0.5, 0.5]
+			BlendsWithCategories = [corridor]
+		}
+
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_Storage_Hidden/DL
+		{
+
+		}
+
+		RoofGrid : &/SW_GRAPHICS/RoofGrid/GridSize_1x1/Roof_Vanilla/DL
+		{
+
+		}
+
+		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+		{
+			OperationalToggle = IsOperational
+			InvertOperationalToggle = true
+			BlendsWithCategories = [corridor]
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [&~/SIZE/0, &~/SIZE/1]
+		}
+
+		BlueprintWalls : &<./Data/ships/terran/walls/blueprint_walls.rules>
+		{
+			Location = [0.5, 0.5]
+			BlendsWithCategories = [corridor]
+		}
+	}
+
+	Stats
+	{
+		StorageTiles = (&~/Part/Components/Storage/GridRect/2) * (&~/Part/Components/Storage/GridRect/3)
+	}
+}

@@ -1,7 +1,30 @@
+OVERCLOCK
+{
+	HEAT_PER_CONVERSION = 50
+	SPEED_FACTOR = 300%
+	POWER_USE_FACTOR = 125%
+}
+HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
+HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
+
+MODIFIERS
+{
+	OVERCLOCK_LERP
+	{
+		Type = Buff
+		BuffType = Overclock
+		ModificationMode = Lerp
+	}
+}
+
+Size = Big
+MaxResources = 8000
+
 Part : &<../base_part_terran_factories.rules>/Part
 {
 	//IDs
 	ID = SW.factory_durasteel
+	//OtherIDs = [factory_durasteel]
 
 	//StringKeys
 	NameKey = "Parts/FactoryDuraSteel"
@@ -9,15 +32,16 @@ Part : &<../base_part_terran_factories.rules>/Part
 	DescriptionKey = "Parts/FactoryDuraSteelDesc"
 
 	//Groups&Categories
-	EditorGroups = ["Production"]
-	TypeCategories = [provides_SW.durasteel, uses_carbon, uses_SW.zersium, uses_steel, uses_power]
+	EditorGroups : ^/0/EditorGroups ["Production", SWTechII]
+	TypeCategories : ^/0/TypeCategories [provides_SW.durasteel, uses_carbon, uses_SW.zersium, uses_steel, uses_power, SW_Tech_II]
 	//RequiresCategories = []
 
 	//Resoures&Size&Health
 	Resources
 	[
-		[steel, 128]
-		[coil2, 64]
+		[steel, 90]
+		[coil, 30]
+		[coil2, 60]
 		[processor, 12]
 	]
 	Size = [6, 4]
@@ -34,6 +58,22 @@ Part : &<../base_part_terran_factories.rules>/Part
 	ReceivableBuffs : ^/0/ReceivableBuffs [Factory]
 
 	//Doors&Etc
+	BlockedTravelCells
+	[
+		[0, 0]
+		[1, 0]
+		[2, 0]
+		[3, 0]
+		[4, 0]
+		[5, 0]
+		[0, 1]
+		//[1, 1]
+		[2, 1]
+		[3, 1]
+		//[4, 1]
+		[5, 1]
+	]
+	ForceManhattanPathInPart = true
 	AllowedDoorLocations
 	[
 		[-1, 2]
@@ -54,7 +94,8 @@ Part : &<../base_part_terran_factories.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [64, 48]
 	}
@@ -62,10 +103,24 @@ Part : &<../base_part_terran_factories.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, CarbonSplitter, ZersiumSplitter, SteelSplitter, BatteryStorage]
+			Toggles : ^/0/Toggles [PowerToggle, CarbonSplitter, ZersiumSplitter, SteelSplitter, CombinedBatteryStorage]
+			Mode = All
+		}
+
+		CommandConsumptionToggle : ^/0/CommandConsumptionToggle
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [PowerToggle]
+			Mode = All
+		}
+		
+		NoResourceToggle
+		{
+			Type = MultiToggle
+			Toggles = [CarbonSplitter, ZersiumSplitter, SteelSplitter]
 			Mode = All
 		}
 
@@ -80,8 +135,77 @@ Part : &<../base_part_terran_factories.rules>/Part
 		CommandConsumer
 		{
 			Type = CommandConsumer
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 			CommandPoints = 1
+		}
+
+		IsBatteryStorageLeftAndPowerToggle
+		{
+			Type = MultiToggle
+			Toggles = [BatteryStorageLeft, PowerToggle]
+			Mode = All
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorageProxy
+			ResourceType = battery
+			ComponentID = CombinedBatteryStorage
+		}
+
+		CombinedBatteryStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			MaxResources = (&~/MaxResources)
+			ToggleOnResources = (&~/MaxResources)/4
+			ToggleOffResources = 0
+			DrainOnFtlJump = true
+			ResourceStorages = [BatteryStorageLeft, BatteryStorageRight]
+			AddMode = InOrder
+			RemoveMode = InReverseOrder
+		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = CombinedBatteryStorage
+			ShowProgressFor = CombinedBatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+
+		BatteryStorageLeft
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = (&~/MaxResources)/2
+			ToggleOnResources = (&~/MaxResources)/4
+			ToggleOffResources = 0
+			DeliveryLocation = [1.5, 1.5]
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		BatteryStorageRight : BatteryStorageLeft
+		{
+			ToggleOnResources = 1
+			ToggleOffResources = 0
+			DeliveryLocation = [6-(&~/Part/Components/BatteryStorageLeft/DeliveryLocation/0), &~/Part/Components/BatteryStorageLeft/DeliveryLocation/1]
+		}
+
+		BatteryConsumerLeft
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorageLeft
+			DefaultPriority = &/PRIORITIES/Defense_Supply
+			AdditionalStorageForJobPriority = [CombinedBatteryStorage]
+			OperationalToggle = PowerToggle
+			ResupplyThreshold = 1
+		}
+		BatteryConsumerRight : BatteryConsumerLeft
+		{
+			Storage = BatteryStorageRight
+			OperationalToggle = IsBatteryStorageLeftAndPowerToggle
 		}
 
 		SteelStorage
@@ -110,7 +234,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 			ResourceType = steel
 			FromStorage = SteelStorage
 			FromQuantity = 1
-			ToQuantity = 2
+			ToQuantity = 3
 		}
 
 		CarbonStorage
@@ -139,7 +263,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 			ResourceType = carbon
 			FromStorage = CarbonStorage
 			FromQuantity = 1
-			ToQuantity = 4
+			ToQuantity = 40
 		}
 
 		ZersiumStorage
@@ -180,28 +304,9 @@ Part : &<../base_part_terran_factories.rules>/Part
 			SpriteInset = [2/64, 6/64, 8/64, 9/64]
 			SuppliesResources = true
 			SupplyToggleButtonOffset = [0, -.4]
-			ToggleOnResources = 1
-			ToggleOffResources = 0
 			RandomSpriteRotation = true
 			InitToMaxResources = 0
 			//AllowExternalPickupAndDelivery = true
-		}
-
-		BatteryStorage
-		{
-			Type = ResourceStorage
-			ResourceType = battery
-			MaxResources = 6000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-		}
-		BatteryConsumer
-		{
-			Type = ResourceConsumer
-			ResourceType = battery
-			Storage = BatteryStorage
-			DefaultPriority = &/PRIORITIES/Factory_Supply
-			ResupplyThreshold = 500
-			OperationalToggle = PowerToggle
 		}
 
 		ResourceConverter
@@ -211,7 +316,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 			From
 			[
 				{
-					Storage = SteelStorage
+					Storage = SteelSplitter
 					Quantity = 2
 				}
 				{
@@ -223,14 +328,39 @@ Part : &<../base_part_terran_factories.rules>/Part
 					Quantity = 1
 				}
 				{
-					Storage = BatteryStorage
-					Quantity = 120
+					Storage = CombinedBatteryStorage
+					Quantity
+					{
+						BaseValue = 120
+						Modifiers
+						[
+							: ~/MODIFIERS/OVERCLOCK_LERP 
+							{
+								MinValue = &../../BaseValue
+								MaxValue = (&MinValue) * (&~/OVERCLOCK/POWER_USE_FACTOR)
+							}
+						]
+					}
 					MinQuantityForConversion = 1
 				}
 			]
 			ToStorage = DuraSteelStorage
-			ToQuantity = 2
-			Interval = { BaseValue=1.0; BuffType=Factory; BuffMode=Divide; }
+			ToQuantity = 1
+			Interval
+			{
+				BaseValue = 0.5
+				Modifiers
+				[
+					{ Type = Buff; BuffType = Factory; ModificationMode = Divide; }
+					{
+						Type = BuffRemap
+						BuffType = Overclock
+						RemapFrom = [0, 1]
+						RemapTo = [1, &~/OVERCLOCK/SPEED_FACTOR]
+						ModificationMode = Divide
+					}
+				]
+			}
 			CheckResourceLimits = true
 		}
 
@@ -241,13 +371,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 			Location = [2, 1.5]
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioInterior
-				{
-					Sound = "../bullet_create.wav"
-					Volume = .1
-					Speed = .5
-					SpeedVariation = .05
-				}
+				&/SW_SOUNDS/Bullet_Create
 			]
 		}
 
@@ -257,7 +381,103 @@ Part : &<../base_part_terran_factories.rules>/Part
 			BuffType = Factory
 			BuffAmount = 25%
 			GridDistance = 1
-			OperationalToggle = BatteryStorage
+			OperationalToggle = CombinedBatteryStorage
+		}
+
+		OverclockStateValue
+		{
+			Type = ToggleValueSelector
+			Toggle = OverclockModeToggle
+			ToggleOffValue = Zero
+			ToggleOnValue = One
+		}
+		
+		Zero { Type = StaticValue; Value = 0; }
+		One { Type = StaticValue; Value = 1; }
+
+		Overclock_ConversionHeatProducer
+		{
+			Type = ResourceChange
+			OperationalToggle = IsOverclocked
+			ResourceStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Trigger = Overclock_ResourceConverterProxy
+			Amount = (&~/OVERCLOCK/HEAT_PER_CONVERSION) * (&~/HEAT_TO_RESOURCE)
+		}
+		
+		Overclock_ResourceConverterProxy
+		{
+			Type = TriggerProxy
+			ProxyToggle = IsOverclocked
+			ComponentID = ResourceConverter
+		}
+
+		Router
+		{
+			Type = NetworkRouter
+			RouteGenerators
+			[
+				{
+					Type = Simple
+					HEAT_INPUT = &~/Part/^/0/HEAT_NETWORK_INPUT
+					Routes
+					[
+						[&../../HEAT_INPUT, Port_Thermal_Left0, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Left1, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down0, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down1, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down2, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down3, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down4, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Down5, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Right0, 0]
+						[&../../HEAT_INPUT, Port_Thermal_Right1, 0]
+					]
+				}
+			]
+		}
+
+		Port_Thermal_Left0 : ~/Part/^/0/BASE_THERMAL_PORT
+		{
+			Location = [0, 2]
+			Direction = Left
+		}
+		Port_Thermal_Left1 : Port_Thermal_Left0
+		{
+			Location = [0, 3]
+		}
+		Port_Thermal_Down0 : Port_Thermal_Left0
+		{
+			Location = [0, 3]
+			Direction = Down
+		}
+		Port_Thermal_Down1 : Port_Thermal_Down0
+		{
+			Location = [1, 3]
+		}
+		Port_Thermal_Down2 : Port_Thermal_Down0
+		{
+			Location = [2, 3]
+		}
+		Port_Thermal_Down3 : Port_Thermal_Down0
+		{
+			Location = [3, 3]
+		}
+		Port_Thermal_Down4 : Port_Thermal_Down0
+		{
+			Location = [4, 3]
+		}
+		Port_Thermal_Down5 : Port_Thermal_Down0
+		{
+			Location = [5, 3]
+		}
+		Port_Thermal_Right0 : Port_Thermal_Left0
+		{
+			Location = [5, 2]
+			Direction = Right
+		}
+		Port_Thermal_Right1 : Port_Thermal_Right0
+		{
+			Location = [5, 3]
 		}
 
 		FloorSprite
@@ -307,10 +527,10 @@ Part : &<../base_part_terran_factories.rules>/Part
 		}
 
 		BeltSpeedFactor
-        {
+		{
 			Type = BuffableValue
 			Value = { BaseValue=1; BuffType=Factory; BuffMode=Multiply; }
-        }
+		}
 
 		Graphics
 		{
@@ -431,7 +651,6 @@ Part : &<../base_part_terran_factories.rules>/Part
 			NonOperationalDoodad
 			{
 				Layer = "doodads_low"
-				Offset = [0, 0]
 				DamageLevels
 				[
 					{
@@ -523,7 +742,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
-				Offset = [-62/64, -43/64]
+				Offset = [-62/64, -43/64] //nani?
 				DamageLevels
 				[
 					{
@@ -591,7 +810,7 @@ Part : &<../base_part_terran_factories.rules>/Part
 		SteelBeltAndRoboticArmGraphics
 		{
 			Type = Graphics
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			DoodadToggle = ResourceConverter
 			ToggleOnDoodad
 			{
@@ -766,31 +985,58 @@ Part : &<../base_part_terran_factories.rules>/Part
 		}
 */
 
-		BatterySprites
+		BatterySpritesLeft
 		{
 			Type = ResourceSprites
-			Location = [2, 80/64]
-			ResourceStorage = BatteryStorage
+			Location = [84/64, 92/64]
+			ResourceStorage = BatteryStorageLeft
 			Layer = "doodads_high"
 			ResourceLevels
 			[
 				{
 					File = "batteries1.png"
 					Size = [1, 1]
-					OffSet = [-1, 0]
 				}
 				{
 					File = "batteries2.png"
 					Size = [1, 1]
-					OffSet = [-1, 0]
 				}
 				{
 					File = "batteries3.png"
-					Size = [3, 1]
+					Size = [1, 1]
 				}
 				{
 					File = "batteries4.png"
-					Size = [3, 1]
+					Size = [1, 1]
+				}
+			]
+		}
+		
+		BatterySpritesRight : BatterySpritesLeft
+		{
+			Location = [6- (&~/Part/Components/BatterySpritesLeft/Location/0), &~/Part/Components/BatterySpritesLeft/Location/1]
+			ResourceStorage = BatteryStorageRight
+			ResourceLevels
+			[
+				{
+					File = "batteries1.png"
+					Size = [1, 1]
+					MirrorU = true
+				}
+				{
+					File = "batteries2.png"
+					Size = [1, 1]
+					MirrorU = true
+				}
+				{
+					File = "batteries3.png"
+					Size = [1, 1]
+					MirrorU = true
+				}
+				{
+					File = "batteries4.png"
+					Size = [1, 1]
+					MirrorU = true
 				}
 			]
 		}
@@ -811,13 +1057,24 @@ Part : &<../base_part_terran_factories.rules>/Part
 			Location = [2, 1.5]
 		}
 
+		ScorchedEffects : ^/0/ScorchedEffects
+		{
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/BigPartScorched //Small Med Big Huge
+		}
+
 		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [3, 2]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3,4]
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -826,75 +1083,34 @@ Part : &<../base_part_terran_factories.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [1]
+					HidesIndicators = [2,3,4]
+				}
+
+				// No Resource.
+				{
+					Toggle = NoResourceToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoResource
+						Size = [1, 1]
+					}
 				}
 
 				// Out of power.
 				{
-					Toggle = BatteryStorage
+					Toggle = CombinedBatteryStorage
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
 						Size = [1, 1]
 					}
 				}
-			]
-		}
-
-		IndicatorSteel
-		{
-			Type = IndicatorSprites
-			Location = [4.9, 3]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
-			Indicators
-			[
-				// No steel.
+				
+				// Resetting from overclock
 				{
-					Toggle = SteelSplitter
-					AtlasSprite
+					Toggle = &~/Part/^/0/OVERCLOCK_OPERATIONAL
+					AtlasSprite : /INDICATORS/OverclockReset
 					{
-						File = &/INDICATORS/NoResource
-//						Offset = [1.5, 1.5]
-						Size = [1, 1]
-					}
-				}
-			]
-		}
-
-		IndicatorCarbon
-		{
-			Type = IndicatorSprites
-			Location = [0.6, 3]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
-			Indicators
-			[
-				// No carbon.
-				{
-					Toggle = CarbonSplitter
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoResource
-//						Offset = [-2, 1.5]
-						Size = [1, 1]
-					}
-				}
-			]
-		}
-
-		IndicatorZersium
-		{
-			Type = IndicatorSprites
-			Location = [1.55, 3]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
-			Indicators
-			[
-				// No SW.zersium.
-				{
-					Toggle = ZersiumSplitter
-					AtlasSprite
-					{
-						File = &/INDICATORS/NoResource
-//						Offset = [3, -1.5]
 						Size = [1, 1]
 					}
 				}
@@ -916,32 +1132,83 @@ Part : &<../base_part_terran_factories.rules>/Part
 			File = "blueprints_flipped.png"
 			Size = [6, 4]
 		}
+		
+		Overclock_HeatProductionInterval
+		{
+			Type = BuffableValue
+			Value = &~/Part/Components/ResourceConverter/Interval
+			IncludeInBlueprints = true
+		}
+		Overclock_HeatPerConversion { Type = StaticValue; Value = &~/OVERCLOCK/HEAT_PER_CONVERSION; }
+		HeatGenerationValue
+		{
+			Type = ValueOperation
+			Operator = Divide
+			ValueOne = Overclock_HeatPerConversion
+			ValueTwo = Overclock_HeatProductionInterval
+			NaNFallbackValue = 0
+			IncludeInBlueprints = Normal
+		}
+		HeatGenerationStatProvider
+		{
+			Type = StatProvider
+			Stat = HeatGeneration
+			OperationalToggle = OverclockModeToggle
+			ValueFrom = HeatGenerationValue
+		}
 	}
 
 	//Stats
 	Stats
 	{
 		DuraSteelProduction = (&~/Part/Components/ResourceConverter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+
 		DuraSteelCapacity = (&~/Part/Components/DuraSteelStorage/GridRect/2) * (&~/Part/Components/DuraSteelStorage/GridRect/3) * (&<../../../../Resources/durasteel/durasteel.rules>/MaxStackSize)
-		SteelCapacity = (&~/Part/Components/CarbonStorage/GridRect/2) * (&~/Part/Components/CarbonStorage/GridRect/3) * (&<./Data/resources/steel/steel.rules>/MaxStackSize)
-		SteelPerDuraSteel = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
-		SteelPerSecond = (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
-		DuraSteelSteelUsage = [&../SteelPerDuraSteel, &../SteelPerSecond]
+		SteelCapacity = (&~/Part/Components/SteelStorage/GridRect/2) * (&~/Part/Components/SteelStorage/GridRect/3) * (&<./Data/resources/steel/steel.rules>/MaxStackSize)
 		CarbonCapacity = (&~/Part/Components/CarbonStorage/GridRect/2) * (&~/Part/Components/CarbonStorage/GridRect/3) * (&<./Data/resources/carbon/carbon.rules>/MaxStackSize)
-		CarbonPerDuraSteel = (&~/Part/Components/CarbonSplitter/FromQuantity) / (&~/Part/Components/CarbonSplitter/ToQuantity)
-		CarbonPerSecond = (&~/Part/Components/CarbonSplitter/FromQuantity) / (&~/Part/Components/CarbonSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
-		DuraSteelCarbonUsage = [&../CarbonPerDuraSteel, &../CarbonPerSecond]
 		ZersiumCapacity = (&~/Part/Components/ZersiumStorage/GridRect/2) * (&~/Part/Components/ZersiumStorage/GridRect/3) * (&<../../../../Resources/zersium/zersium.rules>/MaxStackSize)
-		ZersiumPerDuraSteel = (&~/Part/Components/ZersiumSplitter/FromQuantity) / (&~/Part/Components/ZersiumSplitter/ToQuantity)
-		ZersiumPerSecond = (&~/Part/Components/ZersiumSplitter/FromQuantity) / (&~/Part/Components/ZersiumSplitter/ToQuantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+
+		SteelPerDuraSteel = (&~/Part/Components/SteelSplitter/FromQuantity) / (&~/Part/Components/SteelSplitter/ToQuantity) * (&~/Part/Components/ResourceConverter/From/0/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+		CarbonPerDuraSteel = (&~/Part/Components/CarbonSplitter/FromQuantity) / (&~/Part/Components/CarbonSplitter/ToQuantity) * (&~/Part/Components/ResourceConverter/From/1/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+		ZersiumPerDuraSteel = (&~/Part/Components/ZersiumSplitter/FromQuantity) / (&~/Part/Components/ZersiumSplitter/ToQuantity) * (&~/Part/Components/ResourceConverter/From/1/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity)
+
+		SteelPerSecond = (&SteelPerDuraSteel) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+		CarbonPerSecond = (&CarbonPerDuraSteel) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+		ZersiumPerSecond = (&ZersiumPerDuraSteel) / (&~/Part/Components/ResourceConverter/Interval/BaseValue)
+
+		DuraSteelSteelUsage = [&../SteelPerDuraSteel, &../SteelPerSecond]
+		DuraSteelCarbonUsage = [&../CarbonPerDuraSteel, &../CarbonPerSecond]
 		DuraSteelZersiumUsage = [&../ZersiumPerDuraSteel, &../ZersiumPerSecond]
+
 		PowerPerDuraSteel = (&~/Part/Components/ResourceConverter/From/2/Quantity) / (&~/Part/Components/ResourceConverter/ToQuantity) / 1000
 		PowerPerSecond = (&~/Part/Components/ResourceConverter/From/2/Quantity) / (&~/Part/Components/ResourceConverter/Interval/BaseValue) / 1000
 		DuraSteelPowerUsage = [&../PowerPerDuraSteel, &../PowerPerSecond]
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		PowerCapacity = (&~/Part/Components/CombinedBatteryStorage/MaxResources) / 1000
+
 		FactoryBuff = (&~/Part/Components/BuffProvider/BuffAmount) * 100
 
 		RecPower = &PowerPerSecond
 		RecCrew = (&RecPower) * 4
 	}
+	
+	StatsByCategory
+	[
+		{
+			NameKey = "StatCategories/Overclocked"
+			Stats
+			{
+				DuraSteelProduction = (&~/Part/Stats/DuraSteelProduction) * (&~/OVERCLOCK/SPEED_FACTOR)
+				DuraSteelSteelUsage = [(&~/Part/Stats/DuraSteelSteelUsage/0), (&~/Part/Stats/DuraSteelSteelUsage/1) * (&~/OVERCLOCK/SPEED_FACTOR)]
+				DuraSteelCarbonUsage = [(&~/Part/Stats/DuraSteelCarbonUsage/0), (&~/Part/Stats/DuraSteelCarbonUsage/1) * (&~/OVERCLOCK/SPEED_FACTOR)]
+				DuraSteelZersiumUsage = [(&~/Part/Stats/DuraSteelZersiumUsage/0), (&~/Part/Stats/DuraSteelZersiumUsage/1) * (&~/OVERCLOCK/SPEED_FACTOR)]
+				POWER_PER_ITEM = (&~/Part/Stats/DuraSteelPowerUsage/0) * (&~/OVERCLOCK/POWER_USE_FACTOR)
+				POWER_PER_SECOND = (&~/Part/Stats/DuraSteelPowerUsage/1) * (&~/OVERCLOCK/POWER_USE_FACTOR) * (&~/OVERCLOCK/SPEED_FACTOR)
+				DuraSteelPowerUsage = [&../POWER_PER_ITEM, &../POWER_PER_SECOND]
+				CONVERSION_OUTPUT = (&~/Part/Components/ResourceConverter/ToQuantity)
+				HEAT_PER_ITEM = (&~/OVERCLOCK/HEAT_PER_CONVERSION) / (&CONVERSION_OUTPUT)
+				HEAT_PER_SECOND = (&~/OVERCLOCK/HEAT_PER_CONVERSION) * (&~/Part/Components/ResourceConverter/Interval/BaseValue) * (&~/OVERCLOCK/SPEED_FACTOR);
+				DuraSteelHeatGeneration = [&../HEAT_PER_ITEM, &../HEAT_PER_SECOND]
+			}
+		}
+	]
 }

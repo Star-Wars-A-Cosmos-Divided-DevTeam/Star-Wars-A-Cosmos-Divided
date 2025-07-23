@@ -15,7 +15,7 @@ Versions:
 
 ---------------------------------------------------------------------------- */
 
-Part : /BASE_PART_TERRAN
+Part : &<../base_part_terran_super.rules>/Part
 {
 	//IDs
 
@@ -45,7 +45,7 @@ Part : /BASE_PART_TERRAN
 	IconNameKey = "Parts/DSLaserCoreIcon"
 	ID = SW.DSLaser_core
 	DescriptionKey = "Parts/DSLaserCoreDesc"
-	EditorGroup = "SWTechIII"
+	EditorGroups = [SWTechIII]
 	Resources
 	[
 		[steel, 8] //
@@ -56,7 +56,7 @@ Part : /BASE_PART_TERRAN
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	MaxHealth = 48000
-	TypeCategories = [weapon, uses_power, is_crewed,DSLII,DSL_ammo]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power, is_crewed,DSLII,DSL_ammo]
 	ReceivableBuffs : ^/0/ReceivableBuffs [RailgunReverseOperation]
 	RequiresCategories = [WarRoom, DSL_command]
 	AllowedDoorLocations
@@ -83,7 +83,8 @@ Part : /BASE_PART_TERRAN
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [69, 92]
 	}
@@ -95,10 +96,10 @@ Part : /BASE_PART_TERRAN
 			Toggles = [PowerToggle, PartCrew]
 			Mode = All
 		}
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [BuffOperational, RailgunReverseOperationBuffToggle]
+			Toggles : ^/0/Toggles [BuffOperational, RailgunReverseOperationBuffToggle]
 			Mode = All
 		}
 
@@ -1004,7 +1005,6 @@ Part : /BASE_PART_TERRAN
 		{
 			Type = IndicatorSprites
 			Location = [3, 4]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Turned off.

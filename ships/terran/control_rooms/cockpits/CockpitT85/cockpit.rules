@@ -1,8 +1,8 @@
 Part : &<../base_part_terran_automagic_cockpits.rules>/Part 
 {
 	//IDs
-	ID = SW.cockpitT85
-	OtherIDs = [] //Clears the array
+	ID = SW.cockpit_T85
+	OtherIDs = [SW.cockpitT85, cockpitT85] //Clears the array
 
 	//StringKeys
 	NameKey = "Parts/CockpitT85"
@@ -10,8 +10,8 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	DescriptionKey = "Parts/CockpitT85Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits, provides_power, reactor]
+	EditorGroups : ^/0/EditorGroups [SWTechI]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits, provides_power, reactor]
 
 	//Resources&Size&Health
 	Resources
@@ -53,7 +53,8 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [32, 64]
 	}
@@ -86,10 +87,10 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		// Command Room & Radar - End
 
 		// Toggles - Start
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, /*BatteryStorage,*/ PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, /*BatteryStorage,*/ PartCrew]
 			Mode = All
 		}
 
@@ -144,7 +145,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		CrewLocation
 		{
 			Type = CrewLocation
-			Location = [.5, 1.32]
+			Location = [0.5, 1.32]
 			Rotation = 0d
 		}
 		PartCrew
@@ -157,7 +158,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			AbandonWhenOnFire = false
 			CrewDestinations
 			[
-				[.5, 1.30]
+				[0.5, 1.30]
 			]
 			CrewLocations
 			[
@@ -183,7 +184,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [.5,1]
+			Location = [0.5,1]
 			Floor
 			{
 				Layer = "floors"
@@ -353,14 +354,14 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			ActivationIncreaseTime = 0.1
 			ActivationRecoveryTime = 0.1
 			AllowAutoFire = false
-		}	
+		}
 		// Maneuvering Thrusters - End
 
 
 		BatterySprites
 		{
 			Type = ResourceSprites
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
 			HasZeroResourceSprite = false
@@ -396,7 +397,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		OperationSoundLoop
 		{
 			Type = ContinuousEffects
-			Location = [.5, 1]
+			Location = [0.5, 1]
 			OperationalToggle = IsOperational
 			MaxMediaEffectsZoom = 4
 			MediaEffects
@@ -411,12 +412,11 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 				}
 			]
 		}
-		// Indicators - Start
+
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [.5, 1]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+			Location = [0.5, 1]
 			Indicators
 			[
 				// Turned off.
@@ -450,13 +450,12 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 				}
 			]
 		}
-		// Indicators - End
 
 		// Extinguisher Graphics - Start
 		ExtinguisherSprite
 		{
 			Type = ResourceSprites
-			Location = [.5, 1.2]
+			Location = [0.5, 1.2]
 			ResourceStorage = ExtinguisherStorage
 			Layer = "doodads_high"
 			HasZeroResourceSprite = false

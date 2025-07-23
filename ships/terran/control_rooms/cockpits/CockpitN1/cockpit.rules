@@ -1,7 +1,7 @@
 Part : &<../Cockpit/cockpit.rules>/Part
 {
 	//IDs
-	ID = SW.cockpitT85
+	ID = SW.cockpit_N1
 	OtherIDs = [] //Clears the array
 
 	//StringKeys
@@ -10,8 +10,8 @@ Part : &<../Cockpit/cockpit.rules>/Part
 	DescriptionKey = "Parts/CockpitT85Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits]
+	EditorGroups : ^/0/EditorGroups [SWTechI]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits]
 
 	//Resources&Size&Health
 	Resources
@@ -50,7 +50,8 @@ Part : &<../Cockpit/cockpit.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [32, 64]
 	}
@@ -64,12 +65,17 @@ Part : &<../Cockpit/cockpit.rules>/Part
 			CommandPoints = 50  //Remember to update tooltip.
 		}
 
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
 
 		Graphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [.5,1]
+			Location = [0.5,1]
 			Floor
 			{
 				Layer = "floors"
@@ -239,14 +245,14 @@ Part : &<../Cockpit/cockpit.rules>/Part
 			ActivationIncreaseTime = 0.1
 			ActivationRecoveryTime = 0.1
 			AllowAutoFire = false
-		}	
+		}
 		// Maneuvering Thrusters - End
 
 		// Extinguisher Graphics - Start
 		ExtinguisherSprite
 		{
 			Type = ResourceSprites
-			Location = [.5, 1.2]
+			Location = [0.5, 1.2]
 			ResourceStorage = ExtinguisherStorage
 			Layer = "doodads_high"
 			HasZeroResourceSprite = false

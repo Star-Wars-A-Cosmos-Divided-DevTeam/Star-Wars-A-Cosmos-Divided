@@ -1,59 +1,113 @@
+SCALE = (1)
+SIZE = [2, 1]
+MULTIPLIKATOR = (&~/SCALE) * (&~/Size/0) * (&~/Size/1)
+LOCATION = [((&~/Size/0)/2), ((&~/Size/1)/2)]
+COST = &<../base_part_terran_doonium.rules>/COST
+MAXHEALTH = &<../base_part_terran_doonium.rules>/MAXHEALTH
+
 Part : &<../base_part_terran_doonium.rules>/Part
 {
-	NameKey = "Parts/DooniumArmor2"
-	IconNameKey = "Parts/DooniumArmor2Icon"
+	//IDs
 	ID = SW.doonium_armor_2x1
 	OtherIDs = [doonium_armor2, SW.doonium_armor2]
-	//EditorGroup = "Defenses"
-	//DescriptionKey = "Parts/DooniumArmorDesc"
-	EditorReplacementPartID = SW.doonium_armor
-	MaxHealth = floor((&<../base_part_terran_doonium.rules>/MaxHealth) * (&~/Scale))	
-	InitialPenetrationResistance = floor((&<../base_part_terran_doonium.rules>/InitialPenetrationResistance) * (&~/Scale))
-	//Density = (^/0/Density)
+	//
 
-    Resources
-    [
-     	[SW.doonium_ingot, ceil((&<../base_part_terran_doonium.rules>/Cost)*(&~/Scale))]
-    ]
-	//AIValueFactor = 0
-	Size = [2, 1]
+	//StringKeys
+	NameKey = "Parts/DooniumArmor2x1"
+	IconNameKey = "Parts/DooniumArmor2x1Icon"
+
+	//Resources&Size&Health
+	Resources
+	[
+		[SW.doonium_ingot, ceil((&~/COST)*(&~/MULTIPLIKATOR))]
+	]
+	Size = [&~/SIZE/0, &~/SIZE/1]
+	MaxHealth = ceil((&~/MAXHEALTH) * (&~/MULTIPLIKATOR))
+	FractionalCostToRepair = (ceil((&Resources/0/1)/5)/(&Resources/0/1))
+
+	//PartSpecific
+	EditorReplacementPartID = SW.doonium_armor
+
+	UnderlyingPartPerTile = SW.structure_doonium
+	UnderlyingPart = "" //SW.structure_doonium
+
+	//IsRotateable = true //base true
+	IsFlippable = false //base true
+
 	FlipHRotate = [0, 1, 2, 3] // Disable flipping UI.
 	FlipVRotate = [0, 1, 2, 3] // Disable flipping UI.
-	//SelectionTypeID = "armor"
-	//MaxHealth = 16000 //8000*2
-	//ExplosiveDamageAbsorption = 100%
-	//ExplosiveDamageResistance = 50%
-	//TypeCategories = [armor]
-	//ReceivableBuffs : ^/0/ReceivableBuffs []
-	//Flammable = false
-	UnderlyingPartPerTile = cosmoteer.structure
-	//UnderlyingPart = ""
-	CreatePartPerTileWhenGrabbed = ""
-	//InitialPenetrationResistance = 16
-	//ContinuingPenetrationResistance = &InitialPenetrationResistance
-	//CrewSpeedFactor = 0
-	//Density = 4 //v:3?
-	IsRotateable = true
-	IsFlippable = false	//
-	//IsWalled = true
-	//IsSelfDestructible = false
-	//AllowedDoorLocations = []
-	//GeneratorRequiresDoor = false
-	IgnoreRotationForMirroredSelection = true
-	GenerateRectCollider = true
 
+	GenerateRectCollider = true //armor stuff
+
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+	//
+
+	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [64, 32]
 	}
 
+	//Components&Inheritance
 	Components : ^/0/Components //, &<roof_toggles.rules>
 	{
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
+		//
 /*
 		ArmorRoofType
 		{
@@ -133,14 +187,14 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		{
 			Type = ExplosiveResourceDrainSink
 			ResourceType = battery
-			AbsorbsResourceDrain = ceil((&~/Part/MaxHealth)/4) // 4000
+			AbsorbsResourceDrain = ceil((&~/Part/MaxHealth)/4)
 			RecoveryRate = ceil(&AbsorbsResourceDrain) * 0.1
 		}
 
 		Graphics
 		{
 			Type = Graphics
-			Location = [1, 0.5]
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
 			Floor // This is needed so that armor shows up in ship ghosts.
 			{
 				Layer = "floors"
@@ -148,17 +202,17 @@ Part : &<../base_part_terran_doonium.rules>/Part
 				[
 					{
 						File = "armor.png"
-						Size = [2, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 						UVRotation = 0
 					}
 					{
 						File = "armor_33.png"
-						Size = [2, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 						UVRotation = 0
 					}
 					{
 						File = "armor_66.png"
-						Size = [2, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 						UVRotation = 0
 					}
 				]
@@ -170,17 +224,20 @@ Part : &<../base_part_terran_doonium.rules>/Part
 				[
 					{
 						File = "armor.png"
-						Size = [2, 1]
+						//
+						Size = [&~/SIZE/0, &~/SIZE/1]
 						UVRotation = 0
 					}
 					{
 						File = "armor_33.png"
-						Size = [2, 1]
+						//
+						Size = [&~/SIZE/0, &~/SIZE/1]
 						UVRotation = 0
 					}
 					{
 						File = "armor_66.png"
-						Size = [2, 1]
+						//
+						Size = [&~/SIZE/0, &~/SIZE/1]
 						UVRotation = 0
 					}
 				]
@@ -193,19 +250,19 @@ Part : &<../base_part_terran_doonium.rules>/Part
 					{
 						File = "roof_0.png"
 						NormalsFile = "roof_0_normals.png"
-						Size = [2, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 						UVRotation = 0
 					}
 					{
 						File = "roof_0_33.png"
 						NormalsFile = "roof_0_normals_33.png"
-						Size = [2, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 						UVRotation = 0
 					}
 					{
 						File = "roof_0_66.png"
 						NormalsFile = "roof_0_normals_66.png"
-						Size = [2, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 						UVRotation = 0
 					}
 				]
@@ -216,21 +273,20 @@ Part : &<../base_part_terran_doonium.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
-			Location = [1, .5]
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
 		}
-		
+
 		Blueprints
-		{	
+		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [2, 1]
+			Size = [&~/SIZE/0, &~/SIZE/1]
 		}
 	}
-
+	//Stats
 	Stats
 	{
 		EMPResist = (&~/Part/Components/EmpAbsorber/AbsorbsResourceDrain) / 1000
 		AOEResist = (&~/Part/DamageResistances/explosive) * 100
 	}
 }
-Scale = (2)

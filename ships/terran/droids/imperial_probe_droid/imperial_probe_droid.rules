@@ -1,4 +1,4 @@
-Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+Part : &<../base_part_terran_droids.rules>/Part
 {
 	//IDs
 	ID = SW.imperial_probe_droid
@@ -10,8 +10,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	DescriptionKey = "Parts/ImperialProbeDroidDesc"
 
 	//Groups&Categories
-	EditorGroups = ["SWDroids"]
-	TypeCategories = [command, reactor, thruster, sensors]
+	EditorGroups : ^/0/EditorGroups ["SWTechI"]
+	TypeCategories : ^/0/TypeCategories [command, reactor, thruster, sensors]
 	//RequiresCategories = []
 
 	//Resoures&Size&Health
@@ -48,31 +48,40 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 	ThrusterForce = 8
 	FuelUsage = 10
 	ThrustIncreaseTime = 1
-	ThrustRecoveryTime = 1
+	ThrustDecreaseTime = 0.2
+	ThrustRecoveryTime = 0.4
 	AllowedDoorLocations []
 	GenerateRectCollider = true
 
 	
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
-    
+	
 	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [32, 32]
 	}
 	Components : ^/0/Components
 	{
 
+		IsOperationalSpecial
+		{
+			Type = MultiToggle
+			Toggles [PowerToggle, BatteryStorage]
+			Mode = All
+		}
+
 		CommandProvider
 		{
 			Type = CommandProvider
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalSpecial
 			CommandPoints = 1
 		}
 		CommandConsumer
@@ -80,17 +89,6 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
 			CommandPoints = 1
-		}
-		CommandToggle
-		{
-			Type = CommandToggle
-		}
-
-		IsOperational
-		{
-			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage]
-			Mode = All
 		}
 
 		PowerToggle
@@ -100,6 +98,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -129,10 +128,11 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			HighColor = [0, 63, 255]
 			FullColor = [0, 63, 255]
 		}
+
 		Sensor
 		{
 			Type = Sensor
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalSpecial
 			SightRadius = 1250
 			RadarRadius = 4500
 		}
@@ -149,14 +149,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		LateralThruster45 : LateralThruster0
 		{
-			Location = [.5, .75]
+			Location = [0.5, .75]
 			Rotation = 45d
 		}
 		MainThruster
 		{
 			Type = Thruster
-			OperationalToggle = IsOperational
-			Location = [.5, .75]// Relative to upper-left corner of unrotated part.
+			OperationalToggle = IsOperationalSpecial
+			Location = [0.5, .75]// Relative to upper-left corner of unrotated part.
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
 			MinActivation = 0
@@ -164,13 +164,14 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
 		}
 		LateralThruster135 : LateralThruster0
 		{
-			Location = [.5, .75]
+			Location = [0.5, .75]
 			Rotation = 135d
 		}
 		LateralThruster180 : LateralThruster0
@@ -185,7 +186,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		}
 		ReverseThruster : MainThruster
 		{
-			Location = [.5, .16]
+			Location = [0.5, .16]
 			Rotation = 270d // Relative to main thruster.
 			FuelUsagePerSecond = (&../../FuelUsage)*2
 		}
@@ -225,7 +226,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 			Rotation = -90d
 			Radius = (10/3)
 			Arc = 180.9d // 2 Halfs so the Texture doesn't get Strechted
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalSpecial
 			DrainResourcesFrom = BatteryStorage
 			Location = [0.5, 0.5]
 			PenetrationResistance = [7, 0]
@@ -327,7 +328,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					IgnoreIntensity = true
 				}
 			]
-			
+
 			HitMediaEffects
 			[
 				{
@@ -379,7 +380,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 				}
 				&/SW_SOUNDS/ShieldHit
 			]
-		}	
+		}
 
 		ArcShield90 : ArcShield
 		{
@@ -417,8 +418,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		Graphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational
-			Location = [.5, .5]
+			OperationalToggle = IsOperationalSpecial
+			Location = [0.5, 0.5]
 			Floor
 			{
 				Layer = "floors"
@@ -485,8 +486,8 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational
-			Location = [.5, .5]
+			Toggle = IsOperationalSpecial
+			Location = [0.5, 0.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -495,13 +496,13 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
-			Location = [.5, .5]
+			Location = [0.5, 0.5]
 		}
+
 		Indicators
 		{
 			Type = IndicatorSprites
-			Location = [.5, .5]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+			Location = [0.5, 0.5]
 			Indicators
 			[
 				// Turned off.
@@ -510,7 +511,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [.5, .5]
+						Size = [0.5, 0.5]
 					}
 					HidesIndicators = [1]
 				}
@@ -521,7 +522,7 @@ Part : &<./Data/ships/terran/base_part_terran.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [.5, .5]
+						Size = [0.5, 0.5]
 					}
 				}
 			]

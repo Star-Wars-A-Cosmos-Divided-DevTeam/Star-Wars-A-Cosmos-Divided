@@ -18,7 +18,7 @@ Versions:
 
 ---------------------------------------------------------------------------- */
 
-Part : /BASE_PART_TERRAN
+Part : &<../base_part_terran_super.rules>/Part
 {
 	//IDs
 
@@ -48,7 +48,7 @@ Part : /BASE_PART_TERRAN
 	IconNameKey = "Parts/DSLaserEmitterIcon"
 	ID = SW.DSlaser_emitter
 	DescriptionKey = "Parts/DSLaserEmitterDesc"
-	EditorGroup = "SWTechIII"
+	EditorGroups = [SWTechIII]
 	Resources
 	[
 		[steel, 8] //
@@ -63,8 +63,8 @@ Part : /BASE_PART_TERRAN
 	SelectionPriority = 1
 	SelectionTypeByRotation = true
 	MaxHealth = 48000
-	Flammable = false
-	TypeCategories = [weapon, uses_power,DSLII,DSL_power,deathstarlaser_emitter]
+	
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power,DSLII,DSL_power,deathstarlaser_emitter]
 	RequiresCategories = [DSL_command]
 
 	ReceivableBuffs : ^/0/ReceivableBuffs [Railgun, DSLaserBuff, RailgunOperation,DSLFireCMDBuff,PowerCellBuff]
@@ -198,16 +198,17 @@ Part : /BASE_PART_TERRAN
 		Texture
 		{
 			File = "icon_emitter.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [69, 92]
 	}
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [PowerToggle, BatteryStorage, RailgunOperationBuffToggle]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, RailgunOperationBuffToggle]
 			Mode = All
 		}
 
@@ -444,7 +445,7 @@ Part : /BASE_PART_TERRAN
 				{
 					Texture = &/INDICATORS/RadialGradient
 					VertexColor = [255, 255, 255, 191]
-					UVRect = [.5, 0, 0, 1]
+					UVRect = [0.5, 0, 0, 1]
 				}
 				LineThickness = 2
 
@@ -456,7 +457,7 @@ Part : /BASE_PART_TERRAN
 
 				EndCapSprite : LineSprite
 				{
-					UVRect = [.5, 0, .5, 1]
+					UVRect = [0.5, 0, .5, 1]
 				}
 				EndCapSize = [1, 2]
 			}
@@ -786,7 +787,6 @@ Part : /BASE_PART_TERRAN
 		{
 			Type = IndicatorSprites
 			Location = [3, 4]
-			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
 			Indicators
 			[
 				// Missing component
