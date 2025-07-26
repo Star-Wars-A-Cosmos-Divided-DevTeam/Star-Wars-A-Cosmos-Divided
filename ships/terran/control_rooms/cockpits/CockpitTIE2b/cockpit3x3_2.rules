@@ -3,7 +3,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 	NameKey = "Parts/Cockpit2_2"
 	IconNameKey = "Parts/Cockpit2_2Icon"
 	ID = SW.tie_cockpit2b
-	EditorGroup = "SWTIE"
+	EditorGroups = ["SWTIE"]
 	DescriptionKey = "Parts/Cockpit2_2Desc"
 	Resources
 	[
@@ -23,7 +23,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 	//IsContiguityOrigin = true
 	//IsShipForward = true
 	SelectionTypeID = "control_room"
-	TypeCategories = [command,weapon, provides_power, uses_power, thruster]
+	TypeCategories : ^/0/TypeCategories [command,weapon, provides_power, uses_power, thruster]
 
 	ThrusterForce = 200
 	ThrustIncreaseTime = 0
@@ -55,7 +55,8 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 		Texture
 		{
 			File = "icon2.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [69, 92]
 	}
@@ -218,6 +219,12 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			]
 		}
 
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -258,9 +265,9 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 							"on3.png"
 							"on4.png"
 							"on5.png"
-						    "on6.png"
-						    "on7.png"
-						    "on8.png"
+							"on6.png"
+							"on7.png"
+							"on8.png"
 						]
 						Size = [1, 2]
 						AnimationInterval = 0.100
@@ -289,11 +296,11 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = "walls.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "walls_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "walls_66.png"
 						Size = [1, 2]
 					}
@@ -331,11 +338,11 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = "Cockpit Window.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Cockpit Window_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Cockpit Window_66.png"
 						Size = [1, 2]
 					}
@@ -560,6 +567,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -577,6 +585,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = 0
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -594,6 +603,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -611,6 +621,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			MinUncommandedActivation = 0
 			MaxUncommandedActivation = 0
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -738,11 +749,11 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			]
 		}
 
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [1.5, 1.5]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{
@@ -752,7 +763,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [2,3]
+					HidesIndicators = [1,2]
 				}
 				// Out of power.
 				{

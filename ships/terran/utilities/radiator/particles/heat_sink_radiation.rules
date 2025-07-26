@@ -1,0 +1,311 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.8
+			ToValue = 1.2
+			Name = "random lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 0.6
+			Name = Lifetime
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ValueCurve
+			MinValue = -1
+			MaxValue = 1
+			LerpIn = life
+			CurveOut = curve
+			Invert = false
+			Points
+			[
+				0.45882353
+				0.28235295
+				0.05490196
+				0.003921569
+				0.20392157
+				0.5372549
+				0.8509804
+				1
+				0.9098039
+				0.6784314
+				0.3882353
+				0.13725491
+				0.003921569
+				0.039215688
+				0.17254902
+				0.36862746
+				0.58431375
+				0.7882353
+				0.9372549
+				1
+				0.9098039
+				0.68235296
+				0.39607844
+				0.14509805
+				0.007843138
+				0.023529412
+				0.10980392
+				0.24705882
+				0.41568628
+				0.5921569
+				0.7647059
+				0.90588236
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 1
+			ToValue = 0
+			Name = "Scale lerp"
+			Enabled = false
+			UpdateAfterInit = true
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0.39215687
+					Gf = 0.6862745
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 0.88235295
+					Gf = 1
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 0.78431374
+					Bf = 0
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 0.39215687
+					Bf = 0
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 0
+					Bf = 0
+					Af = 1
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ValueCurve
+			MinValue = 0
+			MaxValue = 1
+			LerpIn = life
+			CurveOut = scale
+			Invert = false
+			Points
+			[
+				1
+				1
+				1
+				0.8
+				0.5
+				0
+			]
+			Name = "Scale Over Life"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply Velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In = scale2
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn
+		BaseSize
+		{
+			X = 0.15
+			Y = 0.15
+		}
+		Offset
+		{
+			X = 0
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Texture
+		{
+			File = ../../../../statuses/fire/particles/fire_spark.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+	}
+	DeleteMode = Fast
+	FpsCompensation = None
+	FpsCompensationStrength = 1
+	EnableMultithreading = false
+	InitCapacity = 2500
+}
+EmitterDef
+{
+	EmitPerSecond = 8
+	EmitPerOneShot
+	{
+		Min = 0
+		Max = 0
+	}
+	PreInitializers
+	[
+		{
+			Type = LocationFromCustomShape
+			LocationOut = location
+			Name = "Init location on grid"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetValue
+			DataOut = scale2
+			ValueType = Vector2
+			Value
+			{
+				X = 1
+				Y = 1
+			}
+			Name = "set scale2"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandomVelocity
+			VelocityOut = velocity
+			Speed
+			{
+				Min = 0.2
+				Max = 0.5
+			}
+			Direction
+			{
+				Min = 0d
+				Max = 360d
+			}
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = Surface1
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 0
+IsFancy = true
+IsFancyLight = false
+IsSimpleLight = false
+IsSimple = false
+Sharing = None
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 3
+UseCustomShapeForOffScreenCheck = true
+MaxEmissionZoom = 15
+MaxParticleCount = 2147483647
+ScaleEmissionWithIntensity = true
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	OnlyStatuses
+	ExcludeStatuses
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Neutrals = true
+	TargetedNeutrals
+	Junk = true
+	TargetedJunk
+	Deconstruction
+}
+Delay
+{
+	BaseValue = 0
+	Modifiers
+	MinValue = -1.7976931348623157E+308
+	MaxValue = 1.7976931348623157E+308
+}
+IgnoreIntensity = false

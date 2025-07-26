@@ -16,169 +16,73 @@
  * @ContinuingPenetrationResistance 4 - Continuing penetration resistance
  * @Components - Shared Components definitions 
 */
+
+
+MaxHealth = 6000
+Density = 1.5
+InitialPenetrationResistance = 14
+Cost = 10
+SCALE = (1)
+SIZE = [1, 1]
+MULTIPLIKATOR = (&~/SCALE) * (&~/Size/0) * (&~/Size/1)
+LOCATION = [((&~/Size/0)/2), ((&~/Size/1)/2)]
+
 Part : &<../base_part_terran_armor.rules>/Part
 {
-	EditorGroups = ["SWDurasteel"]
+	//IDs
+
+	//StringKeys
 	DescriptionKey = "Parts/DurasteelArmorDesc"
-	EditorReplacementPartID = ""//corridor
+
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups [SWDurasteel]
+	EditorParentParts = [ "SW.durasteel_armor" ]
+	TypeCategories : ^/0/TypeCategories [durasteel_armor] //own type
+
+	//Resources&Size&Health
 	Resources
 	[
-		[SW.durasteel, ceil(8*(&~/Scale))]
+		[SW.durasteel, 10]
 	]
-	AIValueFactor = 0 //removes AI targetting //shared across all
-	FractionalCostToRepair = 20%
+	MaxHealth = 6000 //v:4000
+	FractionalCostToRepair = (ceil((&Resources/0/1)/5)/(&Resources/0/1))
+
+	//Selections
+	SelectionTypeID = "durasteel_armor" //armor stuff
+	IgnoreRotationForMirroredSelection = true
+
+	//PartSpecific
+
+	UnderlyingPartPerTile = SW.structure_durasteel
+	UnderlyingPart = "" //SW.structure_durasteel
+
+	InitialPenetrationResistance = 14 //common value// most files use own def
+	ContinuingPenetrationResistance = (floor((&InitialPenetrationResistance)/2)) //shared scaler //shared across all
+
+	FlipHRotate = [0, 3, 2, 1] //using vanila def mostly
+	FlipVRotate = [2, 1, 0, 3] //using vanila def mostly
+
 	ConstructionDuration = 0.5 //Buff
 	RepairDuration = 0.5 //Buff
-	Density = 1.5 //v:3? //0.5v
-	MaxHealth = 6000 //v:4000
-	//HealthType = Operational
+
+	Density = 1.5 //v:3? //0.5*v
+
 	ExplosiveDamageAbsorption = 100%
 	DamageResistances
 	{
 		explosive = 40%
 		thermal = -20%
-	} //1.5HP x 0.5TONS
-	UnderlyingPartPerTile = SW.structure_durasteel
-	UnderlyingPart = "" //SW.structure_durasteel
-	CreatePartPerTileWhenGrabbed = "" //corridor
-	//CreatePartWhenDestroyed = "" //useless? //SW.structure_durasteel //delete? //should work but wont???
-	//DestroyedPartHealthFraction = 50%
-	//CrewKillChanceWhenDestroyed = 25%
-	//CrewThrowSpeedWhenDestroyed = 10
-	CrewSpeedFactor = 0 //no crew movement wanted
-	//CrewCongestedSpeedFactor = .3
-	//CrewFireSpeedFactor = .2
-	//ProhibitLeft = 0
-	//ProhibitRight = 0
-	//ProhibitAbove = 0
-	//ProhibitBelow = 0
-	//Prohibits = [default]
-	//ProhibitedBy = [default]
-	SelectionTypeID = "durasteel_armor" //armor stuff
-	//SelectionPriority = 0 //v value 0
-	//SelectionTypeByRotation = false //v value false
-	//IsExternal = false //v value false
-	IsRotateable = true   //v value true
-	IsFlippable = true //v value false
-	//IsWalled = true //v value true
-	IsSelfDestructible = false //lol
-	GeneratorRequiresDoor = false //armor stuff
-	GenerateRectCollider = false //armor stuff
-	//AutoDoorMaxPathLength = 6 
-	//ExternalWalls = [All]//each file own def
-	//InternalWalls = [None]//each file own def
-	AllowedDoorLocations = []
-	TypeCategories = [durasteel_armor, armor, non_flammable] //own type + vanilla
-	//RequiresCategories = [] //no requirements
-	FlipHRotate = [0, 3, 2, 1] //using vanila def mostly
-	FlipVRotate = [2, 1, 0, 3] //using vanila def mostly
-	InitialPenetrationResistance = 14 //common value// most files use own def
-	ContinuingPenetrationResistance = (floor((&InitialPenetrationResistance)/2.5)) //shared scaler //shared across all
-	ReceivableBuffs : ^/0/ReceivableBuffs [] //common own type buffs later?
+	}
 
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
-
-		ConstructionStructureSprites
+		ConstructionStructureSprites : ^/0/ConstructionStructureSprites
 		{
-			Type = SpriteGrid
-			IncludeWhenUnderConstruction = true
-			IncludeWhenNotUnderConstruction = false
-			Layer = "structure"
-			RectType = Physical
-			RandomUVRotation = true
-			AtlasSprite = &<../../structures/structure_modified/structure_durasteel.rules>/Part/Components/Graphics/Floor/DamageLevels/0
+			AtlasSprite = &<../../structures/structure_1x1/structure_durasteel.rules>/Part/Components/Graphics/Floor/DamageLevels/0
 		}
 	}
 }
-
-MaxHealth = 6000
-Density = 1.5
-InitialPenetrationResistance = 14
-Cost = 8
-Scale = (1)
-
-		/*WallsBlend : <walls/walls.rules>
-		{
-			Type = BlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}*/
-
-		/*
-		ExternalWallsBlend : &<external_walls.rules>
-		{
-			Type = BlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}
-		
-		ExternalWallsBlend1 : <../walls/external_walls_1.rules>
-		{
-			Type = BlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}
-		
-		ExternalWallsBlend2 : &<external_walls_2.rules>
-		{
-			Type = BlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}
-		
-		ExternalWallsBlend3 : <../walls/external_walls_3.rules>
-		{
-			Type = BlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}
-		
-		ExternalWallsBlend4 : <../walls/external_walls_4.rules>
-		{
-			Type = BlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}
-		
-		ExternalWallsBlend5 : <../walls/external_walls_5.rules>
-		{
-			Type = BlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}
-		
-		ExternalWallsBlend6 : <../walls/external_walls_6.rules>
-		{
-			Type = BlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}
-
-		ExternalWallsBlend7 : &<external_walls_7.rules>
-		{
-			Type = BlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}
-
-		ExternalWallsBlend8 : <../walls/external_walls_8.rules>
-		{
-			Type = BlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}
-		*/
-
-		/*BlueprintWalls : <../walls/blueprint_walls.rules>
-		{
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}*/
-
-		/*ExternalBlueprintWalls : <../walls/external_blueprint_walls.rules>
-		{
-			Type = BlueprintBlendSprite
-			Location = [0.5, 0.5]
-			BlendsWithCategories = [armor]
-		}*/

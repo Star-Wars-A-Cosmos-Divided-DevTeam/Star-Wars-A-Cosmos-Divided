@@ -3,11 +3,11 @@
 struct VERT_OUTPUT_BEAM
 {
 	float4 location : SV_POSITION;
-    float length : POSITION3;
+	float length : POSITION3;
 	float4 color : COLOR0;
-    float intensity : COLOR1;
+	float intensity : COLOR1;
 	float3 uvq : TEXCOORD0;
-    float beamTime : TEXCOORD1;
+	float beamTime : TEXCOORD1;
 	float buff : TEXCOORD2;
 };
 
@@ -18,22 +18,22 @@ float _extraEndArc;
 
 VERT_OUTPUT_BEAM vert(in VERT_INPUT_BEAM input)
 {
-    input.intensity *= input.fadeAlpha;
+	input.intensity *= input.fadeAlpha;
 	
 	float additionalBuffedIntensity = max(_additionalBuffedIntensity, 0.00000001);
 	float buff = max(input.intensity - 1, 0) * (1 / additionalBuffedIntensity);
 	float buffThickness = lerp(0, _additionalBuffedThickness, max(input.intensity - 1, 0) * (1 / additionalBuffedIntensity));
-    input.vertexOffset.y *= lerp(_thicknessOverIntensity.x, _thicknessOverIntensity.y, input.intensity) + buffThickness;
+	input.vertexOffset.y *= lerp(_thicknessOverIntensity.x, _thicknessOverIntensity.y, input.intensity) + buffThickness;
 
 	float extraEndLength = max(0, (input.length * input.intensity * 0.06) - input.length);
 	VERT_OUTPUT_BEAM output;
-    float4 vertexLoc = calculateWorldVertexLocProjZ(input, 0, extraEndLength, 0, _extraEndArc);
+	float4 vertexLoc = calculateWorldVertexLocProjZ(input, 0, extraEndLength, 0, _extraEndArc);
 	output.location = mul(float4(vertexLoc.xy, 0 , 1), _transform);
-    output.length = input.length;
+	output.length = input.length;
 	output.color = input.color * _color;
-    output.intensity = input.intensity;
+	output.intensity = input.intensity;
 	output.uvq = float3(input.uv.x, input.uv.y, 1) * vertexLoc.w;
-    output.beamTime = input.beamTime;
+	output.beamTime = input.beamTime;
 	output.buff = buff * 0.1;
 	return output;
 }
