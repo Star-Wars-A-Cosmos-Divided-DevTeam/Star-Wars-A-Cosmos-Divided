@@ -32,20 +32,54 @@ Part : &<../base_part_terran_bridges.rules>/Part
 	//PartSpecific
 	AIValueFactor = 5
 	InitialPenetrationResistance = 2
-	//IsContiguityOrigin = true //No longer Used
-	//IsShipForward = true //No longer Used
 	ContiguityOriginPriority = 4 // 1 - Note this should be prioretized over smaller cockpits - E.g., Vanilla S = 1 / M = 2 / L = 3 ; 
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor]
 
 	//Doors&Etc
+	MaxDoors = 4
 	AllowedDoorLocations
 	[
 		[-1, 5]
+		[1, 7]
 		[2, 7]
 		[3, 7]
+		[4, 7]
 		[6, 5]
+	]
+	BlockedTravelCells
+	[
+		[0, 0]
+		[1, 0]
+		[4, 0]
+		[5, 0]
+		[0, 1]
+		[5, 1]
+		[0, 2]
+		[5, 2]
+		[0, 3]
+		[5, 3]
+	]
+	ForceManhattanPathInPart = true
+	BlockedTravelCellDirections
+	[
+		{
+			Key = [1, 5]
+			Value = [Left]
+		}
+		{
+			Key = [1, 4]
+			Value = [Left]
+		}
+		{
+			Key = [4, 5]
+			Value = [Right]
+		}
+		{
+			Key = [4, 4]
+			Value = [Right]
+		}	
 	]
 
 	//Editor
@@ -54,8 +88,7 @@ Part : &<../base_part_terran_bridges.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Point
-			MipLevels = max
+			SampleMode = Linear
 		}
 		Size = [47, 55]
 	}
@@ -374,11 +407,37 @@ Part : &<../base_part_terran_bridges.rules>/Part
 			SwitchLocationInterval = [5, 10]
 		}
 
-//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
-//		{
-//			OperationalToggle = IsOperationalAndCommandToggle
-//			InvertOperationalToggle = true
-//		}
+		//Thermal Connection for Build-In sensor OC?
+/*
+		Port_Thermal_MidRight5 : ~/Part/^/0/BASE_THERMAL_PORT
+		{
+			Location = [5, 5]
+			Direction = Right
+		}
+
+
+		Port_Thermal_MidDown3 : Port_Thermal_MidRight5
+		{
+			Location = [3, 6]
+			Direction = Down
+		}
+
+		Port_Thermal_MidDown2 : Port_Thermal_MidDown3
+		{
+			Location = [2, 6]
+		}
+
+		Port_Thermal_MidLeft5 : Port_Thermal_MidDown2
+		{
+			Location = [0, 5]
+			Direction = Left
+		}
+*/
+		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+		{
+			OperationalToggle = IsOperationalAndCommandToggle
+			InvertOperationalToggle = true
+		}
 
 		Graphics
 		{
@@ -587,6 +646,13 @@ Part : &<../base_part_terran_bridges.rules>/Part
 			Location = [3, 3.5]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
+
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -595,8 +661,9 @@ Part : &<../base_part_terran_bridges.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [2, 2]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
+
 				//Out of power.
 				{
 					Toggle = BatteryStorage
@@ -606,14 +673,14 @@ Part : &<../base_part_terran_bridges.rules>/Part
 						Size = [3, 3]
 					}
 				}
+
 				//No crew.
 				{
 					Toggle = PartCrew
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoCrew
-						Offset = [0, -2.6]
-						Size = [5, 5]
+						Size = [4, 4]
 					}
 				}
 			]

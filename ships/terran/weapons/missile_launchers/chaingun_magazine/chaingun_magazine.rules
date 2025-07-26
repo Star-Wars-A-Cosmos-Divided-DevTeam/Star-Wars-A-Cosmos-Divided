@@ -1,0 +1,765 @@
+Part : <../base_part_terran.rules>/Part
+{
+	NameKey = "Parts/ChaingunMagazine"
+	IconNameKey = "Parts/ChaingunMagazineIcon"
+	ID = cosmoteer.chaingun_magazine // Part IDs must always be in the form of "author_name.part_name". If making your own mod, do *not* use "cosmoteer" as your author name, because it may conflict with future vanilla parts.
+	EditorParentParts = [ "cosmoteer.chaingun" ]
+	DescriptionKey = "Parts/ChaingunMagazineDesc"
+	Resources
+	[
+		[steel, 20]
+		[coil, 5]
+	]
+	Size = [1, 2]
+	Density = 1
+	SelectionPriority = 1
+	MaxHealth = 2000
+	TypeCategories = [chaingun, chaingun_ammo_requester, chaingun_ammo_supplier]
+	ReceivableBuffs : ^/0/ReceivableBuffs [ChaingunMagConnection]
+	AllowedDoorLocations
+	[
+		[0, 2]
+		[-1,1]
+		[1,1]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 64]
+	}
+	Components : ^/0/Components
+	{
+		LeftMagConnectionProvider
+		{
+			Type = AreaBuffProvider
+			BlueprintsOnly = true // Only for display purposes.
+			BuffType = ChaingunMagConnection
+			BuffArea = [-1, 0, 1, 1]
+			ChainsFromBuffType = ChaingunMagConnection
+			Criterias
+			[
+				{
+					IDs = [cosmoteer.chaingun, cosmoteer.chaingun_magazine]
+					Rot = 0
+					Right = 0
+					Bottom = 2
+				}
+				{
+					IDs = [cosmoteer.chaingun]
+					Rot = 2
+					Right = 0
+					Top = -1
+				}
+				{
+					IDs = [cosmoteer.chaingun_magazine]
+					Rot = 2
+					Right = 0
+					Bottom = 1
+				}
+			]
+		}
+		RightMagConnectionProvider
+		{
+			Type = AreaBuffProvider
+			BlueprintsOnly = true // Only for display purposes.
+			BuffType = ChaingunMagConnection
+			BuffArea = [1, 0, 1, 1]
+			ChainsFromBuffType = ChaingunMagConnection
+			Criterias
+			[
+				{
+					IDs = [cosmoteer.chaingun, cosmoteer.chaingun_magazine]
+					Rot = 0
+					Left = 1
+					Bottom = 2
+				}
+				{
+					IDs = [cosmoteer.chaingun]
+					Rot = 2
+					Left = 1
+					Top = -1
+				}
+				{
+					IDs = [cosmoteer.chaingun_magazine]
+					Rot = 2
+					Left = 1
+					Bottom = 1
+				}
+			]
+		}
+
+		AmmoStorage
+		{
+			Type = ResourceStorage
+			ResourceType = bullet
+			MaxResources = 4
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/AmmoLoad
+			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
+			AllowManualReceiveToggle = CanFillAmmo
+		}
+		AmmoStorageLeft //We need these because the chaingun has a left and right that we need to check for
+		{
+			Type = ResourceStorageProxy
+			ResourceType = bullet
+			ComponentID = AmmoStorage
+		}
+		AmmoStorageRight
+		{
+			Type = ResourceStorageProxy
+			ResourceType = bullet
+			ComponentID = AmmoStorage
+		}
+		AmmoConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = bullet
+			Storage = AmmoStorage
+			OperationalToggle = CanFillAmmo
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			AllowNonOperationalMinPriorityDelivery = false
+			ConsumptionToggleButtonOffset = [0, .4]
+		}
+
+		CanFillAmmo //only fill ammo if the conveyor is not running in either direction
+		{
+			Type = MultiToggle
+			Toggles = [IsRequestingLeftToRightAmmo, IsRequestingRightToLeftAmmo]
+			Mode = None
+		}
+
+		//Magazines pass down ammo to the left or the right, if the part to the left or right is requesting ammo
+		IsRequestingRightToLeftAmmo
+		{
+			Type = ToggleProxy
+			PartLocation = [-1, 0] //looking to the left
+			ProxyableComponents
+			[
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_requester //making sure they have the special category
+						Rot = 0 //is perfectly aligned
+						Right = 0
+						Bottom = 2
+					}
+					ComponentID = IsRequestingRightToLeftAmmo //what component we are looking for.  Chain gun itself always has these components
+				}
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_requester //making sure they have the special category
+						Rot = 2 //is perfectly aligned
+						Right = 0
+						Top = -1
+					}
+					ComponentID = IsRequestingLeftToRightAmmo //what component we are looking for.  Chain gun itself always has these components
+				}
+			]
+		}
+		AmmoStorageProxyLeft
+		{
+			Type = ResourceStorageProxy
+			ResourceType = bullet
+			PartLocation = [-1, 0]
+			ProxyableComponents
+			[
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_requester
+						Rot = 0 //is perfectly aligned
+						Right = 0
+						Bottom = 2
+					}
+					ComponentID = AmmoStorageRight  //we grab right most storage
+				}
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_requester
+						Rot = 2 //is perfectly aligned
+						Right = 0
+						Top = -1
+					}
+					ComponentID = AmmoStorageLeft  //we grab right most storage
+				}
+			]
+		}
+		AmmoLoaderLeft //push from our ammo to theirs
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsRequestingRightToLeftAmmo
+			FromStorage = AmmoStorage
+			ToStorage = AmmoStorageProxyLeft
+			FromQuantity = 1
+			ToQuantity = 1
+			Interval = 1/30
+		}
+
+		IsRequestingLeftToRightAmmo
+		{
+			Type = ToggleProxy
+			PartLocation = [1, 0] //looking to the right
+			ProxyableComponents
+			[
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_requester //making sure they have the special category
+						Rot = 0 //is perfectly aligned
+						Left = 1
+						Bottom = 2
+					}
+					ComponentID = IsRequestingLeftToRightAmmo //what component we are looking for.  Chain gun itself always has these components
+				}
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_requester //making sure they have the special category
+						Rot = 2 //is perfectly aligned
+						Left = 1
+						Top = -1
+					}
+					ComponentID = IsRequestingRightToLeftAmmo //what component we are looking for.  Chain gun itself always has these components
+				}
+			]
+		}
+		AmmoStorageProxyRight
+		{
+			Type = ResourceStorageProxy
+			ResourceType = bullet
+			PartLocation = [1, 0]
+			ProxyableComponents
+			[
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_requester
+						Rot = 0 //is perfectly aligned
+						Left = 1
+						Bottom = 2
+					}
+					ComponentID = AmmoStorageLeft //we grab left most storage
+				}
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_requester
+						Rot = 2 //is perfectly aligned
+						Left = 1
+						Top = -1
+					}
+					ComponentID = AmmoStorageRight //we grab left most storage
+				}
+			]
+		}
+		AmmoLoaderRight //push from our ammo to theirs
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsRequestingLeftToRightAmmo
+			FromStorage = AmmoStorage
+			ToStorage = AmmoStorageProxyRight
+			FromQuantity = 1
+			ToQuantity = 1
+			Interval = 1/30
+		}
+
+		CombinedLeftBeltStorages //used for amount of ammo check
+		{
+			Type = MultiResourceStorage
+			ResourceType = bullet
+			ResourceStorages = [AmmoStorage, CombinedLeftBeltStoragesProxy]
+		}
+		CombinedLeftBeltStoragesProxy //used for amount of ammo check
+		{
+			Type = ResourceStorageProxy
+			ResourceType = bullet
+			PartLocation = [-1, 0]
+			ProxyableComponents
+			[
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_supplier
+						Rot = 0 //is perfectly aligned
+						Right = 0
+						Bottom = 2
+					}
+					ComponentID = CombinedLeftBeltStorages
+				}
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_supplier
+						Rot = 2 //is perfectly aligned
+						Right = 0
+						Top = -1
+					}
+					ComponentID = CombinedRightBeltStorages
+				}
+			]
+		}
+		CombinedRightBeltStorages //used for amount of ammo check
+		{
+			Type = MultiResourceStorage
+			ResourceType = bullet
+			ResourceStorages = [AmmoStorage, CombinedRightBeltStoragesProxy]
+		}
+		CombinedRightBeltStoragesProxy //used for amount of ammo check
+		{
+			Type = ResourceStorageProxy
+			ResourceType = bullet
+			PartLocation = [1, 0]
+			ProxyableComponents
+			[
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_supplier
+						Rot = 0 //is perfectly aligned
+						Left = 1
+						Bottom = 2
+					}
+					ComponentID = CombinedRightBeltStorages
+				}
+				{
+					PartCriteria
+					{
+						Category = chaingun_ammo_supplier
+						Rot = 2 //is perfectly aligned
+						Left = 1
+						Top = -1
+					}
+					ComponentID = CombinedLeftBeltStorages
+				}
+			]
+		}
+		HasMaxAmmo
+		{
+			Type = ThresholdToggle
+			ValueFrom = AmmoStorage
+			MinAmount = 100%
+		}
+		HasAmmoForLights
+		{
+			Type = MultiToggle
+			Toggles = [ActiveAndHasSomeAmmo, LockedAndHasFullAmmo]
+			Mode = Any
+		}
+		ActiveAndHasSomeAmmo
+		{
+			Type = MultiToggle
+			Toggles = [{Toggle = CanFillAmmo, Invert = true}, AmmoStorage]
+			Mode = All
+		}
+		LockedAndHasFullAmmo  //Show ammo indicator if we aren't full
+		{
+			Type = MultiToggle
+			Toggles = [CanFillAmmo, HasMaxAmmo]
+			Mode = All
+		}
+		Graphics
+		{
+			Type = Graphics
+			Location = [.5, 1]
+			OperationalToggle = HasAmmoForLights
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [1, 2]
+					}
+					{
+						File = "floor_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "floor_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [1, 2]
+					}
+					{
+						File = "walls_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "walls_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [1, 2]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [1, 2]
+					}
+				]
+			}
+			OperationalRoofDoodad
+			{
+				Layer = "roof_doodads"
+				Offset = [0, .5]
+				DamageLevels
+				[
+					{
+						File = "roof_glows.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_glows_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "roof_glows_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				Offset = [0, -35/64]
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [1.5, 1.5]
+						Z = .5 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+						VertexColor = [255*1.5, 0, 0]
+					}
+				]
+			}
+		}
+
+		BulletDoorGraphics
+		{
+			Type = Graphics
+			Location = [.5, 1]
+			OperationalToggle = CanFillAmmo
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "bullet_door_on.png"
+						Size = [1, 1]
+					}
+					{
+						File = "bullet_door_on_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "bullet_door_on_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "bullet_door_off.png"
+						Size = [1, 1]
+					}
+					{
+						File = "bullet_door_off_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "bullet_door_off_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+
+		BeltAmmoSprites_Toggle
+		{
+			Type = ToggledComponents
+			Toggle = CanFillAmmo
+			Components
+			{
+				BeltAmmoSprites
+				{
+					Type = ResourceSprites
+					Location = [0.5, 0.5]
+					ResourceStorage = AmmoStorage
+					Layer = "doodads_low"
+					ResourceLevels
+					[
+						{
+							File = "bullets1.png"
+							Size = [1, 1]
+						}
+						{
+							File = "bullets2.png"
+							Size = [1, 1]
+						}
+						{
+							File = "bullets3.png"
+							Size = [1, 1]
+						}
+						{
+							File = "bullets4.png"
+							Size = [1, 1]
+						}
+					]
+				}
+			}
+		}
+		BeltAmmoSpritesLeftToRight_Toggle
+		{
+			Type = ToggledComponents
+			Toggle = IsRequestingLeftToRightAmmo
+			Components
+			{
+				BeltAmmoSpritesLeftToRight
+				{
+					Type = ResourceSprites
+					Location = [0.5, 0.5]
+					ResourceStorage = AmmoStorage
+					Layer = "doodads_low"
+					ResourceLevels
+					[
+						{
+							AnimationFiles
+							[
+								"bullets_with_signal1.png"
+								"bullets_with_signal1-2.png"
+							]
+							Size = [1, 1]
+							AnimationInterval = 0.1
+							ClampAnimation = true
+						}
+						{
+							AnimationFiles
+							[
+								"bullets_with_signal2.png"
+								"bullets_with_signal2-2.png"
+							]
+							Size = [1, 1]
+							AnimationInterval = 0.1
+							ClampAnimation = true
+						}
+						{
+							AnimationFiles
+							[
+								"bullets_with_signal3.png"
+								"bullets_with_signal3-2.png"
+							]
+							Size = [1, 1]
+							AnimationInterval = 0.1
+							ClampAnimation = true
+						}
+						{
+							AnimationFiles
+							[
+								"bullets_with_signal4.png"
+								"bullets_with_signal4-2.png"
+							]
+							Size = [1, 1]
+							AnimationInterval = 0.1
+							ClampAnimation = true
+						}
+					]
+				}
+			}
+		}
+		BeltAmmoSpritesRightToLeft_Toggle
+		{
+			Type = ToggledComponents
+			Toggle = IsRequestingRightToLeftAmmo
+			Components
+			{
+				BeltAmmoSpritesRightToLeft
+				{
+					Type = ResourceSprites
+					Location = [0.5, 0.5]
+					ResourceStorage = AmmoStorage
+					Layer = "doodads_low"
+					ResourceLevels
+					[
+						{
+							AnimationFiles
+							[
+								"bullets_with_signal1.png"
+								"bullets_with_signal1-2.png"
+							]
+							Size = [1, 1]
+							MirrorU = true
+							AnimationInterval = 0.1
+							ClampAnimation = true
+						}
+						{
+							AnimationFiles
+							[
+								"bullets_with_signal2.png"
+								"bullets_with_signal2-2.png"
+							]
+							Size = [1, 1]
+							MirrorU = true
+							AnimationInterval = 0.1
+							ClampAnimation = true
+						}
+						{
+							AnimationFiles
+							[
+								"bullets_with_signal3.png"
+								"bullets_with_signal3-2.png"
+							]
+							Size = [1, 1]
+							MirrorU = true
+							AnimationInterval = 0.1
+							ClampAnimation = true
+						}
+						{
+							AnimationFiles
+							[
+								"bullets_with_signal4.png"
+								"bullets_with_signal4-2.png"
+							]
+							Size = [1, 1]
+							MirrorU = true
+							AnimationInterval = 0.01
+							ClampAnimation = true
+						}
+					]
+				}
+			}
+		}
+
+		ScorchedToggle
+		{
+			Type = StatusToggle
+			MinStatusValue = 1
+			StatusType = cosmoteer.scorched
+			Invert = true
+			IncludeWhenUnderConstruction = true
+		}
+		ScorchedTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = ScorchedToggle
+			TriggerWhenOn = false
+			TriggerWhenOff = true
+		}
+		ScorchedEffects
+		{
+			Type = TriggeredEffects
+			Trigger = ScorchedTrigger
+			IncludeWhenUnderConstruction = false
+			Location = &~/Part/Components/DestroyedEffects/Location
+			FactorHitEffectsWith = AmmoStorage
+			MediaEffects = &~/Part/Components/DestroyedEffects/MediaEffects
+			HitEffects = &~/Part/Components/DestroyedHitEffects/HitEffects
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyed
+			Location = [0.5, 1]
+		}
+		DestroyedHitEffects
+		{
+			Type = DeathEffects
+			OperationalToggle = ScorchedToggle
+			IncludeWhenUnderConstruction = false
+			Location = [0.5, 1]
+			FactorHitEffectsWith = AmmoStorage
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = { BaseValue = 6000; EffectScaleExponent = 1 }
+					Radius = 3
+					Delay = .05
+					StatusType = cosmoteer.fire
+					StatusChancePerNDamage = 50%
+					StatusValue = 1
+					StatusValueType = Interpolated
+					NDamage = 1000
+					CrewKillChance = 10%
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false
+						Friendlies = true
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = { BaseValue = 1200; EffectScaleExponent = 1 }
+					Radius = 2
+					Delay = .05
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = true
+						Crew = false
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
+		}
+	}
+
+	Stats
+	{
+		AmmoCapacity = &~/Part/Components/AmmoStorage/MaxResources
+		RecCrew = (&AmmoCapacity) / 2
+	}
+}
