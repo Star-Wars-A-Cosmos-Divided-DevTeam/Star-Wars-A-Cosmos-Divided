@@ -10,8 +10,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_20x26_Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechIII"]
-	TypeCategories = [ftl, thruster, ion_thruster, uses_power, SW_Hypernodes, SW_Tech_III]
+	EditorGroups : ^/0/EditorGroups ["Flight", SWTechIII]
+	TypeCategories : ^/0/TypeCategories [ftl, thruster, ion_thruster, uses_power, SW_Hypernodes, SW_Tech_III]
 	RequiresCategories = [SW_Bridge]
 
 	//Resources&Size&Health
@@ -46,7 +46,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	ProhibitBelow = 21 // 32
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Thrust, SW_Ion_Thruster_To_Accelerator, SW_Ion_Thruster_Accelerator_RampUp, SW_Ion_Thruster_Accelerator_RampUpFinal, SW_Display] 
 
-    //Doors&Etc
+	//Doors&Etc
 	ForceManhattenPathInPart = true
 	BlockedTravelCells
 	[
@@ -120,7 +120,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [56.25, 108]
 	}
@@ -201,7 +202,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = ToggledComponents
 			Toggle = PowerDistributionBuffToggle
 			Invert = true
-			IncludeInBlueprints = true //added 0.27.0_rc2_steam - unsure if this applies
+			IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -472,7 +473,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 							Size = [20, 26]
 						}
 					]
-				}	*/
+				}*/
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -513,7 +514,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 					{
 						File = "doodads_base_66.png"
 						Size = [7.5, 10]
-					}	*/	/*
+					}*/	/*
 				]
 			}
 
@@ -566,6 +567,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -709,11 +711,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
 		}
 
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [10, 13]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{

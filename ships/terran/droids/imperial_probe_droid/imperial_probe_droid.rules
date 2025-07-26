@@ -10,8 +10,8 @@ Part : &<../base_part_terran_droids.rules>/Part
 	DescriptionKey = "Parts/ImperialProbeDroidDesc"
 
 	//Groups&Categories
-	EditorGroups = ["SWDroids"]
-	TypeCategories = [command, reactor, thruster, sensors]
+	EditorGroups : ^/0/EditorGroups ["SWTechI"]
+	TypeCategories : ^/0/TypeCategories [command, reactor, thruster, sensors]
 	//RequiresCategories = []
 
 	//Resoures&Size&Health
@@ -48,31 +48,40 @@ Part : &<../base_part_terran_droids.rules>/Part
 	ThrusterForce = 8
 	FuelUsage = 10
 	ThrustIncreaseTime = 1
-	ThrustRecoveryTime = 1
+	ThrustDecreaseTime = 0.2
+	ThrustRecoveryTime = 0.4
 	AllowedDoorLocations []
 	GenerateRectCollider = true
 
 	
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
-    
+	
 	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [32, 32]
 	}
 	Components : ^/0/Components
 	{
 
+		IsOperationalSpecial
+		{
+			Type = MultiToggle
+			Toggles [PowerToggle, BatteryStorage]
+			Mode = All
+		}
+
 		CommandProvider
 		{
 			Type = CommandProvider
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalSpecial
 			CommandPoints = 1
 		}
 		CommandConsumer
@@ -80,17 +89,6 @@ Part : &<../base_part_terran_droids.rules>/Part
 			Type = CommandConsumer
 			OperationalToggle = PowerToggle
 			CommandPoints = 1
-		}
-		CommandToggle
-		{
-			Type = CommandToggle
-		}
-
-		IsOperational : ^/0/IsOperational
-		{
-			Type = MultiToggle
-			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage]
-			Mode = All
 		}
 
 		PowerToggle
@@ -100,6 +98,7 @@ Part : &<../base_part_terran_droids.rules>/Part
 			Default = 1
 			RequiresCommand = false
 		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -129,10 +128,11 @@ Part : &<../base_part_terran_droids.rules>/Part
 			HighColor = [0, 63, 255]
 			FullColor = [0, 63, 255]
 		}
+
 		Sensor
 		{
 			Type = Sensor
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalSpecial
 			SightRadius = 1250
 			RadarRadius = 4500
 		}
@@ -155,7 +155,7 @@ Part : &<../base_part_terran_droids.rules>/Part
 		MainThruster
 		{
 			Type = Thruster
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalSpecial
 			Location = [0.5, .75]// Relative to upper-left corner of unrotated part.
 			Rotation = 90d// Relative to unrotated part.
 			Force = &../../ThrusterForce
@@ -164,6 +164,7 @@ Part : &<../base_part_terran_droids.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -225,7 +226,7 @@ Part : &<../base_part_terran_droids.rules>/Part
 			Rotation = -90d
 			Radius = (10/3)
 			Arc = 180.9d // 2 Halfs so the Texture doesn't get Strechted
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalSpecial
 			DrainResourcesFrom = BatteryStorage
 			Location = [0.5, 0.5]
 			PenetrationResistance = [7, 0]
@@ -327,7 +328,7 @@ Part : &<../base_part_terran_droids.rules>/Part
 					IgnoreIntensity = true
 				}
 			]
-			
+
 			HitMediaEffects
 			[
 				{
@@ -379,7 +380,7 @@ Part : &<../base_part_terran_droids.rules>/Part
 				}
 				&/SW_SOUNDS/ShieldHit
 			]
-		}	
+		}
 
 		ArcShield90 : ArcShield
 		{
@@ -417,7 +418,7 @@ Part : &<../base_part_terran_droids.rules>/Part
 		Graphics
 		{
 			Type = Graphics
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalSpecial
 			Location = [0.5, 0.5]
 			Floor
 			{
@@ -485,7 +486,7 @@ Part : &<../base_part_terran_droids.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational
+			Toggle = IsOperationalSpecial
 			Location = [0.5, 0.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
@@ -497,11 +498,12 @@ Part : &<../base_part_terran_droids.rules>/Part
 			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
 			Location = [0.5, 0.5]
 		}
-		Indicators : ^/0/Indicators
+
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [0.5, 0.5]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{

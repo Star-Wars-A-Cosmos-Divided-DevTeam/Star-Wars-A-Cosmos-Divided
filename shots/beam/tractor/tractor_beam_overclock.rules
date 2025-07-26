@@ -1,0 +1,28 @@
+EMITTER = &<./Data/ships/terran/tractor_beam_emitter/tractor_beam_emitter.rules>
+
+Beam : <tractor_Beam.rules>
+{
+	TractorImpulse = ceil((&^/0/TractorImpulse) * (&~/EMITTER/OVERCLOCK/FORCE_FACTOR))
+	HitOperational : ^/0/HitOperational
+	{
+		HitEffects
+		[
+			{
+				Type = Impulse
+				Impulse = { BaseValue = -(&~/Beam/TractorImpulse) / 2; EffectScaleExponent = 1 }
+				ApplyToCenterOfMass = true
+			}
+			{
+				Type = Feedback
+				HitEffects
+				[
+					{
+						Type = Impulse
+						Impulse = { BaseValue = (&~/Beam/TractorImpulse) / 2; EffectScaleExponent = 1}
+					}
+				]
+			}
+		]
+	}
+	HitStructural = &HitOperational
+}

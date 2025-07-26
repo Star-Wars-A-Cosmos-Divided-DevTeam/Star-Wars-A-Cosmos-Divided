@@ -1,0 +1,101 @@
+SCALE = (1)
+SIZE = [4, 2]
+MULTIPLIKATOR = (&~/SCALE) * (&~/Size/0) * (&~/Size/1)
+LOCATION = [((&~/Size/0)/2), ((&~/Size/1)/2)]
+COST = &<../base_part_terran_storages_hidden.rules>/COST
+MAXHEALTH = &<../base_part_terran_storages_hidden.rules>/MAXHEALTH
+
+Part : &<../base_part_terran_storages_hidden.rules>/Part
+{
+	//IDs
+	ID = SW.storage_4x2_hidden
+	OtherIDs = []
+
+	//StringKeys
+	NameKey = "Parts/Storage4x2Int"
+	IconNameKey = "Parts/Storage4x2IntIcon"
+	DescriptionKey = "Parts/Storage4x2IntDesc"
+
+	//Resources&Size&Health
+	Resources
+	[
+		[steel, ceil((&~/COST)*(&~/MULTIPLIKATOR))]
+	]
+	Size = [&~/SIZE/0, &~/SIZE/1]
+	MaxHealth = ceil((&~/MAXHEALTH)*(&~/MULTIPLIKATOR))
+
+	//PartSpecific
+	IsRotateable = true
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Point
+			MipLevels = max
+		}
+		Size = [64, 32]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		Storage
+		{
+			Type = FlexResourceGrid
+			GridRect = [0, 0, 4, 2]
+			Layer = "doodads_low"
+			SpriteInset = 0/64
+			RandomSpriteRotation = true
+			AllowExternalPickupAndDelivery = false
+		}
+
+		WallsBlend : <./Data/ships/terran/walls/walls.rules>
+		{
+			Type = BlendSpriteGrid
+			Location = [0.5, 0.5]
+			BlendsWithCategories = [corridor]
+		}
+
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_Storage_Hidden/RDL
+		{
+
+		}
+
+		RoofGrid : &/SW_GRAPHICS/RoofGrid/GridSize_1x1/Roof_Vanilla/RDL
+		{
+
+		}
+
+		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+		{
+			OperationalToggle = IsOperational
+			InvertOperationalToggle = true
+			BlendsWithCategories = [corridor]
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyedDry
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [&~/SIZE/0, &~/SIZE/1]
+		}
+	}
+
+	Stats
+	{
+		StorageTiles = (&~/Part/Components/Storage/GridRect/2) * (&~/Part/Components/Storage/GridRect/3)
+	}
+}

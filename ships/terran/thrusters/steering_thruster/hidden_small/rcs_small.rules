@@ -10,8 +10,8 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 	DescriptionKey = "Parts/rcsDesc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [thruster, uses_power, SW_Tech_I]
+	EditorGroups : ^/0/EditorGroups ["Flight", SWTechI]
+	TypeCategories : ^/0/TypeCategories [thruster, uses_power, SW_Tech_I]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -38,6 +38,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 	//PartSpecific
 	ThrusterForce = 160 //40%*400 of vanilla
 	ThrustIncreaseTime = 0.21 //softer accel
+	ThrustDecreaseTime = 0.21 //softer decre
 	ThrustRecoveryTime = 0.21 //softer deccel
 	FuelUsage = 12 //40%*30 of vanilla
 
@@ -66,19 +67,32 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [21.33, 21.33]
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components, &<../../../Armor/Doonium/doonium_armor/roof_toggles.rules>
+	Components : ^/0/Components, &<../../../Armor/Doonium/doonium_armor_1x1/roof_toggles.rules>
 	{
 		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
 			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage]
 			Mode = All
+		}
+
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
+			Mode = All
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
 		}
 
 		PowerToggle
@@ -138,7 +152,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 			Type = ToggledComponents
 			Toggle = PowerDistributionBuffToggle
 			Invert = true
-			IncludeInBlueprints = true //added 0.27.0_rc2_steam - unsure if this applies
+			IncludeInBlueprints = true
 			Components
 			{
 				BatteryConsumer
@@ -252,11 +266,11 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 		}
 
 		StaticScalerValue
-        {
-            Type = StaticValue
+		{
+			Type = StaticValue
 			OperationalToggle = RocketToggle
-            Value = 2.1
-        }
+			Value = 2.1
+		}
 		RocketEffectValue
 		{
 			Type = MultiValue
@@ -413,7 +427,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 						AnimationInterval = 0.1
 					}
 				]
-			}	*/
+			}*/
 		/*	OperationalRoofDoodad
 			{
 				Layer = "roof_doodads"
@@ -433,7 +447,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 						Size = [1, 1]
 					}
 				]
-			}	
+			}
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -450,6 +464,13 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 			}
 		}
 */
+
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -557,7 +578,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 						Size = [1, 1]
 					}
 				]
-			}	*/
+			}*/
 		}
 
 		MainThruster
@@ -572,6 +593,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
 			FuelUsagePerSecond = &../../FuelUsage
@@ -594,6 +616,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
+			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
 			AllowAutoFire = false
@@ -712,11 +735,11 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyed
 		}
 
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [0.5, 0.5]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{

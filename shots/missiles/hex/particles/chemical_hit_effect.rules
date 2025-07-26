@@ -1,301 +1,301 @@
 Type = Particles
 Def
 {
-    EmitPerSecond = 0
-    EmitPerOneShot = 0
-    Initializers
-    [
-        {
-            Type = LocationToWorldSpace
-            LocationIn = location
-            LocationOut = location
-            Name = "Convert location to world space."
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = ScaleToWorldSpace
-            ScaleIn = base_scale
-            ScaleOut = base_scale
-            Name = "Convert scale to world space"
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = VelocityToWorldSpace
-            VelocityIn = velocity
-            VelocityOut = velocity
-            Name = "Convert initial velocity to world space."
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = RotationToWorldSpace
-            RotationIn = rotation
-            RotationOut = rotation
-            Name = "Convert rotation to world space."
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = AddFrameOfReference
-            VelocityInOut = velocity
-            Name = "Add frame of reference"
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = InheritVelocity
-            VelocityInOut = velocity
-            Name = "Inherit velocity"
-            Enabled = false
-            UpdateAfterInit = false
-        }
-    ]
-    Updaters
-    [
-        {
-            Type = VariableLifetime
-            LifeInOut = life
-            LifetimeIn = lifetime
-            Name = ""
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = Operator
-            DataType = Vector2
-            AIn = location
-            BIn = velocity
-            ResultOut = location
-            Operator = AddDt
-            Name = "Apply velocity."
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = Lerp
-            LerpIn = life
-            DataOut = scale
-            Invert = false
-            ValueType = Float
-            FromValue = 3
-            ToValue = 10 // Adjusted from 6 to 10 for slower dispersal
-            Name = "Scale lerp"
-            Enabled = true
-            UpdateAfterInit = true
-        }
-        {
-            Type = Operator
-            DataType = Float
-            AIn = scale
-            BIn = base_scale
-            ResultOut = scale
-            Operator = Multiply
-            Name = "Apply base scale"
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = ColorRamp
-            LerpIn = life
-            ColorOut = color
-            Invert = false
-            Colors
-            [
-                {
-                    Rf = 0.2
-                    Gf = 1
-                    Bf = 0.2
-                    Af = 0
-                }
-                {
-                    Rf = 0.2
-                    Gf = 1
-                    Bf = 0.2
-                    Af = 0.2
-                }
-                {
-                    Rf = 0.1
-                    Gf = 0.8
-                    Bf = 0.1
-                    Af = 0.1
-                }
-                {
-                    Rf = 0
-                    Gf = 0.6
-                    Bf = 0
-                    Af = 0
-                }
-            ]
-            Name = ""
-            Enabled = true
-            UpdateAfterInit = true
-        }
-    ]
-    Renderer
-    {
-        Type = StandardQuadRenderer
-        LocationIn = location
-        ScaleIn = scale
-        RotationIn = rotation
-        ColorIn = color
-        UvRectIn
-        BaseSize
-        {
-            X = 1
-            Y = 1
-        }
-        Offset
-        {
-            X = 0
-            Y = 0
-        }
-        Name = ""
-    }
-    Material
-    {
-        Shader
-        {
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Convert location to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = base_scale
+			ScaleOut = base_scale
+			Name = "Convert scale to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = VelocityToWorldSpace
+			VelocityIn = velocity
+			VelocityOut = velocity
+			Name = "Convert initial velocity to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rotation
+			RotationOut = rotation
+			Name = "Convert rotation to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = InheritVelocity
+			VelocityInOut = velocity
+			Name = "Inherit velocity"
+			Enabled = false
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 3
+			ToValue = 10 // Adjusted from 6 to 10 for slower dispersal
+			Name = "Scale lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = scale
+			BIn = base_scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "Apply base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0.2
+					Gf = 1
+					Bf = 0.2
+					Af = 0
+				}
+				{
+					Rf = 0.2
+					Gf = 1
+					Bf = 0.2
+					Af = 0.2
+				}
+				{
+					Rf = 0.1
+					Gf = 0.8
+					Bf = 0.1
+					Af = 0.1
+				}
+				{
+					Rf = 0
+					Gf = 0.6
+					Bf = 0
+					Af = 0
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = true
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		RotationIn = rotation
+		ColorIn = color
+		UvRectIn
+		BaseSize
+		{
+			X = 1
+			Y = 1
+		}
+		Offset
+		{
+			X = 0
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
 			File = ./Data/common_effects/particles/particle_dissolve.shader
-            //File = ./Data/common_effects/particles/particle_light_emissive.shader
-        }
-        _z = 0.05
-        _litReflectiveStrength = 3
-        _litAdditiveStrength = 0.05
-        _unlitAdditiveStrength = 0
-        _emissiveStrength = 2
-        Texture
-        {
-            File = chemical_hit_effect.png
-            MipLevels = max
-            SampleMode = Linear
-        }
-        TargetBlendMode
-        {
-            SourceRgbFactor = InverseDestColor
-            DestRgbFactor = One
-            RgbOperator = Add
-            SourceAlphaFactor = Zero
-            DestAlphaFactor = One
-            AlphaOperator = Add
-        }
-    }
-    DeleteMode = Fast
-    EnableMultithreading = false
-    InitCapacity = 256
+			//File = ./Data/common_effects/particles/particle_light_emissive.shader
+		}
+		_z = 0.05
+		_litReflectiveStrength = 3
+		_litAdditiveStrength = 0.05
+		_unlitAdditiveStrength = 0
+		_emissiveStrength = 2
+		Texture
+		{
+			File = chemical_hit_effect.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+		TargetBlendMode
+		{
+			SourceRgbFactor = InverseDestColor
+			DestRgbFactor = One
+			RgbOperator = Add
+			SourceAlphaFactor = Zero
+			DestAlphaFactor = One
+			AlphaOperator = Add
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
 }
 EmitterDef
 {
-    EmitPerSecond = 0
-    EmitPerOneShot
-    {
-        Min = 10
-        Max = 20
-    }
-    PreInitializers
-    [
-        {
-            Type = SetRandomVelocity
-            VelocityOut = velocity
-            Speed
-            {
-                Min = 1
-                Max = 2 // Adjusted from 5 to 2 for slower movement
-            }
-            Direction
-            {
-                Min = -90d
-                Max = 90d
-            }
-            Name = "randomize velocity"
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = SetRandom
-            DataOut = lifetime
-            ValueType = Float
-            FromValue = 3
-            ToValue = 6
-            Name = "randomize lifetime"
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = SetRandom
-            DataOut = base_scale
-            ValueType = Float
-            FromValue = 1
-            ToValue = 3
-            Name = "randomize base scale"
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = SetRandom
-            DataOut = location
-            ValueType = Vector2
-            FromValue
-            {
-                X = -0.5
-                Y = -0.25
-            }
-            ToValue
-            {
-                X = 0.5
-                Y = 0.25
-            }
-            Name = ""
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = SetRandomVelocityFromPoint
-            LocationIn = location
-            VelocityOut = velocity
-            Speed
-            {
-                Min = 1
-                Max = 2 // Adjusted from 5 to 2 for slower movement
-            }
-            AwayFromPoint
-            {
-                X = 0.05
-                Y = 0
-            }
-            Name = ""
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = AlignToVelocity
-            VelocityIn = velocity
-            RotationInOut = rotation
-            Name = ""
-            Enabled = true
-            UpdateAfterInit = false
-        }
-        {
-            Type = SetRandom
-            DataOut = scale2
-            ValueType = Vector2
-            FromValue
-            {
-                X = 0.5
-                Y = 0.5
-            }
-            ToValue
-            {
-                X = 2
-                Y = 2
-            }
-            Name = "Random scale2"
-            Enabled = true
-            UpdateAfterInit = false
-        }
-    ]
-    PostInitializers[]
+	EmitPerSecond = 0
+	EmitPerOneShot
+	{
+		Min = 10
+		Max = 20
+	}
+	PreInitializers
+	[
+		{
+			Type = SetRandomVelocity
+			VelocityOut = velocity
+			Speed
+			{
+				Min = 1
+				Max = 2 // Adjusted from 5 to 2 for slower movement
+			}
+			Direction
+			{
+				Min = -90d
+				Max = 90d
+			}
+			Name = "randomize velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 3
+			ToValue = 6
+			Name = "randomize lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = base_scale
+			ValueType = Float
+			FromValue = 1
+			ToValue = 3
+			Name = "randomize base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = location
+			ValueType = Vector2
+			FromValue
+			{
+				X = -0.5
+				Y = -0.25
+			}
+			ToValue
+			{
+				X = 0.5
+				Y = 0.25
+			}
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandomVelocityFromPoint
+			LocationIn = location
+			VelocityOut = velocity
+			Speed
+			{
+				Min = 1
+				Max = 2 // Adjusted from 5 to 2 for slower movement
+			}
+			AwayFromPoint
+			{
+				X = 0.05
+				Y = 0
+			}
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AlignToVelocity
+			VelocityIn = velocity
+			RotationInOut = rotation
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = scale2
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0.5
+				Y = 0.5
+			}
+			ToValue
+			{
+				X = 2
+				Y = 2
+			}
+			Name = "Random scale2"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
 }
 Bucket = Lower1 //DisruptorOrb
 //Bucket = BulletHitSparks
@@ -319,26 +319,26 @@ ScaleEmissionWithPartPhysicalSize = false
 CaptureBackBuffer = false
 Filter
 {
-    Ships = true
-    OperationalHealth = true
-    StructuralHealth = true
-    OnlyPartCategories
-    ExcludePartCategories
-    Shields = true
-    Bullets = true
-    OnlyBulletCategories
-    ExcludeBulletCategories
-    Crew = true
-    Nuggets = true
-    IgnoreInvulnerability = true
-    Self
-    TargetedSelf
-    Friendlies = true
-    TargetedFriendlies
-    Enemies = true
-    TargetedEnemies
-    Junk = true
-    TargetedJunk
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Junk = true
+	TargetedJunk
 }
 Delay = 0
 IgnoreIntensity = false

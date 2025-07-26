@@ -1,0 +1,103 @@
+// shots/missiles/discord/buzz-droids/buzzdroid_deployed.rules
+ID = SW.buzz_bullet_deployed
+OtherIDs = ["buzz_bullet_deployed"]
+
+Range          = 10
+IdealRange     = 10
+Speed          = 0
+RandomRotation = true
+
+Components
+{
+    // Physics: keeps them in place but still collidable
+    Physics
+    {
+        Type                    = CirclePhysics
+        Radius                  = .3
+        Density                 = 2
+        LinearDamping           = .5
+        AngularDamping          = 1
+        CollidesWithBullets     = true
+        FrameOfReferenceDuration= 0
+    }
+
+    // Holds them in a tight orbit around the ship
+    Repulsion
+    {
+        Type                     = ProximityAcceleration
+        Range                    = 10
+        Acceleration             = -10
+        AccelerateTowardsShips           = false
+        AccelerateTowardsBullets         = true
+        AccelerateTowardsBulletCategories= ["buzz_bullet"]
+        AccelerateTowardsFriendlies      = false
+        AccelerateTowardsEnemies         = true
+    }
+
+    Retarget
+    {
+        Type = SameShipRetarget
+    }
+
+    // Clean up after 20 seconds
+    DeathByLifetime
+    {
+        Type     = DeathByLifetime
+        Lifetime = 20
+    }
+
+    Targetable
+    {
+        Type           = Targetable
+        Health         = 500
+        TargetCategory = "missile"
+    }
+
+    // Each collision ticks damage and shows effects
+    Hit
+    {
+        Type              = PenetratingHit
+        Penetration       = 400
+        PenetratesShields = true
+        PenetrationSpeed  = 0.05
+
+        HitShield
+        {
+            HitEffects
+            [
+                { Type = Damage; Damage = 50 }
+            ]
+            MediaEffects
+            [
+                &<particles/BuzzDroid_beam_hit_sparks.rules>
+            ]
+        }
+
+        HitOperational
+        {
+            StartDelay = 0
+            HitEffects
+            [
+                { Type = Damage; Damage = 50 }
+            ]
+            MediaEffects
+            [
+                &<particles/BuzzDroid_debris.rules>
+
+            : /BASE_SOUNDS/AudioExterior
+            {
+                Sound         = "./Data/crew/salvage.wav"
+                Volume        = 0.4
+                MaxConcurrent = 2
+            }
+            ]
+        }
+
+        // Reuse the operational block for all continued penetrations
+        HitStructural                    = &HitOperational
+        PenetratingOperational           = &HitOperational
+        PenetratingStructural            = &HitOperational
+        FinishedPenetratingOperational   = &HitOperational
+        FinishedPenetratingStructural    = &HitOperational
+    }
+}

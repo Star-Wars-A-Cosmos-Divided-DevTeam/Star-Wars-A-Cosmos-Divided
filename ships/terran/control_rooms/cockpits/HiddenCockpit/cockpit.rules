@@ -1,20 +1,20 @@
 Part : &<../base_part_terran_cockpits.rules>/Part
 {
-    //IDs
+	//IDs
 	ID = SW.cockpit2
 	OtherIDs = ["cockpit2"]
 
-    //StringKeys
+	//StringKeys
 	NameKey = "Parts/CockpitHid"
 	IconNameKey = "Parts/CockpitHidIcon"
 	DescriptionKey = "Parts/CockpitHidDesc"
 
-    //Groups&Categories
-	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [command, uses_power, is_crewed, fire_extinguisher]
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups [SWTechI]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, fire_extinguisher]
 	//RequiresCategories = []
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[steel, 24]
@@ -24,21 +24,21 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 	Size = [1, 2]
 	MaxHealth = 3000
 
-    //Selections
+	//Selections
 	SelectionPriority = 0
 	SelectionTypeID = "control_room"
 
-    //PartSpecific
+	//PartSpecific
 	AIValueFactor = 5
 	InitialPenetrationResistance = 2
 	//IsContiguityOrigin = true
 	//IsShipForward = true
 	ContiguityOriginPriority = 1
 
-    //ReceivableBuffs&Prohibits
+	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
-    //Doors&Etc
+	//Doors&Etc
 	MaxDoors = 2
 	AllowedDoorLocations
 	[
@@ -47,18 +47,19 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 		[0,2]
 	]
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Linear
+			SampleMode = Point
+			MipLevels = max
 		}
 		Size = [32, 64]
 	}
 
-    //Components&Inheritance
+	//Components&Inheritance
 	Components : ^/0/Components, &<roofs.rules>
 	{
 		/* SPECIAL COCKPIT TOGGLES */
@@ -206,6 +207,13 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 				CrewLocation
 			]
 		}
+
+//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//		{
+//			OperationalToggle = IsOperationalAndCommandToggle
+//			InvertOperationalToggle = true
+//		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -243,9 +251,9 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 							"on3.png"
 							"on4.png"
 							"on5.png"
-						    "on6.png"
-						    "on7.png"
-						    "on8.png"
+							"on6.png"
+							"on7.png"
+							"on8.png"
 						]
 						Size = [1, 2]
 						AnimationInterval = 0.100
@@ -272,11 +280,11 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = "walls.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "walls_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "walls_66.png"
 						Size = [1, 2]
 					}
@@ -315,11 +323,11 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = "Cockpit Window.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Cockpit Window_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Cockpit Window_66.png"
 						Size = [1, 2]
 					}
@@ -379,12 +387,11 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			]
 		}
 
-		// Indicators - Start
-		Indicators : ^/0/Indicators
+		Indicators
 		{
 			Type = IndicatorSprites
 			Location = [0.5, 1]
-			Indicators : ^/0/Indicators
+			Indicators
 			[
 				// Turned off.
 				{
@@ -394,7 +401,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [2,3]
+					HidesIndicators = [1,2]
 				}
 				// Out of power.
 				{
@@ -416,7 +423,6 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 				}
 			]
 		}
-// Indicators - End
 
 		// Extinguisher Graphics - Start
 		ExtinguisherSprite
