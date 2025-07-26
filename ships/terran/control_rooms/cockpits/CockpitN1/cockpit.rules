@@ -50,8 +50,7 @@ Part : &<../Cockpit/cockpit.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Point
-			MipLevels = max
+			SampleMode = Linear
 		}
 		Size = [32, 64]
 	}
@@ -65,11 +64,11 @@ Part : &<../Cockpit/cockpit.rules>/Part
 			CommandPoints = 50  //Remember to update tooltip.
 		}
 
-//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
-//		{
-//			OperationalToggle = IsOperationalAndCommandToggle
-//			InvertOperationalToggle = true
-//		}
+		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+		{
+			OperationalToggle = IsOperationalAndCommandToggle
+			InvertOperationalToggle = true
+		}
 
 		Graphics
 		{
@@ -247,6 +246,50 @@ Part : &<../Cockpit/cockpit.rules>/Part
 			AllowAutoFire = false
 		}
 		// Maneuvering Thrusters - End
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [0.5, 1]
+			Indicators
+			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [.75, .75]
+					}
+					HidesIndicators = [2,3]
+				}
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [.75, .75]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [.75, .75]
+					}
+				}
+			]
+		}
 
 		// Extinguisher Graphics - Start
 		ExtinguisherSprite

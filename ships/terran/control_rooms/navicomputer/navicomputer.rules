@@ -10,8 +10,8 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 	DescriptionKey = "Parts/NavicomputerDesc"
 
 	//Groups&Categories
-	EditorGroups : ^/0/EditorGroups ["Utilities", SWTechII]
-	TypeCategories : ^/0/TypeCategories [navicomputer, uses_power, is_crewed, SW_Navicomputer, SW_Tech_II]
+	EditorGroups : ^/0/EditorGroups [Utilities, SWTechII]
+	TypeCategories : ^/0/TypeCategories [uses_power, is_crewed, SW_Navicomputer, SW_Tech_II]
 	RequiresCategories = []
 
 	//Resources&Size&Health
@@ -44,6 +44,14 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		[1, 2]
 		[0, 2]
 	]
+	ForceManhattanPathInPart = true
+	BlockedTravelCellDirections
+	[
+		{
+			Key = [0, 0]
+			Value = [Right]
+		}
+	]
 
 	//Editor
 	EditorIcon
@@ -51,8 +59,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Point
-			MipLevels = max
+			SampleMode = Linear
 		}
 		Size = [48, 48]
 	}
@@ -157,11 +164,11 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			Interval = 60 // Drains 1 power every minute.
 		}
 
-//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
-//		{
-//			OperationalToggle = IsOperationalAndCommandToggle
-//			InvertOperationalToggle = true
-//		}
+		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+		{
+			OperationalToggle = IsOperationalAndCommandToggle
+			InvertOperationalToggle = true
+		}
 
 		Graphics
 		{
@@ -334,6 +341,13 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			Location = [1, 1]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
+
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -342,7 +356,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
 				// Out of power.
 				{

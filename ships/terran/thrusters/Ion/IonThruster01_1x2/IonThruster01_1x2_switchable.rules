@@ -1,3 +1,13 @@
+OVERCLOCK : &<./Data/ships/terran/thruster_med/thruster_med.rules>/OVERCLOCK
+{
+	THRUST_FACTOR = ((&^/0/THRUST_FACTOR)/1.6)
+	//
+	POWER_USAGE_FACTOR = (1 / (&THRUST_FACTOR) * (&^/0/MAX_POWER_USAGE_FACTOR))
+	THRUST_HEAT_PER_SECOND = ceil((&^/0/THRUST_HEAT_PER_SECOND)/1.6)
+}
+HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
+HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
+
 Part : &<../base_part_terran_thrusters_ion.rules>/Part
 {
 	//IDs
@@ -10,7 +20,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_1x2_Desc"
 
 	//Groups&Categories
-	EditorGroups : ^/0/EditorGroups ["Flight", SWTechI]
+	EditorGroups : ^/0/EditorGroups [Flight, SWTechI]
 	TypeCategories : ^/0/TypeCategories [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_I]
 	//RequiresCategories = []
 
@@ -38,8 +48,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	//PartSpecific
 	ThrusterForce = 1200 		//v:1200	//160%*1200 of vanilla = 1920 managed thru ramping buff 
 	ThrustIncreaseTime = 0.8	//v:1		// 80%*1 of vanilla
-	ThrustDecreaseTime = 1.2	//v:0		//softer deccel 
-	ThrustRecoveryTime = 1.6	//v:2		// 80%*2 of vanilla
+	ThrustDecreaseTime = 0.35	//v:0		//softer deccel 
+	ThrustRecoveryTime = 0.6	//v:2		// 80%*2 of vanilla
 	FuelUsage = 64				//v:100		// 64%*100 of vanilla
 	//FuelRecharge
 
@@ -88,8 +98,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		Texture
 		{
 			File = "icon.png"
-			SampleMode = Point
-			MipLevels = max
+			SampleMode = Linear
 		}
 		Size = [21.33, 64]
 	}
@@ -104,10 +113,10 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = All
 		}
 
-		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
+		CommandConsumptionToggle : ^/0/CommandConsumptionToggle
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
+			Toggles : ^/0/Toggles [PowerToggle]
 			Mode = All
 		}
 
@@ -134,7 +143,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		CommandConsumer
 		{
 			Type = CommandConsumer
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 			CommandPoints = 2
 		}
 
@@ -156,6 +165,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			BuffType = EnginePowerDistribution
 		}
 
+		//
+		//
+			//
+			//
+		//
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -170,10 +185,18 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			//
 			//
 			//
-		//
-		//
-		//
 			//
+				//
+				//
+				//
+					//
+						//
+						//
+						//
+						//
+						//
+					//
+				//
 			//
 		//
 
@@ -192,7 +215,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 					Storage = BatteryStorage
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
 					ResupplyThreshold = 500
-					OperationalToggle = PowerToggle
+					OperationalToggle = CommandConsumptionToggle
+					//
 				}
 			}
 		}
@@ -347,7 +371,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = Add
 		}
 
-		ThrusterActivationBar
+		RampProgressBar
 		{
 			Type = ProgressBar
 			OperationalToggle = ThrusterIsFiringThresholdToggle
@@ -409,16 +433,132 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			BuffAmount = { BaseValue=100%; BuffType=SW_Ion_Thruster_Overdrive; BuffMode=Add; }
 		}
 
-		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
+		//OC START
+
+		OverclockStateValue
 		{
-			GridSize = [1, 2]
+			Type = ToggleValueSelector
+			Toggle = OverclockModeToggle
+			ToggleOffValue = Zero
+			ToggleOnValue = One
 		}
 
-//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
-//		{
-//			OperationalToggle = IsOperationalAndCommandToggle
-//			InvertOperationalToggle = true
-//		}
+		Zero { Type = StaticValue; Value = 0; }
+		One { Type = StaticValue; Value = 1; }
+
+		Overclock_EngineHeatCollectionBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = EngineHeatCollection
+		}
+		ForceOverclockTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = Overclock_EngineHeatCollectionBuffToggle
+			AllowOperationalBypass = true
+			TriggerWhenOff = false
+		}
+
+		// Overriding to allow forcing on / locking
+		OverclockModeToggle : ^/0/OverclockModeToggle
+		{
+			AutoOnTrigger = ForceOverclockTrigger
+			OperationalToggle = Overclock_EngineHeatCollectionBuffToggle
+			InvertOperationalToggle = true
+		}
+
+		OverheatEffects : ^/0/OverheatEffects
+		{
+			Location = [0.5, 1]
+		}
+
+		Overclock_CombinedHeatInput
+		{
+			Type = MultiResourceStorage
+			ResourceType = heat
+			ResourceStorages = [ NetworkHeatInput ]
+			ViaBuffs
+			{
+				IncomingBuffTypes = [ EngineHeatCollection ]
+				ComponentIDs = [ EngineHeatCollectionStorage ]
+			}
+		}
+
+		// Overriding to use the combined heat input
+		HeatDistributionStorage : ^/0/HeatDistributionStorage
+		{
+			ResourceStorages = [Overclock_CombinedHeatInput, OverflowHeatStorage]
+		}
+
+		Overclock_ThrusterHeatProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperationalOverclocked
+			HEAT_PER_INTERVAL = ceil((&~/OVERCLOCK/THRUST_HEAT_PER_SECOND) * (&Interval))
+			ToQuantity
+			{
+				BaseValue = (&../HEAT_PER_INTERVAL) * (&~/HEAT_TO_RESOURCE)
+				BuffType = ThermalActivity
+				BuffMode = Multiply
+			}
+			ToStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Interval = 0.5
+		}
+
+		Overclock_ActivationBuff
+		{
+			Type = SelfBuffProvider
+			BuffType = ThermalActivity
+			BuffMultiplier = Overclock_SmoothedThrusterActivation
+		}
+
+		Overclock_SmoothedThrusterActivation
+		{
+			Type = SmoothedValue
+			ValueSource = Overclock_NormalizedThrusterActivation
+			MaxDelta = 1 / (&../Overclock_ThrusterHeatProducer/Interval)
+		}
+
+		Overclock_NormalizedThrusterActivation
+		{
+			Type = ValueOperation
+			Operator = Divide
+			ValueOne = MainThrusterValueProxy
+			ValueTwo = Overclock_MaxActivation
+		}
+
+		Overclock_MaxActivation
+		{
+			Type = BuffableValue
+			Value = &~/Part/Components/MainThruster/MaxActivation
+		}
+
+		Port_Thermal_Left : ~/Part/^/0/BASE_THERMAL_PORT
+		{
+			Location = [0, 0]
+			Direction = Left
+		}
+		Port_Thermal_Up : Port_Thermal_Left
+		{
+			Direction = Up
+		}
+		Port_Thermal_Right : Port_Thermal_Left
+		{
+			Direction = Right
+		}
+
+		//OC END
+
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
+		{
+
+		}
+
+		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+		{
+			OperationalToggle = IsOperationalAndCommandToggle
+			InvertOperationalToggle = true
+		}
 
 		LightGraphics
 		{
@@ -589,7 +729,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 				]
 			}
 		}
-
+/*
 		//
 		//
 			//
@@ -618,24 +758,59 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 				//
 			//
 		//
-
-
+*/
 		MainThruster
 		{
 			Type = Thruster
-			OperationalToggle = IsOperational
 			Location = [0.5, 2 + 34/64]
 			Rotation = 90d// Relative to unrotated part.
+			SoftOperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Overdrive_Thrust;  BuffMode=Multiply; MinValue=(&BaseValue)/10; MaxValue=(&BaseValue)*10; }
+			MaxActivation
+			{
+				BaseValue=1;
+				Modifiers
+				[
+					{
+						Type = Buff
+						BuffType = Engine
+						ModificationMode = Multiply
+					}
+					{
+						Type = Buff
+						BuffType = SW_Ion_Thruster_Overdrive_Thrust
+						ModificationMode = Multiply
+					}
+					{
+						Type = BuffRemap
+						BuffType = Overclock
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, (&~/OVERCLOCK/THRUST_FACTOR)]
+					}
+				]
+			}
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			FuelUsagePerSecond
+			{
+				BaseValue = &~/Part/FuelUsage
+				Modifiers
+				[
+					{
+						Type = BuffRemap
+						BuffType = Overclock
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, (&~/OVERCLOCK/POWER_USAGE_FACTOR)]
+					}
+				]
+			}
 		}
 		LateralThruster : MainThruster
 		{
@@ -649,12 +824,24 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
-			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = 0.20
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
+			FuelUsagePerSecond
+			{
+				BaseValue = ceil((&~/Part/FuelUsage)*2.5)
+				Modifiers
+				[
+					{
+						Type = BuffRemap
+						BuffType = Overclock
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, (&~/OVERCLOCK/POWER_USAGE_FACTOR)]
+					}
+				]
+			}
 			AllowAutoFire = false
 		}
 
@@ -663,6 +850,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = ContinuousEffects
 			ChainedTo = MainThrusterLocationProxy
 			FactorMediaEffectsIntensityWith = DoodadAnimationSpeedFactorValue
+			IntensityTweenDuration = 0.1
+			MinMediaEffectsIntensity = 1%
 			MediaEffects
 			[
 				: /SW_SOUNDS/ThrusterRumble
@@ -687,13 +876,14 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			ChainedTo = MainThrusterLocationProxy
 			Trigger = BurstTrigger
 			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
+			MinMediaEffectsIntensity = 1%
 			AnchorMediaEffects = true
 			MediaEffects
 			[
 				: /SW_SOUNDS/ThrusterBurst
 				{
 					Volume = 0.125
-					Speed = .5
+					Speed = 0.5
 					MaxConcurrentVolume = 0.25
 				}
 			]
@@ -734,6 +924,10 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 					File = "batteries_2.png"
 					//
 					Size = [1, 1]
+				//
+				//
+					//
+					//
 				}
 				//
 					//
@@ -761,10 +955,16 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational
 			Location = [0.5, 1]
+			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		ScorchedEffects : ^/0/ScorchedEffects
+		{
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/SmallPartScorched //Small Med Big Huge
 		}
 
 		DestroyedEffects
@@ -780,6 +980,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Location = [0.5, 1]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -788,7 +994,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [1]
+					HidesIndicators = [2,3]
 				}
 
 				// Out of power.
@@ -800,6 +1006,15 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 						Size = [1, 1]
 					}
 				}
+
+				// Resetting from overclock
+				{
+					Toggle = &~/Part/^/0/OVERCLOCK_OPERATIONAL
+					AtlasSprite : /INDICATORS/OverclockReset
+					{
+						Size = [1, 1]
+					}
+				}
 			]
 		}
 
@@ -808,6 +1023,19 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [1, 3]
+		}
+
+		PeakHeatGenerationStatValue
+		{
+			Type = StaticValue
+			Value = (&~/OVERCLOCK/THRUST_HEAT_PER_SECOND)
+		}
+		HeatGenerationStatProvider
+		{
+			Type = StatProvider
+			Stat = HeatGeneration
+			OperationalToggle = OverclockModeToggle
+			ValueFrom = PeakHeatGenerationStatValue
 		}
 	}
 
@@ -843,105 +1071,17 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		}
 	]
+
+	SecondaryToolTip
+	{
+		TitleKey = "StatCategories/Overclocked"
+		DescriptionKey = "Parts/ThrusterMedOverclockDesc"
+		Stats
+		{
+			ThrusterForce = (&~/Part/ThrusterForce) * (&~/OVERCLOCK/THRUST_FACTOR)
+			ThrusterHeatGeneration = &~/OVERCLOCK/THRUST_HEAT_PER_SECOND
+			ThrusterPowerUsage = (&~/Part/FuelUsage) * (&~/OVERCLOCK/MAX_POWER_USAGE_FACTOR) / 1000
+		}
+	}
 }
-Size = Med
-
-//Appendix
-
-/*
-		NozzleCollider
-		{
-			Type = PolygonCollider
-			Vertices
-			[
-				[0			, 2			]
-				[1			, 2			]
-				//
-				[1 - 5/64	, 2 + 34/64	]
-				[0 + 5/64	, 2 + 34/64	]
-				//
-			]
-			Density = 1.35
-		}
-		NozzleGraphics
-		{
-			Type = Graphics
-			Location = [0.5, 2.5]
-			Floor
-			{
-				Layer = "weapons"
-				DamageLevels
-				[
-					{
-						File = "nozzle.png"
-						NormalsFile = "nozzle_normals.png"
-						Size = [1.0, 1.0]
-					}
-					{
-						File = "nozzle_33.png"
-						NormalsFile = "nozzle_normals_33.png"
-						Size = [1.0, 1.0]
-					}
-					{
-						File = "nozzle_66.png"
-						NormalsFile = "nozzle_normals_66.png"
-						Size = [1.0, 1.0]
-					}
-				]
-			}
-
-		}
-*/
-/*
-			OperationalDoodad
-			{
-				Layer = "doodads_high"
-				//
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"doodads_on_1.png"
-							"doodads_on_2.png"
-							"doodads_on_3.png"
-							"doodads_on_4.png"
-							"doodads_on_5.png"
-							"doodads_on_6.png"
-							"doodads_on_7.png"
-							"doodads_on_8.png"
-						]
-						Size = [1, 2]
-						AnimationInterval = 0.075
-					}
-				]
-			}
-			NonOperationalDoodad
-			{
-				Layer = "doodads_high"
-				//
-				DamageLevels
-				[
-					{
-						File = "doodads_off_0.png"
-						Size = [1, 2]
-					}
-				]
-			}
-*/
-			/*
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				Offset = [0, 0.35]
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [2.1, 3.6]
-						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
-						//VertexColor = [16, 120, 255] // [6, 57, 113]
-					}
-				]
-			}
-			*/
+CLASSIFICATION = Med
