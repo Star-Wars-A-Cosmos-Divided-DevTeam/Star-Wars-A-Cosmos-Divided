@@ -1,4 +1,7 @@
-OVERCLOCK
+CLASSIFICATION = Huge
+Scale = (1/1)
+
+OVERCLOCK : &<./Data/ships/terran/reactor_large/reactor_large.rules>/OVERCLOCK
 {
 	POWER_GENERATION_FACTOR = 150%
 	BONUS_BATTERY_SIZE = 1
@@ -10,31 +13,47 @@ OVERCLOCK
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
 
-Part : <../base_part_terran_overclock.rules>/Part
+Part : &<../base_part_terran_battery.rules>/Part
 {
-	NameKey = "Parts/ReactorLarge"
-	IconNameKey = "Parts/ReactorLargeIcon"
-	ID = cosmoteer.reactor_large // Part IDs must always be in the form of "author_name.part_name". If making your own mod, do *not* use "cosmoteer" as your author name, because it may conflict with future vanilla parts.
-	EditorGroup = "Power"
-	DescriptionKey = "Parts/ReactorLargeDesc"
+	//IDs
+	ID = SW.reinforced_reactor_huge
+	// OtherIDs = []
+
+	//StringKeys
+	NameKey = "Parts/SW_SuperHeavyReactor"
+	IconNameKey = "Parts/SW_SuperHeavyReactorIcon"
+	DescriptionKey = "Parts/SW_SuperHeavyReactorDesc"
+
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups [ SWTechIII ]
+	TypeCategories : ^/0/TypeCategories [reactor, provides_power, SW_Reactor_Huge, SW_Tech_III]
+	//RequiresCategories = []
+
+	//Resoures&Size&Health
 	Resources
 	[
-		[steel, 120]
-		[coil2, 80]
-		[enriched_uranium, 24]
+		[SW.durasteel, 230]
+		[coil, 270]
+		[coil2, 180]
+		[enriched_uranium, 48]
 	]
-	AIValueFactor = 5
 	Size = [4, 4]
-	IsRotateable = false
+	MaxHealth = 36000
+
+	//Selections
 	SelectionPriority = 0
-	SelectionTypeID = "reactors"
-	MaxHealth = 4000 // Deliberately not increasing this for med/large reactors to make them extra-fragile.
-	AutoDoorMaxPathLength = 5
-	TypeCategories = [reactor, provides_power]
-	SignificanceToggle = ScorchedToggle
-	ReceivableBuffs : ^/0/ReceivableBuffs [ElectronDebuff, ElectronNebula]
-	CreateUnderlyingWhenDestroyed = false
+	//SelectionTypeByRotation = true
 	IgnoreRotationForMirroredSelection = true
+	SelectionTypeID = "reactors"
+
+	//PartSpecific
+	AIValueFactor = 5
+	IsRotateable = false
+	AutoDoorMaxPathLength = 5
+	CreateUnderlyingWhenDestroyed = false
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs [ElectronDebuff, ElectronNebula]
 	BlockedTravelCells
 	[
 		[1, 1]
@@ -43,6 +62,8 @@ Part : <../base_part_terran_overclock.rules>/Part
 		[2, 2]
 	]
 	ForceManhattanPathInPart = true
+
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -52,12 +73,14 @@ Part : <../base_part_terran_overclock.rules>/Part
 		}
 		Size = [72, 72]
 	}
+
+	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [NonJunkToggle, ScorchedToggle, &~/Part/^/0/OVERCLOCK_OPERATIONAL]
+			Toggles : ^/0/Toggles [NonJunkToggle]
 			Mode = All
 		}
 
@@ -65,14 +88,6 @@ Part : <../base_part_terran_overclock.rules>/Part
 		{
 			Type = JunkToggle
 			OnWhenJunk = false
-		}
-
-		ScorchedToggle
-		{
-			Type = StatusToggle
-			StatusType = cosmoteer.scorched
-			MinStatusValue = 1
-			Invert = true
 		}
 
 		IsNonOverclocked
@@ -85,14 +100,14 @@ Part : <../base_part_terran_overclock.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 24000
+			MaxResources = 48000 //multiplies of 2,4,8 pls
 			StartingResources = &MaxResources
 			SuppliesResources = true
 			SuppliesResourcesToggle = IsNonOverclocked
 			MinResourcesPickUp = 3000
 			MaxResourcesPickUp = 3000
-			InitPickUp = 2001
-			PickUpRate = 1000 / 1.0
+			InitPickUp = 3000
+			PickUpRate = 3000 / 1.0
 			ExpectedResourceGenerationToggle = IsOperational
 			ExpectedResourceGenerationRate : ../BatteryProducer/ToQuantity
 			{
@@ -184,6 +199,8 @@ Part : <../base_part_terran_overclock.rules>/Part
 			Trigger = Overclock_PowerGenerationTrigger
 			Amount { BaseValue=ceil((&~/OVERCLOCK/HEAT_PER_BATTERY) * (&~/HEAT_TO_RESOURCE)); EffectScaleExponent=1 }
 		}
+
+		// 4x4 PART: PORTS FROM LARGE REACTOR //All edge (perimeter) tiles have ports facing outward
 
 		Port_Thermal_Up0 : ~/Part/^/0/BASE_THERMAL_PORT
 		{
@@ -297,7 +314,7 @@ Part : <../base_part_terran_overclock.rules>/Part
 							"floor_on8.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.095
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -312,7 +329,7 @@ Part : <../base_part_terran_overclock.rules>/Part
 							"floor_on8_33.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.095
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 					{
 						AnimationFiles
@@ -327,7 +344,7 @@ Part : <../base_part_terran_overclock.rules>/Part
 							"floor_on8_66.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.095
+						AnimationInterval = 0.095*(&~/Scale)
 					}
 				]
 			}
@@ -410,7 +427,7 @@ Part : <../base_part_terran_overclock.rules>/Part
 					}
 				]
 			}
-			OperationalRoofDoodad
+/*			OperationalRoofDoodad
 			{
 				Layer = "roof_doodads"
 				DamageLevels
@@ -421,7 +438,7 @@ Part : <../base_part_terran_overclock.rules>/Part
 					}
 					{
 						File = "roof_glows_33.png"
-						Size = [4, 4]
+						Size = [3, 3]
 					}
 					{
 						File = "roof_glows_66.png"
@@ -441,7 +458,7 @@ Part : <../base_part_terran_overclock.rules>/Part
 						VertexColor = [180*1.0,255*1.0, 77*1.0]
 					}
 				]
-			}
+			}*/
 		}
 
 		ReactorLights_Graphics
@@ -468,7 +485,8 @@ Part : <../base_part_terran_overclock.rules>/Part
 							"lights8.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.065
+						AnimationInterval = 0.065*(&~/Scale)
+						VertexColor = [255*0.5, 255*0.5, 255*0.5]
 					}
 					{
 						AnimationFiles
@@ -483,7 +501,8 @@ Part : <../base_part_terran_overclock.rules>/Part
 							"lights8.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.065/1.75
+						AnimationInterval = 0.065/1.75*(&~/Scale)
+						VertexColor = [255*0.5, 255*0.5, 255*0.5]
 					}
 					{
 						AnimationFiles
@@ -498,7 +517,8 @@ Part : <../base_part_terran_overclock.rules>/Part
 							"lights8.png"
 						]
 						Size = [4, 4]
-						AnimationInterval = 0.065/2.5
+						AnimationInterval = 0.065/2.5*(&~/Scale)
+						VertexColor = [255*0.5, 255*0.5, 255*0.5]
 					}
 				]
 			}
@@ -626,55 +646,7 @@ Part : <../base_part_terran_overclock.rules>/Part
 				}
 			}
 		}
-/*
-		BatterySprites
-		{
-			Type = ResourceSprites
-			Location = [2, 2]
-			ResourceStorage = BatteryStorage
-			Layer = "doodads_high"
-			Round = Down
-			ResourceLevels
-			[
-				{
-					File = "batteries1.png"
-					Offset = [0.5, -1.5]
-					Size = [1, 1]
-				}
-				{
-					File = "batteries2.png"
-					Offset = [1, -1]
-					Size = [2, 2]
-				}
-				{
-					File = "batteries3.png"
-					Offset = [1, 0]
-					Size = [2, 4]
-				}
-				{
-					File = "batteries4.png"
-					Offset = [1, 0]
-					Size = [2, 4]
-				}
-				{
-					File = "batteries5.png"
-					Size = [4, 4]
-				}
-				{
-					File = "batteries6.png"
-					Size = [4, 4]
-				}
-				{
-					File = "batteries7.png"
-					Size = [4, 4]
-				}
-				{
-					File = "batteries8.png"
-					Size = [4, 4]
-				}
-			]
-		}
-*/
+
 		ReactorHum
 		{
 			Type = ContinuousEffects
@@ -685,13 +657,13 @@ Part : <../base_part_terran_overclock.rules>/Part
 			[
 				: /BASE_SOUNDS/AudioInterior
 				{
-					Sound = "../reactor_small/operating.wav"
+					Sound = "./Data/ships/terran/reactor_small/operating.wav"
 					Volume = .5
 					Speed = .5
 					MaxConcurrent = 1
 					DynamicVolume : ^/0/DynamicVolume
 					{
-						ExteriorVolume = .5
+						ExteriorVolume = .5*(&~/Scale)
 					}
 				}
 			]
@@ -762,7 +734,6 @@ Part : <../base_part_terran_overclock.rules>/Part
 					{
 						Friendlies = true
 					}
-
 					MediaEffectsOnDrainFactor = .0015
 					MediaEffectsOnDrain
 					[
@@ -794,15 +765,15 @@ Part : <../base_part_terran_overclock.rules>/Part
 
 			MediaEffects
 			[
-				&<particles/reactor_explode_large.rules>
-				&<particles/reactor_explode_flash_large.rules>
-				&<particles/reactor_shockwave_large.rules>
+				&<./Data/ships/terran/reactor_large/particles/reactor_explode_large.rules>
+				&<./Data/ships/terran/reactor_large/particles/reactor_explode_flash_large.rules>
+				&<./Data/ships/terran/reactor_large/particles/reactor_shockwave_large.rules>
 				&<./Data/common_effects/particles/explosions/huge_part_explode_debris.rules>
 				&<./Data/common_effects/particles/explosions/huge_part_explode_smoke.rules>
 
 				: /BASE_SOUNDS/AudioExterior
 				{
-					Sound = "../reactor_small/destroyed.wav"
+					Sound = "./Data/ships/terran/reactor_small/destroyed.wav"
 					Volume = 2
 					Speed = .5
 					SpeedVariation = .25 * (&Speed)
