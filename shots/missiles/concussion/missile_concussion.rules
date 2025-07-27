@@ -1,0 +1,185 @@
+ID = "SW.missile_concussion"
+Range = 1250 //810
+IdealRange = 450 //640
+Speed = 40
+
+Components
+{
+	Physics
+	{
+		Type = BoxPhysics
+		Size = [1.92, .5]
+		Density = 0.1
+	}
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 240d
+		Delay = .1
+		AvoidanceRaycastDistance = 250
+		VelocityCompensation = 60%
+	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+	Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 65
+	}
+
+	NegativeAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [-120, 0]
+		AccelerationOverTime = [0, .64]
+		Direction = FrameOfReferenceVelocity
+	}
+
+	DeathByLifetime
+	{
+		Type = DeathByLifetime
+		Lifetime = 25
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper3
+		IsLit = true
+		Sprite
+		{
+			Texture
+			{
+				File = "missile_concussion.png"
+				MipLevels = max
+			}
+			Size = [2, 1]
+		}
+
+		NormalsTexture
+		{
+			File = "missile_concussion_normals.png"
+			MipLevels = max
+		}
+	}
+
+	LightsSprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper4
+		Offset = [24/64, 0]
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "missile_concussion_light.png"
+					MipLevels = max
+					SampleMode = Linear
+				}
+				Size = [1.5, 1.5]
+				TargetBlendMode = Add
+			}
+			FrameCount = 4
+			FrameSize = [98, 98]
+			FramesPerRow = 4
+			FramesPerSecond = 15
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		Offset = [-0.9, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&<particles/missile_concussion_thruster_fire.rules>
+			&<particles/missile_concussion_thruster_smoke.rules>
+			&<particles/missile_concussion_thruster_plume.rules>
+			&<particles/missile_concussion_thruster_plume_light.rules>
+		]
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 8000
+		TargetCategory = "missile"
+
+		// No AOE damage when shot down.
+		OnDeath = &../Hit/HitFriendly
+	}
+
+	Hit
+	{
+		Type = SimpleHit
+		SourcePartCollisionDelay = 1.5 / (&/Simulation/PhysicsUpdatesPerSecond)
+		SourceShipLowCollisions = false
+
+		HitShield = &HitOperational
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 30000//15000
+					Radius = 10
+					Filter
+					{
+						Friendlies = true
+					}
+				}
+				{
+					Type = Impulse;
+					Impulse = 100;
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/missile_concussion_hit.rules>
+				&<particles/missile_concussion_flash.rules>
+				&<particles/missile_concussion_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "missile_concussion_hit.wav"
+					Volume = .75
+					SpeedVariation = .4
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .15
+					Duration = .75
+				}
+			]
+		}
+		HitStructural = &HitOperational
+
+		HitFriendly
+		{
+			MediaEffects
+			[
+				&<particles/missile_concussion_hit.rules>
+				&<particles/missile_concussion_flash.rules>
+				&<particles/missile_concussion_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "missile_concussion_hit.wav"
+					Volume = .75
+					SpeedVariation = .4
+				}
+			]
+		}
+	}
+}

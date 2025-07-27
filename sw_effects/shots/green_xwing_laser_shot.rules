@@ -1,0 +1,159 @@
+ID = SW.green_xwing_shot_common //DIRECT WEAPONSHOT
+OtherIDs = ["green_xwing_shot_common"]
+Range = 420
+IdealRange = [126, 420]
+IdealRadius = [5, 50]
+Speed = 180 //120
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 250
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		Penetration = 1
+		PenetrationSpeed = 20
+		SourceShipLowCollisions = false
+		FactorEffectsWith = Targetable
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		HitCrew = &HitOperational
+
+		HitShield = &HitOperational
+		HitOperational
+		{
+			ReduceEffectsByPenetration = true
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 450
+				}
+				{
+					Type = Impulse
+					Impulse = 2.5
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Hit/Med/Green
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Green
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Green
+	
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitStructural
+		{
+			ReduceEffectsByPenetration = true
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 300
+				}
+				{
+					Type = Impulse;
+					Impulse = 1.25;
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/HitStruct/Med/Green
+
+				&/SW_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational
+		{
+			// No effect.
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational
+		{
+			// No effect.
+		}
+		FinishedPenetratingStructural
+		{
+			// No effect.
+		}
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "laser_ball_green_shot.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [2.5, 2.5]
+			}
+			FrameCount = 8
+			FrameSize = [128, 128]
+			FramesPerRow = 2
+			FramesPerSecond = 16
+		}
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [6, 6]
+			VertexColor = [0, 255, 0]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
+	}
+}

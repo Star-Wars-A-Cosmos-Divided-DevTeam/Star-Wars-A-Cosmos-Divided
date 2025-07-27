@@ -1,0 +1,185 @@
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Convert location to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = base_scale
+			ScaleOut = base_scale
+			Name = "Convert scale to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = VelocityToWorldSpace
+			VelocityIn = velocity
+			VelocityOut = velocity
+			Name = "Convert initial velocity to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rotation
+			RotationOut = rotation
+			Name = "Convert rotation to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = InheritVelocity
+			VelocityInOut = velocity
+			Name = "Inherit velocity"
+			Enabled = false
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 1
+			ToValue = 0.5
+			Name = "Scale lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = scale
+			BIn = base_scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "Apply base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0.00
+					Gf = 0.00
+					Bf = 1.00
+					Af = 0.00
+				}
+				{
+					Rf = 0.00
+					Gf = 0.00
+					Bf = 1.00
+					Af = 1.00
+				}
+				{
+					Rf = 0.00
+					Gf = 0.00
+					Bf = 1.00
+					Af = 0.80
+				}
+				{
+					Rf = 0.00
+					Gf = 0.00
+					Bf = 1.00
+					Af = 0.00
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = true
+		}
+	]
+	Renderer
+	{
+		Type = LightQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In
+		RotationIn = rotation
+		ColorIn = color
+		UvRectIn
+		BaseSize
+		{
+			X = 1
+			Y = 1
+		}
+		Offset
+		{
+			X = 0
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
+			File = ./Data/common_effects/particles/particle_light_emissive.shader
+		}
+		_z = 0.05
+		_litReflectiveStrength = 3
+		_litAdditiveStrength = 0.05
+		_unlitAdditiveStrength = 0
+		_emissiveStrength = 2
+		Texture
+		{
+			File = ./Data/common_effects/particles/explode_spark.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+		TargetBlendMode
+		{
+			SourceRgbFactor = InverseDestColor
+			DestRgbFactor = One
+			RgbOperator = Add
+			SourceAlphaFactor = Zero
+			DestAlphaFactor = One
+			AlphaOperator = Add
+		}
+	}
+	DeleteMode = Fast
+	FpsCompensation = None
+	FpsCompensationStrength = 1
+	EnableMultithreading = false
+	InitCapacity = 256

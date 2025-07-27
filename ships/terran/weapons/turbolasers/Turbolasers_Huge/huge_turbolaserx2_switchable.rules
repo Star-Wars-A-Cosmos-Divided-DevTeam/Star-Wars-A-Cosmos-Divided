@@ -1,0 +1,994 @@
+Part : &<huge_turbolaser_switchable.rules>/Part
+{
+	//IDs
+	ID = SW.turbolaser_huge_9x9
+	//OtherIDs = [name1,name2]
+
+	//StringKeys
+	NameKey = "Parts/TurbolaserHuge02"
+	IconNameKey = "Parts/TurbolaserHuge02Icon"
+	DescriptionKey = "Parts/TurbolaserHuge02Desc"
+
+	//Groups&Categories
+	EditorGroups = ["WeaponsEnergy", "SWTechIII"]
+	TypeCategories = [weapon, uses_power, is_crewed]
+	RequiresCategories = [SW_WarRoom]
+
+	//Resources&Size&Health
+	Resources
+	[
+		[SW.durasteel, 800]
+		[SW.doonium_ingot, 600]
+		[coil2, 120]
+		[processor, 40]
+	]
+	Size = [9, 9]
+	MaxHealth = 168000
+
+	//Rects
+	GenerateRectCollider = true
+	//Density = 1 + (&~/Part/TurretDensity)
+	/*
+	ProhibitRects
+	[
+		[tall, [0, -1, 2, 1]]
+	]
+	*/
+
+	//Selections
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "turbolasers"
+
+	//PartSpecific
+	AIValueFactor = 2
+	InitialPenetrationResistance = 10
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	//ProhibitedBy : ^/0/ProhibitedBy [tall]
+
+	//Doors&Etc
+	AutoDoorMaxPathLength = 8
+	MaxDoors = 8
+	AllowedDoorLocations
+	[
+		//[-1, 0]
+		[-1, 1]
+		[-1, 2]
+		[-1, 3]
+		[-1, 4]
+		[-1, 5]
+		[-1, 6]
+		[-1, 7]
+		//[-1, 8]
+		//[9, 0]
+		[9, 1]
+		[9, 2]
+		[9, 3]
+		[9, 4]
+		[9, 5]
+		[9, 6]
+		[9, 7]
+		//[9, 8]
+		//[0, -1]
+		[1, -1]
+		[2, -1]
+		[3, -1]
+		[4, -1]
+		[5, -1]
+		[6, -1]
+		[7, -1]
+		//[8, -1]
+		//[0, 9]
+		[1, 9]
+		[2, 9]
+		[3, 9]
+		[4, 9]
+		[5, 9]
+		[6, 9]
+		[7, 9]
+		//[8, 9]
+	]
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "iconx2.png"
+			SampleMode = Linear
+		}
+		Size = [43.2, 54]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 16
+		}
+
+		FireModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_mode"
+			Default = 1
+			ToggledOnChoices = [0, 1, 2]
+		}
+		AutoTargetToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnModes = [1, 2]
+		}
+		AutoFireToggle
+		{
+			Type = ModeToggle
+			Mode = FireModeToggle
+			OnMode = 2
+		}
+		FireAlternatingToggle
+		{
+			Type = UIToggle
+			ToggleID = "fire_alternating"
+			Default = 0
+			AvailableChoices = [0]
+		}
+
+		CommonReloadTimer
+		{
+			Type = Timer
+			Duration = 13 //6.1
+			AutoStart = true
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+		CommonOnShootEffectTimer
+		{
+			Type = Timer
+			Duration = 0.42
+			AutoStart = true
+			StartTrigger = CommonReloadResetTriggerProxy
+		}
+		CommonReloadResetTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = CommonReloadResetTrigger
+		}
+
+		SwitchWeaponCooldownProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = SwitchWeaponCooldownTimer
+			InvertOperationalToggle = true
+			ShowProgressFor = SwitchWeaponCooldownTimer
+			Invert = true
+			LowColor = [16, 16, 16]
+			HighColor = [255, 255, 255]
+		}
+		SwitchWeaponCooldownTimer
+		{
+			Type = Timer
+			Duration = 6.3
+			AutoStart = true
+			Repeats = false
+			StartsOn = 0
+			StartTrigger = SwitchWeaponCooldownTrigger
+		}
+		SwitchWeaponCooldownTrigger
+		{
+			Type = ModeTrigger
+			Mode = MunitionType
+			TriggerInModes = [0, 1, 2]
+		}
+
+		MunitionType
+		{
+			Type = UIToggle
+			ToggleID = "SW.munition_type"
+			Default = 0
+			AvailableChoices = [0, 1, 2]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+		RedMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 0
+		}
+		RedMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = RedMunitionToggle
+			Components = &<huge_turbolaserx2_red.rules>/Components
+		}
+		BlueMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 1
+		}
+		BlueMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = BlueMunitionToggle
+			Components = &<huge_turbolaserx2_blue.rules>/Components
+		}
+		GreenMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 2
+		}
+		GreenMunitionComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreenMunitionToggle
+			Components = &<huge_turbolaserx2_green.rules>/Components
+		}
+
+		ExteriorType
+		{
+			Type = UIToggle
+			ToggleID = "SW.exterior_type"
+			Default = 0
+			AvailableChoices = [0, 1]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+
+		WhiteExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 0
+		}
+
+		WhiteExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = WhiteExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<huge_turbolaserx2_white.rules>/Components
+		}
+
+		GreyExteriorToggle
+		{
+			Type = ModeToggle
+			Mode = ExteriorType
+			OnMode = 1
+		}
+		GreyExteriorComponents
+		{
+			Type = ToggledComponents
+			Toggle = GreyExteriorToggle
+			IncludeInBlueprints = false
+			Components = &<huge_turbolaserx2_grey.rules>/Components
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 20000 //7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/Weapon_Supply
+			ResupplyThreshold = 1000
+			OperationalToggle = PowerToggle
+		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [4.5, 4.5] // scaled proportionally
+			Floor
+			{
+				 Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [9, 9] // scaled proportionally
+					}
+					{
+						File = "floor_33.png"
+						Size = [9, 9] // scaled proportionally
+					}
+					{
+						File = "floor_66.png"
+						Size = [9, 9] // scaled proportionally
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [9, 9] // scaled proportionally
+					}
+					{
+						File = "walls.png"//"walls_33.png"
+						Size = [9, 9] // scaled proportionally
+					}
+					{
+						File = "walls.png"//"walls_66.png"
+						Size = [9, 9] // scaled proportionally
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [9, 9] // scaled proportionally
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [9, 9] // scaled proportionally
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [9, 9] // scaled proportionally
+					}
+				]
+			}
+			/*
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [1.8, 1.8] // scaled proportionally
+						Z = 1.17 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [192, 192, 192] // [6, 57, 113]
+					}
+				]
+			}
+			*/
+		}
+
+		ConsoleGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			//Location = [4.5, 4.5] // scaled proportionally
+			Rotation = 90d
+			OperationalToggle = IsOperational
+			//DoodadToggle = IsOperational
+			//ShowToggledDoodadsWhenNotOperational = true
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [9, 9] // scaled proportionally
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "lights_add"
+				Offset = [0.0140625, 0.3234375] // scaled proportionally
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"A1.png"
+							"A2.png"
+							"A3.png"
+							"A4.png"
+							"A5.png"
+						]
+						Size = [2.7, 2.7] // scaled proportionally
+						AnimationInterval = 0.075
+						AnimationStartTime = Zero
+					}
+				]
+			}
+		}
+
+		FirePermissionToggle
+		{
+			Type = MultiToggle
+			Toggles = [CommonReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
+			Mode = All
+		}
+
+		Turret : &~/TurretBase
+		{
+
+		}
+
+		BulletEmitterBase : &~/BulletEmitterBase
+		{
+			FireTrigger
+		}
+
+		TurretCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[-4.5, -4.5] // scaled proportionally
+				[4.5, -4.5] // scaled proportionally
+				[4.5, 4.5] // scaled proportionally
+				[-4.5, 4.5] // scaled proportionally
+			]
+			Location = &~/TurretBase/Location
+			Density = .9
+			//IsHigh = true
+			//InitialPenetrationResistance = 5
+		}
+
+		CommonReloadResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [Turret]
+		}
+/*
+		ChargeEffectSound
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = Turret
+			AnchorMediaEffects = true
+		
+			MediaEffects
+			[
+				&/SW_SOUNDS/LaserReCharge
+			]
+		}
+
+		FireEffectSound
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Location = [0.9, 0] // scaled proportionally
+			Trigger = Turret
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/SW_SOUNDS/TurbolaserSFX
+			]
+		}
+*/
+		TurretLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
+		}
+
+		TurretGhostGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [0, 0]
+			Rotation = 90d
+			//OperationalToggle = IsOperational
+
+			Walls
+			{
+				Layer = "doodads_high"
+				Offset = [-1.234375, -6.259375] //-102, -459
+				DamageLevels
+				[
+					{
+						File = "barrel_shadow.png"
+						Size = [0.9, 4.5] 
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "doodads_high"
+				Offset = [1.234375, -6.259375] //102, -459
+				DamageLevels
+				[
+					{
+						File = "barrel_shadow.png"
+						Size = [0.9, 4.5] 
+						MirrorU = true
+					}
+				]
+			}
+		}
+
+
+		CrewLocation1
+		{
+			Type = CrewLocation
+			ChainedTo = Turret
+			Location = [2.025, -1.1390625] // scaled proportionally
+			Rotation = 180d //0d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			ChainedTo = Turret
+			Location = [2.025, 1.1390625] // scaled proportionally
+			//Rotation = 180d
+		}
+		CrewLocation3
+		{
+			Type = CrewLocation
+			ChainedTo = Turret
+			Location = [0.6046875, -1.603125] // scaled proportionally
+			Rotation = -90d //90d
+		}
+		CrewLocation4
+		{
+			Type = CrewLocation
+			ChainedTo = Turret
+			Location = [0.6046875, 1.603125] // scaled proportionally
+			Rotation = -90d //90d
+		}
+		CrewLocation5
+		{
+			Type = CrewLocation
+			ChainedTo = Turret
+			Location = [2.4609375, -3.09375] // scaled proportionally
+			Rotation = -90d //90d 
+		}
+		CrewLocation6
+		{
+			Type = CrewLocation
+			ChainedTo = Turret
+			Location = [2.4609375, 3.09375] // scaled proportionally
+			Rotation = -90d //90d
+		}
+		CrewLocation7
+		{
+			Type = CrewLocation
+			ChainedTo = Turret
+			Location = [1.63125, -1.575] // scaled proportionally
+			//Rotation = 180d
+		}
+		CrewLocation8
+		{
+			Type = CrewLocation
+			ChainedTo = Turret
+			Location = [1.63125, 1.575] // scaled proportionally
+			Rotation = 180d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 8
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				[4.5, 4.5] //&../../CrewLocation1/Location // scaled proportionally
+				[4.5, 4.5] //&../../CrewLocation2/Location // scaled proportionally
+				[4.5, 4.5] //&../../CrewLocation3/Location // scaled proportionally
+				[4.5, 4.5] //&../../CrewLocation4/Location // scaled proportionally
+				[4.5, 4.5] //&../../CrewLocation5/Location // scaled proportionally
+				[4.5, 4.5] //&../../CrewLocation6/Location // scaled proportionally
+				[4.5, 4.5] //&../../CrewLocation7/Location // scaled proportionally
+				[4.5, 4.5] //&../../CrewLocation8/Location // scaled proportionally
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+				CrewLocation3
+				CrewLocation4
+				CrewLocation5
+				CrewLocation6
+				CrewLocation7
+				CrewLocation8
+			]
+		}
+
+		BatterySprites
+		{
+			Type = ResourceSprites
+			ChainedTo = Turret
+			Location = [0, -2.7] // scaled proportionally
+			Rotation = 90d
+			ResourceStorage = BatteryStorage
+			Layer = "lights_add"
+			//RangeLow = 0
+			//RangeHigh = 24000
+			ResourceLevels
+			[
+				{
+					File = "b1.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b2.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b3.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b4.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b5.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b6.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b7.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b8.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b9.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b10.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b11.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b12.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b13.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b14.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b15.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+				{
+					File = "b16.png"
+					Size = [3.6, 5.4] // scaled proportionally
+				}
+			]
+		}
+		BatterySprites2
+		{
+			Type = ResourceSprites
+			ChainedTo = Turret
+			Location = [0, 2.7] // scaled proportionally
+			Rotation = 90d
+			ResourceStorage = BatteryStorage
+			Layer = "lights_add"
+			//RangeLow = 1000
+			//RangeHigh = 25000
+			ResourceLevels
+			[
+				{
+					File = "b1.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b2.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b3.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b4.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b5.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b6.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b7.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b8.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b9.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b10.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b11.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b12.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b13.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b14.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b15.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+				{
+					File = "b16.png"
+					Size = [3.6, 5.4] // scaled proportionally
+					MirrorU = true
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Location = [4.5, 4.5] // scaled proportionally
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			Location = [4.5, 4.5] // scaled proportionally
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [4.5, 4.5] // scaled proportionally
+			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [2, 2]
+					}
+					HidesIndicators = [1,2]
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [2, 2]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [2, 2]
+					}
+				}
+			]
+		}
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints01.png"
+			Size = [4.5, 9] // scaled proportionally
+			Offset = [-2.25, 0] // scaled proportionally
+		}
+		Blueprints2
+		{
+			Type = BlueprintSprite
+			File = "blueprints01.png"
+			Size = [4.5, 9] // scaled proportionally
+			Offset = [2.25, 0] // scaled proportionally
+			MirrorU = true
+		}
+	}
+
+   //Stats
+	Stats
+	{
+		CrewRequired = &~/Part/Components/PartCrew/Crew
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		//TurretPenResist = &~/Part/Components/TurretCollider/InitialPenetrationResistance
+
+		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+	StatsByCategory
+	[
+		&~/TurretStats
+		&<huge_turbolaserx2_red.rules>/LaserStats
+		&<huge_turbolaserx2_blue.rules>/LaserStats
+		&<huge_turbolaserx2_green.rules>/LaserStats
+	]
+}
+TurretStats
+{
+	NameKey = "StatCategories/Turret"
+	Stats
+	{
+		Barrels = 2
+		Burst = &~/BulletEmitterBase/Burst
+		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
+		Salvo = [&../Barrels, &../ReloadTime]
+		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
+		Range = &~/BulletEmitterBase/Bullet/Range
+		Arc = deg(&~/TurretBase/FiringArc)
+		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
+		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+		Spread = deg(&~/BulletEmitterBase/Spread/1)
+		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
+	}
+}
+OperationalRoofLightingBase
+{
+	Size = [4.5, 5.04] // scaled proportionally
+	Z = 1.485 // Controls the "height" of the light for the purposes of normal mapping.
+}
+BulletEmitterBase
+{
+	Type = BulletEmitter
+	ChainedTo = TurretLocationProxy
+	FireTrigger = CommonReloadResetTriggerProxy
+	GetTargetFrom = Turret
+	//No Location is dual barrel
+	OperationalToggle = IsOperational
+	FireDelay = 0.6
+	ResourceStorage = BatteryStorage
+	ResourcesUsed = 420
+	Bullet = &/SW_SHOTS/turretturbolasermediumlaserredshot
+	Recoil = 400
+	AntiPhasingRaycastDistance = 5
+	UseResourcePerShotInBurst = true
+	Burst = 4
+	BurstDelay = 0.3
+	Spread = [-1d, 1d]
+	TargetLeadPrediction = false
+}
+ReloadProgressBarBase
+{
+	Type = ProgressBar
+	OperationalToggle = SwitchWeaponCooldownTimer
+	ShowProgressFor = CommonReloadTimer
+	Invert = true
+}
+TurretBase
+{
+	Type = TurretWeapon
+	Location = [4.5, 4.5] // scaled proportionally
+	Rotation = -90d
+	OperationalToggle = IsOperational
+	AutoFireToggle = AutoFireToggle
+	FireInterval = 0 // Uses separate common fire timer.
+	FiringArc = 200d
+	RotateSpeed = 10d // scaled proportionally
+	FireThresholdAngle = 2d
+	AIFirepowerRating = 6400
+	//CanBeGivenExplicitTarget = true
+	//TargetSearchesPerSecond = 4
+	Emitter = BulletEmitterBase
+	FirePermissionToggle = FirePermissionToggle
+	HoldTargetAfterCancel = 0.05
+	AutoTargetCrewSafetyDist = 7.2 // scaled proportionally
+	IgnoreSourceShipLOSChecks = false
+	IgnoreSourceShipLowLOSChecks = true
+	AllowFireWithBlockedLOS = false
+
+	AutoTargets
+	[
+		{
+			TargetType = ShipParts
+			Toggle = AutoTargetToggle
+		}
+	]
+
+	BlueprintArcSprite
+	{
+		Texture = &/INDICATORS/WeaponArc
+		Size = [0, 1.35] // scaled proportionally
+		Color = [255, 0, 0, 63]
+	}
+	BlueprintArcRadius = 9 // scaled proportionally
+	BlueprintArcSpriteSegments = 64
+
+	CoverageSectorArc
+	{
+		Texture = &/INDICATORS/VerticalGradient
+		VertexColor = [255, 255, 255, 51]
+		QuadCount = 64
+	}
+}

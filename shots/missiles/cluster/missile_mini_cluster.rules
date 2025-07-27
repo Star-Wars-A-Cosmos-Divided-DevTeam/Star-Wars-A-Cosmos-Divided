@@ -1,0 +1,196 @@
+ID = "SW.missile_mini_cluster"
+
+Range = 1250 //666
+IdealRange = [150, &~/Range]
+Speed = 0
+
+Components
+{
+	Physics
+	{
+		Type = BoxPhysics
+		Size = [0.96, .21]
+		Density = 0.1
+	}
+
+	BoostAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [160, 40]
+		AccelerationOverTime = [0, 15]
+	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+	DeathByDistanceTraveledTargeted
+	{
+		Type = DeathByDistanceTraveled
+		Distance = (&~/Range) * 3
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		IsLit = true
+		Sprite
+		{
+			Texture
+			{
+				File = "missile_cluster.png"
+				MipLevels = max
+			}
+			Size = [1, 0.5]
+		}
+
+		NormalsTexture
+		{
+			File = "missile_cluster_normals.png"
+			MipLevels = max
+		}
+	}
+
+	HELightsSprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper1
+		Offset = [18/64, 0]
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "missile_cluster_light.png"
+					MipLevels = max
+					SampleMode = Linear
+				}
+				Size = [0.75, 0.75]
+				TargetBlendMode = Add
+			}
+			FrameCount = 4
+			FrameSize = [98, 98]
+			FramesPerRow = 4
+			FramesPerSecond = 15
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		Offset = [-0.45, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&<particles/missile_cluster_thruster_fire.rules>
+			&<particles/missile_cluster_thruster_smoke.rules>
+			&<particles/missile_cluster_thruster_plume.rules>
+			&<particles/missile_cluster_thruster_plume_light.rules>
+			&/SW_PARTICLES/Thruster/Vanilla/PlumeLight/Small/Red
+			&/SW_PARTICLES/Thruster/Vanilla/PlumeLight/Med/Orange
+		]
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 200
+		TargetCategory = "missile"
+
+		// No AOE damage when shot down.
+		OnDeath = &../Hit/HitFriendly
+	}
+
+	Hit
+	{
+		Type = SimpleHit
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		
+
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 1000
+					Radius = 3
+					Filter
+					{
+						Friendlies = true
+					}
+				}
+				{
+					Type = Impulse;
+					Impulse = 1;
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/missile_cluster_hit.rules>
+				&<particles/missile_cluster_flash.rules>
+				&<particles/missile_cluster_smoke.rules>
+
+				&/SW_SOUNDS/SW_Missile_Cluster_Hit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .15
+					Duration = .75
+				}
+			]
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 2500
+					Radius = 4
+					Filter
+					{
+						Friendlies = true
+					}
+				}
+				{
+					Type = Impulse;
+					Impulse = 16;
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/missile_cluster_hit.rules>
+				&<particles/missile_cluster_flash.rules>
+				&<particles/missile_cluster_smoke.rules>
+
+				&/SW_SOUNDS/SW_Missile_Cluster_Hit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .15
+					Duration = .75
+				}
+			]
+		}
+		HitStructural = &HitOperational
+
+		HitFriendly
+		{
+			MediaEffects
+			[
+				&<particles/missile_cluster_hit.rules>
+				&<particles/missile_cluster_flash.rules>
+				&<particles/missile_cluster_smoke.rules>
+
+				&/SW_SOUNDS/SW_Missile_Cluster_Hit
+			]
+		}
+	}
+}

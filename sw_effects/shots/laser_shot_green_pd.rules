@@ -1,0 +1,117 @@
+ID = SW.laser_shot_green_pd //TURRET WEAPONSHOT (PD)
+
+Range = 200
+IdealRange = 95
+Speed = 150
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 250
+		TargetCategory = "laser"
+	}
+	
+	AntiBullet
+	{
+		Type = AntiBullet
+		HitsBulletCategories = [missile, mine, bullet, laser]
+
+		HitBullet
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 250
+				}
+			]
+
+			MediaEffects
+			[
+				&<./Data/shots/pd_shot/particles/pd_shot_clink.rules>
+			]
+		}
+	}
+
+
+	Hit
+	{
+		Type = SimpleHit
+		SourceShipCollisionDelay = 10
+
+		HitShield = &HitOperational
+		HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 70
+				}
+			]
+			MediaEffects = &~/Components/AntiBullet/HitBullet/MediaEffects
+		}
+		HitStructural = &HitOperational
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "lasershotgreen.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [0.54, 0.24]
+			}
+			FrameCount = 2
+			FrameSize = [64, 32]
+			FramesPerRow = 1
+			FramesPerSecond = 24
+		}
+	}
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [3, 3]
+			VertexColor = [0, 255, 0]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 6
+			_litAdditiveStrength = 0.02
+			_unlitAdditiveStrength = 0.1
+		}
+	}
+}

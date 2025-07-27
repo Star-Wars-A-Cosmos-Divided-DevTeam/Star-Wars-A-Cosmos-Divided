@@ -1,0 +1,815 @@
+//This variation preserves Skipper's original intended design and includes roja's graphics updates, however, this has a crash bug. Feel free to use this if you want to fix the crash bug.
+Part : &<./Data/ships/terran/base_part_terran.rules>/Part
+{
+	//IDs
+	ID = SW.IonThrusterAccelerator10x20
+	//OtherIDs = []
+
+	//StringKeys
+	NameKey = "Parts/IonThrusterAccelerator10x20"
+	IconNameKey = "Parts/IonThrusterAccelerator10x20Icon"
+	DescriptionKey = "Parts/IonThrusterAccelerator10x20Desc"
+
+	//Groups&Categories
+	EditorGroups = ["Flight", "SWTechIII"]
+	TypeCategories = [engine_room, uses_power, SW_Ion_Accelerator, SW_Tech_III] //, is_crewed
+	RequiresCategories = [SW_Bridge]
+
+	//Resources & Size & Health
+	Resources
+	[
+		[SW.durasteel, 200]
+		[coil2, 80]
+		[processor, 10]
+	]
+	Size = [10, 20]
+	MaxHealth = 200000
+
+	//Selections
+	SelectionPriority = 1
+	SelectionTypeByRotation = true
+	SelectionTypeID = "ion_accelerators"
+
+	//PartSpecific
+	//Density = 4 //WHY BUFF THEN; TO BE HEAVIER???
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs [EnginePowerDistribution, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_To_Accelerator, SW_Display] //grants SW_Ion_Thruster_Accelerator Buff & EnginePowerDistribution Buff
+
+	AllowedDoorLocations
+	[
+		[0, -1]
+		[1, -1]
+		[2, -1]
+		//
+		//
+		//
+		//
+		[7, -1]
+		[8, -1]
+		[9, -1]
+		//[0, 20]
+		[1, 20]
+		[2, 20]
+		//
+		[7, 20]
+		[8, 20]
+		//[9, 20]
+		[-1, 0]
+		[-1, 1]
+		[-1, 2]
+		[-1, 3]
+		[-1, 4]
+		[-1, 5]
+		[-1, 6]
+		[-1, 7]
+		[-1, 8]
+		[-1, 9]
+		[-1, 10]
+		[-1, 11]
+		[-1, 12]
+		[-1, 13]
+		[-1, 14]
+		[-1, 15]
+		[-1, 16]
+		[-1, 17]
+		[-1, 18]
+		//[-1, 19]
+		[10, 0]
+		[10, 1]
+		[10, 2]
+		[10, 3]
+		[10, 4]
+		[10, 5]
+		[10, 6]
+		[10, 7]
+		[10, 12]
+		[10, 13]
+		[10, 14]
+		[10, 15]
+		[10, 16]
+		[10, 17]
+		[10, 18]
+		//[10, 19]
+	]
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [64, 106.66]
+	}
+	Components : ^/0/Components //, <graphics.rules>
+	{
+		IsOperational
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, BatteryStorage] //, PartCrew
+			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = PowerToggle
+			CommandPoints = 200 //1 per tile
+		}
+
+		PowerDistributionBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = EnginePowerDistribution
+		}
+
+		SWIonThrusterAcceleratorBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Ion_Thruster_Accelerator
+		}
+
+		SWIonThrusterAcceleratorReverseBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = SW_Ion_Thruster_To_Accelerator
+		}
+
+		DistributePowerUIToggle
+		{
+			Type = UIToggle
+			ToggleID = "distribute_power"
+			Default = 1
+		}
+		DistributePowerToggle
+		{
+			Type = MultiToggle
+			Toggles = [DistributePowerUIToggle, IsOperational]
+			Mode = All
+		}
+
+		PowerDistributionBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = EnginePowerDistribution
+			BuffArea = [-10, 20, 30, 30]
+			OperationalToggle = DistributePowerToggle
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 100000
+		}
+		CombinedBatteryStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = battery
+			ResourceStorages = [BatteryStorage]
+			ViaBuffs
+			{
+				OutgoingBuffProviders = [PowerDistributionBuffProvider]
+				ComponentIDs = [BatteryStorage, CombinedBatteryStorage]
+			}
+			AddMode = PrioritizeLeastResources
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = CombinedBatteryStorage
+			DefaultPriority = &/PRIORITIES/Thruster_Supply
+			//AdditionalStorageForJobPriority = [BatteryStorage] //hmm
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+		}
+		BatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+		CombinedBatteryStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = CombinedBatteryStorage
+			LowColor = [64, 0, 12]
+			HighColor = [250, 0, 96]
+			FullColor = [255, 0, 98]
+		}
+
+		PowerDrain
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
+			FromQuantity = 500
+			MinFromQuantityForConversion = 1
+			Interval = { BaseValue=1; BuffType=SW_Ion_Thruster_To_Accelerator; BuffMode=Divide; MinValue=(1/(&<./Data/cosmoteer.rules>/Simulation/PhysicsUpdatesPerSecond)); MaxValue=((&../FromQuantity)/(&<./Data/ships/terran/engine_room/engine_room.rules>/Part/Components/PowerDrain/FromQuantity))}
+		}
+
+		SW_Display
+		{
+			Type = SelfBuffProvider
+			BuffType = SW_Display
+			ChainsFromBuffType = SW_Ion_Thruster_To_Accelerator
+			BuffAmount = { BaseValue=1; BuffType=SW_Ion_Thruster_To_Accelerator; BuffMode=Divide; }
+		}
+
+		IonAcceleratorBuffProvider
+		{
+			Type = AreaBuffProvider
+			BuffType = SW_Ion_Thruster_Accelerator
+			BuffAmount = { BaseValue=75%; BuffType=SW_Ion_Thruster_Accelerator; BuffMode=Add; }
+			BuffArea = [-10, 20, 30, 30] //[0, 20, 10, 20]
+			ShowBuffRange = true
+			OperationalToggle = IsOperational
+			ChainsFromBuffType = SW_Ion_Thruster_Accelerator
+		}
+
+		DoodadAnimationSpeedFactorValue
+		{
+			Type = BuffableValue
+			Value = { BaseValue=0; BuffType=SW_Ion_Thruster_To_Accelerator; BuffMode=Add; }
+		}
+
+		FloorGrid = &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
+
+		RoofGridFlat
+		{
+			Type = BlendSpriteGrid
+			AllowUndefinedBlendSprites = true
+			BlendsWithCategories = []
+			AlwaysBlendWithSelf = true
+			RectType = Physical
+			Location = [0.5, 0.5]
+			Layer = "roofs"
+			AmbiguousSprites = &<../Ion_Common/RoofGrid/roof_grid_blank.rules>/AmbiguousSprites
+		}
+
+		ColorPickerThruster
+		{
+			Type = UIColor
+			ColorID = "SW_Part_ThrusterColor"
+			Default = [38, 38, 255, 255]//.85 saturation
+			AlwaysAllowInBuildMode = false
+			RequiresCommand = true
+		}
+
+		TopWall // Note: Not using UV Rotation in case you want to make a different sprite for Walls.
+		{
+			Type = SpriteGrid
+			Location = [1.5, 0.5]
+			GridSize = [8, 1]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Ion_Common/Walls/walls_2.png"
+						Size = [1, 1]
+					}
+				]
+			]
+			RandomUVRotation = false
+			Layer = "walls"
+		}
+
+		LeftWall : &TopWall
+		{
+			Location = [0.5, 1.5]
+			GridSize = [1, 18]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Ion_Common/Walls/walls_4.png"
+						Size = [1, 1]
+					}
+				]
+			]
+		}
+
+		RightWall : &TopWall
+		{
+			Location = [9.5, 1.5]
+			GridSize = [1, 18]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Ion_Common/Walls/walls_5.png"
+						Size = [1, 1]
+					}
+				]
+			]
+		}
+
+		BottomWall : &TopWall
+		{
+			Location = [1.5, 19.5]
+			GridSize = [8, 1]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Ion_Common/Walls/walls_7.png"
+						Size = [1, 1]
+					}
+				]
+			]
+		}
+
+		TopLeftWall : &TopWall
+		{
+			Location = [0.5, 0.5]
+			GridSize = [1, 1]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Ion_Common/Walls/walls_1.png"
+						Size = [1, 1]
+					}
+				]
+			]
+		}
+
+		TopRightWall : &TopWall
+		{
+			Location = [9.5, 0.5]
+			GridSize = [1, 1]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Ion_Common/Walls/walls_3.png"
+						Size = [1, 1]
+					}
+				]
+			]
+		}
+
+		BottomLeftWall : &TopWall
+		{
+			Location = [0.5, 19.5]
+			GridSize = [1, 1]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Ion_Common/Walls/walls_6.png"
+						Size = [1, 1]
+					}
+				]
+			]
+		}
+
+		BottomRightWall : &TopWall
+		{
+			Location = [9.5, 19.5]
+			GridSize = [1, 1]
+			RandomDamageLevels
+			[
+				[
+					{
+						File = "../Ion_Common/Walls/walls_8.png"
+						Size = [1, 1]
+					}
+				]
+			]
+		}
+
+		OperationalLightingGraphics
+		{
+			Type = Graphics
+			Location = [5, 10]
+			OperationalToggle = IsOperational
+			GetColorFrom = ColorPickerThruster
+
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "../Ion_Common/IonThruster_lights.png"
+						Size = [10, 20]
+					}
+				]
+			}
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [15, 30]
+						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
+						//VertexColor = [16*1.0, 120*1.0, 255*1.0]
+					}
+				]
+			}
+		}
+
+		OperationalGlowlyGraphics
+		{
+			Type = Graphics
+			Location = &../DoodadGraphicsAnimation03_01/Location 
+			Offset = [-0.015625, 0]
+			OperationalToggle = IsOperational
+			GetColorFrom = ColorPickerThruster
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0, 1]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../Ion_Common/roof_glowly_3a.png"
+							"../Ion_Common/roof_glowly_3b.png"
+							"../Ion_Common/roof_glowly_3c.png"
+							"../Ion_Common/roof_glowly_3b.png"
+						]
+						Size = [4.23, 4.23]
+						AnimationInterval = 0.1
+						//AnimationInterval = 1/8
+					}
+				]
+			}
+		}
+		OperationalGlowlyGraphics2 : &OperationalGlowlyGraphics
+		{
+			Location = &../DoodadGraphicsAnimation03_02/Location 
+			AnimationSpeedFactorRenormalize = [0, 2]
+		}
+		OperationalGlowlyGraphics3 : &OperationalGlowlyGraphics
+		{
+			Location = &../DoodadGraphicsAnimation03_03/Location 
+			AnimationSpeedFactorRenormalize = [0, 3]
+		}
+		OperationalGlowlyGraphics4 : &OperationalGlowlyGraphics
+		{
+			Location = &../DoodadGraphicsAnimation03_04/Location 
+			AnimationSpeedFactorRenormalize = [0, 4]
+			//Offset = [0, -0.5]
+		}
+
+		DoodadGraphics03_01
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+
+			Location = [5, 3.953125]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "IonThruster_doodads03_T.png"
+						Size = [7, 7] // Adjusted to fit in the same space
+					}
+				]
+			}
+			NonOperationalDoodad = &OperationalDoodad
+		}
+
+		DoodadGraphicsAnimation03_01
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			GetColorFrom = ColorPickerThruster
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0, 1] //[0.64, 2.7]
+
+			Location = [5.045, 5.78]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../Ion_Common/IonThruster_doodads03_on1.png"
+							"../Ion_Common/IonThruster_doodads03_on2.png"
+							"../Ion_Common/IonThruster_doodads03_on3.png"
+							"../Ion_Common/IonThruster_doodads03_on4.png"
+							"../Ion_Common/IonThruster_doodads03_on5.png"
+							"../Ion_Common/IonThruster_doodads03_on6.png"
+							"../Ion_Common/IonThruster_doodads03_on7.png"
+							"../Ion_Common/IonThruster_doodads03_on8.png"
+						]
+						Size = [2.82, 2.82]
+						AnimationInterval = 0.075
+						//AnimationInterval = 1/8
+					}
+				]
+			}
+		}
+
+		DoodadGraphics03_02 : DoodadGraphics03_01
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+
+			Location = [5, 10.953125]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "IonThruster_doodads03_M.png"
+						Size = [7, 7] // Adjusted to fit in the same space
+					}
+				]
+			}
+			NonOperationalDoodad = &OperationalDoodad
+		}
+
+		DoodadGraphicsAnimation03_02 : DoodadGraphicsAnimation03_01
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0, 2] // [0.64, 2.7]
+
+			Location = [5.045, 9.195625]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../Ion_Common/IonThruster_doodads03_on1.png"
+							"../Ion_Common/IonThruster_doodads03_on2.png"
+							"../Ion_Common/IonThruster_doodads03_on3.png"
+							"../Ion_Common/IonThruster_doodads03_on4.png"
+							"../Ion_Common/IonThruster_doodads03_on5.png"
+							"../Ion_Common/IonThruster_doodads03_on6.png"
+							"../Ion_Common/IonThruster_doodads03_on7.png"
+							"../Ion_Common/IonThruster_doodads03_on8.png"
+						]
+						Size = [2.82, 2.82]
+						AnimationInterval = 1/8
+					}
+				]
+			}
+		}
+		DoodadGraphicsAnimation03_03 : DoodadGraphicsAnimation03_01
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0, 3]//[0.64, 2.7]
+
+			Location = [5.045, 12.724375]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../Ion_Common/IonThruster_doodads03_on1.png"
+							"../Ion_Common/IonThruster_doodads03_on2.png"
+							"../Ion_Common/IonThruster_doodads03_on3.png"
+							"../Ion_Common/IonThruster_doodads03_on4.png"
+							"../Ion_Common/IonThruster_doodads03_on5.png"
+							"../Ion_Common/IonThruster_doodads03_on6.png"
+							"../Ion_Common/IonThruster_doodads03_on7.png"
+							"../Ion_Common/IonThruster_doodads03_on8.png"
+						]
+						Size = [2.82, 2.82]
+						AnimationInterval = 1/8
+					}
+				]
+			}
+		}
+
+		DoodadGraphics03_03 : DoodadGraphics03_01
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+
+			Location = [5, 16.5]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "IonThruster_doodads03_B.png"
+						Size = [7, 7] // Adjusted to fit in the same space
+					}
+				]
+			}
+			NonOperationalDoodad = &OperationalDoodad
+		}
+
+
+		DoodadGraphicsAnimation03_04 : DoodadGraphicsAnimation03_01
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0, 4] //[0.64, 2.7]
+
+			Location = [5.045, 16.12]
+			//Offset = [0, -0.5]
+
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"../Ion_Common/IonThruster_doodads03_on1.png"
+							"../Ion_Common/IonThruster_doodads03_on2.png"
+							"../Ion_Common/IonThruster_doodads03_on3.png"
+							"../Ion_Common/IonThruster_doodads03_on4.png"
+							"../Ion_Common/IonThruster_doodads03_on5.png"
+							"../Ion_Common/IonThruster_doodads03_on6.png"
+							"../Ion_Common/IonThruster_doodads03_on7.png"
+							"../Ion_Common/IonThruster_doodads03_on8.png"
+						]
+						Size = [2.82, 2.82]
+						AnimationInterval = 0.075
+					}
+				]
+			}
+		}
+
+		BatterySpritesHolder
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+		
+			Location = [5, 2.625]
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "../Ion_Common/IonThruster_battery_holder05.png"
+						Size = [4, 1.6]  // Reduced by 20%
+					}
+				]
+			}
+			NonOperationalDoodad = &OperationalDoodad
+		}
+		
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = &../BatterySpritesHolder/Location
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "../Ion_Common/batteries_1.png"
+					Offset = [-1, 0]
+					Size = [2, 2]  // Reduced by 20%
+				}
+				{
+					File = "../Ion_Common/batteries_2.png"
+					Size = [4, 2]  // Reduced by 20%
+				}
+				{
+					File = "../Ion_Common/batteries_3.png"
+					Size = [4, 2]  // Reduced by 20%
+				}
+				{
+					File = "../Ion_Common/batteries_4.png"
+					Size = [4, 2]  // Reduced by 20%
+				}
+				{
+					File = "../Ion_Common/batteries_5.png"
+					Size = [4, 2]  // Reduced by 20%
+				}
+				{
+					File = "../Ion_Common/batteries_6.png"
+					Size = [4, 2]  // Reduced by 20%
+				}
+				{
+					File = "../Ion_Common/batteries_7.png"
+					Size = [4, 2]  // Reduced by 20%
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Location = [5, 10]
+			Toggle = IsOperational
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
+			Location = [5, 10]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [5, 10]
+			//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+			Indicators
+			[
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [5, 5]
+					}
+					HidesIndicators = [1]
+				}
+
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					Delay = 0.1
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [5, 5]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [10, 20]
+		}
+
+		BlueprintsBuff
+		{
+			Type = BlueprintSprite
+			File = "blueprints_buff.png"
+			Size = [30, 30]
+			Offset = [0, 25]
+		}
+	}
+
+	//Stats
+	Stats
+	{
+		//CrewRequired = &~/Part/Components/PartCrew/Crew
+		//ThrusterBuff = (&~/Part/Components/IonAcceleratorBuffProvider/BuffAmount/BaseValue) * 100
+		PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / 1 //(&~/Part/Components/PowerDrain/Interval/BaseValue) / 1000
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+
+		RecPower = &PowerUsageContinuous
+		RecCrew = (&RecPower) * 4
+	}
+}
+Size = Omega

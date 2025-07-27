@@ -1,0 +1,99 @@
+ID = SW.asteroid_doonium_xxl
+Type = GeneratedShip
+DescriptionKey = "Doodads/AsteroidDoonium_XXL"
+CategoryKey = "Doodads/Asteroids"
+Icon
+{
+	Texture
+	{
+		File = "asteroid_doonium_xxl.png"
+		MipLevels = 2
+		SampleMode = Linear
+	}
+}
+Allegiance = -3 // Junk
+SpawnRadius = sqrt(&Generator/Stages/0/MaxParts)
+Generator
+{
+	ShipRulesID = "cosmoteer.asteroid"
+	Stages
+	[
+		{
+			Type = AsteroidStage
+			Name = AsteroidStage
+			IsEnabled = true
+			Parts
+			[
+				cosmoteer.rubble
+			]
+			MinParts = 1600
+			MaxParts = 3200
+		}
+		{
+			Type = AsteroidDepositsStage
+			ReplaceableParts
+			[
+				cosmoteer.rock_1x1
+			]
+			Name = AsteroidDepositsStage
+			IsEnabled = true
+			Parts
+			[
+				SW.deposit_doonium_1x
+				SW.deposit_doonium_2x
+				SW.deposit_doonium_3x
+			]
+			MinPartsFraction = 0.125 * (&<./Data/resources/tritanium/tritanium.rules>/AsteroidDensity)
+			MaxPartsFraction = 0.25 * (&<./Data/resources/tritanium/tritanium.rules>/AsteroidDensity)
+			MinPartsPerDeposit = 3
+			MaxPartsPerDeposit = 10
+		}
+		{
+			Type = AsteroidWedgesStage
+			ReplaceableParts
+			[
+				cosmoteer.rock_1x1
+			]
+			LargerParts
+			[
+				cosmoteer.rock_4x4
+				cosmoteer.rock_3x3
+				cosmoteer.rock_2x2
+			]
+			RandomizeReplaceOrder = true
+			Name = AsteroidWedgesStage
+			IsEnabled = true
+			WedgeParts
+			[
+				cosmoteer.rock_1x2_wedge_L
+				cosmoteer.rock_1x2_wedge_R
+				cosmoteer.rock_1x1_wedge
+			]
+		}
+		{
+			Type = EnlargeTilesStage
+			ReplaceableParts
+			[
+				cosmoteer.rubble
+			]
+			LargerParts
+			[
+				cosmoteer.rubble_4x4
+				cosmoteer.rubble_3x3
+				cosmoteer.rubble_2x2
+			]
+			RandomizeReplaceOrder = true
+			Name = EnlargeTilesStage
+			IsEnabled = true
+		}
+		{
+			Type = ConvertTypeStage
+			Conversions = &<../hard_conversions.rules>/Conversions
+			ChanceAtCenter = 1.2
+			ChanceAtEdge = 0
+			Name = ConvertTypeStage
+			IsEnabled = true
+			ChanceExponent = 1
+		}
+	]
+}

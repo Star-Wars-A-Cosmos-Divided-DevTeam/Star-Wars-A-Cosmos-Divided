@@ -1,0 +1,145 @@
+Part : &<../base_part_terran_control_rooms.rules>/Part
+{
+	Components : ^/0/Components
+	{
+		/******** COCKPIT - AIRLOCK ********/
+	
+		AirLock
+		{
+			Type = Airlock
+			EnterExitPoint = [.5, .3]
+			NuggetEjectVelocity = [1, 1]
+			NuggetEjectDirection = [-100d, -80d]
+			NuggetEjectDoorOpenDuration = 0.65
+			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
+	
+			CrewEnterEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					RandomSounds = 
+					[
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_01.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_02.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_04.wav", 
+						"./Data/ships/terran/airlock/crew_enter/crew_enter_05.wav"
+					]
+					SpeedVariation = .1
+				}
+			]
+	
+			CrewLeaveEffects
+			[
+				: /BASE_SOUNDS/AudioInterior
+				{
+					RandomSounds = 
+					[
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_01.wav", 
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_02.wav", 
+						"./Data/ships/terran/airlock/crew_leave/crew_leave_03.wav"
+					]
+					SpeedVariation = .1
+				}
+			]	
+		}
+	
+		/******** COCKPIT - FIRE EXTINGUISHER ********/
+	
+		ExtinguisherStorage
+		{
+			Type = ResourceStorage
+			ResourceType = fire_extinguisher
+			MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			StartingResources = &MaxResources
+			SuppliesResources = true
+		}
+	
+		ExtinguisherProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = ExtinguisherStorage
+			InvertOperationalToggle = true
+			ToStorage = ExtinguisherStorage
+			ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
+			Interval = 45
+		}
+	
+		ProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = ExtinguisherProducer
+			ShowProgressFor = ExtinguisherProducer
+		}
+	
+		//WHAT THE FIRE EXTINGUISHER LOOKS LIKE - DOES NOT RUN OUT
+		ExtinguisherSprite
+		{
+			Type = ResourceSprites
+			Location = [.5, 1.5]
+			ResourceStorage = ExtinguisherStorage
+			Layer = "doodads_high"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "extinguisher.png"
+					Size = [1, 1]
+				}
+			]
+		}
+	
+		/******** COCKPIT - MANUVERING THRUSTERS (T/B/L/R) ********/
+		MainAuxThruster
+		{
+			Type = Thruster
+			Location = [0.5, 2.0] // Relative to upper-left corner of unrotated part.
+			Rotation = 90d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			Force = 250 
+			MinActivation = -1
+			MaxActivation = 3
+			MinUncommandedActivation = -1
+			MaxUncommandedActivation = 1
+			ActivationIncreaseTime = 1
+			ActivationRecoveryTime = 1
+		}
+
+		LateralAuxThruster : MainAuxThruster 
+		{	
+			Location = [0.5, 0.0]
+			Rotation = 0d
+			MinActivation = -1
+			MaxActivation = 1
+			MinUncommandedActivation = &MinActivation
+			MaxUncommandedActivation = &MaxActivation
+			ActivationIncreaseTime = 0.1
+			ActivationRecoveryTime = 0.1
+			AllowAutoFire = false
+		}
+	
+		/******** COCKPIT - CREW, SUPPLY, SEATING ********/
+	
+		CrewSource
+		{
+			Type = CrewSource
+			Crew = 1
+			ColorSRange = [0, 0.25]
+			ColorVRange = [0.5, 0.75]
+		}
+		
+		/******** COCKPIT - ENGINE BOOST ********/
+	/*
+		BuffProvider
+		{
+			//square, 3fore, 3sides, 3aft
+			Type = AreaBuffProvider
+			BuffType = FighterSpeed
+			BuffAmount = 300%
+			BuffArea = [-3, -3, 7, 8]
+			OperationalToggle = IsOperational
+		}
+	 */
+	}
+}

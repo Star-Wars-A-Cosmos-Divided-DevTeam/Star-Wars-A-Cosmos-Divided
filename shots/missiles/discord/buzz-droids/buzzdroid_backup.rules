@@ -1,0 +1,193 @@
+ID = SW.buzz_bullet
+OtherIDs = ["buzz_bullet"]
+
+Range = 30
+IdealRange = 25
+Speed = 10.5
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = .5
+		Density = 0.1
+		LinearDamping = 1
+	}
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 360d
+		Delay = .1
+		RaycastForward = [1, 0]
+		RaycastLeft = [1, -1]
+		RaycastRight = [1, 1]
+	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+	Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 15
+	}
+
+	DeathByLifetime
+	{
+		Type = DeathByLifetime
+		Lifetime = 150
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 500
+		TargetCategory = "missile"
+
+		OnDeath
+		{
+			MediaEffects = &~/Components/Hit/HitOperational/MediaEffects
+		}
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		Penetration = 400
+		PenetratesShields = true
+		PenetrationSpeed = 0.05
+
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 50
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+		HitOperational
+		{
+            StartDelay = 4  
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 200
+				}
+
+			]
+			MediaEffects
+			[
+				//&<buzzdroid_deployment.rules>
+				&<particles/BuzzDroid_beam_hit_sparks.rules>
+				&<particles/BuzzDroid_debris.rules>
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/crew/salvage.wav"
+					Volume = 0.4
+					//MaxConcurrentVolume = &Volume
+					MaxConcurrent = 2
+					//SpeedVariation = .25
+					RampUpTime = 1
+					RampDownTime = 1
+				}
+			]
+			
+		}
+		HitStructural = &HitOperational
+
+		PenetratingOperational = &HitOperational
+		PenetratingStructural = &HitOperational
+
+		FinishedPenetratingOperational = &HitOperational
+		FinishedPenetratingStructural = &HitOperational
+	}
+
+	HitSprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper4
+        StartTime = &~/Components/Hit/HitOperational/StartDelay
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture = "buzz bullet.png"
+				Size = [1.5, 1.5]
+			}
+			FrameCount = 5
+			FrameSize = [64, 64]
+			FramesPerRow = 1
+			FramesPerSecond = 3//7.5
+			WrapMode = Clamp
+		}
+		NormalsTexture
+		{
+			File = "buzz bullet_normals.png"
+			MipLevels = max
+		}
+	}
+
+
+	RollingSprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+        EndTime = &~/Components/Hit/HitOperational/StartDelay    //HitOperational/StartDelay
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture = "buzz bullet rollin.png"
+				Size = [1.5, 1.5]
+			}
+			FrameCount = 4
+			FrameSize = [64, 64]
+			FramesPerRow = 1
+			FramesPerSecond = 20//7.5
+			//WrapMode = Clamp
+		}
+		//NormalsTexture
+		//{
+		//	File = "buzz bullet_normals.png"
+		//	MipLevels = max
+		//}
+	}
+
+	Thruster_MediaEffectsR
+	{
+		Type = MediaEffects
+		InheritVelocityFrom = Physics
+		Offset = [-24/64, -.35]
+		//Rotation = 90d
+		MediaEffects
+		[
+			&<./Data/crew/particles/thruster_fire_crew.rules>
+			&<./Data/crew/particles/thruster_plume_crew.rules>
+			&<./Data/crew/particles/thruster_plume_light_crew.rules>
+			&<./Data/crew/particles/thruster_smoke_crew.rules>
+		]
+	}
+	Thruster_MediaEffectsL
+	{
+		Type = MediaEffects
+		InheritVelocityFrom = Physics
+		Offset = [-24/64, .35]
+		//Rotation = 0d
+		MediaEffects
+		[
+			&<./Data/crew/particles/thruster_fire_crew.rules>
+			&<./Data/crew/particles/thruster_plume_crew.rules>
+			&<./Data/crew/particles/thruster_plume_light_crew.rules>
+			&<./Data/crew/particles/thruster_smoke_crew.rules>
+		]
+	}
+}

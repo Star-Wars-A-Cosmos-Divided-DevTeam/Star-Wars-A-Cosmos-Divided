@@ -1,0 +1,262 @@
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Convert location to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = VelocityToWorldSpace
+			ScaleOut = scale
+			LocalScale = 1
+			Name = "Convert velocity to world space"
+			Enabled = true
+			UpdateAfterInit = false
+			VelocityIn = velocity
+			VelocityOut = velocity
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityIn = velocity
+			VelocityOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+			VelocityInOut = velocity
+		}
+		{
+			Type = SetRandom
+			VelocityInOut = velocity
+			Name = "Sprite Index"
+			Enabled = true
+			UpdateAfterInit = false
+			DataOut = sprite_index
+			ValueType = Int
+			FromValue = 0
+			ToValue = 15
+		}
+		{
+			Type = UvSprites
+			DataOut = sprite_index
+			ValueType = Int
+			FromValue = 0
+			ToValue = 15
+			Name = "Sprite UV Rect"
+			Enabled = true
+			UpdateAfterInit = false
+			SpriteIndexIn = sprite_index
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 256
+				Y = 256
+			}
+			SpriteSize
+			{
+				X = 64
+				Y = 64
+			}
+			SpriteCount = 16
+			SpritesPerRow = 4
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+		}
+		{
+			Type = SetRandom
+			SpriteIndexIn = sprite_index
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 256
+				Y = 256
+			}
+			SpriteSize
+			{
+				X = 64
+				Y = 64
+			}
+			SpriteCount = 16
+			SpritesPerRow = 4
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Name = Rotation
+			Enabled = true
+			UpdateAfterInit = false
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 0d
+			ToValue = 360d
+		}
+		{
+			Type = ScaleToWorldSpace
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 0d
+			ToValue = 360d
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+			ScaleIn = scale
+			ScaleOut = scale
+		}
+		{
+			Type = SetRandom
+			DataOut = randLife
+			ValueType = Float
+			FromValue = 1.5
+			ToValue = 3
+			Name = "Randomize Lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			Lifetime = 2
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+			VariableLifetimeIn = randLife
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0.39215687
+					Gf = 0.39215687
+					Bf = 0.39215687
+					Af = 1
+				}
+				{
+					Rf = 0.39215687
+					Gf = 0.39215687
+					Bf = 0.39215687
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0
+				}
+			]
+			Name = "Apply rot velocity."
+			Enabled = true
+			UpdateAfterInit = false
+			DataType = Angle
+			AIn = rot
+			BIn = rot_vel
+			ResultOut = rot
+			Operator = AddDt
+		}
+		{
+			Type = ColorRamp
+			LocationIn = location
+			LightNormalOut = light_normal
+			Name = "Alpha ramp"
+			Enabled = true
+			UpdateAfterInit = false
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0.39215687
+					Gf = 0.39215687
+					Bf = 0.39215687
+					Af = 1
+				}
+				{
+					Rf = 0.39215687
+					Gf = 0.39215687
+					Bf = 0.39215687
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0
+				}
+			]
+		}
+		{
+			Type = ParticleLightNormal
+			LocationIn = location
+			LightNormalOut = light_normal
+			Name = "Light normal"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = LitQuadRenderer
+		LightNormalIn = light_normal
+		DiffuseShader
+		NormalsShader
+		{
+			File = particle_normals.shader
+		}
+		LocationIn = location
+		ScaleIn = scale
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn = uv_rect
+		BaseSize
+		{
+			X = 1
+			Y = 1
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
+			File = particle_lit.shader
+		}
+		_normalsTexture
+		{
+			File = shrapnel_normals.png
+			MipLevels = max
+		}
+		Texture
+		{
+			File = shrapnel.png
+			MipLevels = 8
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256

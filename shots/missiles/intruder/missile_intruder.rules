@@ -1,0 +1,331 @@
+ID = "SW.missile_intruder"
+Range = 1250 //720
+IdealRange = 450 //640
+Speed = 45
+
+Components
+{
+	Physics
+	{
+		Type = BoxPhysics
+		Size = [2.1, .75]
+		Density = 0.1
+	}
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 120d
+		Delay = .1
+		AvoidanceRaycastDistance = 150
+		VelocityCompensation = 80%
+	}
+
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+
+	Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 75
+	}
+
+	NegativeAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [-90, 0]
+		AccelerationOverTime = [0, .75]
+		Direction = FrameOfReferenceVelocity
+	}
+
+	DeathByLifetime
+	{
+		Type = DeathByLifetime
+		Lifetime = 15
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper3
+		Sprite
+		{
+			Texture
+			{
+				File = "missile_intruder.png"
+				MipLevels = max
+			}
+			Size = [3, 1.5]
+		}
+
+		NormalsTexture
+		{
+			File = "missile_intruder_normals.png"
+			MipLevels = max
+		}
+	}
+
+	SmallLightsSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Sprite
+		{
+			Texture
+			{
+				File = "missile_intruder_small_lights.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [3, 1.5]
+		}
+	}
+
+	MediaEffects1
+	{
+		Type = MediaEffects
+		Offset = [-0.9, 0]
+		Rotation = 180d
+		MediaEffects
+		[
+			&<particles/missile_intruder_thruster_plume_light.rules>
+			&<particles/missile_intruder_thruster_smoke.rules>
+		]
+	}
+
+	MediaEffects3
+	{
+		Type = MediaEffects
+		Offset = [45/64, 0]
+		MediaEffects
+		[
+			&/SW_PARTICLES/Shot/Ion/Trail/Med/Cyan
+		]
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 8800 //3200
+		TargetCategory = "missile"
+
+		// No AOE damage when shot down.
+		OnDeath = &../Hit/HitFriendly
+	}
+
+	Hit
+	{
+	    Type = SimpleHit
+	    SourcePartCollisionDelay = 1.5 / (&/Simulation/PhysicsUpdatesPerSecond)
+	    FriendlyShipLowCollisions = false
+
+	    HitShield = &HitOperational
+	    HitOperational
+	    {
+	        HitEffects
+	        [
+	            {
+	                Type = Repeating
+	                Count = 4  // Number of times to repeat the effect
+	                Interval = 1.5  // Interval in seconds between each repeat
+	                InitialDelay = 0.2  // Initial delay before the first effect
+					RequireHitPart = true
+
+	                HitEffects
+	                [
+	                    {
+	                        Type = ExplosiveResourceDrain
+	                        ResourceType = battery
+	                        TotalDrain = 200000//50000
+	                        Radius = 20
+	                        Slices = 16
+	                        Filter
+	                        {
+	                            Ships = true
+	                            Shields = true
+	                            Friendlies = true
+	                        }
+
+	                        MediaEffectsOnDrainFactor = .0005
+	                        MediaEffectsOnDrain
+	                        [
+								&<particles/missile_intruder_hit_emitter.rules>
+								&<particles/missile_intruder_hit_shockwave.rules>
+	                            &/SW_PARTICLES/Shot/Ion/Drain/Med/Cyan
+	                            &/SW_PARTICLES/Shot/Ion/Sizzle/Med/Cyan
+	                            &/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+	                            &/SW_SOUNDS/SW_Missile_Intruder_Hit
+	                        ]
+	                    }
+	                ]
+	                MediaEffects
+	                [
+						&<particles/missile_intruder_hit_emitter.rules>
+	                    &/SW_PARTICLES/Shot/Ion/Hit/Med/Cyan
+	                    &/SW_PARTICLES/Shot/Ion/Flash/Med/Cyan
+	                    &/SW_PARTICLES/Shot/Ion/Sparks/Med/Cyan
+
+	                    &/SW_SOUNDS/SW_Missile_Intruder_Hit
+
+	                    : /BASE_SHAKE
+	                    {
+	                        ShakeAmount = .03
+	                        Duration = .3
+	                    }
+	                ]
+	            }
+				{
+	                Type = Damage
+	                Damage = 300
+	                Filter
+	                {
+	                    Friendlies = true
+	                }
+	            }
+	            {
+	                Type = ExplosiveDamage
+	                TotalDamage = 10000
+	                Radius = 3
+	                Filter
+	            	{
+	                OperationalHealth = false
+	                StructuralHealth = true
+	                Friendlies = true
+	            	}
+	            }
+	            {
+	                Type = Impulse
+	                Impulse = 100
+	            }
+	        ]
+			MediaEffects
+	        [
+				//&<particles/missile_intruder_hit_emitter.rules>
+	            &/SW_PARTICLES/Shot/Ion/Hit/Med/Cyan
+	            &/SW_PARTICLES/Shot/Ion/Flash/Med/Cyan
+	            &/SW_PARTICLES/Shot/Ion/Sparks/Med/Cyan
+	            &/SW_SOUNDS/SW_Missile_Intruder_Hit
+				
+	            : /BASE_SHAKE
+	            {
+	                ShakeAmount = .03
+	                Duration = .3
+	            }
+	        ]
+	    }
+	    HitStructural = &HitOperational
+
+	    HitFriendly
+	    {
+	        MediaEffects
+	        [
+				&<particles/missile_intruder_hit_emitter.rules>
+	            &<particles/missile_intruder_hit_orb.rules>
+	            &<particles/missile_intruder_hit_bolts.rules>
+	            &/SW_PARTICLES/Shot/Ion/Sizzle/Med/Cyan
+	            &/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+
+	            : /BASE_SOUNDS/AudioExterior
+	            {
+	                Sound = "missile_intruder_hit.wav"
+	                Volume = 1
+	                SpeedVariation = .2
+	            }
+	        ]
+	    }
+	}
+
+}
+
+	    /*{
+	        HitEffects
+	        [
+	            {
+	                Type = Repeating
+	                Count = 16  // Number of times to repeat the effect
+	                Interval = .5 // Interval in seconds between each repeat
+	                InitialDelay = 0  // Initial delay before the first effect
+
+	                HitEffects
+	                [
+	                    {
+	                        Type = ExplosiveResourceDrain
+	                        ResourceType = battery
+	                        TotalDrain = 50000
+	                        Radius = 20
+	                        Slices = 16
+	                        Filter
+	                        {
+	                            Ships = true
+	                            Shields = true
+	                            Friendlies = true
+	                        }
+
+	                        MediaEffectsOnDrainFactor = .0005
+	                        MediaEffectsOnDrain
+	                        [
+	                            &/SW_PARTICLES/Shot/Ion/Drain/Med/Cyan
+	                            &/SW_PARTICLES/Shot/Ion/Sizzle/Med/Cyan
+	                            &/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+	                            &/SW_SOUNDS/SW_Missile_Intruder_Hit
+	                        ]
+	                    }
+	                    {
+	                        Type = ExplosiveResourceDrain
+	                        ResourceType = SW.fake
+	                        TotalDrain = -10000
+	                        Radius = 18
+	                        Slices = 16
+	                        Filter
+	                        {
+	                            Ships = true
+	                            Shields = true
+	                            Friendlies = true
+	                        }
+	                    }
+	                    {
+	                        Type = Damage
+	                        Damage = 300
+	                        Filter
+	                        {
+	                            Friendlies = true
+	                        }
+	                    }
+	                    {
+	                        Type = ExplosiveDamage
+	                        TotalDamage = 10000
+	                        Radius = 3
+	                        Filter
+	                        {
+	                            OperationalHealth = false
+	                            StructuralHealth = true
+	                            Friendlies = true
+	                        }
+	                    }
+	                    {
+	                        Type = Impulse
+	                        Impulse = 100
+	                    }
+	                ]
+
+	                MediaEffects
+	                [
+						&<particles/missile_intruder_hit_emitter.rules>
+						&<particles/missile_intruder_hit_shockwave.rules>
+	                    &/SW_PARTICLES/Shot/Ion/Hit/Med/Cyan
+	                    &/SW_PARTICLES/Shot/Ion/Flash/Med/Cyan
+	                    &/SW_PARTICLES/Shot/Ion/Sparks/Med/Cyan
+
+	                    &/SW_SOUNDS/SW_Missile_Intruder_Hit
+
+	                    : /BASE_SHAKE
+	                    {
+	                        ShakeAmount = .03
+	                        Duration = .3
+	                    }
+	                ]
+	            }
+	        ]
+	    }*/

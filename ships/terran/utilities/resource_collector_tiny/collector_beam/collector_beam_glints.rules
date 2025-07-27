@@ -1,0 +1,553 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Convert location to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = VelocityToWorldSpace
+			VelocityIn = velocity
+			VelocityOut = velocity
+			Name = "Convert velocity to world space"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rot
+			ValueType = Angle
+			FromValue = 0d
+			ToValue = 360d
+			Name = Rotation
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rot_vel
+			ValueType = Angle
+			FromValue = -90d
+			ToValue = 90d
+			Name = "Rot Velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = base_scale
+			ScaleOut = base_scale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.1
+			ToValue = 0.5
+			Name = "create random lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetWorldSpaceLocation
+			LocationOut = emit_loc
+			LocalLocation
+			{
+				X = 0
+				Y = 0
+			}
+			Name = "set emitter location"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetValue
+			DataOut = emit_rot
+			ValueType = Angle
+			Value = 180d
+			Name = "set emitter rotation"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = emit_rot
+			RotationOut = emit_rot
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ParticleNormalFromRotation
+			RotationIn = emit_rot
+			NormalOut = emit_normal
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = EndPointFromCustomShape
+			LocationOut = end_loc
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Angle
+			AIn = rot
+			BIn = rot_vel
+			ResultOut = rot
+			Operator = AddDt
+			Name = "Apply rot velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.88235295
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.78431374
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.6862745
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.5882353
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.49019608
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.39215687
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 1.9607843
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.19607843
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.09803922
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Color
+			AIn = color
+			BIn = base_color
+			ResultOut = color
+			Operator = Multiply
+			Name = "Multiply base color with alpha"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 1
+			ToValue = 0
+			Name = "Scale lerp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = scale
+			BIn = base_scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "Apply base scale"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = LocalBarrier
+			LocationIn = location
+			BarrierLocationIn = emit_loc
+			BarrierNormalIn = emit_normal
+			InvertNormal = false
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = LocalBarrier
+			LocationIn = location
+			BarrierLocationIn = end_loc
+			BarrierNormalIn = emit_normal
+			InvertNormal = true
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn
+		BaseSize
+		{
+			X = 1
+			Y = 1
+		}
+		Offset
+		{
+			X = 0
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Texture
+		{
+			File = ./Data/common_effects/particles/spark.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+		TargetBlendMode
+		{
+			SourceRgbFactor = SourceAlpha
+			DestRgbFactor = One
+			RgbOperator = Add
+			SourceAlphaFactor = InverseDestAlpha
+			DestAlphaFactor = One
+			AlphaOperator = Add
+		}
+	}
+	DeleteMode = Fast
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 50
+	EmitPerOneShot
+	{
+		Min = 0
+		Max = 0
+	}
+	PreInitializers
+	[
+		{
+			Type = SetValue
+			DataOut = base_scale
+			ValueType = Float
+			Value = 1
+			Name = "Base scale"
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetValue
+			DataOut = velocity_shape
+			ValueType = Vector2
+			Value
+			{
+				X = 0.2
+				Y = 1
+			}
+			Name = "create velocity shape"
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = velocity
+			BIn = velocity_shape
+			ResultOut = velocity
+			Operator = Multiply
+			Name = "modify velocity shape"
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = base_scale
+			ValueType = Float
+			FromValue = 0.05
+			ToValue = 0.3
+			Name = "random scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = VelocityFromIntensity
+			VelocityOut = velocity
+			VelocityFactor
+			{
+				X = 1
+				Y = 0
+			}
+			IntensityExponent = 1
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = LocationFromCustomShape
+			LocationOut = location
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScalarOperator
+			AIn = base_scale
+			DataType = Vector2
+			BIn = velocity
+			ResultOut = velocity
+			Operator = InvDivide
+			Name = "apply scale to velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = loc_offset
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0
+				Y = -0.2
+			}
+			ToValue
+			{
+				X = 0
+				Y = 0.2
+			}
+			Name = "generate location offset"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = loc_offset
+			ResultOut = location
+			Operator = Add
+			Name = "Apply location offset"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rand_velocity
+			ValueType = Vector2
+			FromValue
+			{
+				X = -0.2
+				Y = 0
+			}
+			ToValue
+			{
+				X = 0.2
+				Y = 0
+			}
+			Name = "generate random velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScalarOperator
+			AIn = base_scale
+			DataType = Vector2
+			BIn = rand_velocity
+			ResultOut = rand_velocity
+			Operator = InvDivide
+			Name = "apply scale to rand velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = velocity
+			BIn = rand_velocity
+			ResultOut = velocity
+			Operator = Add
+			Name = "combine velocity and rand velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandomHsvColor
+			ColorOut = base_color
+			HueRange
+			{
+				Min = 200
+				Max = 210
+			}
+			SaturationRange
+			{
+				Min = 0.4
+				Max = 0.8
+			}
+			ValueRange
+			{
+				Min = 1
+				Max = 1
+			}
+			AlphaRange
+			{
+				Min = 1
+				Max = 1
+			}
+			Name = "random base color"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = TractorBeamGlints
+UseRealTime = false
+PenetratingBucket
+MinIntensity = -10000
+IsFancy = true
+IsFancyLight = false
+IsSimpleLight = false
+IsSimple = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 0
+UseCustomShapeForOffScreenCheck = true
+MaxEmissionZoom = 5
+MaxParticleCount = 25000
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = true
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Neutrals = true
+	TargetedNeutrals
+	Junk = true
+	TargetedJunk
+	Deconstruction
+}
+Delay = 0
+IgnoreIntensity = false

@@ -1,0 +1,695 @@
+EditorIcon
+{
+	Texture
+	{
+		File = "icon_intruder.png"
+		SampleMode = Linear
+	}
+	Size = [20, 60]
+}
+
+Components
+{
+
+	MissileStorageA_EMP : ~/MissileStorageBaseEMP
+	{
+		// Nothing different.
+	}
+
+	MissileStorageB_EMP : ~/MissileStorageBaseEMP
+	{
+		// Nothing different.
+	}
+
+	CombinedMissileStorage_EMP
+	{
+		Type = MultiResourceStorage
+		ResourceType = missile_part_emp
+		ResourceStorages = [MissileStorageA_EMP, MissileStorageB_EMP]
+		AddMode = PrioritizeLeastEmptyCapacity
+		RemoveMode = PrioritizeMostEmptyCapacity
+		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
+		//UITileRect = [.9 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
+		UITileRect = [0.0625, 1.0625, 0.875, 0.875]  // Adjusted for padding within the tile
+	}
+
+	Consumer
+	{
+		Type = ResourceConsumer
+		ResourceType = missile_part_emp
+		Storage = CombinedMissileStorage_EMP
+		DefaultPriority = &/PRIORITIES/Weapon_Supply
+		OverridePriorityKey = EMPMissilesComponents
+		OperationalToggle = PowerToggle
+		ConsumptionToggleButtonOffset = [0, -.4]
+	}
+
+	MissileStorageA
+	{
+		Type = MultiToggle
+		Toggles = [MissileStorageA_EMP]
+		Mode = Any
+	}
+
+	MissileStorageB
+	{
+		Type = MultiToggle
+		Toggles = [MissileStorageB_EMP]
+		Mode = Any
+	}
+
+	MissilesPrereq
+	{
+		Type = MultiToggle
+		Toggles = [MissileStorageA_EMP, MissileStorageB_EMP]
+		Mode = All
+	}
+
+	ReloadProgressBar
+	{
+		Type = ProgressBar
+		OperationalToggle = IsOperational
+		ShowProgressFor = CommonReloadTimerMed
+		Invert = true
+	}
+
+	WeaponArc : ~/WeaponBase
+	{
+		Location = [1, 1.5]
+		Emitter = EmitterArc
+
+		CoverageSectorArc
+		{
+			Texture = &/INDICATORS/VerticalGradient
+			VertexColor = [255, 255, 255, 51]
+			QuadCount = 64
+		}
+	}
+
+	EmitterArc : ~/EmitterBase
+	{
+		ChainedTo = WeaponArc
+		FireTrigger
+		GetTargetFrom = WeaponArc
+	}
+
+	WeaponA : ~/WeaponBase
+	{
+		Location = [0.5, 1.5]
+		ShowExplicitTarget = false
+		Emitter = EmitterA
+	}
+
+	EmitterA : ~/EmitterBase
+	{
+		ChainedTo = WeaponA
+		FireTrigger = WeaponA
+		GetTargetFrom = WeaponA
+		ResourceUsage
+		[
+			{
+				ResourceStorage = MissileStorageA_EMP
+				ResourcesUsed = 3
+			}
+			{
+				ResourceStorage = MissileStorageB_EMP
+				ResourcesUsed = 3
+			}
+		]
+	}
+
+	FirePermissionToggle
+	{
+		Type = MultiToggle
+		Toggles = [CommonReloadTimerMed, FireModeToggle]
+		Mode = All
+	}
+
+	CommonReloadResetTrigger
+	{
+		Type = MultiTrigger
+		Triggers = [WeaponA]
+	}
+
+	LaunchEffectA : ~/LaunchEffectBase
+	{
+		ChainedTo = WeaponA
+		Trigger = WeaponA
+	}
+
+	IsLaunchBayNotFullyOpen
+	{
+		Type = MultiToggle
+		Toggles = [{Toggle = IsLaunchBayFullyOpen; Invert = true}]
+		Mode = All
+	}
+	
+    LaunchBayChangingValueTween
+    {
+        Type = ValueTween
+        OnTweenDuration = .2
+        OffTweenDuration = .2
+        IsOnToggle = LauchBayShouldOpen
+    }
+    IsLaunchBayFullyOpen
+    {
+        Type = ThresholdToggle
+        ValueFrom = LaunchBayChangingValueTween
+        MinAmount = 100%
+    }
+    IsLauchBayFullyClosed
+    {
+        Type = ThresholdToggle
+        ValueFrom = LaunchBayChangingValueTween
+        MaxAmount = 0%
+    }
+    LauchBayShouldOpen
+    {
+        Type = MultiToggle
+        Toggles = [IsOperational, MissilesPrereq, FireModeToggle, WeaponA]
+        Mode = All
+    }
+
+	LaunchBaySprite
+	{
+		Type = OpenCloseSprite
+		Location = [.5, 1.5]
+		OperationalToggle = LauchBayShouldOpen
+		Layer = "SW.roof_engines"
+		OpenDamageLevels
+		[
+			{
+				AnimationFiles
+				[
+					"roof_0.png"
+					"roof_1.png"
+					"roof_2.png"
+					"roof_3.png"
+				]
+				
+				NormalsAnimationFiles
+				[
+					"roof_0_normals.png"
+					"roof_1_normals.png"
+					"roof_2_normals.png"
+					"roof_3_normals.png"
+				]
+				
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OnTweenDuration) / 4
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+			{
+				AnimationFiles
+				[
+					"roof_0_33.png"
+					"roof_1_33.png"
+					"roof_2_33.png"
+					"roof_3_33.png"
+				]
+				NormalsAnimationFiles
+				[
+					"roof_0_normals_33.png"
+					"roof_1_normals_33.png"
+					"roof_2_normals_33.png"
+					"roof_3_normals_33.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OnTweenDuration) / 4
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+			{
+				AnimationFiles
+				[
+					"roof_0_66.png"
+					"roof_1_66.png"
+					"roof_2_66.png"
+					"roof_3_66.png"
+				]
+				NormalsAnimationFiles
+				[
+					"roof_0_normals_66.png"
+					"roof_1_normals_66.png"
+					"roof_2_normals_66.png"
+					"roof_3_normals_66.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OnTweenDuration) / 4
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		]
+		ClosedDamageLevels
+		[
+			{
+				AnimationFiles
+				[
+					"roof_3.png"
+					"roof_2.png"
+					"roof_1.png"
+					"roof_0.png"
+				]
+				NormalsAnimationFiles
+				[
+					"roof_3_normals.png"
+					"roof_2_normals.png"
+					"roof_1_normals.png"
+					"roof_0_normals.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OffTweenDuration) / 4
+				AnimationStartTime = 3 //MinValue
+				ClampAnimation = true
+			}
+			{
+				AnimationFiles
+				[
+					"roof_3_33.png"
+					"roof_2_33.png"
+					"roof_1_33.png"
+					"roof_0_33.png"
+				]
+				NormalsAnimationFiles
+				[
+					"roof_3_normals_33.png"
+					"roof_2_normals_33.png"
+					"roof_1_normals_33.png"
+					"roof_0_normals_33.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OffTweenDuration) / 4
+				AnimationStartTime = 3 //MinValue
+				ClampAnimation = true
+			}
+			{
+				AnimationFiles
+				[
+					"roof_3_66.png"
+					"roof_2_66.png"
+					"roof_1_66.png"
+					"roof_0_66.png"
+				]
+				NormalsAnimationFiles
+				[
+					"roof_3_normals_66.png"
+					"roof_2_normals_66.png"
+					"roof_1_normals_66.png"
+					"roof_0_normals_66.png"
+				]
+				Size = [1, 3]
+				AnimationInterval = (&~/Components/LaunchBayChangingValueTween/OffTweenDuration) / 4
+				AnimationStartTime = 3 //MinValue
+				ClampAnimation = true
+			}
+		]
+	}
+
+		CloseDoor
+		{
+			Type = Sprite
+			Location = [.5, 1.5]
+			Layer = "roofs"
+			ResetAnimationTrigger = WeaponA
+			AtlasSprite
+			{
+				AnimationFiles
+				[
+					//"missile_4.png"
+					"missile_5.png"
+					"missile_6.png"
+					"missile_7.png"
+					"missile_8.png"
+					"missile_9.png"
+				]
+				/*NormalsAnimationFiles
+				[
+					"missile_5_normals.png"
+					"missile_6_normals.png"
+					"missile_7_normals.png"
+					"missile_8_normals.png"
+				]*/
+				Size = [1, 3]
+				AnimationInterval = 0.2
+				AnimationStartTime = MinValue
+				ClampAnimation = true
+			}
+		}
+
+	Graphics
+	{
+		Type = Graphics
+		Location = [0.5, 1.5]
+		OperationalToggle = IsOperational
+		Floor
+		{
+			Layer = "floors"
+			//Offset = [0, .5]
+			DamageLevels
+			[
+				{
+					File = "floor.png"
+					Size = [1, 3]
+				}
+				{
+					File = "floor_33.png"
+					Size = [1, 3]
+				}
+				{
+					File = "floor_66.png"
+					Size = [1, 3]
+				}
+			]
+		}
+		Walls
+		{
+			Layer = "walls"
+			//Offset = [0, .5]
+			DamageLevels
+			[
+				{
+					File = "walls.png"
+					Size = [1, 3]
+				}
+				{
+					File = "walls_33.png"
+					Size = [1, 3]
+				}
+				{
+					File = "walls_66.png"
+					Size = [1, 3]
+				}
+			]
+		}
+		/*OperationalLighting
+		{
+			Layer = "lights_add"
+			//Offset = [0, -.2]	
+			DamageLevels
+			[
+				{
+					File = "lights.png"
+					Size = [1, 3]
+				}
+			]
+		}*/	
+	}
+
+	External_Walls_Graphics
+	{
+		Type = Graphics
+		OperationalToggle = MissilesPrereq
+		Location = [0.5, 1.5]
+		Walls
+		{
+			Layer = "external_walls"
+			//Offset = [0, -0.5]
+			DamageLevels
+			[
+				{
+					File = "walls_exterior.png"
+					NormalsFile = "walls_exterior_normals.png"
+					Size = [1, 3]
+				}
+				/*{
+					File = "external_walls_33.png"
+					NormalsFile = "external_walls_normals_33.png"
+					Size = [1, 4]
+				}
+				{
+					File = "external_walls_66.png"
+					NormalsFile = "external_walls_normals_66.png"
+					Size = [1, 4]
+				}*/
+			]
+		}
+	}
+	OperationalLightingEffects
+	{
+		//Offset = [0, -.2]	
+		Type = Sprite
+		Location = [.5, 1.5]
+		Layer = "lights_add"
+		ResetAnimationTrigger = WeaponA
+		AtlasSprite
+		{
+			AnimationFiles
+			[
+				"lights_alert.png"
+				"lights2.png"
+				"lights.png"
+			]
+			/*NormalsAnimationFiles
+			[
+				"lights_alert.png"
+				"lights2.png"
+				"lights.png"
+			]*/
+			Size = [1, 3]
+			AnimationInterval = 0.5
+			AnimationStartTime = MinValue
+			ClampAnimation = true
+		}
+	}	
+	MissileLightsA
+	{
+		Type = Graphics
+		OperationalToggle = MissilesPrereq
+		Location = [.5, 1.5]//[(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)+0.5]
+		OperationalRoofLighting
+		{
+			Layer = "roof_lights_fancy"
+			DamageLevels
+			[
+				{
+					File = "../sprites/light_blob.png"
+					Size = [1, 1]
+					Z = 0.35 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
+					VertexColor = [0, 248, 248]
+				}
+			]
+		}
+	}
+	MissileLightsB : MissileLightsA
+	{
+		Type = Graphics
+		OperationalToggle = MissilesPrereq
+		Location = [.5, 2.5] //[2-(&~/Components/MissileLightsA/Location/0), (&~/Components/MissileLightsA/Location/1)]
+	}
+
+	MissileSpritesA //1
+	{
+		Type = ResourceSprites
+		Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)/*+1.0*/]
+		ResourceStorage = CombinedMissileStorage_EMP
+		Layer = "weapons"
+		HasZeroResourceSprite = true
+		ResourceLevels
+		[
+			{
+				File = "missile_0.png"
+				//NormalsFile = "intruder_normals_7.png"
+				Size = [1, 3]
+			}
+			{
+				File = "missile_1.png"
+				//NormalsFile = "intruder_normals_7.png"
+				Size = [1, 3]
+			}
+			{
+				File = "missile_2.png"
+				//NormalsFile = "intruder_normals_7.png"
+				Size = [1, 3]
+			}
+			{
+				File = "missile_3.png"
+				//NormalsFile = "intruder_normals_7.png"
+				Size = [1, 3]
+			}
+			{
+				File = "missile_4.png"
+				//NormalsFile = "intruder_normals_7.png"
+				Size = [1, 3]
+			}
+		]
+	}
+
+	DestroyedEffects_EMP
+	{
+		Type = DeathEffects
+		Location = [1, 2]
+
+		FactorHitEffectsWith = CombinedMissileStorage_EMP
+		HitEffects
+		[
+			{
+				Type = ExplosiveResourceDrain
+				ResourceType = battery
+				TotalDrain = 24000
+				Radius = 12
+				Slices = 4
+				Delay = .05
+				RadiusEffectScaleExponent = 0.5
+				Filter
+				{
+					Ships = true
+					Shields = true
+					Friendlies = true
+				}
+
+				MediaEffectsOnDrainFactor = .00025
+				MediaEffectsOnDrain
+				[
+					&<./Data/shots/missile_emp/particles/missile_emp_hit_sizzle.rules>
+					&<./Data/shots/missile_emp/particles/missile_emp_lightning.rules>
+					&<./Data/shots/missile_emp/particles/missile_emp_drain.rules>
+
+					: /BASE_SOUNDS/AudioExterior
+					{
+						Sound = "./Data/shots/disruptor_bolt/discharge.wav"
+						Volume = 1
+						SpeedVariation = .2
+					}
+				]
+			}
+		]
+
+		FactorMediaEffectsWith = CombinedMissileStorage_EMP
+		MediaEffects
+		[
+			&<./Data/shots/missile_emp/particles/missile_emp_hit_orb.rules>
+			&<./Data/shots/missile_emp/particles/missile_emp_hit_bolts.rules>
+			&<./Data/shots/missile_emp/particles/missile_emp_hit_shockwave.rules>
+		]
+	}
+
+	Indicators
+	{
+		Type = IndicatorSprites
+		Location = [0.5, 1.75]
+		//Layer = "indicators" //Removal for 0.27.0_rc2_steam 
+		Indicators
+		[
+			// Turned off.
+			{
+				Toggle = PowerToggle
+				AtlasSprite
+				{
+					File = &/INDICATORS/PowerOff
+					Size = [.75, .75]
+				}
+				HidesIndicators = [1]
+			}
+
+			// Out of missiles.
+			{
+				Toggle = CombinedMissileStorage_EMP
+				Delay = &<../missile_launcher_small.rules>/Part/Components/CommonReloadTimerShort/Duration
+				AtlasSprite
+				{
+					File = &/INDICATORS/SWNoIntruderMissiles
+					Size = [.75, .75]
+				}
+			}
+
+		]
+	}
+}
+
+MissileStorageBaseEMP
+{
+	Type = ResourceStorage
+	ResourceType = missile_part_emp
+	MaxResources = 3
+	ToggleOnResources = (&MaxResources)
+	ToggleOffResources = (&ToggleOnResources)-1
+	DelayBeforeReadyToUse = .5
+	DropResourcesWhenDestroyed = true
+	DropResourcesWhenRemoved = true
+}
+
+WeaponBase
+{
+	Type = TurretWeapon // This has an arc of 0, but we don't want to use FixedWeapon because that will only shoot at things directly in the LOS.
+	Rotation = -90d
+	OperationalToggle = IsOperational
+	AutoFireToggle = AutoFireToggle
+	FireInterval = 0 // Uses common reload timer.
+	FiringArc = 0d;
+	ValidArc = 360d;
+	FireThresholdAngle = 180d;
+	RotateSpeed = 0d
+	AllowFireWithBlockedLOS = true
+	IgnoreSourceShipLowLOSChecks = true
+	AIFirepowerRating = 1600
+	ToggleOnMode = HasTargetExceptShipRelative
+	FirePermissionToggle = FirePermissionToggle
+
+	AutoTargets
+	[
+		{
+			TargetType = ShipParts
+			Toggle = AutoTargetToggle
+			EnableInDirectControlMode = true
+		}
+	]
+}
+
+EmitterBase
+{
+	Type = BulletEmitter
+	OperationalToggle = IsOperational
+	Location = [0, 0]//[.5, 1.5]
+	Bullet = &/SW_SHOTS/Missiles/Intruder
+	TargetLeadPrediction = false
+	Recoil = 50
+	ResourceUsage
+	[
+
+		{
+			ResourceStorage = CombinedMissileStorage_EMP
+			ResourcesUsed = 6
+		}
+	]
+}
+
+LaunchEffectBase
+{
+	Type = TriggeredEffects
+
+	MediaEffects
+	[
+		&<../particles/missile_launcher_shoot.rules>
+		&<../particles/missile_launcher_shoot_flash.rules>
+
+		: /BASE_SOUNDS/AudioExterior
+		{
+			Sound = "../shoot.wav"
+			SpeedVariation = .25
+		}
+	]
+}
+
+MissileStats
+{
+	NameKey = "StatCategories/MissileIntruder"
+	Stats
+	{
+		DamagePerShot = &~/Components/Emitter/Bullet/Components/Hit/HitOperational/HitEffects/1/Damage
+		DamagePerSecond = (&DamagePerShot) * (&ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		PowerDrainPerShot = (&~/Components/Emitter/Bullet/Components/Hit/HitShield/HitEffects/0/TotalDrain) / 1000
+		PowerDrainPerSecond = (&PowerDrainPerShot) * (&ROF)
+		PowerDrain = [&../PowerDrainPerShot, &../PowerDrainPerSecond]
+		PowerDrainArea = &~/Components/Emitter/Bullet/Components/Hit/HitOperational/HitEffects/0/Radius
+		ROF = 1 / (&<../missile_launcher_small.rules>/Part/Components/CommonReloadTimerMed/Duration)
+		Range = &~/Components/Emitter/Bullet/Range
+		Arc = deg(&~/Components/Weapon/ValidArc)
+		ShotLaunchSpeed = &~/Components/Emitter/Bullet/Speed
+		Acceleration = &~/Components/Emitter/Bullet/Components/Acceleration/Acceleration
+		ShotGuidance = deg(&~/Components/Emitter/Bullet/Components/Homing/TurnVelocity)
+		ShotHP = &~/Components/Emitter/Bullet/Components/Targetable/Health
+		MissileParts = &~/Components/Emitter/ResourcesUsed
+	}
+}

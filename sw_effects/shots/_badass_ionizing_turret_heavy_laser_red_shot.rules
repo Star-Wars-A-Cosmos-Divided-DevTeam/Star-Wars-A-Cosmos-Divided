@@ -1,0 +1,261 @@
+ID = SW.ionizing_turret_heavy_laser_red_shot //TURRET WEAPONSHOT
+Range = 550
+IdealRange = [200, 550]
+IdealRadius = [5, 50]
+Speed = 70
+
+/* Notes: 
+Scales the hit effects of the ion beam weapon over its range.
+The hit effects are scaled linearly from 1 at the weapon's minimum range to 1 - (range / 1000) at the weapon's maximum range.
+At range 1, the damage would be 1
+At max range (300), the damage would be 1 - (300 / 1000) = 0.7 
+*/
+
+/* ExampleA: */ 
+//HitEffectsScaleOverRange = [1, 0.1]
+/* ExampleB: */
+//HitEffectsScaleOverRange = [1, 1 - (range / 1000)]
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 6000
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+		Penetration = 200.0
+		PenetrationSpeed = 15
+		//PenetratesShields = false
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		FriendlyShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 10000 
+				}
+				{
+					Type = Impulse
+					Impulse = 300
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/SWConcussionLaserHitRed
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+	
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				/*{
+					Type = ExplosiveDamage
+					TotalDamage = 25000
+					Radius = 9
+					ExpandDuration = 0.2
+					ExpandStartRadius = 1
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 10000
+					// Filter
+					// {
+					// 	Friendlies = true
+					// }
+				}*/
+				{
+					Type = Damage
+					Damage = 10000
+				}
+				{
+					Type = Impulse
+					Impulse = 300
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/SWConcussionLaserHitRed
+				&/SW_PARTICLES/SWFlakLargeFlash
+				// &/SW_PARTICLES/SWFlakLargeSmoke
+	
+				&/SW_SOUNDS/SWConcussionLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .2
+					Duration = .75
+				}
+			]
+		}
+		HitStructural = &HitOperational
+		PenetratingOperational
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 2000
+				}
+				{
+					Type = Fire
+					FireChance = .2
+				}
+				{
+					Type = Impulse
+					Impulse = 100
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/SWConcussionLaserHitRed
+				&/SW_PARTICLES/SWFlakLargeFlash
+			]
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "IonizingShotRed.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [2.5, 1]//2.1, 1.05
+				//Size = [3, 1.5]//2.1, 1.05
+			}
+			FrameCount = 2
+			FrameSize = [160, 64]
+			FramesPerRow = 1
+			FramesPerSecond = 24
+		}
+		//NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
+	}
+/*
+	Sprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Sprite
+		{
+			Texture
+			{
+				File = "shot_red.png"
+				SampleMode = Linear
+				MipLevels = max
+			}
+			Size = [1.2, 1.2]
+		}
+	}
+*/
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Offset = [-1.5, 0]
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [18, 9]
+			VertexColor = [255, 0, 0] // VertexColor = [255, 100, 0]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.125
+		}
+	}
+	MediaEffects3
+	{
+		Type = MediaEffects
+		Offset = [1.4, 0]
+		MediaEffects
+		[
+			&/SW_PARTICLES/SWNanoSparklesTrailRed
+			//&/SW_PARTICLES/SWConcussionLaserTrailRed			// &/SW_PARTICLES/Shot/Ion/Trail/Med/Cyan
+		]
+	}	
+	/*
+		MediaEffects
+		{
+			Type = MediaEffects
+			// Offset = [10.5, 0]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Glow/Med/Red
+				&/SW_PARTICLES/SWConcussionLaserTrail
+			]
+		}
+	*/
+
+}
+

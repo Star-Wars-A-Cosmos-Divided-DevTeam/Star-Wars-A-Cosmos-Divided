@@ -1,0 +1,1139 @@
+/*Simplified Equation for math dumb-dumbs like me for calculating Width Height based on Original Sprite vs Target Size in game
+
+Size Calculation = pixel𝑊/64 pixel𝐻/64 = Size W, Size H
+Example: 512/64, 707/64 = 6, 9
+8, 11.05
+
+Simplified Equation
+For any given original size (in units 64 = 1 unit) ["𝑊orig","𝐻orig"] and target width "𝑊target":
+
+𝐻target = "𝐻orig" * ("𝑊target" / "𝑊orig")
+​
+Explanation
+Original Width (𝑊orig): The width of the sprite in its original form.
+Original Height (𝐻orig): The height of the sprite in its original form.
+Target Width (𝑊target: The width you WANT the sprite to be.
+Target Height (𝐻target): The height the sprite SHOULD be, calculated to maintain the aspect ratio.
+
+Example: I have a sprite that is originally [1.64, 2.98] (7*64px, 17.5*64px = Width x Height resolution).  I want it to be width of 3 units wide.
+𝑊o = Original Width (𝑊orig): 8
+𝐻o = Original Height (𝐻orig): 11
+𝑊t = Target Width (𝑊target: 3
+T = Target Height (𝐻target): "T" (Target)
+
+𝐻t = 𝐻o * (𝑊t / 𝑊o)
+T = 11 * ( 3 / 8 ) = 4.125 New Size = [3, 4.125]
+
+*/
+
+/*Simplified Equation for calculating the vertical Offset to align the bottom of a shape with the bottom of a space on a grid
+
+
+Simplified Equation
+For any given space height ("Hs"), vertical center of the space ("Yc"), and shape height ("Ht"):
+
+Δy = Yc + (Hs / 2) - Ht
+
+Explanation
+Space Height (Hs): The height of the space in units.
+Center of Space (Yc): The vertical coordinate of the center of the space.
+Shape Height (Ht): The height of the shape in units.
+Vertical Offset (Δy): The vertical coordinate where the top of the shape should be placed to align its bottom with the bottom of the space.
+
+Example: I have a space that is 2 units tall and its center is at y = 1. I want to align a shape that is 3.8125 units tall.
+Hs = Space Height: 2
+Yc = Center of Space: 1
+Ht = Shape Height: 1.817
+Δy = Vertical Offset: Δy
+Δy = Yc + (Hs / 2) - (Ht / 2)
+Δy = 1 + (2 / 2) - (1.817 / 2) = 1 - .9 = .1 
+Offset = [0, .1]
+
+So, the top of the shape should be placed at y = -2 to align its bottom with the bottom of the space.
+
+
+*/
+
+
+        RoofExteriorOptionToggle0
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 0
+        }
+        RoofExteriorOptionComponents0
+        {     
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle0
+            Components
+            {
+                RoofExteriorOptionGraphics0
+                {
+                    Type = Graphics
+                    Location = [1.5, 1]
+			        //Floor
+			        //{
+			        //	Layer = "floors"
+			        //	DamageLevels
+			        //	[
+			        //		{
+			        //			File = "full_floor.png"
+			        //			Size = [3, 2]
+			        //		}
+			        //		{
+			        //			File = "full_floor_33.png"
+			        //			Size = [3, 2]
+			        //		}
+			        //		{
+			        //			File = "full_floor_66.png"
+			        //			Size = [3, 2]
+			        //		}
+			        //	]
+			        //}
+			        Roof
+			        {
+			        	Layer = "roofs"
+                        //Offset = [0, .5] // Offset X = 0 (no change) Offset Y = remainder of loc to end of part + half of roof cover Size height (Y) (e.g., Location of mid part = .5, .5, Roof Size = [1, 7] then offset for Y is .5 + 3.5 = 4)
+			        	DamageLevels
+			        	[
+			        		{
+			        			File = "full_roof.png"
+			        			NormalsFile = "full_roof_normals.png"
+			        			Size = [3, 2]
+			        		}
+			        		{
+			        			File = "full_roof_33.png"
+			        			NormalsFile = "full_roof_33_normals.png"
+			        			Size = [3, 2]
+			        		}
+			        		{
+			        			File = "full_roof_66.png"
+			        			NormalsFile = "full_roof_66_normals.png"
+			        			Size = [3, 2]
+			        		}
+			        	]
+			        }
+			        Walls
+			        {
+			        	Layer = "walls"
+			        	DamageLevels
+			        	[
+			        		{
+			        			File = "full_walls.png"
+			        			Size = [3, 2]
+			        		}
+			        	    {
+			        			File = "full_walls_33.png"
+			        			Size = [3, 2]
+			        		}
+			        	    {
+			        			File = "full_walls_66.png"
+			        			Size = [3, 2]
+			        		}
+			        	]
+			        }
+                }
+            }            
+        }
+
+        RoofExteriorOptionToggle1
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 1
+        }
+        RoofExteriorOptionComponents1
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle1
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics1
+                {
+                    Type = Graphics
+                    Location = [1.5, 1]
+			        //Floor
+			        //{
+			        //	Layer = "floors"
+			        //	DamageLevels
+			        //	[
+			        //		{
+			        //			File = "floor.png"
+			        //			Size = [3, 2]
+			        //		}
+			        //		{
+			        //			File = "floor_33.png"
+			        //			Size = [3, 2]
+			        //		}
+			        //		{
+			        //			File = "floor_66.png"
+			        //			Size = [3, 2]
+			        //		}
+			        //	]
+			        //}
+                    //Roof
+                    //{
+			    	//    Layer = "roofs"
+			    	//    DamageLevels
+			    	//    [
+			    	//    	{
+			    	//    		File = "roof.png"
+			    	//    		NormalsFile = "roof_normals.png"
+			    	//    		Size = [3, 2]
+			    	//    	}
+			    	//    	{
+			    	//    		File = "roof_33.png"
+			    	//    		NormalsFile = "roof_normals_33.png"
+			    	//    		Size = [3, 2]
+			    	//    	}
+			    	//    	{
+			    	//    		File = "roof_66.png"
+			    	//    		NormalsFile = "roof_normals_66.png"
+			    	//    		Size = [3, 2]
+			    	//    	}
+			    	//    ]
+                    //}
+			        Walls
+			        {
+			        	Layer = "walls"
+			        	DamageLevels
+			        	[
+			        		{
+			        			File = "walls.png"
+			        			Size = [3, 2]
+			        		}
+			        	    {
+			        			File = "walls_33.png"
+			        			Size = [3, 2]
+			        		}
+			        	    {
+			        			File = "walls_66.png"
+			        			Size = [3, 2]
+			        		}
+			        	]
+			        }
+                }
+            }
+        }
+/*
+        RoofExteriorOptionToggle2
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 2
+        }
+        RoofExteriorOptionComponents2
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle2
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics2
+                {
+                    Type = Graphics
+                    Location = [1.5, 1]
+                    Roof
+                    {
+                        Layer = "SW.roof_engines"
+                        //Offset = [0, .1] 
+                        DamageLevels
+                        [
+                            {
+                                File = "roof_C.png"
+                                NormalsFile =  "roof_C_normals.png"
+                                Size = [3, 2]
+                                //UVRotation = 2
+                                //MirrorU = true
+                            }
+                        ]
+                    }
+                }
+			    RoofGraphics
+			    {
+                    Type = Graphics
+                    Location = [1.5, 1]
+                    Roof
+                    {
+			    	    Layer = "roofs"
+			    	    DamageLevels
+			    	    [
+			    	    	{
+			    	    		File = "roof.png"
+			    	    		NormalsFile = "roof_normals.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_33.png"
+			    	    		NormalsFile = "roof_normals_33.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_66.png"
+			    	    		NormalsFile = "roof_normals_66.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    ]
+                    }
+			    }  
+            }
+        }
+//RoofExteriorOptionToggle3
+        RoofExteriorOptionToggle3
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 3
+        }
+        RoofExteriorOptionComponents3
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle3
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics3
+                {
+                    Type = Graphics
+                    Location = [1.5, 1]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        //Offset = [0, .1] 
+                        DamageLevels
+                        [
+                            {
+                                File = "roof_D.png"
+                                NormalsFile =  "roof_D_normals.png"
+                                Size = [3, 2]
+                                //UVRotation = 2
+                                //MirrorU = true
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+
+
+
+//RoofExteriorOptionToggle4
+        RoofExteriorOptionToggle4
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 4
+        }
+        RoofExteriorOptionComponents4
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle4
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics4
+                {
+                    Type = Graphics
+                    Location = [.5, 1]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        //Offset = [0, .1] 
+                        DamageLevels
+                        [
+                            {
+                                File = "roof_F2.png"
+                                NormalsFile =  "roof_F_normals.png"
+                                Size = [1, 2]
+                                //UVRotation = 2
+                                //MirrorU = true
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+
+//RoofExteriorOptionToggle5
+        RoofExteriorOptionToggle5
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 5
+        }
+        RoofExteriorOptionComponents5
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle5
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics5
+                {
+                    Type = Graphics
+                    Location = [.5, 1]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        //Offset = [0, .1] 
+                        DamageLevels
+                        [
+                            {
+                                File = "roof_E.png"
+                                NormalsFile =  "roof_E_normals.png"
+                                Size = [1, 2]
+                                //UVRotation = 2
+                                //MirrorU = true
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+
+//RoofExteriorOptionToggle6
+        RoofExteriorOptionToggle6
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 6
+        }
+        RoofExteriorOptionComponents6
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle6
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics6
+                {
+                    Type = Graphics
+                    Location = [.5, 1]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        //Offset = [0, .1] 
+                        DamageLevels
+                        [
+                            {
+                                File = "roof_E2.png"
+                                NormalsFile =  "roof_E_normals.png"
+                                Size = [1, 2]
+                                //UVRotation = 2
+                                //MirrorU = true
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+
+//RoofExteriorOptionToggle7
+        RoofExteriorOptionToggle7
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 7
+        }
+        RoofExteriorOptionComponents7
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle7
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics7
+                {
+                    Type = Graphics
+                    Location = [.5, 1]
+                    Roof
+                    {
+                        Layer = "SW.roof_engines"
+                        //Offset = [0, .1] 
+                        DamageLevels
+                        [
+                            {
+                                File = "roof_H.png"
+                                NormalsFile =  "roof_H_normals.png"
+                                Size = [1, 2]
+                                //UVRotation = 2
+                                //MirrorU = true
+                            }
+                        ]
+                    }
+                }
+			    RoofGraphics
+			    {
+                    Type = Graphics
+                    Location = [1.5, 1]
+                    Roof
+                    {
+			    	    Layer = "roofs"
+			    	    DamageLevels
+			    	    [
+			    	    	{
+			    	    		File = "roof.png"
+			    	    		NormalsFile = "roof_normals.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_33.png"
+			    	    		NormalsFile = "roof_normals_33.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_66.png"
+			    	    		NormalsFile = "roof_normals_66.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    ]
+                    }
+			    }   
+            }
+        }
+//RoofExteriorOptionToggle8
+        RoofExteriorOptionToggle8
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 8
+        }
+        RoofExteriorOptionComponents8
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle8
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics8
+                {
+                    Type = Graphics
+                    Location = [.5, 1]
+                    Roof
+                    {
+                        Layer = "SW.roof_engines"
+                        //Offset = [0, .1] 
+                        DamageLevels
+                        [
+                            {
+                                File = "roof_H2.png"
+                                NormalsFile =  "roof_H_normals.png"
+                                Size = [1, 2]
+                                //UVRotation = 2
+                                //MirrorU = true
+                            }
+                        ]
+                    }
+                }
+			    RoofGraphics
+			    {
+                    Type = Graphics
+                    Location = [1.5, 1]
+                    Roof
+                    {
+			    	    Layer = "roofs"
+			    	    DamageLevels
+			    	    [
+			    	    	{
+			    	    		File = "roof.png"
+			    	    		NormalsFile = "roof_normals.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_33.png"
+			    	    		NormalsFile = "roof_normals_33.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_66.png"
+			    	    		NormalsFile = "roof_normals_66.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    ]
+                    }
+			    }   
+            }
+        }
+
+//RoofExteriorOptionToggle9
+        RoofExteriorOptionToggle9
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 9
+        }
+        RoofExteriorOptionComponents9
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle9
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics9
+                {
+                    Type = Graphics
+                    Location = [.5, 1]
+                    Roof
+                    {
+                        Layer = "SW.roof_engines"
+                        //Offset = [0, .1] 
+                        DamageLevels
+                        [
+                            {
+                                File = "roof_I2.png"
+                                NormalsFile =  "roof_I_normals.png"
+                                Size = [1, 2]
+                                //UVRotation = 2
+                                //MirrorU = true
+                            }
+                        ]
+                    }
+                }
+			    RoofGraphics
+			    {
+                    Type = Graphics
+                    Location = [1.5, 1]
+                    Roof
+                    {
+			    	    Layer = "roofs"
+			    	    DamageLevels
+			    	    [
+			    	    	{
+			    	    		File = "roof.png"
+			    	    		NormalsFile = "roof_normals.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_33.png"
+			    	    		NormalsFile = "roof_normals_33.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_66.png"
+			    	    		NormalsFile = "roof_normals_66.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    ]
+                    }
+			    }   
+            }
+        }
+
+//RoofExteriorOptionToggle10
+        RoofExteriorOptionToggle10
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 10
+        }
+        RoofExteriorOptionComponents10
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle10
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics10
+                {
+                    Type = Graphics
+                    Location = [.5, 1]
+                    Roof
+                    {
+                        Layer = "SW.roof_engines"
+                        //Offset = [0, -.5] 
+                        DamageLevels
+                        [
+                            {
+                                File = "roof_J.png"
+                                NormalsFile =  "roof_J_normals.png"
+                                Size = [1, 2]
+                                //UVRotation = 2
+                                //MirrorU = true
+                            }
+                        ]
+                    }
+                }
+			    RoofGraphics
+			    {
+                    Type = Graphics
+                    Location = [1.5, 1]
+                    Roof
+                    {
+			    	    Layer = "roofs"
+			    	    DamageLevels
+			    	    [
+			    	    	{
+			    	    		File = "roof.png"
+			    	    		NormalsFile = "roof_normals.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_33.png"
+			    	    		NormalsFile = "roof_normals_33.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_66.png"
+			    	    		NormalsFile = "roof_normals_66.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    ]
+                    }
+			    }   
+            }
+        }
+
+//RoofExteriorOptionToggle11
+        RoofExteriorOptionToggle11
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 11
+        }
+        RoofExteriorOptionComponents11
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle11
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics11
+                {
+                    Type = Graphics
+                    Location = [.5, 1]
+                    Roof
+                    {
+                        Layer = "SW.roof_engines"
+                        Offset = [0, .5] 
+                        DamageLevels
+                        [
+                            {
+                                File = "roof_A.png"
+                                NormalsFile =  "roof_A_normals.png"
+                                Size = [1, 3]
+                                //UVRotation = 2
+                                //MirrorU = true
+                            }
+                        ]
+                    }
+                }
+			    RoofGraphics
+			    {
+                    Type = Graphics
+                    Location = [1.5, 1]
+                    Roof
+                    {
+			    	    Layer = "roofs"
+			    	    DamageLevels
+			    	    [
+			    	    	{
+			    	    		File = "roof.png"
+			    	    		NormalsFile = "roof_normals.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_33.png"
+			    	    		NormalsFile = "roof_normals_33.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    	{
+			    	    		File = "roof_66.png"
+			    	    		NormalsFile = "roof_normals_66.png"
+			    	    		Size = [3, 2]
+			    	    	}
+			    	    ]
+                    }
+			    }   
+            }
+        }
+
+        RoofExteriorOptionToggle9
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 9
+        }
+        RoofExteriorOptionComponents9
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle9
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics9
+                {
+                    Type = Graphics
+                    Location = [.5, .5]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        Offset = [0, 2]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_slope5x1.png"
+                                NormalsFile =  "../Ion_Common/roof_cover_slope5x1_normals.png"
+                                Size = [20, 4]
+                                UVRotation = 2
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        RoofExteriorOptionToggle10
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 10
+        }
+        RoofExteriorOptionComponents10
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle10
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics10
+                {
+                    Type = Graphics
+                    Location = [.5, .5]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        Offset = [0, 2]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_slope5x1.png"
+                                NormalsFile =  "../Ion_Common/roof_cover_slope5x1_normals.png"
+                                Size = [20, 4]
+                                UVRotation = 2
+                                MirrorU = true
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        RoofExteriorOptionToggle11
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 11
+        }
+        RoofExteriorOptionComponents11
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle11
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics11
+                {
+                    Type = Graphics
+                    Location = [.5, .5]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        Offset = [0, 1.6666]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_slope6x1.png"
+                                NormalsFile =  "../Ion_Common/roof_cover_slope6x1_normals.png"
+                                Size = [20, 3.33333]
+                                UVRotation = 2
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        RoofExteriorOptionToggle12
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 12
+        }
+        RoofExteriorOptionComponents12
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle12
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics12
+                {
+                    Type = Graphics
+                    Location = [.5, .5]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        Offset = [0, 1.66666]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_slope6x1.png"
+                                NormalsFile =  "../Ion_Common/roof_cover_slope6x1_normals.png"
+                                Size = [20, 3.33333]
+                                UVRotation = 2
+                                MirrorU = true
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        RoofExteriorOptionToggle13
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 13
+        }
+        RoofExteriorOptionComponents13
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle13
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics13
+                {
+                    Type = Graphics
+                    Location = [.5, .5]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        Offset = [0, 1.75]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_[1,1].png"
+                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
+                                Size = [20, 3.5]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        RoofExteriorOptionToggle14
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 14
+        }
+        RoofExteriorOptionComponents14
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle14
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics14
+                {
+                    Type = Graphics
+                    Location = [.5, .5]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        Offset = [0, 3.5]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_[1,1].png"
+                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
+                                Size = [20, 7]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        RoofExteriorOptionToggle15
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 15
+        }
+        RoofExteriorOptionComponents15
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle15
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics15
+                {
+                    Type = Graphics
+                    Location = [.5, .5]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        Offset = [0, 12.5]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_[1,1].png"
+                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
+                                Size = [20, 25]
+                            }
+                        ]
+                    }
+                    Floor
+                    {
+                        Layer = "SW.structure_engines"
+                        Offset = [0, 12.5]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_[1,1]02.png"
+                                NormalsFile = "../Ion_Common/roof_cover_[1,1]02_normals.png"
+                                Size = [20, 25]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        RoofExteriorOptionToggle16
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 16
+        }
+        RoofExteriorOptionComponents16
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle16
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics16
+                {
+                    Type = Graphics
+                    Location = [.5, .5]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        Offset = [0, 16.25] //480gap
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_[1,1].png"
+                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
+                                Size = [20, 17.5]
+                            }
+                        ]
+                    }
+                    Floor
+                    {
+                        Layer = "SW.structure_engines"
+                        Offset = [0, 12.5]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_[1,1]02.png"
+                                NormalsFile = "../Ion_Common/roof_cover_[1,1]02_normals.png"
+                                Size = [20, 25]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        RoofExteriorOptionToggle17
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 17
+        }
+        RoofExteriorOptionComponents17
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle17
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics17
+                {
+                    Type = Graphics
+                    Location = [.5, .5]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        Offset = [0, 15.625] //400gap
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_[1,1].png"
+                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
+                                Size = [20, 18.75]
+                            }
+                        ]
+                    }
+                    Floor
+                    {
+                        Layer = "SW.structure_engines"
+                        Offset = [0, 12.5]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_[1,1]02.png"
+                                NormalsFile = "../Ion_Common/roof_cover_[1,1]02_normals.png"
+                                Size = [20, 25]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+        RoofExteriorOptionToggle18
+        {
+            Type = ModeToggle
+            Mode = RoofExteriorOptionToggle
+            OnMode = 18
+        }
+        RoofExteriorOptionComponents18
+        {
+            Type = ToggledComponents
+            Toggle = RoofExteriorOptionToggle18
+            //Invert = true
+            Components
+            {
+                RoofExteriorOptionGraphics18
+                {
+                    Type = Graphics
+                    Location = [.5, .5]
+                    Roof
+                    {
+                        Layer = "roofs"
+                        Offset = [0, 14.734375] //286gap
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_[1,1].png"
+                                NormalsFile = "../Ion_Common/roof_cover_[1,1]_normals.png"
+                                Size = [20, 20.53125]
+                            }
+                        ]
+                    }
+                    Floor
+                    {
+                        Layer = "SW.structure_engines"
+                        Offset = [0, 12.5]
+                        DamageLevels
+                        [
+                            {
+                                File = "../Ion_Common/roof_cover_[1,1]02.png"
+                                NormalsFile = "../Ion_Common/roof_cover_[1,1]02_normals.png"
+                                Size = [20, 25]
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+*/

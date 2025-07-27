@@ -1,0 +1,349 @@
+ID = SW.proton_rocket
+OtherIDs = ["proton_rocket"]
+
+Range = 150
+IdealRange = 150
+Speed = 60
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Density = 0.1
+		Radius = 0.1
+		LinearDamping = .1
+	}
+
+	DeathByDistanceTraveledTargeted
+	{
+		Type = DeathByDistanceTraveled
+		Distance = (&~/Range) * 2
+	}
+
+	Homing
+	{
+		Type = TargetHoming
+		TurnVelocity = 60d 
+		Delay = .1
+		//AvoidanceRaycastDistance = 10
+		VelocityCompensation = 80%
+		AvoidsFriendlies = true
+		AvoidsJunk = true
+	}
+
+/*
+	Retarget
+	{
+		Type = SameShipRetarget
+	}
+*/
+
+	Acceleration
+	{
+		Type = Acceleration
+		Acceleration = 100
+	}
+
+/*
+	NegativeAcceleration
+	{
+		Type = Acceleration
+		Acceleration = [-65, 0]
+		AccelerationOverTime = [0, .75]
+		Direction = FrameOfReferenceVelocity
+	}
+*/
+	DeathByLifetime
+	{
+		Type = DeathByLifetime
+		Lifetime = 6
+		HasTarget = false
+	}
+	
+	Targetable
+	{
+		Type = Targetable
+		Health = 7200
+		TargetCategory = "missile"
+
+		// No AOE damage when shot down.
+		OnDeath = &../Hit/HitFriendly
+	}
+
+
+
+	Hit
+	{
+		Type = PenetratingHit
+		//SourcePartCollisionDelay = 1.5 / (&/Simulation/PhysicsUpdatesPerSecond)
+		Penetration = 18.0
+		PenetrationSpeed = 40
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		FriendlyShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
+		HitShield 
+		{
+			//ReduceEffectsByPenetration = true
+			//Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 80000
+					Radius = 10
+					ExpandDuration = 1
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = true 
+						Friendlies = false 
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 40000
+					Radius = 15
+					ExpandDuration = .8
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 5
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = false
+					}
+				}
+			]
+
+			MediaEffectsScale = 1.5 // 0.3
+			MediaEffects
+			[
+				//&/SW_PARTICLES/SWIonLargeHitPurple //&<./Data/shots/missile_he/particles/missile_he_hit.rules>
+				&/SW_PARTICLES/SWIonExplosionHit //&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				&/SW_PARTICLES/SWIonExplosionShockwave //&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
+				&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
+
+				&/SW_SOUNDS/SW_Proton_Missile_Hit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .05
+					Duration = .5
+				}
+			]
+		}
+		HitOperational
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 120000
+					Radius = 10
+					ExpandDuration = 1
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 10
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = false 
+						Friendlies = false 
+					}
+				}
+				{
+					Type = ExplosiveDamage
+					TotalDamage = 80000
+					Radius = 15
+					ExpandDuration = .8
+					ExpandStartRadius = 2
+					ExpandLoss = 100%
+					ImpulsePerNDamage = 5
+					NDamage = 1000
+					Filter
+					{
+						OperationalHealth = false
+						StructuralHealth = true
+						Friendlies = false
+					}
+				}
+			]
+
+			MediaEffectsScale = 1.5 // 0.3
+			MediaEffects
+			[
+				&/SW_PARTICLES/SWIonLargeHitPurple //&<./Data/shots/missile_he/particles/missile_he_hit.rules>
+				&/SW_PARTICLES/SWIonExplosionHit //&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				&/SW_PARTICLES/SWIonExplosionShockwave //&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
+				&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
+
+				&/SW_SOUNDS/SW_Proton_Missile_Hit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .05
+					Duration = .5
+				}
+			]
+		}
+		HitStructural = &HitOperational
+
+		HitFriendly
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				//&/SW_PARTICLES/SWIonExplosionShockwave//&/SW_PARTICLES/SWIonExplosionHit //&<./Data/shots/missile_emp/particles/missile_emp_hit_bolts.rules>
+				&/SW_PARTICLES/SWIonExplosionShockwave //&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
+				//&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/missile_emp/missile_emp_hit.wav"
+					Volume = 1
+					SpeedVariation = .2
+				}
+			]
+		}
+
+		PenetratingOperational
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = 30000
+				}
+				{
+					Type = Fire
+					FireChance = .4
+				}
+				{
+					Type = Impulse
+					Impulse = 300
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_flash.rules>
+				&/SW_PARTICLES/SWIonExplosionShockwave //&<./Data/shots/missile_he/particles/missile_he_shockwave.rules>
+				//&/SW_PARTICLES/SWIonExplosionDischarge//&<./Data/shots/missile_he/particles/missile_he_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "./Data/shots/missile_emp/missile_emp_hit.wav"
+					Volume = 1
+					SpeedVariation = .2
+				}
+
+			]
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		PenetratingShield
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational 
+		{
+			// No effect.
+		}
+		FinishedPenetratingStructural
+		{
+			// No effect.
+		}
+		FinishPenetratingShield
+		{
+			// No effect.
+		}
+	}
+
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "missile.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [1.5, 1.5]
+				TargetBlendMode
+				{
+					SourceRgbFactor = SourceAlpha
+					DestRgbFactor = One
+					RgbOperator = Add
+					SourceAlphaFactor = Zero
+					DestAlphaFactor = One
+					AlphaOperator = Add
+				}
+			}
+			FrameCount = 16
+			FrameSize = [128, 128]
+			FramesPerRow = 4
+			FramesPerSecond = 60
+		}
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [5, 5]
+			VertexColor = [240, 160, 240]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		MediaEffects
+		[
+			&/SW_PARTICLES/ProtonThrusterTrail
+			&/SW_PARTICLES/ProtonTrail
+			&/SW_PARTICLES/ProtonThrusterGlow
+		]
+	}
+}
