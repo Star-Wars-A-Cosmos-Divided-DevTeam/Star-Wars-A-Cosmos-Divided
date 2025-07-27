@@ -1,15 +1,17 @@
-OVERCLOCK // : &<./Data/ships/terran/reactor_small/reactor_small.rules>/OVERCLOCK
-{
-	POWER_GENERATION_FACTOR = 300%
-	EXTRA_CAPACITY_FACTOR = 200%
-	HEAT_PER_SECOND = 800
+CLASSIFICATION = Tiny
+SCALE = (1/4)
 
-	BATTERY_PER_SEC = (&~/Part/Components/BatteryProducer/ToQuantity/BaseValue) * (&POWER_GENERATION_FACTOR) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
-	HEAT_PER_BATTERY = (&HEAT_PER_SECOND) / (&BATTERY_PER_SEC)
+OVERCLOCK : &<./Data/ships/terran/reactor_small/reactor_small.rules>/OVERCLOCK
+{
+	POWER_GENERATION_FACTOR = ceil((&^/0/POWER_GENERATION_FACTOR)*2/3)
+	EXTRA_CAPACITY_FACTOR = ceil((&^/0/EXTRA_CAPACITY_FACTOR)/2)
+	HEAT_PER_SECOND = ceil((&^/0/HEAT_PER_SECOND)*((1/2)*(2/3)/2))
+
+	// BATTERY_PER_SEC = (&~/Part/Components/BatteryProducer/ToQuantity/BaseValue) * (&POWER_GENERATION_FACTOR) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
+	// HEAT_PER_BATTERY = (&HEAT_PER_SECOND) / (&BATTERY_PER_SEC)
 }
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
-
 
 Part : &<../base_part_terran_battery.rules>/Part
 {
@@ -23,8 +25,8 @@ Part : &<../base_part_terran_battery.rules>/Part
 	DescriptionKey = "Parts/SW_TinyReactorDesc"
 
 	//Groups&Categories
-	EditorGroups = /*: ^/0/EditorGroups*/ [Power, SWTechI]
-	TypeCategories = /*: ^/0/TypeCategories*/ [reactor, provides_power, SW_Reactor_Tiny, SW_Tech_I]
+	EditorGroups : ^/0/EditorGroups [SWTechI]
+	TypeCategories : ^/0/TypeCategories [reactor, provides_power, SW_Reactor_Tiny, SW_Tech_I]
 	//RequiresCategories = []
 
 	//Resoures&Size&Health
@@ -59,7 +61,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 	{
 		Texture
 		{
-			File = "../reactor_small/icon.png"
+			File = "icon.png" //Rojamiiii ei ei eiiiii
 			SampleMode = Linear
 			//MipLevels = max
 		}
@@ -69,10 +71,10 @@ Part : &<../base_part_terran_battery.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational // : ^/0/IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [NonJunkToggle, ScorchedToggle, &~/Part/^/0/OVERCLOCK_OPERATIONAL]
+			Toggles = [ NonJunkToggle ]
 			Mode = All
 		}
 
@@ -80,14 +82,6 @@ Part : &<../base_part_terran_battery.rules>/Part
 		{
 			Type = JunkToggle
 			OnWhenJunk = false
-		}
-
-		ScorchedToggle
-		{
-			Type = StatusToggle
-			StatusType = cosmoteer.scorched
-			MinStatusValue = 1
-			Invert = true
 		}
 
 		IsNonOverclocked
@@ -224,8 +218,28 @@ Part : &<../base_part_terran_battery.rules>/Part
 		Graphics
 		{
 			Type = Graphics
+			OperationalToggle = IsOperational
 			Location = [0.5, 0.5]
 			Floor
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "../reactor_small/reactor.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../reactor_small/reactor_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "../reactor_small/reactor_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+			OperationalDoodad
 			{
 				Layer = "floors"
 				DamageLevels
@@ -274,80 +288,6 @@ Part : &<../base_part_terran_battery.rules>/Part
 						]
 						Size = [1, 1]
 						AnimationInterval = 0.095*(&~/Scale)
-					}
-				]
-			}
-			OperationalDoodad
-			{
-				Layer = "doodads_high"
-				DamageLevels
-				[
-					{
-						File = "../reactor_small/reactor.png"
-						Size = [1, 1]
-					}
-					{
-						File = "../reactor_small/reactor_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "../reactor_small/reactor_66.png"
-						Size = [1, 1]
-					}
-				]
-			}
-			OperationalLighting
-			{
-				Layer = "lights_add"
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"../reactor_small/lights1.png"
-							"../reactor_small/lights2.png"
-							"../reactor_small/lights3.png"
-							"../reactor_small/lights4.png"
-							"../reactor_small/lights5.png"
-							"../reactor_small/lights6.png"
-							"../reactor_small/lights7.png"
-							"../reactor_small/lights8.png"
-						]
-						Size = [1, 1]
-						AnimationInterval = 0.075*(&~/Scale)
-						VertexColor = [255*0.5, 255*0.5, 255*0.5]
-					}
-					{
-						AnimationFiles
-						[
-							"../reactor_small/lights1.png"
-							"../reactor_small/lights2.png"
-							"../reactor_small/lights3.png"
-							"../reactor_small/lights4.png"
-							"../reactor_small/lights5.png"
-							"../reactor_small/lights6.png"
-							"../reactor_small/lights7.png"
-							"../reactor_small/lights8.png"
-						]
-						Size = [1, 1]
-						AnimationInterval = 0.075/1.75*(&~/Scale)
-						VertexColor = [255*0.5, 255*0.5, 255*0.5]
-					}
-					{
-						AnimationFiles
-						[
-							"../reactor_small/lights1.png"
-							"../reactor_small/lights2.png"
-							"../reactor_small/lights3.png"
-							"../reactor_small/lights4.png"
-							"../reactor_small/lights5.png"
-							"../reactor_small/lights6.png"
-							"../reactor_small/lights7.png"
-							"../reactor_small/lights8.png"
-						]
-						Size = [1, 1]
-						AnimationInterval = 0.075/2.5*(&~/Scale)
-						VertexColor = [255*0.5, 255*0.5, 255*0.5]
 					}
 				]
 			}
@@ -410,19 +350,111 @@ Part : &<../base_part_terran_battery.rules>/Part
 						Size = [1, 1]
 					}
 				]
-
+			}
+/*			OperationalRoofDoodad //No Roof Lighting Wanted.
+			{
+				Layer = "roof_doodads"
+				DamageLevels
+				[
+					{
+						File = "roof_glows.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_glows_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "roof_glows_66.png"
+						Size = [2, 2]
+					}
+				]
 			}
 
+			OperationalRoofLighting
+			{
+				Layer = "roof_lights_fancy"
+				DamageLevels
+				[
+					{
+						File = "./Data/ships/common/light_blob.png"
+						Size = [6, 6]
+						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
+						VertexColor = [180*1.0,255*1.0, 77*1.0]
+					}
+				]
+			}*/
 		}
+
 		ReactorLights_NonOverclocked_Components
 		{
 			Type = ToggledComponents
 			Toggle = IsNonOverclocked
 			Components
 			{
+				ReactorLights_NonOverclocked_Graphics
+				{
+					Type = Graphics
+					OperationalToggle = IsOperational
+					Location = [0.5, 0.5]
+					OperationalLighting
+					{
+						Layer = "lights_add"
+						DamageLevels
+						[
+							{
+								AnimationFiles
+								[
+									"../reactor_small/lights1.png"
+									"../reactor_small/lights2.png"
+									"../reactor_small/lights3.png"
+									"../reactor_small/lights4.png"
+									"../reactor_small/lights5.png"
+									"../reactor_small/lights6.png"
+									"../reactor_small/lights7.png"
+									"../reactor_small/lights8.png"
+								]
+								Size = [1, 1]
+								AnimationInterval = 0.065*(&~/Scale)
+								VertexColor = [255*0.5, 255*0.5, 255*0.5]
+							}
+							{
+								AnimationFiles
+								[
+									"../reactor_small/lights1.png"
+									"../reactor_small/lights2.png"
+									"../reactor_small/lights3.png"
+									"../reactor_small/lights4.png"
+									"../reactor_small/lights5.png"
+									"../reactor_small/lights6.png"
+									"../reactor_small/lights7.png"
+									"../reactor_small/lights8.png"
+								]
+								Size = [1, 1]
+								AnimationInterval = 0.065/1.75*(&~/Scale)
+								VertexColor = [255*0.5, 255*0.5, 255*0.5]
+							}
+							{
+								AnimationFiles
+								[
+									"../reactor_small/lights1.png"
+									"../reactor_small/lights2.png"
+									"../reactor_small/lights3.png"
+									"../reactor_small/lights4.png"
+									"../reactor_small/lights5.png"
+									"../reactor_small/lights6.png"
+									"../reactor_small/lights7.png"
+									"../reactor_small/lights8.png"
+								]
+								Size = [1, 1]
+								AnimationInterval = 0.065/2.5*(&~/Scale)
+								VertexColor = [255*0.5, 255*0.5, 255*0.5]
+							}
+						]
+					}
+				}
 			}
 		}
-
 
 		ReactorLights_Overclocked_Components
 		{
@@ -430,7 +462,66 @@ Part : &<../base_part_terran_battery.rules>/Part
 			Toggle = IsOverclocked
 			Components
 			{
-
+				ReactorLights_Overclocked_Graphics
+				{
+					Type = Graphics
+					OperationalToggle = IsOperational
+					Location = [0.5, 0.5]
+					OperationalLighting
+					{
+						Layer = "lights_add"
+						DamageLevels
+						[
+							{
+								AnimationFiles
+								[
+									"../reactor_small/lights1.png"
+									"../reactor_small/lights2.png"
+									"../reactor_small/lights3.png"
+									"../reactor_small/lights4.png"
+									"../reactor_small/lights5.png"
+									"../reactor_small/lights6.png"
+									"../reactor_small/lights7.png"
+									"../reactor_small/lights8.png"
+								]
+								Size = [1, 1]
+								AnimationInterval = 0.04*(&~/Scale)
+								VertexColor = [255*0.5, 255*0.5, 255*0.5]
+							}
+							{
+								AnimationFiles
+								[
+									"../reactor_small/lights1.png"
+									"../reactor_small/lights2.png"
+									"../reactor_small/lights3.png"
+									"../reactor_small/lights4.png"
+									"../reactor_small/lights5.png"
+									"../reactor_small/lights6.png"
+									"../reactor_small/lights7.png"
+									"../reactor_small/lights8.png"
+								]
+								Size = [1, 1]
+								AnimationInterval = 0.04/1.75*(&~/Scale)
+								VertexColor = [255*0.5, 255*0.5, 255*0.5]
+							}
+							{
+								AnimationFiles
+								[
+									"../reactor_small/lights1.png"
+									"../reactor_small/lights2.png"
+									"../reactor_small/lights3.png"
+									"../reactor_small/lights4.png"
+									"../reactor_small/lights5.png"
+									"../reactor_small/lights6.png"
+									"../reactor_small/lights7.png"
+									"../reactor_small/lights8.png"
+								]
+								Size = [1, 1]
+								AnimationInterval = 0.04/2.5*(&~/Scale)
+								VertexColor = [255*0.5, 255*0.5, 255*0.5]
+							}
+						]
+					}
 				}
 
 				OCLights_Graphics
@@ -457,6 +548,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 		ReactorHum
 		{
 			Type = ContinuousEffects
+			OperationalToggle = IsOperational
 			Location = [0.5, 0.5]
 			MaxMediaEffectsZoom = 2
 			MediaEffects
@@ -486,7 +578,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 			Type = ContinuousEffects
 			OperationalToggle = ElectronDebuffToggle
 			Location = [0.5, 0.5]
-			MediaEffectsIntensityFactor = { BaseValue=1; BuffType=ElectronNebula; BuffMode=Multiply; }
+			MediaEffectsIntensityFactor = { BaseValue=1*(&~/Scale); BuffType=ElectronNebula; BuffMode=Multiply; }
 			MediaEffects
 			[
 				&<./Data/nebulas/electron/particles/electron_reactor_light.rules>
@@ -500,14 +592,14 @@ Part : &<../base_part_terran_battery.rules>/Part
 				}
 			]
 		}
-		
+
 		ElectronNebulaShipEffects
 		{
 			Type = ContinuousEffects
 			OperationalToggle = ElectronDebuffToggle
 			Location = [0.5, 0.5]
 			ParentToShip = true
-			MediaEffectsIntensityFactor = { BaseValue=1; BuffType=ElectronNebula; BuffMode=Multiply; }
+			MediaEffectsIntensityFactor = { BaseValue=1*(&~/Scale); BuffType=ElectronNebula; BuffMode=Multiply; }
 			MediaEffects
 			[
 				&<./Data/nebulas/electron/particles/electron_reactor_sizzle.rules>
@@ -523,10 +615,39 @@ Part : &<../base_part_terran_battery.rules>/Part
 			Round = Down
 			ResourceLevels
 			[
+				//
+					//
+					//
+					//
+				//
+				{
+					File = "../reactor_small/batteries2.png"
+					Offset = [0.12625, -0.25]
+					Size = [1, 1]
+				}
+				//
+					//
+					//
+					//
+				//
 				{
 					File = "../reactor_small/batteries4.png"
 					Size = [1, 1]
 				}
+				//
+					//
+					//
+					//
+				//
+				{
+					File = "../reactor_small/batteries6.png"
+					Size = [1, 1]
+				}
+				//
+					//
+					//
+					//
+				//
 				{
 					File = "../reactor_small/batteries8.png"
 					Size = [1, 1]
@@ -534,47 +655,41 @@ Part : &<../base_part_terran_battery.rules>/Part
 			]
 		}
 
-		ScorchedTrigger
-		{
-			Type = ToggleTrigger
-			Toggle = ScorchedToggle
-			TriggerWhenOn = false
-		}
-
-		ScorchedEffects
+		ScorchedEffects : &<./Data/ships/terran/reactor_small/reactor_small.rules>/Part/Components/ScorchedEffects
 		{
 			Type = TriggeredEffects
 			Trigger = ScorchedTrigger
 			Location = [0.5, 0.5]
-			HitEffects
+			HitEffects : ^/0/HitEffects
 			[
+				: ^/0/0
 				{
-					Type = ExplosiveResourceDrain
-					ResourceType = battery
-					TotalDrain = { BaseValue = 20000; EffectScaleExponent = .75 }
-					Radius = 4
-					Delay = .05
-					ExpandDuration = .1
-					ExpandStartRadius = 1
-					ExpandLoss = 100%
-					Filter
-					{
-						Friendlies = true
-					}
-					MediaEffectsOnDrainFactor = .00025
-					MediaEffectsOnDrain
-					[
-						&<./Data/shots/missile_emp/particles/missile_emp_hit_sizzle.rules>
-						&<./Data/shots/missile_emp/particles/missile_emp_lightning.rules>
-						&<./Data/shots/missile_emp/particles/missile_emp_drain.rules>
+					//
+					//
+					//
+					//
+					//
+					//
+					//
+					//
+					//
+					//
+					//
+					//
+					//
+					//
+					//
+						//
+						//
+						//
 
-						: /BASE_SOUNDS/AudioExterior
-						{
-							Sound = "./Data/shots/disruptor_bolt/discharge.wav"
-							Volume = 1
-							SpeedVariation = .2
-						}
-					]
+						//
+						//
+							//
+							//
+							//
+						//
+					//
 				}
 			]
 			MediaEffects : /COMMON_EFFECTS/MedPartScorched
@@ -600,7 +715,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 
 				: /BASE_SOUNDS/AudioExterior
 				{
-					Sound = "destroyed.wav"
+					Sound = "./Data/ships/terran/reactor_small/destroyed.wav"
 					Volume = 1
 					SpeedVariation = .25
 				}
@@ -719,6 +834,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 	SecondaryToolTip
 	{
 		TitleKey = "StatCategories/Overclocked"
+		DescriptionKey = "Parts/ReactorSmallOverclockDesc"
 		Stats
 		{
 			PowerCapacity = (&~/Part/Stats/PowerCapacity) * (1 + (&~/OVERCLOCK/EXTRA_CAPACITY_FACTOR))
@@ -726,6 +842,4 @@ Part : &<../base_part_terran_battery.rules>/Part
 			PowerHeatGeneration = [&~/OVERCLOCK/HEAT_PER_BATTERY, &~/OVERCLOCK/HEAT_PER_SECOND]
 		}
 	}
-
-CLASSIFICATION = Tiny
-Scale = (1/4)
+}
