@@ -1,15 +1,17 @@
-OVERCLOCK // : &<./Data/ships/terran/reactor_small/reactor_small.rules>/OVERCLOCK
-{
-	POWER_GENERATION_FACTOR = 300%
-	EXTRA_CAPACITY_FACTOR = 200%
-	HEAT_PER_SECOND = 800
+CLASSIFICATION = Small
+Scale = (1/1)
 
-	BATTERY_PER_SEC = (&~/Part/Components/BatteryProducer/ToQuantity/BaseValue) * (&POWER_GENERATION_FACTOR) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
-	HEAT_PER_BATTERY = (&HEAT_PER_SECOND) / (&BATTERY_PER_SEC)
+OVERCLOCK : &<./Data/ships/terran/reactor_small/reactor_small.rules>/OVERCLOCK
+{
+	// POWER_GENERATION_FACTOR = 300%
+	// EXTRA_CAPACITY_FACTOR = 200%
+	// HEAT_PER_SECOND = 800
+
+	// BATTERY_PER_SEC = (&~/Part/Components/BatteryProducer/ToQuantity/BaseValue) * (&POWER_GENERATION_FACTOR) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
+	// HEAT_PER_BATTERY = (&HEAT_PER_SECOND) / (&BATTERY_PER_SEC)
 }
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
-
 
 Part : &<../base_part_terran_battery.rules>/Part
 {
@@ -23,8 +25,8 @@ Part : &<../base_part_terran_battery.rules>/Part
 	DescriptionKey = "Parts/SW_SmallReactorDesc"
 
 	//Groups&Categories
-	EditorGroups = /* : ^/0/EditorGroups */ [Power, SWTechII]
-	TypeCategories = /* : ^/0/TypeCategories */ [reactor, provides_power, SW_Reactor_Small, SW_Tech_I, SW_Tech_II]
+	EditorGroups : ^/0/EditorGroups [SWTechII]
+	TypeCategories : ^/0/TypeCategories [reactor, provides_power, SW_Reactor_Small, SW_Tech_I, SW_Tech_II]
 	//RequiresCategories = []
 
 	//Resoures&Size&Health
@@ -69,10 +71,10 @@ Part : &<../base_part_terran_battery.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
-		IsOperational // : ^/0/IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [NonJunkToggle, ScorchedToggle, &~/Part/^/0/OVERCLOCK_OPERATIONAL]
+			Toggles = [ NonJunkToggle ]
 			Mode = All
 		}
 
@@ -80,14 +82,6 @@ Part : &<../base_part_terran_battery.rules>/Part
 		{
 			Type = JunkToggle
 			OnWhenJunk = false
-		}
-
-		ScorchedToggle
-		{
-			Type = StatusToggle
-			StatusType = cosmoteer.scorched
-			MinStatusValue = 1
-			Invert = true
 		}
 
 		IsNonOverclocked
@@ -310,61 +304,6 @@ Part : &<../base_part_terran_battery.rules>/Part
 					}
 				]
 			}
-			OperationalLighting
-			{
-				Layer = "lights_add"
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"lights1.png"
-							"lights2.png"
-							"lights3.png"
-							"lights4.png"
-							"lights5.png"
-							"lights6.png"
-							"lights7.png"
-							"lights8.png"
-						]
-						Size = [2, 2]
-						AnimationInterval = 0.075*(&~/Scale)
-						VertexColor = [255*0.5, 255*0.5, 255*0.5]
-					}
-					{
-						AnimationFiles
-						[
-							"lights1.png"
-							"lights2.png"
-							"lights3.png"
-							"lights4.png"
-							"lights5.png"
-							"lights6.png"
-							"lights7.png"
-							"lights8.png"
-						]
-						Size = [2, 2]
-						AnimationInterval = 0.075/1.75*(&~/Scale)
-						VertexColor = [255*0.5, 255*0.5, 255*0.5]
-					}
-					{
-						AnimationFiles
-						[
-							"lights1.png"
-							"lights2.png"
-							"lights3.png"
-							"lights4.png"
-							"lights5.png"
-							"lights6.png"
-							"lights7.png"
-							"lights8.png"
-						]
-						Size = [2, 2]
-						AnimationInterval = 0.075/2.5*(&~/Scale)
-						VertexColor = [255*0.5, 255*0.5, 255*0.5]
-					}
-				]
-			}
 			NonOperationalDoodad
 			{
 				Layer = "floors"
@@ -425,7 +364,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 					}
 				]
 			}
-/*			OperationalRoofDoodad
+/*			OperationalRoofDoodad //No Roof Lighting Wanted.
 			{
 				Layer = "roof_doodads"
 				DamageLevels
@@ -652,7 +591,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 			Type = ContinuousEffects
 			OperationalToggle = ElectronDebuffToggle
 			Location = [1, 1]
-			MediaEffectsIntensityFactor = { BaseValue=1; BuffType=ElectronNebula; BuffMode=Multiply; }
+			MediaEffectsIntensityFactor = { BaseValue=1*(&~/Scale); BuffType=ElectronNebula; BuffMode=Multiply; }
 			MediaEffects
 			[
 				&<./Data/nebulas/electron/particles/electron_reactor_light.rules>
@@ -673,7 +612,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 			OperationalToggle = ElectronDebuffToggle
 			Location = [1, 1]
 			ParentToShip = true
-			MediaEffectsIntensityFactor = { BaseValue=1; BuffType=ElectronNebula; BuffMode=Multiply; }
+			MediaEffectsIntensityFactor = { BaseValue=1*(&~/Scale); BuffType=ElectronNebula; BuffMode=Multiply; }
 			MediaEffects
 			[
 				&<./Data/nebulas/electron/particles/electron_reactor_sizzle.rules>
@@ -726,26 +665,20 @@ Part : &<../base_part_terran_battery.rules>/Part
 			]
 		}
 
-		ScorchedTrigger
-		{
-			Type = ToggleTrigger
-			Toggle = ScorchedToggle
-			TriggerWhenOn = false
-		}
-
-		ScorchedEffects
+		ScorchedEffects : &<./Data/ships/terran/reactor_small/reactor_small.rules>/Part/Components/ScorchedEffects
 		{
 			Type = TriggeredEffects
 			Trigger = ScorchedTrigger
 			Location = [1, 1]
-			HitEffects
+			HitEffects : ^/0/HitEffects
 			[
+				: ^/0/0
 				{
 					Type = ExplosiveResourceDrain
 					ResourceType = battery
 					TotalDrain = { BaseValue = 100000; EffectScaleExponent = .75 }
-					Radius = 8
-					Delay = .05
+					Radius = 12
+					Delay = .10
 					ExpandDuration = .1
 					ExpandStartRadius = 2
 					ExpandLoss = 100%
@@ -754,7 +687,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 						Friendlies = true
 					}
 					MediaEffectsOnDrainFactor = .00025
-					MediaEffectsOnDrain
+					MediaEffectsOnDrain : ^/0/MediaEffectsOnDrain
 					[
 						&<./Data/shots/missile_emp/particles/missile_emp_hit_sizzle.rules>
 						&<./Data/shots/missile_emp/particles/missile_emp_lightning.rules>
@@ -808,7 +741,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 			[
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 75000
+					TotalDamage = 64000
 					Radius = 6
 					Delay = .05
 					ExpandDuration = .1
@@ -829,7 +762,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 				}
 				{
 					Type = ExplosiveDamage
-					TotalDamage = 20000
+					TotalDamage = 12000
 					Radius = 4
 					Delay = .05
 					ExpandDuration = .05
@@ -911,6 +844,7 @@ Part : &<../base_part_terran_battery.rules>/Part
 	SecondaryToolTip
 	{
 		TitleKey = "StatCategories/Overclocked"
+		DescriptionKey = "Parts/ReactorSmallOverclockDesc"
 		Stats
 		{
 			PowerCapacity = (&~/Part/Stats/PowerCapacity) * (1 + (&~/OVERCLOCK/EXTRA_CAPACITY_FACTOR))
@@ -919,5 +853,3 @@ Part : &<../base_part_terran_battery.rules>/Part
 		}
 	}
 }
-CLASSIFICATION = Small
-Scale = (1/1)
