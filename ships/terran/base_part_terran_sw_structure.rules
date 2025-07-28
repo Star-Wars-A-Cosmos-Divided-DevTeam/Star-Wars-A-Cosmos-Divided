@@ -1,7 +1,10 @@
 VANILLA_REF = &<./Data/ships/terran/structure/structure.rules>/Part
-COST = &<./Data/ships/terran/structure/structure.rules>/Part/Resources/0/1
-MAXHEALTH = &<./Data/ships/terran/structure/structure.rules>/Part/MaxHealth
-DENSITY = &<./Data/ships/terran/structure/structure.rules>/Part/Density
+MAXHEALTH = &~/VANILLA_REF/MaxHealth
+DENSITY = &~/VANILLA_REF/Density
+COST = &~/VANILLA_REF/Resources/0/1
+//
+//
+//
 
 Part : &<./Data/ships/terran/base_part_terran_structure.rules>/Part
 {
@@ -10,39 +13,58 @@ Part : &<./Data/ships/terran/base_part_terran_structure.rules>/Part
 	//ID
 	//OtherIDs
 	//FlipWhenLoadingIDs
-	EditorGroups = [Structure] //Initial for Structural Parts
+	EditorGroups = [ Structure ] //Initial for Structural Parts
 	DescriptionKey = "Parts/StructureDesc"
+	EditorReplacementPartID = "" //v:""
 	Resources
 	[
 		[steel, (&~/COST)]
 	]
-	AIValueFactor = 0
-	//
+	AIValueFactor = 0 //v:0
+	Size = [1, 1]
+	IsFlippable = true //v: true
 	SelectionTypeID = "structure"
-	Density = (&~/DENSITY) //bp: 1.00
+	AllowedContiguity = [ Right, Bottom ]
+	Density = (&~/DENSITY) 																//struct 0.333
 	MaxHealth = (&~/MAXHEALTH)
-	ConstructionWork = 0.25
-	WorkPerRepairedHealth = 0.25 / 1000
-	HealthType = Structural //bp: Operational
-	DamageResistances : ^/0/DamageResistances {}
-	TypeCategories : ^/0/TypeCategories [structure, non_flammable, SW_STRUCTURE]
+	ConstructionWork = 0.25 															//v:0.25
+	WorkPerRepairedHealth = 0.25 / 1000 												//v:0.25 / 1000
+	HealthType = Structural //v:Structural
+	DamageResistances : ^/0/DamageResistances { thermal=60% }  							// thermal=60%
+	TypeCategories : ^/0/TypeCategories [ structure, non_flammable, SW_STRUCTURE ]
 	ReceivableBuffs : ^/0/ReceivableBuffs []
-	UnderlyingPartPerTile = "" //bp: cosmoteer.structure
-	CreatePartPerTileWhenGrabbed = "" //bp: cosmoteer.corridor
-	InitialPenetrationResistance = 0 //v:0
+	UnderlyingPartPerTile = "" 															//v:""
+	TempConstructionPartPerTile = cosmoteer.structure 									//v:cosmoteer.structure
+	CreatePartPerTileWhenGrabbed = "" 													//v:""
+	InitialPenetrationResistance = 0 													//v:0
 	ContinuingPenetrationResistance = &InitialPenetrationResistance
-	CrewSpeedFactor = 0 //v:0
-	AllowedDoorLocations = [] //v: EMPTY
-	IsExternal = true //v: true
-	ExternalWalls = [None] //v: NONE
-	InternalWalls = [All] //v: ALL
-	IsRotateable = false  //v: false
-	IsWalled = false //v: false
-	IsSelfDestructible = false //v: false
-	GeneratorRequiresDoor = false //v: false
-	NoAutoDoors = true //v: true
-	IgnoreRotationForMirroredSelection = true //v: true
-
+	CrewSpeedFactor = 0 																//v:0
+	CellOccupancyFactor = 0.25 															//v:0.25
+	IsExternal = true 																	//v: true
+	ExternalWalls = [None] 																//v: NONE
+	InternalWalls = [All] 																//v: ALL
+	IsRotateable = true 																//v: true
+	IsWalled = false 																	//v: false
+	IsSelfDestructible = false 															//v: false
+	AllowedDoorLocations = [] 															//v: EMPTY
+	GeneratorRequiresDoor = false 														//v: false
+	NoAutoDoors = true 																	//v: true
+	FlipHRotate = [1, 0, 3, 2]															//v: structure_wedge
+	FlipVRotate = [3, 2, 1, 0]															//v: structure_wedge
+	GenerateRectCollider = false														//v: false
+	IgnoreRotationForMirroredSelection = true 											//v: true
+	//ConstructionDuration = 0.5
+	//RepairDuration = 0.5
+	//EditorParentParts = []
+	EditorIcon
+	{
+		Texture
+		{
+			File = "./data/ships/terran/structure/structure.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
 	Components : ^/0/Components
 	{
 		ConstructionEffects
@@ -63,11 +85,11 @@ Part : &<./Data/ships/terran/base_part_terran_structure.rules>/Part
 			UseConstructionProgressAsDamage = true
 		}
 
-		DestroyedEffects
+		DestroyedEffects //can just be inherited only need adjusting for 1x1 + sizes
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/StructureDestroyed
-			Location = [.5, .5]
+			Location = [.5, .5] 
 		}
 
 		Blueprints
