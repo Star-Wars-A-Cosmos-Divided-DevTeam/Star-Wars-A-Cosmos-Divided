@@ -1,3 +1,6 @@
+CLASSIFICATION = Small
+Scale = (1/1)
+
 Part : &<../base_part_terran_hyperdrives.rules>/Part
 {
 	//IDs
@@ -11,28 +14,39 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 
 	//Groups&Categories
 	EditorGroups : ^/0/EditorGroups [ SWTechI ]
+	DontStackInEditorGroups : ^/0/ DontStackInEditorGroups []
 	TypeCategories : ^/0/TypeCategories [ftl, uses_power, SW_Hyperdrive_Small, SW_Hyperdrives, SW_Tech_I] //
-	AffectsValidityOfCategories = [SW_Hyperdrive_Small, SW_Hyperdrives] //
-	RequiresCategories = [astromech]
+	AffectsValidityOfCategories = [SW_Hyperdrive_Small, SW_Hyperdrives]
+	RequiresCategories = [SW_Astromech]
 
 	//Resoures&Size&Health
 	Resources
 	[
 		[steel, 21] //V:2x2 costs 40
-		[coil2, 16] //V:2x2 costs 30
+		//
+		[coil2, 12] //V:2x2 costs 30
 	]
 	Size = [1, 1]
 	MaxHealth = 2000 //cost based buff.
 
 	//Selections
 	SelectionPriority = 0
+	SelectionTypeID = "hyperdrives"
 	//SelectionTypeByRotation = true
 	IgnoreRotationForMirroredSelection = true
-	SelectionTypeID = "hyperdrives"
+
+	//PartSpecific
+	AutoDoorMaxPathLength = 5
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	//ProhibitedBy : ^/0/ProhibitedBy [tall]
+
+	//
+	//
+		//
+	//
+	//
 
 	//Editor
 	EditorIcon
@@ -48,6 +62,13 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
+		IsOperational : ^/0/IsOperational
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [PowerToggle]
+			Mode = All
+		}
+
 		PowerToggle
 		{
 			Type = UIToggle
@@ -56,20 +77,44 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			RequiresCommand = false
 		}
 
+		//
+		//
+			//
+			//
+			//
+			//
+			//
+			//
+		//
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 16000
+			MaxResources = 8000
 			InitToMaxResources = 0
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
+		//
+		//
+			//
+			//
+			//
+			//
+			//
+				//
+				//
+			//
+			//
+			//
+		//
 		BatteryConsumer
 		{
 			Type = ResourceConsumer
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Ftl_Supply
+			//
 			OperationalToggle = FtlDrive
 			AllowNonOperationalMinPriorityDelivery = false
 			OverrideExclusiveCrewAssignment = true
@@ -90,18 +135,34 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			Type = ResourceStorage
 			ResourceType = hyperium
 			MaxResources = 10 //V:2x2 has 20
-			InitToMaxResources = 0
 			UITileRect = [.5 + 7/64, .5 + 7/64, 1 - 14/64, 1 - 14/64]
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
 			DropResourcesWhenDestroyed = true
 		}
+		//
+		//
+			//
+			//
+			//
+			//
+			//
+				//
+				//
+			//
+			//
+			//
+			//
+			//
+			//
+		//
 		HyperiumConsumer
 		{
 			Type = ResourceConsumer
 			ResourceType = hyperium
 			Storage = HyperiumStorage
 			DefaultPriority = &/PRIORITIES/Utility_Supply
-			OperationalToggle = PowerToggle
+			//
+			OperationalToggle = IsOperational
 			ConsumptionToggleButtonOffset = [0, -.4]
 		}
 		HyperiumStorageBar
@@ -116,7 +177,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 		FtlDrive
 		{
 			Type = FtlDrive
-			OperationalToggle = PowerToggle
+			OperationalToggle = IsOperational
 			PowerStorage = BatteryStorage
 			FuelStorage = HyperiumStorage
 			SpinDownDuration = 5
@@ -135,16 +196,16 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			JumpInGateMediaEffects = &<./Data/ships/terran/hyperdrive_small/hyperdrive_small.rules>/Part/Components/FtlDrive/JumpInGateMediaEffects
 		}
 
-		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_05/RDL
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_05/DL
 		{	
-			GridSize = &~/Part/Size
+			Type = Sprite
 		}
 
 		Graphics
 		{
 			Type = Graphics
 			Location = [0.5, 0.5]
-			OperationalToggle = PowerToggle
+			OperationalToggle = IsOperational
 			AnimationSpeedFactor = FtlDrive
 			AnimationSpeedFactorRenormalize = [0.1, 1.0]
 
@@ -255,7 +316,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			Location = [0.5, 0.5]
 			FactorMediaEffectsIntensityWith = FtlDrive
 			MinMediaEffectsIntensity = 1%
-			OperationalToggle = PowerToggle
+			OperationalToggle = IsOperational
 			MediaEffects
 			[
 				: /BASE_SOUNDS/AudioExterior
@@ -355,7 +416,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 		{
 			Type = ToggleEffects
 			Location = [0.5, 0.5]
-			Toggle = PowerToggle
+			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -373,6 +434,12 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			Location = [0.5, 0.5]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1]
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -403,5 +470,3 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 	}
 	StatsNotesKey = "Stats/SmallHyperdriver_Notes"
 }
-CLASSIFICATION = Small
-Scale = (1/1)
