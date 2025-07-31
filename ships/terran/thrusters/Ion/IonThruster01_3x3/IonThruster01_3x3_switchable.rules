@@ -4,10 +4,11 @@ LOCATION = [((&~/SIZE/0)/2), ((&~/SIZE/1)/2)]
 
 OVERCLOCK : &<./Data/ships/terran/thruster_huge/thruster_huge.rules>/OVERCLOCK
 {
-	THRUST_FACTOR = ((&^/0/THRUST_FACTOR)/1.6)
-	//
-	POWER_USAGE_FACTOR = (1 / (&THRUST_FACTOR) * (&^/0/MAX_POWER_USAGE_FACTOR))
-	THRUST_HEAT_PER_SECOND = ceil((&^/0/THRUST_HEAT_PER_SECOND)/1.6)
+	THRUST_FACTOR = ((&^/0/THRUST_FACTOR)/1.6)									//v:2		//2/1.6 = 1.875
+	MAX_POWER_USAGE_FACTOR = &^/0/MAX_POWER_USAGE_FACTOR							//v:1.5		//
+	POWER_USAGE_FACTOR = (1 / (&THRUST_FACTOR) * (&MAX_POWER_USAGE_FACTOR))		//v:3/2		//1/(3/1.6)*2
+	//POWER_GENERATION_FACTOR													//			//
+	THRUST_HEAT_PER_SECOND = ceil((&^/0/THRUST_HEAT_PER_SECOND)/1.6)			//v:1100	//1100/1.6 = 212.5
 }
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
@@ -31,9 +32,9 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	//Resources&Size&Health
 	Resources
 	[
-		[steel, 100]//125%*80 of vanilla
+		[steel, 100]//125%*124 of vanilla
 		//[coil, 0]//133%*0 of vanilla
-		[coil2, 24]//120%*20 of vanilla
+		[coil2, 24]//120%*23 of vanilla
 		[SW.durasteel, 12]//120%*10 of vanilla
 	]
 	Size = [3, 5]
@@ -51,7 +52,25 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 
 	//PartSpecific
 	ThrusterForce = 8000 		//v:8000	//160%*8000 of vanilla = 12800 managed thru ramping buff 
-	ThrustIncreaseTime = 1.8 	//v: 4		//160% of vanilla
+	ThrustIncreaseTime
+	{
+		BaseValue = 3.2			//v:4		// 80%*4 of vanilla
+		Modifiers
+		[
+			{
+				Type = Buff
+				BuffType = Engine
+				ModificationMode = Divide
+			}
+			{
+				Type = BuffRemap
+				BuffType = Overclock
+				ModificationMode = Divide
+				RemapFrom = [0, 1]
+				RemapTo = [1, (&~/OVERCLOCK/THRUST_FACTOR)]
+			}
+		]
+	}
 	ThrustDecreaseTime = 0.9 	//v: 0		//160% of vanilla
 	ThrustRecoveryTime = 1.2 	//v: 2		//160% of vanilla
 	FuelUsage = 256 			//v: 400	// 64% of vanilla
@@ -451,6 +470,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		Zero { Type = StaticValue; Value = 0; }
 		One { Type = StaticValue; Value = 1; }
 
+		OverheatEffects : ^/0/OverheatEffects
+		{
+			Location = [1.5, 1.5]
+		}
+
 		Overclock_CombinedHeatInput
 		{
 			Type = MultiResourceStorage
@@ -555,13 +579,6 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
 		{
 			//
-		}
-
-		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
-		{
-			//
-			OperationalToggle = IsOperationalAndCommandToggle
-			InvertOperationalToggle = true
 		}
 
 		LightGraphics
@@ -1044,7 +1061,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		PeakHeatGenerationStatValue
 		{
 			Type = StaticValue
-			Value = &~/OVERCLOCK/THRUST_HEAT_PER_SECOND
+			Value = (&~/OVERCLOCK/THRUST_HEAT_PER_SECOND)
 		}
 
 		HeatGenerationStatProvider
@@ -1060,7 +1077,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce
-		ThrusterRampUp = ceil(&~/Part/ThrustIncreaseTime)
+		ThrusterRampUp = ceil(&~/Part/ThrustIncreaseTime/BaseValue)
 		ThrusterRampDown = ceil(&~/Part/ThrustDecreaseTime)
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
@@ -1096,6 +1113,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		Stats
 		{
 			ThrusterForce = (&~/Part/ThrusterForce) * (&~/OVERCLOCK/THRUST_FACTOR)
+			//PowerGeneration
 			ThrusterHeatGeneration = &~/OVERCLOCK/THRUST_HEAT_PER_SECOND
 			ThrusterPowerUsage = (&~/Part/FuelUsage) * (&~/OVERCLOCK/MAX_POWER_USAGE_FACTOR) / 1000
 		}
