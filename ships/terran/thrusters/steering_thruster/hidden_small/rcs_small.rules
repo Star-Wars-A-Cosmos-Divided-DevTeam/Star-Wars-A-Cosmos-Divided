@@ -1,9 +1,15 @@
+CLASSIFICATION = Tiny
 SIZE = [1, 1]
 LOCATION = [((&~/SIZE/0)/2), ((&~/SIZE/1)/2)]
+//UPSCALER = 100%
 
 OVERCLOCK : &<./Data/ships/terran/thruster_small/thruster_small.rules>/OVERCLOCK
 {
-	THRUST_FACTOR = ((&^/0/THRUST_FACTOR)/1.6)
+	THRUST_FACTOR = (ceil((&^/0/THRUST_FACTOR)/1.6*100)/100)					//v:4				//4/1.6 = 2.5
+	//MAX_POWER_USAGE_FACTOR													//					//
+	POWER_USAGE_FACTOR = 1 / (&THRUST_FACTOR)									//v:1/4=0.25		//1/2.5 = 0.4
+	POWER_GENERATION_FACTOR = &^/0/POWER_GENERATION_FACTOR						//v:3				//
+	THRUST_HEAT_PER_SECOND = (ceil((&^/0/THRUST_HEAT_PER_SECOND)/1.6/10)*10)	//v:250				//250/1.6 = 156.25 ~= 160
 }
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
@@ -27,13 +33,13 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 	//Resources&Size&Health
 	Resources
 	[
-		[steel, 8]//100%*8 of vanilla
-		[coil, 2]//66%*3 of vanilla
-		//[coil2, 0]
-		//[SW.durasteel, 0]
+		[steel, 8]				//100%*8 of vanilla
+		[coil, 2]				//66%*3 of vanilla
+		//[coil2, 0]			//140%*0 of vanilla
+		//[SW.durasteel, 0]		//120%*0 of vanilla
 	]
 	Size = [1, 1]
-	MaxHealth = 600 //60%*1000 of vanilla
+	MaxHealth = 600 //60%*1000 of vanilla 1000 per tile
 
 	//Rects
 	PhysicalRect = [0, 0, 1, 1]
@@ -47,29 +53,41 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 
 	//PartSpecific
 	ThrusterForce = 160 		//40%*400 of vanilla
-	ThrustIncreaseTime = 0.21 	//softer accel
-	ThrustDecreaseTime = 0.21 	//softer decre
-	ThrustRecoveryTime = 0.21 	//softer deccel
-	FuelUsage = 12 				//40%*30 of vanilla
+	ThrustIncreaseTime
+	{
+		BaseValue = 0.21			//v:1		// 20%*1 of vanilla
+		Modifiers
+		[
+			{
+				Type = Buff
+				BuffType = Engine
+				ModificationMode = Divide
+			}
+			{
+				Type = BuffRemap
+				BuffType = Overclock
+				ModificationMode = Divide
+				RemapFrom = [0, 1]
+				RemapTo = [1, (&~/OVERCLOCK/THRUST_FACTOR)]
+			}
+		]
+	}
+	ThrustDecreaseTime = 0.1 	//v:0 		//softer deccel
+	ThrustRecoveryTime = 0.21 	//v:0 		//softer recov
+	FuelUsage = 10				//v:30		// 32%*30 of vanilla (9,2 but INT)
 	FuelRecharge = 2			//v:5		// 40%*5 of vanilla
 
 	//ReceivableBuffs&Prohibits
 	//
 	ProhibitBelow = 1
-	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution]
+	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, EngineHeatCollection, ThermalActivity, SW_Hypernode_Interface]
 
 	//Doors&Etc
 	AllowedDoorLocations
 	[
-		//
-		//
 		[-1, 0]
 		[0, -1]
-		//
-		//
 		[1, 0]
-		//
-		//
 	]
 
 	//Editor
@@ -89,7 +107,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles [PowerToggle, CommandToggle, BatteryStorage]
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage]
 			Mode = All
 		}
 
@@ -98,11 +116,6 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 			Type = MultiToggle
 			Toggles : ^/0/Toggles [PowerToggle]
 			Mode = All
-		}
-
-		CommandToggle
-		{
-			Type = CommandToggle
 		}
 
 		//
@@ -450,31 +463,10 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 		Zero { Type = StaticValue; Value = 0; }
 		One { Type = StaticValue; Value = 1; }
 
-		Overclock_EngineHeatCollectionBuffToggle
-		{
-			Type = BuffToggle
-			BuffType = EngineHeatCollection
-		}
-		ForceOverclockTrigger
-		{
-			Type = ToggleTrigger
-			Toggle = Overclock_EngineHeatCollectionBuffToggle
-			AllowOperationalBypass = true
-			TriggerWhenOff = false
-		}
-
-		// Overriding to allow forcing on / locking
-		OverclockModeToggle : ^/0/OverclockModeToggle
-		{
-			AutoOnTrigger = ForceOverclockTrigger
-			OperationalToggle = Overclock_EngineHeatCollectionBuffToggle
-			InvertOperationalToggle = true
-		}
-
-		OverheatEffects : ^/0/OverheatEffects
-		{
-			Location = [0.5, 0.5]
-		}
+		//
+		//
+			//
+		//
 
 		Overclock_CombinedHeatInput
 		{
@@ -546,10 +538,34 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 		{
 			Direction = Up
 		}
+		//
+		//
+			//
+		//
+		//
+		//
+			//
+		//
+		//
+		//
+			//
+		//
 		Port_Thermal_Right : Port_Thermal_Left
 		{
+			//
+		//
+		//
+		//
 			Direction = Right
 		}
+		//
+		//
+			//
+		//
+		//
+		//
+			//
+		//
 
 		//OC END
 
@@ -557,76 +573,6 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 		{
 			Type = Sprite
 		}
-
-//		DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
-//		{
-//			Type = BlendSprite
-//			OperationalToggle = IsOperationalAndCommandToggle
-//			InvertOperationalToggle = true
-//		}
-/*		
-		LightGraphics
-		{
-			Type = Graphics
-			Location = [0.5, 0.5]
-			OperationalToggle = IsOperational
-			GetColorFrom = ColorPickerThruster
-
-			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
-			AnimationSpeedFactorRenormalize = [0.64, 2.7]
-
-			OperationalLighting
-			{
-				Layer = "lights_add"
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"lights_1_bleached.png"
-							"lights_2_bleached.png"
-						]
-						Size = [1, 2]
-						AnimationInterval = 0.1
-					}
-				]
-			}*/
-		/*	OperationalRoofDoodad
-			{
-				Layer = "roof_doodads"
-				Offset = [0, -0.5]
-				DamageLevels
-				[
-					{
-						File = "roof_glows_bleached.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_glows_bleached_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_glows_bleached_66.png"
-						Size = [1, 1]
-					}
-				]
-			}
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				//Offset = [0, 0.14]
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [1.25, 1.25]
-						Z = 1.30 // Controls the "height" of the light for the purposes of normal mapping.
-						//VertexColor = [16, 120, 255] // [6, 57, 113]
-					}
-				]
-			}
-		}
-*/
 
 		Graphics
 		{
@@ -714,28 +660,6 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 					}
 				]
 			}
-/*			Roof
-			{
-				Layer = "roofs"
-				DamageLevels
-				[
-					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
-						Size = [1, 1]
-					}
-					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
-						Size = [1, 1]
-					}
-				]
-			}*/
 		}
 
 		MainThruster
@@ -798,7 +722,6 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 		ReverseThruster : MainThruster
 		{
 			Rotation = -90d
-			Force = &../../ThrusterForce
 			MinActivation = 0
 			MaxActivation = 0.20
 			MinUncommandedActivation = &MinActivation
@@ -926,8 +849,8 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 		OperationEffects
 		{
 			Type = ToggleEffects
-			Toggle = IsOperational
 			Location = [0.5, 0.5]
+			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
@@ -957,6 +880,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 					AtlasSprite = &/INDICATORS/Scorched
 					HidesIndicators = [1,2,3]
 				}
+
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -1015,7 +939,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce
-		ThrusterRampUp = ceil(&~/Part/ThrustIncreaseTime)
+		ThrusterRampUp = ceil(&~/Part/ThrustIncreaseTime/BaseValue)
 		ThrusterRampDown = ceil(&~/Part/ThrustDecreaseTime)
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
@@ -1053,7 +977,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 			ThrusterForce = (&~/Part/ThrusterForce) * (&~/OVERCLOCK/THRUST_FACTOR)
 			PowerGeneration = (&~/Part/Stats/PowerGeneration) * (&~/OVERCLOCK/POWER_GENERATION_FACTOR)
 			ThrusterHeatGeneration = &~/OVERCLOCK/THRUST_HEAT_PER_SECOND
+			//ThrusterPowerUsage
 		}
 	}
 }
-CLASSIFICATION = Tiny
