@@ -61,8 +61,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	//PartSpecific
 	ThrusterForce = 5120 		//v:3200		//160%*3200 of vanilla = 5120 managed thru ramping buff 
 	ThrustIncreaseTime
-	{ 
-		BaseValue=2
+	{
+		BaseValue = 175%*2		//v:2		// 175%*2 of vanilla
 		Modifiers
 		[
 			{
@@ -79,8 +79,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		]
 	}
-	ThrustDecreaseTime = 0 	//v:0			//softer deccel
-	ThrustRecoveryTime = 2.0
+	ThrustDecreaseTime : &ThrustIncreaseTime	//v:0		//softer deccel 
+	{
+		BaseValue = 175%*1 / 2
+	}
+	ThrustRecoveryTime = 1.6	//v:2		// 80%*2 of vanilla
 	FuelUsage = 128 			//v:200			// 64%*200 of vanilla
 	
 	//Boosted
@@ -1450,7 +1453,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			{
 				ThrusterForce = &~/Part/ThrusterForce
 				ThrusterRampUp = (&~/Part/ThrustIncreaseTime/BaseValue)
-				ThrusterRampDown = (&~/Part/ThrustDecreaseTime)
+				ThrusterRampDown = (&~/Part/ThrustDecreaseTime/BaseValue)
 				ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 			}
 		}
@@ -1465,13 +1468,13 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 				BoostedPowerUsageContinuous = -(&~/Part/BoostedPowerDrain/BaseValue) / (&~/Part/BoostedPowerDrainInterval) / 1000
 			}
 		}
-		{
+		/* {
 			NameKey = "StatCategories/EngineBuff"
 			Stats
 			{
 				ThrusterBuff =  (&<./Data/ships/terran/engine_room/engine_room.rules>/Part/Components/BuffProvider/BuffAmount) * 100
 			}
-		}
+		} */
 	]
 
 	SecondaryToolTip
