@@ -36,7 +36,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 	ContiguityOriginPriority = 5
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor, SW_Sensor_Radar]
 
 	//SpecialCells
 	ForceManhattenPathInPart = true
@@ -161,39 +161,50 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			OperationalToggle = IsOperational
 			CommandPoints = 3600 // Remember to update tooltip.
 		}
-		/*
+		
 		GridBuffProvider
 		{
 			Type = GridBuffProvider
 			BuffType = SW_Sensor
-			BuffAmount = 50%
-			GridDistance = 100
+			BuffAmount = 500^2
+			GridDistance = 1000
 			OperationalToggle = IsOperational
+			BuffsSelf = false
 		}
-
+		
+		GridBuffProviderRadar : &GridBuffProvider
+		{
+			BuffType = SW_Sensor_Radar
+			BuffAmount = (500^2)*2
+		}
+		
 		SelfBuffProvider
 		{
 			Type = SelfBuffProvider
 			BuffType =	SW_Sensor
-			ChainsFromBuffType = SW_Sensor
-			BuffAmount = { BaseValue=100%; BuffType=SW_Sensor; BuffMode=Add; }
+			BuffAmount = (1200)^2 //1200 radius
+		}
+		SelfBuffProviderRadar : &SelfBuffProvider
+		{
+			BuffType =	SW_Sensor_Radar
+			BuffAmount = (2400)^2 //2400 radius
 		}
 
 		Sensor
 		{
 			Type = Sensor
 			OperationalToggle = IsOperationalAndCommandToggle
-			SightRadius = { BaseValue=1500; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=3000; } //was 2500
-			RadarRadius = { BaseValue=2500; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=5000; } //was 4500
+			SightRadius = { BaseValue=1; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=3000; } //was 2500
+			RadarRadius = { BaseValue=1; BuffType=SW_Sensor_Radar; BuffMode=Multiply; MaxValue=5000; } //was 4500
 		}
-		*/
-		Sensor
+		
+	/* 	Sensor
 		{
 			Type = Sensor
 			OperationalToggle = IsOperationalAndCommandToggle
 			SightRadius = 2500
 			RadarRadius = 4500
-		}
+		} */
 
 		BatteryStorage
 		{
@@ -510,8 +521,8 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		SightRange = &~/Part/Components/Sensor/SightRadius // /BaseValue
-		RadarRange = &~/Part/Components/Sensor/RadarRadius // /BaseValue
+		SightRange = (&~/Part/Components/SelfBuffProvider/BuffAmount)^0.5
+		RadarRange = (&~/Part/Components/SelfBuffProviderRadar/BuffAmount)^0.5
 		CommandPoints =  &~/Part/Components/CommandProvider/CommandPoints
 
 		RecPower = (&PowerUsageContinuousMinutes) / 60
