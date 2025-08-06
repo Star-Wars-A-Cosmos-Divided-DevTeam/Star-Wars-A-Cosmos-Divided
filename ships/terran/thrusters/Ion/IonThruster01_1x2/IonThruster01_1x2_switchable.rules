@@ -60,7 +60,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		[
 			{
 				Type = Buff
-				BuffType = Engine
+				BuffType = SW_Ion_Thruster_Overdrive_Thrust
 				ModificationMode = Divide
 			}
 			{
@@ -72,9 +72,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		]
 	}
-	ThrustDecreaseTime = 2.4	//normalized beetween Inc & Rec
-	ThrustRecoveryTime = 3.2	//v:2		//160%*2	of vanilla
-	FuelUsage = 64				//v:100		// 64%*100	of vanilla
+	ThrustDecreaseTime : ThrustIncreaseTime
+	{	
+		BaseValue = (&^/0/BaseValue) / 2
+	}				// = 3.2	//v:2		//160%*2	of vanilla
+	ThrustRecoveryTime = 3.2	//v:2		//160%	of vanilla	//( ( (&ThrustIncreaseTime/BaseValue) + (&ThrustDecreaseTime/BaseValue) ) /2) 	//normalized between Inc & Dec
+	FuelUsage = 64				//v:100		// 64%	of vanilla
 	//FuelRecharge
 
 	//ReceivableBuffs&Prohibits
@@ -1082,7 +1085,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	{
 		ThrusterForce = &~/Part/ThrusterForce
 		ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
-		ThrusterRampDown = &~/Part/ThrustDecreaseTime
+		ThrusterRampDown = &~/Part/ThrustDecreaseTime/BaseValue
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 		//
