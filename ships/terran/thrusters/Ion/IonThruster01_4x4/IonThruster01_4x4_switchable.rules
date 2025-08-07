@@ -1,11 +1,14 @@
 CLASSIFICATION = Huge
+SCALE = (1)
 SIZE = [4, 4]
+MULTIPLIKATOR = (&~/SCALE) * (&~/SIZE/0) * (&~/SIZE/1)
+NOZZLE_OFFSET = 2
 LOCATION = [((&~/SIZE/0)/2), ((&~/SIZE/1)/2)]
 UPSCALER = 175%
 
 OVERCLOCK : &<./Data/ships/terran/thruster_huge/thruster_huge.rules>/OVERCLOCK
 {
-	THRUST_FACTOR = (ceil((&^/0/THRUST_FACTOR)/1.6*100)/100)									//v:2				//2/1.6 = 1.875 ~= 1.87
+	THRUST_FACTOR = (ceil((&^/0/THRUST_FACTOR)*(&~/UPSCALER)/1.6*100)/100)									//v:2				//2/1.6 = 1.875 ~= 1.87
 	MAX_POWER_USAGE_FACTOR = &^/0/MAX_POWER_USAGE_FACTOR										//v:1.5				//
 	POWER_USAGE_FACTOR = (ceil((1 / (&THRUST_FACTOR) * (&MAX_POWER_USAGE_FACTOR))*100)/100)		//v:1/2*1.5=0.75	//1/1.87*1.5 = 0.80 ~= 0.80
 	//POWER_GENERATION_FACTOR																	//					//
@@ -26,7 +29,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_4x4_Desc"
 
 	//Groups&Categories
-	EditorGroups : ^/0/EditorGroups [Flight, SWTechII, SWTechIII]
+	EditorGroups : ^/0/EditorGroups [ SWTechII, SWTechIII]
 	TypeCategories : ^/0/TypeCategories [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_II, SW_Tech_III]
 	//RequiresCategories = []
 
@@ -38,11 +41,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		[coil2, 36]				//v:23		//140%*175%	of vanilla
 		[SW.durasteel, 18]		//v:0		//120%*175%	of vanilla
 	]
-	Size = [4, 6]
+	Size = [&~/SIZE/0, ((&~/SIZE/1) + (&~/NOZZLE_OFFSET))]
 	MaxHealth = 13000 //12.960 //810*4*4 //81% of vanilla 1000 per tile
 
 	//Rects
-	PhysicalRect = [0, 0, 4, 4]
+	PhysicalRect = [0, 0, &~/SIZE/0, &~/SIZE/1]
 	SaveRect = &PhysicalRect
 	BoundingRectType = Physical
 
@@ -60,7 +63,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		[
 			{
 				Type = Buff
-				BuffType = Engine
+				BuffType = SW_Ion_Thruster_Overdrive_Thrust
 				ModificationMode = Divide
 			}
 			{
@@ -72,8 +75,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		]
 	}
-	ThrustDecreaseTime = 4.8	//normalized beetween Inc & Rec
-	ThrustRecoveryTime = 5.6	//v:2		//160%*175% of vanilla
+	ThrustDecreaseTime : ThrustIncreaseTime
+	{	
+		BaseValue = (&^/0/BaseValue) / 2
+	}				// = 4.8	//normalized between Inc & Dec
+	ThrustRecoveryTime = 3.2	//v:2		//160%	of vanilla	//( ( (&ThrustIncreaseTime/BaseValue) + (&ThrustDecreaseTime/BaseValue) ) /2) 	//normalized between Inc & Dec
 	FuelUsage = 450				//v:400		// 64%*175% of vanilla
 	//
 
@@ -416,7 +422,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = ValueTween
 			OffValue = 0
 			OnValue = 1 //+60% Boost if on for OnTweenDuration
-			OnTweenDuration = 12 //target is to reward continous flight and NOT provide burst buffing
+			OnTweenDuration = (12 * 2) //target is to reward continous flight and NOT provide burst buffing
 			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
 			IsOnToggle = ThrusterIsFiringThresholdToggle
 		}
@@ -1023,7 +1029,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 				// Resetting from overclock
 				{
 					Toggle = &~/Part/^/0/OVERCLOCK_OPERATIONAL
-					AtlasSprite : /INDICATORS/OverclockReset
+					AtlasSprite : &/INDICATORS/OverclockReset
 					{
 						Size = [1, 1]
 					}
@@ -1058,7 +1064,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	{
 		ThrusterForce = &~/Part/ThrusterForce
 		ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
-		ThrusterRampDown = &~/Part/ThrustDecreaseTime
+		ThrusterRampDown = &~/Part/ThrustDecreaseTime/BaseValue
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 		//

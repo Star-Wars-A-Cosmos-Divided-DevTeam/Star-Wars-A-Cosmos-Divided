@@ -26,7 +26,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_2x2_Desc"
 
 	//Groups&Categories
-	EditorGroups : ^/0/EditorGroups [Flight, SWTechI, SWTechII]
+	EditorGroups : ^/0/EditorGroups [ SWTechI, SWTechII]
 	TypeCategories : ^/0/TypeCategories [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_I, SW_Tech_II]
 	//RequiresCategories = []
 
@@ -60,7 +60,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		[
 			{
 				Type = Buff
-				BuffType = Engine
+				BuffType = SW_Ion_Thruster_Overdrive_Thrust
 				ModificationMode = Divide
 			}
 			{
@@ -72,8 +72,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		]
 	}
-	ThrustDecreaseTime = 3.2	//normalized beetween Inc & Rec
-	ThrustRecoveryTime = 3.2	//v:2		//160%	of vanilla
+	ThrustDecreaseTime : ThrustIncreaseTime
+	{	
+		BaseValue = (&^/0/BaseValue) / 2
+	}				// = 3.2	//v:2		//160%*2	of vanilla
+	ThrustRecoveryTime = 3.2	//v:2		//160%	of vanilla	//( ( (&ThrustIncreaseTime/BaseValue) + (&ThrustDecreaseTime/BaseValue) ) /2) 	//normalized between Inc & Dec
 	FuelUsage = 128 			//v:200		// 64%	of vanilla
 	//
 
@@ -445,7 +448,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = ValueTween
 			OffValue = 0
 			OnValue = 1 //+60% Boost if on for OnTweenDuration
-			OnTweenDuration = 12 //target is to reward continous flight and NOT provide burst buffing
+			OnTweenDuration = (12 * 4/3) //target is to reward continous flight and NOT provide burst buffing
 			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
 			IsOnToggle = ThrusterIsFiringThresholdToggle
 		}
@@ -1083,7 +1086,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	{
 		ThrusterForce = &~/Part/ThrusterForce
 		ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
-		ThrusterRampDown = &~/Part/ThrustDecreaseTime
+		ThrusterRampDown = &~/Part/ThrustDecreaseTime/BaseValue
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 		//

@@ -26,7 +26,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 	DescriptionKey = "Parts/rcsDesc"
 
 	//Groups&Categories
-	EditorGroups : ^/0/EditorGroups [Flight, SWTechI]
+	EditorGroups : ^/0/EditorGroups [ SWTechI]
 	TypeCategories : ^/0/TypeCategories [thruster, uses_power, SW_Tech_I]
 	//RequiresCategories = []
 
@@ -55,7 +55,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 	ThrusterForce = 160 		//40%*400 of vanilla
 	ThrustIncreaseTime
 	{
-		BaseValue = 0.21			//v:1		// 20%*1 of vanilla
+		BaseValue = 0.2			//v:1		// 20%*1 of vanilla
 		Modifiers
 		[
 			{
@@ -72,8 +72,11 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 			}
 		]
 	}
-	ThrustDecreaseTime = 0.1 	//v:0 		//softer deccel
-	ThrustRecoveryTime = 0.21 	//v:0 		//softer recov
+	ThrustDecreaseTime : ThrustIncreaseTime
+	{	
+		BaseValue = (&^/0/BaseValue) / 2
+	}				// = 0.1 	//v:0 		//softer deccel
+	ThrustRecoveryTime = 0.2 	//v:0 		//softer recov
 	FuelUsage = 10				//v:30		// 32%*30 of vanilla (9,2 but INT)
 	FuelRecharge = 2			//v:5		// 40%*5 of vanilla
 
@@ -940,7 +943,7 @@ Part : &<../base_part_terran_thrusters_rcs.rules>/Part
 	{
 		ThrusterForce = &~/Part/ThrusterForce
 		ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
-		ThrusterRampDown = &~/Part/ThrustDecreaseTime
+		ThrusterRampDown = &~/Part/ThrustDecreaseTime/BaseValue
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000

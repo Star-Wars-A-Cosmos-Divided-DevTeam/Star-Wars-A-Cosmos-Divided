@@ -26,7 +26,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	DescriptionKey = "Parts/IonThrusterDesc"
 
 	//Groups&Categories
-	EditorGroups : ^/0/EditorGroups [Flight, SWTechI]
+	EditorGroups : ^/0/EditorGroups [ SWTechI]
 	TypeCategories : ^/0/TypeCategories [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_I]
 	//RequiresCategories = []
 
@@ -55,12 +55,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	ThrusterForce = 400 //640	//v:400 	//160%*400 of vanilla = 640 managed thru ramping buff
 	ThrustIncreaseTime
 	{
-		BaseValue = 1.6			//v:1		// 160%*1 of vanilla
+		BaseValue = 0.8			//v:1		// 160%*0 of vanilla
 		Modifiers
 		[
 			{
 				Type = Buff
-				BuffType = Engine
+				BuffType = SW_Ion_Thruster_Overdrive_Thrust
 				ModificationMode = Divide
 			}
 			{
@@ -72,8 +72,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		]
 	}
-	ThrustDecreaseTime = 1.2 	//normalized beetween Inc & Rec
-	ThrustRecoveryTime = 0.8 	//v:0 		//softer recov
+	ThrustDecreaseTime : ThrustIncreaseTime
+	{	
+		BaseValue = (&^/0/BaseValue) / 2
+	}				// = 0.4 	//v:0 		//softer recov
+	ThrustRecoveryTime = 3.2	//v:2		//160%	of vanilla	//( ( (&ThrustIncreaseTime/BaseValue) + (&ThrustDecreaseTime/BaseValue) ) /2) 	//normalized between Inc & Dec
 	FuelUsage = 20				//v:30		// 64%*30 of vanilla (19,2 but INT)
 	FuelRecharge = 4			//v:5		// 64%*5 of vanilla
 
@@ -445,7 +448,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = ValueTween
 			OffValue = 0
 			OnValue = 1 //+60% Boost if on for OnTweenDuration
-			OnTweenDuration = 12 //target is to reward continous flight and NOT provide burst buffing
+			OnTweenDuration = (12 * 2/3) //target is to reward continous flight and NOT provide burst buffing
 			OffTweenDuration = (&OnTweenDuration) / 6 //cooldown is sixth the ramp up
 			IsOnToggle = ThrusterIsFiringThresholdToggle
 		}
@@ -1082,7 +1085,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	{
 		ThrusterForce = &~/Part/ThrusterForce
 		ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
-		ThrusterRampDown = &~/Part/ThrustDecreaseTime
+		ThrusterRampDown = &~/Part/ThrustDecreaseTime/BaseValue
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
