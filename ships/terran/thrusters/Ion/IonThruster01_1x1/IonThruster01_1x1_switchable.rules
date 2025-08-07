@@ -5,11 +5,11 @@ LOCATION = [((&~/SIZE/0)/2), ((&~/SIZE/1)/2)]
 
 OVERCLOCK : &<./Data/ships/terran/thruster_small/thruster_small.rules>/OVERCLOCK
 {
-	THRUST_FACTOR = (ceil((&^/0/THRUST_FACTOR)/1.6*100)/100)					//v:4				//4/1.6 = 2.5
-	//MAX_POWER_USAGE_FACTOR													//					//
-	POWER_USAGE_FACTOR = 1 / (&THRUST_FACTOR)									//v:1/4=0.25		//1/2.5 = 0.4
-	POWER_GENERATION_FACTOR = &^/0/POWER_GENERATION_FACTOR						//v:3				//
-	THRUST_HEAT_PER_SECOND = (ceil((&^/0/THRUST_HEAT_PER_SECOND)/1.6/10)*10)	//v:250				//250/1.6 = 156.25 ~= 160
+	THRUST_FACTOR = (ceil((&^/0/THRUST_FACTOR)/1.6*100)/100)									//v:4				//4/1.6 = 2.5
+	MAX_POWER_USAGE_FACTOR = 100%																//					//
+	POWER_USAGE_FACTOR = (ceil((1 / (&THRUST_FACTOR) * (&MAX_POWER_USAGE_FACTOR))*100)/100)		//v:1/4=0.25		//1/2.5 * 1 = 0.4
+	POWER_GENERATION_FACTOR = &^/0/POWER_GENERATION_FACTOR										//v:3				//
+	THRUST_HEAT_PER_SECOND = (ceil((&^/0/THRUST_HEAT_PER_SECOND)/1.6/10)*10)					//v:250				//250/1.6 = 156.25 ~= 160
 }
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
@@ -55,7 +55,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	ThrusterForce = 400 //640	//v:400 	//160%*400 of vanilla = 640 managed thru ramping buff
 	ThrustIncreaseTime
 	{
-		BaseValue = 0.4			//v:1		// 40%*1 of vanilla
+		BaseValue = 1.6			//v:1		// 160%*1 of vanilla
 		Modifiers
 		[
 			{
@@ -72,8 +72,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		]
 	}
-	ThrustDecreaseTime = 0.1 	//v:0 		//softer deccel
-	ThrustRecoveryTime = 0.2 	//v:0 		//softer recov
+	ThrustDecreaseTime = 1.2 	//normalized beetween Inc & Rec
+	ThrustRecoveryTime = 0.8 	//v:0 		//softer recov
 	FuelUsage = 20				//v:30		// 64%*30 of vanilla (19,2 but INT)
 	FuelRecharge = 4			//v:5		// 64%*5 of vanilla
 
@@ -1081,8 +1081,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce
-		ThrusterRampUp = ceil(&~/Part/ThrustIncreaseTime/BaseValue)
-		ThrusterRampDown = ceil(&~/Part/ThrustDecreaseTime)
+		ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
+		ThrusterRampDown = &~/Part/ThrustDecreaseTime
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
@@ -1105,7 +1105,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Stats
 			{
 				ThrusterBuff = (&~/Part/Components/ThrusterIsFiringRampUpBuff/BuffAmount) * 100
-				RampUpTime = &~/Part/Components/ThrusterIsFiringTween/OnTweenDuration
+				ThrusterRampUp = &~/Part/Components/ThrusterIsFiringTween/OnTweenDuration
+				ThrusterRampDown = &~/Part/Components/ThrusterIsFiringTween/OffTweenDuration
 			}
 		}
 	]

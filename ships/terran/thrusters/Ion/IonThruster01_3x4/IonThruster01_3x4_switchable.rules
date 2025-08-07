@@ -33,10 +33,10 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	//Resources&Size&Health
 	Resources
 	[
-		[steel, 150]			//125%*120 of vanilla
-		//[coil, 0]				//133%*0 of vanilla
-		[coil2, 36]				//120%*30 of vanilla
-		[SW.durasteel, 18]		//120%*15 of vanilla
+		[steel, 150]			//v:120		//125%	of vanilla
+		//[coil, 0]				//v:0		//133%	of vanilla
+		[coil2, 36]				//v:30		//140%	of vanilla
+		[SW.durasteel, 18]		//v:15		//120%	of vanilla
 	]
 	Size = [3, 6]
 	MaxHealth = 9700 //9720 //81% of vanilla 1000 per tile
@@ -55,7 +55,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	ThrusterForce = 10000 		//v:10000	//300%*10000 of vanilla = 30000 managed thru ramping buff 
 	ThrustIncreaseTime
 	{
-		BaseValue = 3.2			//v:4		// 80%*4 of vanilla
+		BaseValue = 6.4			//v:4		//160%*4 of vanilla
 		Modifiers
 		[
 			{
@@ -72,9 +72,9 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		]
 	}
-	ThrustDecreaseTime = 1.2	//v:2		//100% of vanilla
-	ThrustRecoveryTime = 1.6	//v:2		// 60% of vanilla
-	FuelUsage = 200 			//v: 300	// 64% of vanilla
+	ThrustDecreaseTime = 4.8	//normalized beetween Inc & Rec
+	ThrustRecoveryTime = 3.2	//v:2		//160%	of vanilla
+	FuelUsage = 200				//v:300		// 64%	of vanilla
 	//
 
 	//ReceivableBuffs&Prohibits
@@ -1082,8 +1082,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce
-		ThrusterRampUp = ceil(&~/Part/ThrustIncreaseTime/BaseValue)
-		ThrusterRampDown = ceil(&~/Part/ThrustDecreaseTime)
+		ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
+		ThrusterRampDown = &~/Part/ThrustDecreaseTime
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 		//
