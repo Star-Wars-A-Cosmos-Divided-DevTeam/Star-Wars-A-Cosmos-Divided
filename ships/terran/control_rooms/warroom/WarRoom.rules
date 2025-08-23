@@ -40,20 +40,42 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 
 	//SpecialCells
 	ForceManhattenPathInPart = true
+
 	BlockedTravelCells
 	[
-		[1, 1]
-		[1, 5]
-		//[2, 3]
-		//[3, 3]
-		[4, 1]
-		[4, 5]
+		[0, 0]
+		[1, 0]
+		[4, 0]
+		[5, 0]
+
+		[0, 1]
+		[5, 1]
+
+		[0, 5]
+		[5, 5]
+
+		[0, 6]
+		[1, 6]
+		[4, 6]
+		[5, 6]
 	]
-	HasNonContiguousPathing = true
+
 	BlockedTravelCellDirections
 	[
 		{
+			Key = [1, 1]
+			Value = [Right]
+		}
+		{
+			Key = [4, 1]
+			Value = [Left]
+		}
+		{
 			Key = [2, 2]
+			Value = [Down]
+		}
+		{
+			Key = [3, 2]
 			Value = [Down]
 		}
 		{
@@ -64,13 +86,16 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			Key = [2, 4]
 			Value = [Up]
 		}
-
-		{
-			Key = [3, 2]
-			Value = [Down]
-		}
 		{
 			Key = [3, 4]
+			Value = [Up]
+		}
+		{
+			Key = [1, 5]
+			Value = [Up]
+		}
+		{
+			Key = [4, 5]
 			Value = [Up]
 		}
 	]
@@ -79,18 +104,20 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 	AutoDoorMaxPathLength = 5
 	AllowedDoorLocations
 	[
-		[3, -1]
+		//TOP
 		[2, -1]
-
+		[3, -1]
+		//LEFT
 		[-1, 2]
-		[6, 2]
 		[-1, 3]
-		[6, 3]
 		[-1, 4]
+		//RIGHT
+		[6, 2]
+		[6, 3]
 		[6, 4]
-
-		[3, 7]
+		//BOTTOM
 		[2, 7]
+		[3, 7]
 	]
 
 	//Editor
@@ -168,7 +195,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			BuffType = SW_Sensor
 			BuffAmount = 500^2
 			GridDistance = 1000
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalAndCommandToggle
 			BuffsSelf = false
 		}
 		
@@ -197,14 +224,6 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			SightRadius = { BaseValue=1; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=3000; } //was 2500
 			RadarRadius = { BaseValue=1; BuffType=SW_Sensor_Radar; BuffMode=Multiply; MaxValue=5000; } //was 4500
 		}
-		
-	/* 	Sensor
-		{
-			Type = Sensor
-			OperationalToggle = IsOperationalAndCommandToggle
-			SightRadius = 2500
-			RadarRadius = 4500
-		} */
 
 		BatteryStorage
 		{
@@ -218,7 +237,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
-			ResupplyThreshold = 1000
+			ResupplyThreshold = 500
 			OperationalToggle = PowerToggle
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
@@ -235,49 +254,49 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		CrewLocation1 //CircleTop
 		{
 			Type = CrewLocation
-			Location = [3, 2.27]
+			Location = [3, 2.30]
 			Rotation = 180d
 		}
 		CrewLocation2 //CircleLeft
 		{
 			Type = CrewLocation
-			Location = [1.75, 3.5]
+			Location = [1.80, 3.5]
 			Rotation = 90d
 		}
 		CrewLocation3 //CircleRight
 		{
 			Type = CrewLocation
-			Location = [4.25, 3.5]
-			Rotation = 270d
+			Location = [4.20, 3.5]
+			Rotation = -90d
 		}
 		CrewLocation4 //CircleBottom
 		{
 			Type = CrewLocation
-			Location = [3, 4.72]
+			Location = [3, 4.70]
 			Rotation = 0d
 		}
 		CrewLocation5
 		{
 			Type = CrewLocation
-			Location = [1.5, 1.85]
+			Location = [1.5, 1 + 45/64]
 			Rotation = 0d
 		}
 		CrewLocation6
 		{
 			Type = CrewLocation
-			Location = [4.5, 1.85]
+			Location = [4.5, 1 + 45/64]
 			Rotation = 0d
 		}
 		CrewLocation7
 		{
 			Type = CrewLocation
-			Location =  [1.85, 5.5]
-			Rotation = 270d
+			Location =  [1 + 45/64, 5.5]
+			Rotation = -90d
 		}
 		CrewLocation8
 		{
 			Type = CrewLocation
-			Location = [4.15, 5.5]
+			Location = [5 - 45/64, 5.5]
 			Rotation = 90d
 		}
 
@@ -287,19 +306,19 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			Crew = 8
 			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
 			PrerequisitesBeforeCrewing = [PowerToggle]
-			HighPriorityPrerequisites = [BatteryStorage]
+			//HighPriorityPrerequisites = [BatteryStorage]
 			AbandonWhenOnFire = false
 			CrewDestinations
 			[
-				[3, 2.27]
-				[1.75, 3.5]
-				[4.25, 3.5]
-				[3, 4.72]
+				[3, 2.20]
+				[1.80, 3.5]
+				[4.20, 3.5]
+				[3, 4.80]
 
 				[1.5, 2]
 				[4.5, 2]
 				[2, 5.5]
-				[3.99, 5.5]
+				[4, 5.5]
 			]
 			CrewLocations
 			[
@@ -315,31 +334,17 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			//SwitchLocationInterval = [5, 10]
 		}
 
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_09/RDL
+		{	
+			//
+		}
+
 		Graphics
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
 
-			Location = [3,3.5]
-			Floor
-			{
-				Layer = "floors"
-				DamageLevels
-				[
-					{
-						File = "floor.png"
-						Size = [6, 7]
-					}
-					{
-						File = "floor_33.png"
-						Size = [6, 7]
-					}
-					{
-						File = "floor_66.png"
-						Size = [6, 7]
-					}
-				]
-			}
+			Location = [3, 3.5]
 			OperationalLighting
 			{
 				Layer = "lights_add"
@@ -347,7 +352,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 				[
 					{
 						File = "lights.png"
-						Size = [6,7]
+						Size = [6, 7]
 					}
 				]
 			}
@@ -362,7 +367,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 							"doodads1.png"
 							"doodads2.png"
 						]
-						Size = [6,7]
+						Size = [6, 7]
 						AnimationInterval = 0.80
 					}
 				]
@@ -420,6 +425,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 				]
 			}
 		}
+
 		BatterySprites
 		{
 			Type = ResourceSprites
@@ -451,8 +457,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		{
 			Type = ToggleEffects
 			Toggle = IsOperational
-
-			Location = [1, 1]
+			Location = [3, 3.5]
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -461,7 +466,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/BigPartDestroyed
-			Location = [3,3.5]
+			Location = [3, 3.5]
 		}
 
 		Indicators
