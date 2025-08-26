@@ -103,7 +103,7 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components
+	Components : ^/0/Components, &<huge_turbolaserx2_doodad_toggles.rules> /*, &<floors_components.rules>*/ 
 	{
 		IsOperational : ^/0/IsOperational
 		{
@@ -199,7 +199,26 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 			Mode = MunitionType
 			TriggerInModes = [0, 1, 2]
 		}
-
+		/*
+		DecorativeFloorOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "decor_floor_option_switch01"
+			Default = 0
+			AvailableChoices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19] // comment as desired
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
+		*/
+		InternalDoodadOptionToggle
+		{
+			Type = UIToggle
+			ToggleID = "internal_doodad_option_switch01"
+			Default = 0
+			AvailableChoices = [0,1/*,2,3,4,5,6,7,8,9,10/*,11,12,13,14,15,16,17,18,19*/]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
+		}
 		MunitionType
 		{
 			Type = UIToggle
@@ -391,49 +410,6 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 				]
 			}
 			*/
-		}
-
-		ConsoleGraphics
-		{
-			Type = Graphics
-			ChainedTo = Turret
-			//Location = [4.5, 4.5] // scaled proportionally
-			Rotation = 90d
-			OperationalToggle = IsOperational
-			//DoodadToggle = IsOperational
-			//ShowToggledDoodadsWhenNotOperational = true
-			OperationalLighting
-			{
-				Layer = "lights_add"
-				DamageLevels
-				[
-					{
-						File = "lights.png"
-						Size = [9, 9] // scaled proportionally
-					}
-				]
-			}
-			OperationalDoodad
-			{
-				Layer = "lights_add"
-				Offset = [0.0140625, 0.3234375] // scaled proportionally
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"A1.png"
-							"A2.png"
-							"A3.png"
-							"A4.png"
-							"A5.png"
-						]
-						Size = [2.7, 2.7] // scaled proportionally
-						AnimationInterval = 0.075
-						AnimationStartTime = Zero
-					}
-				]
-			}
 		}
 
 		FirePermissionToggle
