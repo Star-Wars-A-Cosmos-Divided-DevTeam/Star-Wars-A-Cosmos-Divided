@@ -1,3 +1,19 @@
+/*
+OVERCLOCK
+{
+	BULLET = &<./Data/shots/bullet_deck/overclock/bullet_deck_overclock.rules>
+	FIRE_RATE_FACTOR = 50%
+	HALF_SPREAD = 2d
+	RECOIL_FACTOR = 250%
+	CREW_STUN_DURATION = 1.5
+	CREW_STUN_RADIUS = 9
+	HEAT_PER_SHOT = 3500
+	HEAT_PER_SECOND = 120
+}
+HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
+HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
+*/
+
 Part : &<../base_part_terran_turbolasers.rules>/Part
 {
 	//IDs
@@ -43,26 +59,152 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 	//Doors&Etc
 	ForceManhattenPathInPart = true
 	AllowedDoorLocations
-	[  	//Top
+	[
 		[1, -1]
-		[3, -1]
-		[8, -1]
-		[10, -1]
-		//Left
-		[-1, 1]
-		[-1, 3]
-		[-1, 8]
-		[-1, 10]
-		//Bottom
 		[1, 12]
-		[3, 12]
-		[8, 12]
+		[2, -1]
+		[2, 12]
+		[4, 12]
+		[5, 12]
+		[6, 12]
+		[7, 12]
+		[9, -1]
+		[9, 12]
+		[10, -1]
 		[10, 12]
-		//Right
+		[-1, 1]
 		[12, 1]
-		[12, 3]
-		[12, 8]
+		[-1, 2]
+		[12, 2]
+		[-1, 4]
+		[12, 4]
+		[-1, 5]
+		[12, 5]
+		[-1, 6]
+		[12, 6]
+		[-1, 7]
+		[12, 7]
+		[-1, 9]
+		[12, 9]
+		[-1, 10]
 		[12, 10]
+	]
+
+	BlockedTravelCells
+	[
+		[3, 0]
+		[4, 0]
+		[5, 0]
+		[6, 0]
+		[7, 0]
+		[8, 0]
+		[3, 1]
+		[4, 1]
+		[5, 1]
+		[6, 1]
+		[7, 1]
+		[8, 1]
+		[4, 2]
+		[5, 2]
+		[6, 2]
+		[7, 2]
+		[4, 3]
+		[5, 3]
+		[6, 3]
+		[7, 3]
+		[5, 4]
+		[6, 4]
+		[5, 5]
+		[6, 5]
+		[5, 6]
+		[6, 6]
+		[5, 7]
+		[6, 7]
+		[5, 8]
+		[6, 8]
+	]
+	BlockedTravelCellDirections
+	[
+		{
+			Key = [2, 0]
+			Value = [Right]
+		}
+		{
+			Key = [2, 1]
+			Value = [Right]
+		}
+		{
+			Key = [3, 2]
+			Value = [Right, Up]
+		}
+		{
+			Key = [3, 3]
+			Value = [Right]
+		}
+		{
+			Key = [4, 4]
+			Value = [Right, Up]
+		}
+		{
+			Key = [4, 5]
+			Value = [Right]
+		}
+		{
+			Key = [4, 6]
+			Value = [Right]
+		}
+		{
+			Key = [4, 7]
+			Value = [Right]
+		}
+		{
+			Key = [4, 8]
+			Value = [Right]
+		}
+		{
+			Key = [5, 9]
+			Value = [Up]
+		}
+		{
+			Key = [6, 9]
+			Value = [Up]
+		}
+		{
+			Key = [7, 8]
+			Value = [Left]
+		}
+		{
+			Key = [7, 7]
+			Value = [Left]
+		}
+		{
+			Key = [7, 6]
+			Value = [Left]
+		}
+		{
+			Key = [7, 5]
+			Value = [Left]
+		}
+		{
+			Key = [7, 4]
+			Value = [Left, Up]
+		}
+		{
+			Key = [8, 3]
+			Value = [Left]
+		}
+		{
+			Key = [8, 2]
+			Value = [Left, Up]
+		}
+		{
+			Key = [9, 1]
+			Value = [Left]
+		}
+		{
+			Key = [9, 0]
+			Value = [Left]
+		}
 	]
 
 	//Editor
@@ -99,6 +241,138 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			OperationalToggle = PowerToggle
 			CommandPoints = 20
 		}
+		//OverclockSettings
+/*
+		OverclockStateValue
+		{
+			Type = ToggleValueSelector
+			Toggle = OverclockModeToggle
+			ToggleOffValue = Zero
+			ToggleOnValue = One
+		}
+
+		Zero { Type = StaticValue; Value = 0; }
+		One { Type = StaticValue; Value = 1; }
+
+		OverheatEffects : ^/0/OverheatEffects
+		{
+			Location = [2, 2.5]
+		}
+
+		Overclock_EmissionTriggered
+		{
+			Type = MultiTrigger
+			OperationalToggle = IsOverclocked
+			Triggers = [ Emitter1Proxy, Emitter2Proxy ]
+		}
+		Overclock_ConstantHeatProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperationalOverclocked
+			HEAT_PER_INTERVAL = ceil((&~/OVERCLOCK/HEAT_PER_SECOND) * (&Interval))
+			ToQuantity = (&HEAT_PER_INTERVAL) * (&~/HEAT_TO_RESOURCE)
+			ToStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Interval = 0.5
+		}
+		Overclock_ShotHeatProducer
+		{
+			Type = ResourceChange
+			ResourceStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Trigger = Overclock_EmissionTriggered
+			Amount = (&~/OVERCLOCK/HEAT_PER_SHOT) * (&~/HEAT_TO_RESOURCE)
+		}
+*/
+
+/*		// Thermal Ports
+		Port_Thermal_TopLeft : ~/Part/^/0/BASE_THERMAL_PORT
+		{
+			Location = [0, 0]
+			Direction = Left
+		}
+		Port_Thermal_LeftUp : Port_Thermal_TopLeft
+		{
+			Direction = Up
+		}
+		Port_Thermal_TopRight : Port_Thermal_LeftUp
+		{
+			Location = [11, 0]
+			Direction = Right
+		}
+		Port_Thermal_RightUp : Port_Thermal_TopRight
+		{
+			Direction = Up
+		}
+		Port_Thermal_BottomRight : Port_Thermal_RightUp
+		{
+			Location = [11, 11]
+			Direction = Right
+		}
+		Port_Thermal_RightDown : Port_Thermal_BottomRight
+		{
+			Direction = Down
+		}
+		Port_Thermal_BottomLeft : Port_Thermal_RightDown
+		{
+			Location = [0, 11]
+			Direction = Left
+		}
+		Port_Thermal_LeftDown : Port_Thermal_BottomLeft
+		{
+			Direction = Down
+		}
+		Port_Thermal_MidUp3 : Port_Thermal_LeftDown
+		{
+			Location = [3, 0]
+			Direction = Up
+		}
+		Port_Thermal_MidUp4 : Port_Thermal_MidUp3
+		{
+			Location = [4, 0]
+		}
+		Port_Thermal_MidUp5 : Port_Thermal_MidUp4
+		{
+			Location = [5, 0]
+		}
+		Port_Thermal_MidUp6 : Port_Thermal_MidUp5
+		{
+			Location = [6, 0]
+		}
+		Port_Thermal_MidUp7 : Port_Thermal_MidUp6
+		{
+			Location = [7, 0]
+		}
+		Port_Thermal_MidUp8 : Port_Thermal_MidUp7
+		{
+			Location = [8, 0]
+		}
+		Port_Thermal_MidRight3 : Port_Thermal_MidUp8
+		{
+			Location = [11, 3]
+			Direction = Right
+		}
+		Port_Thermal_MidRight8 : Port_Thermal_MidRight3
+		{
+			Location = [11, 8]
+		}
+		Port_Thermal_MidDown8 : Port_Thermal_MidRight8
+		{
+			Location = [8, 11]
+			Direction = Down
+		}
+		Port_Thermal_MidDown3 : Port_Thermal_MidDown8
+		{
+			Location = [3, 11]
+		}
+		Port_Thermal_MidLeft8 : Port_Thermal_MidDown3
+		{
+			Location = [0, 8]
+			Direction = Left
+		}
+		Port_Thermal_MidLeft3 : Port_Thermal_MidLeft8
+		{
+			Location = [0, 3]
+		}
+*/
 
 		FireModeToggle
 		{
@@ -409,7 +683,7 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			SourceShipCollisions = false
 			TargetLeadPrediction = false
 			ResourceStorage = BatteryStorage
-			ResourcesUsed = 500
+			ResourcesUsed = 3000
 			Recoil = 750
 			AntiPhasingRaycastDistance = 5
 		}
@@ -541,8 +815,8 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			Location = [6, 6]
 			ResourceStorage = BatteryStorage
 			Layer = "doodads_high"
-			RangeLow = 0
-			RangeHigh = 5000
+			//RangeLow = 0
+			//RangeHigh = 5000
 			HasZeroResourceSprite = false
 			ResourceLevels
 			[
@@ -775,6 +1049,184 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 				CrewLocation8
 			]
 		}
+
+
+		//Overclock Weapon Settings
+/*
+		IsOperationalNonOverclocked
+		{
+			Type = MultiToggle
+			Toggles = [ IsOperational, { Toggle=IsOverclocked; Invert=true } ]
+			Mode = All
+		}
+
+		Emitters_NonOverclocked
+		{
+			Type = ToggledComponents
+			Toggle = IsOverclocked
+			Invert = true
+			IncludeInBlueprints = true
+			Components
+			{
+				BaseEmitter
+				{
+					Type = BulletEmitter
+					ChainedTo = Turret
+					FireTrigger // Not optional, but don't want to actually shoot this emitter.
+					GetTargetFrom = Turret
+					Location = [2.5, 0]
+					OperationalToggle = IsOperational
+					Bullet = &<./Data/shots/bullet_deck/bullet_deck.rules>
+					Spread = [-2.5d, 2.5d]
+					ResourceStorage = CombinedLoadedAmmo // Needed to prevent turret from trying to fire when out of ammo.
+					ResourcesUsed = 10
+					Recoil = 240
+					AntiPhasingRaycastDistance = 2
+					AntiPhasingRaycastIgnoreLowCollisions = true
+				}
+				Emitter1 : BaseEmitter
+				{
+					Location = [240/64, -35/64]
+					FireTrigger = ShootTrigger1
+					ResourceStorage = LoadedAmmo1
+				}
+				Emitter2 : BaseEmitter
+				{
+					Location = [240/64, 35/64]
+					FireTrigger = ShootTrigger2
+					ResourceStorage = LoadedAmmo2
+				}
+			}
+		}
+
+		Emitters_Overclocked
+		{
+			Type = ToggledComponents
+			Toggle = IsOverclocked
+			Components
+			{
+				BaseEmitter : ~/Part/Components/Emitters_NonOverclocked/Components/BaseEmitter
+				{
+					Bullet = &~/OVERCLOCK/BULLET
+					Spread = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+				}
+				Emitter1 : BaseEmitter, ~/Part/Components/Emitters_NonOverclocked/Components/Emitter1
+				{
+					FireTrigger = &^/1/FireTrigger
+					Location = &^/1/Location
+					ResourceStorage = &^/1/ResourceStorage
+				}
+				Emitter2 : BaseEmitter, ~/Part/Components/Emitters_NonOverclocked/Components/Emitter2
+				{
+					FireTrigger = &^/1/FireTrigger
+					Location = &^/1/Location
+					ResourceStorage = &^/1/ResourceStorage
+				}
+			}
+		}
+
+		BaseEmitterProxy
+		{
+			Type = EmitterProxy
+			ComponentID = BaseEmitter
+			ChainedTo = Turret
+		}
+		Emitter1Proxy
+		{
+			Type = EmitterProxy
+			ComponentID = Emitter1
+			ChainedTo = Turret
+			Location = [240/64, -35/64]
+		}
+		Emitter1Proxy_Overclocked : Emitter1Proxy
+		{
+			ProxyToggle = IsOverclocked
+		}
+		Emitter1Proxy_NonOverclocked : Emitter1Proxy_Overclocked
+		{
+			InvertProxyToggle = true
+		}
+		Emitter2Proxy
+		{
+			Type = EmitterProxy
+			ComponentID = Emitter2
+			ChainedTo = Turret
+			Location = [240/64, 35/64]
+		}
+		Emitter2Proxy_Overclocked : Emitter2Proxy
+		{
+			ProxyToggle = IsOverclocked
+		}
+		Emitter2Proxy_NonOverclocked : Emitter2Proxy_Overclocked
+		{
+			InvertProxyToggle = true
+		}
+
+		FireEffect1
+		{
+			Type = TriggeredEffects
+			ChainedTo = Emitter1Proxy_NonOverclocked
+			Trigger = Emitter1Proxy_NonOverclocked
+			Location = [90/64, 0]
+
+			MediaEffects
+			[
+				&<particles/cannon_shoot_deck.rules>
+				&<particles/cannon_shoot_deck_flash.rules>
+				&<particles/cannon_shoot_deck_flare.rules>
+				&<particles/cannon_smoke_deck.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "shoot.wav"
+					SpeedVariation = .25
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .1
+					Duration = 1
+				}
+			]
+		}
+		FireEffect2 : FireEffect1
+		{
+			ChainedTo = Emitter2Proxy_NonOverclocked
+			Trigger = Emitter2Proxy_NonOverclocked
+		}
+		Overclock_FireEffect1 : FireEffect1
+		{
+			ChainedTo = Emitter1Proxy_Overclocked
+			Trigger = &ChainedTo
+			
+			MediaEffects
+			[
+				&<particles/cannon_shoot_deck.rules>
+				&<particles/cannon_shoot_deck_flash.rules>
+				&<particles/cannon_shoot_deck_flare.rules>
+				&<particles/cannon_smoke_deck.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/deck_cannon_overclocked_shot.wav"
+					SpeedVariation = .25
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .1
+					Duration = 1
+				}
+			]
+		}
+		Overclock_FireEffect2 : Overclock_FireEffect1
+		{
+			ChainedTo = Emitter2Proxy_Overclocked
+			Trigger = &ChainedTo
+		}
+*/
+
 
 		DestroyedEffects
 		{
