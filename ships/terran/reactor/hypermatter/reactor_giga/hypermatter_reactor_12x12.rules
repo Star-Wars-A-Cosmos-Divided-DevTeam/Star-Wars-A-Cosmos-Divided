@@ -178,7 +178,7 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components, <graphics_12x12.rules>
+	Components : ^/0/Components, <graphics_12x12.rules>, &<doodad_components.rules>
 	{
 		IsOperational : ^/0/IsOperational
 		{
@@ -191,7 +191,13 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 			Type = StaticToggle
 			ToggleOn = "true"
 		}
-
+		ColorPicker
+		{
+			Type = UIColor
+			ColorID = "SW_Part_Color"
+			Default = [128, 128, 128, 255]//.85 saturation
+			RequiresCommand = false
+		}
 		PowerToggle
 		{
 			Type = UIToggle
@@ -307,55 +313,16 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 			MinAmount = 100%
 		}
 
-		Graphics
+		InternalDoodadOptionToggle
 		{
-			Type = Graphics
-			Location = [6, 6]
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [16, 16]
-						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
-						VertexColor = [0, 240, 240]
-						//VertexColor = [240, 0, 240]
-					}
-				]
-			}
-			OperationalDoodad
-			{
-				Layer = "lights_add"
-				Offset = [0,  0] // [0, 0.2]
-				OperationalToggle = IsOperational
-				DamageLevels
-				[
-					{
-						File = "reactor_lights1_12x12.png"
-						Size = [12, 12]
-						//RotSpeed = 180d
-						//AnimationStartTime = WhenSpawned
-					}
-				]
-			}
-			//NonOperationalDoodad
-			//{
-			//	Layer = "doodads_high"
-			//	Offset = [0,  0.0625]
-			//	DamageLevels
-			//	[
-			//		{
-			//			File = "reactor_core_off.png"
-			//			Size = [8, 10]
-			//			//RotSpeed = 180d
-			//			//AnimationStartTime = WhenSpawned
-			//		}
-			//	]
-			//}
-
+			Type = UIToggle
+			ToggleID = "internal_doodad_option_switch01"
+			Default = 0
+			AvailableChoices = [0,1,2,3,4,5,6,7,8,9/*,10,11,12,13,14,15,16,17,18,19*/]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
 		}
+
 		ReactorHum
 		{
 			Type = ContinuousEffects
@@ -406,7 +373,6 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 				&<electron_reactor_sizzle.rules>
 			]
 		}
-
 
 		DestroyedEffects
 		{

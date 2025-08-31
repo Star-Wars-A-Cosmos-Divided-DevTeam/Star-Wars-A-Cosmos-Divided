@@ -250,7 +250,7 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components, <graphics_30x30.rules>
+	Components : ^/0/Components, <graphics_30x30.rules>, &<doodad_components.rules>
 	{
 		IsOperational : ^/0/IsOperational
 		{
@@ -263,7 +263,13 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 			Type = StaticToggle
 			ToggleOn = "true"
 		}
-
+		ColorPicker
+		{
+			Type = UIColor
+			ColorID = "SW_Part_Color"
+			Default = [128, 128, 128, 255]//.85 saturation
+			RequiresCommand = false
+		}
 		PowerToggle
 		{
 			Type = UIToggle
@@ -380,55 +386,16 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 			MinAmount = 100%
 		}
 
-		Graphics
+		InternalDoodadOptionToggle
 		{
-			Type = Graphics
-			Location = [15, 15]
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [45, 45]
-						Z = 2.5 // Controls the "height" of the light for the purposes of normal mapping.
-						VertexColor = [0, 240, 240]
-						//VertexColor = [240, 0, 240]
-					}
-				]
-			}
-			OperationalDoodad
-			{
-				Layer = "lights_add"
-				Offset = [0,  0.5]
-				OperationalToggle = IsOperational
-				DamageLevels
-				[
-					{
-						File = "../reactor_giga/reactor_core.png"
-						Size = [20, 25]
-						//RotSpeed = 180d
-						//AnimationStartTime = WhenSpawned
-					}
-				]
-			}
-			//NonOperationalDoodad
-			//{
-			//	Layer = "doodads_high"
-			//	Offset = [0,  0.0625]
-			//	DamageLevels
-			//	[
-			//		{
-			//			File = "reactor_core_off.png"
-			//			Size = [8, 10]
-			//			//RotSpeed = 180d
-			//			//AnimationStartTime = WhenSpawned
-			//		}
-			//	]
-			//}
-
+			Type = UIToggle
+			ToggleID = "internal_doodad_option_switch01"
+			Default = 0
+			AvailableChoices = [0,1,2,3,4,5,6,7,8,9/*,10,11,12,13,14,15,16,17,18,19*/]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
 		}
+
 		ReactorHum
 		{
 			Type = ContinuousEffects
