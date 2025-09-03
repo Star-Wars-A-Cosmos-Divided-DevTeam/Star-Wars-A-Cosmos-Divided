@@ -1,18 +1,20 @@
-/*
-OVERCLOCK
-{
-	BULLET = &<./Data/shots/bullet_deck/overclock/bullet_deck_overclock.rules>
-	FIRE_RATE_FACTOR = 50%
-	HALF_SPREAD = 2d
-	RECOIL_FACTOR = 250%
-	CREW_STUN_DURATION = 1.5
-	CREW_STUN_RADIUS = 9
-	HEAT_PER_SHOT = 3500
-	HEAT_PER_SECOND = 120
-}
-HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
-HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
-*/
+//OVERCLOCK
+//{
+	// BULLET = &<shots/laser/turret/concussion/heavy/overclock/oc_green_shot.rules>
+
+	// BLUEBULLET = &<shots/laser/turret/concussion/heavy/overclock/blue_shot.rules>
+	// GREENBULLET = &<shots/laser/turret/concussion/heavy/overclock/green_shot.rules>
+	// REDBULLET = &<shots/laser/turret/concussion/heavy/overclock/red_shot.rules>
+
+	// Optional tuning values 
+	// FIRE_RATE_FACTOR = 1.25
+	// HALF_SPREAD     = &~/Part/Components/WeaponEmitterBase/Spread/1
+	// HEAT_PER_SHOT   = 0
+	// HEAT_PER_SECOND = 0
+	// CREW_STUN_DURATION = &~/Part/Components/StunEffect/HitEffects/0/Duration/BaseValue
+	// CREW_STUN_RADIUS   = &~/Part/Components/StunEffect/HitEffects/0/Radius/BaseValue
+//}
+
 
 Part : &<../base_part_terran_turbolasers.rules>/Part
 {
@@ -679,7 +681,7 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			Location = [0, 0]
 			OperationalToggle = IsOperational
 			//FireDelay = .1
-			Bullet = &/SW_SHOTS/greenmedlasershot
+			Bullet = &/SW_SHOTS/Laser/Turret/Concussion/Heavy/Green
 			SourceShipCollisions = false
 			TargetLeadPrediction = false
 			ResourceStorage = BatteryStorage
@@ -1285,13 +1287,13 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
    //Stats
 	Stats
 	{
-		CrewRequired = &~/Part/Components/PartCrew/Crew
-		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		//TurretPenResist = &~/Part/Components/TurretCollider/InitialPenetrationResistance
+		CrewRequired   = &~/Part/Components/PartCrew/Crew
+		PowerPerShot   = (&~/Part/Components/WeaponEmitterBase/ResourcesUsed) / 1000
 
-		RecPower = &../StatsByCategory/0/Stats/PowerPerSecond
-		RecCrew = (&CrewRequired) + (&RecPower) * 4
+		ROF            = &<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF
 
+		PowerPerSecond = (&PowerPerShot) * (&ROF)
+		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 	}
 
    //Stats 
@@ -1323,3 +1325,4 @@ TurretStats
 		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
 	}
 }
+

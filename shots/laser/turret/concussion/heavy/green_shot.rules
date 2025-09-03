@@ -1,0 +1,106 @@
+// LOCATION: shots\laser\turret\concussion\heavy\green_shot.rules
+// USED IN: ships\terran\weapons\turbolasers\Turbolasers_Siege_12x12\siege12x12green.rules "Dual 70TT Superheavy Siege Turbolaser"
+// STRINGKEY: HeavyGreenConcussiveBlastLasershot = "Heavy <green>Green</green> Concussive Blast Laser Shot"
+ID = "SW.concussion_turret_heavy_laser_green_shot" 
+Range = 550
+IdealRange = [200, &~/Range]
+IdealRadius = [5, 50]
+Speed = 80
+
+Components : &<base_shot.rules>/Components
+{
+	Targetable : ^/0/Targetable
+	{
+		OnDeath : ^/0/OnDeath
+		{
+			MediaEffects = &~/Components/Hit/HitOperational/MediaEffects
+		}
+	}
+
+
+	Hit : ^/0/Hit
+	{
+		HitShield : ^/0/HitShield
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/SWConcussionLaserHitGreen
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Green
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Green
+
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE { ShakeAmount = 0.03; Duration = 0.3 }
+			]
+		}
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Green
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Green
+				&/SW_PARTICLES/SWConcussionLaserHitGreen
+				&/SW_PARTICLES/SWFlakLargeFlash
+
+				&/SW_SOUNDS/SWConcussionLaserHit
+				: /BASE_SHAKE { ShakeAmount = 0.2; Duration = 0.75 }
+			]
+		}
+
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Green
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Green
+				&/SW_PARTICLES/SWConcussionLaserHitGreen
+				&/SW_PARTICLES/SWFlakLargeFlash
+			]
+		}
+
+		FinishedPenetratingStructural : ^/0/FinishedPenetratingStructural
+		{
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Green
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Green
+				&/SW_PARTICLES/SWConcussionLaserHitGreen
+				&/SW_PARTICLES/SWFlakLargeFlash
+			]	
+		}
+	}
+	Sprite : ^/0/Sprite
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture : ^/0/Texture
+				{
+					File = "particles/lasershotgreen.png"
+				}
+			}
+		}
+	}
+
+	GlowSprite : ^/0/GlowSprite
+	{
+		Sprite : ^/0/Sprite
+		{
+			VertexColor = [0, 255, 0] 
+			_litReflectiveStrength = 6
+			_litAdditiveStrength = 0.02
+			_unlitAdditiveStrength = 0.125
+		}
+	}
+	MediaEffects : ^/0/MediaEffects
+	{
+		MediaEffects
+		[
+			&/SW_PARTICLES/SWConcussionLaserTrailGreen
+		]
+	}
+}
+
