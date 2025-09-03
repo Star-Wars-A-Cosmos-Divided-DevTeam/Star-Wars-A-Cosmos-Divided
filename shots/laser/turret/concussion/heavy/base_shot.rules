@@ -1,0 +1,181 @@
+ID = "SW.concussion_turret_heavy_laser_base" // TURRET WEAPONSHOT
+Range = 550
+IdealRange = [200, &~/Range]
+IdealRadius = [5, 50]
+Speed = 80
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime  // Lifetime auto-calculated from Range & Speed
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 20000
+		TargetCategory = "laser"
+
+		// Vanilla convention: reuse your main hit media on death for nice feedback
+		OnDeath
+		{
+		}
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		Penetration = 200.0
+		PenetrationSpeed = 25
+
+		CrewCollisions = { Enemies=true; Junk=true }
+		FriendlyShipLowCollisions = false
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = { BaseValue = 20000; EffectScaleExponent = 1 } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue =   300; EffectScaleExponent = 1 } }
+			]
+
+		}
+
+		HitOperational
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage       = 50000
+					Radius            = 10
+					ExpandDuration    = 0.9
+					ExpandStartRadius = 1
+					ExpandLoss        = 100%
+					ImpulsePerNDamage = 10
+					NDamage           = 10000
+				}
+				{ Type = Damage;  Damage  = { BaseValue = 15000; EffectScaleExponent = 1 } }
+				{ Type = Impulse; Impulse = { BaseValue =   400; EffectScaleExponent = 1 } }
+			]
+
+		}
+
+		HitStructural = &HitOperational
+
+		PenetratingOperational
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage       = 10000
+					Radius            = 5
+					ExpandDuration    = 0.9
+					ExpandStartRadius = 1
+					ExpandLoss        = 100%
+					ImpulsePerNDamage = 10
+					NDamage           = 10000
+				}
+				{ Type = Impulse; Impulse = { BaseValue = 100; EffectScaleExponent = 1 } }
+			]
+
+		}
+
+		PenetratingStructural          = &PenetratingOperational
+		FinishedPenetratingOperational = &PenetratingOperational
+
+		FinishedPenetratingStructural
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = ExplosiveDamage
+					TotalDamage       = 10000
+					Radius            = 9
+					ExpandDuration    = 0.9
+					ExpandStartRadius = 1
+					ExpandLoss        = 100%
+					ImpulsePerNDamage = 10
+					NDamage           = 10000
+				}
+			]
+
+		}
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [3, 1.5]
+			}
+			FrameCount = 2
+			FrameSize = [64, 32]
+			FramesPerRow = 1
+			FramesPerSecond = 24
+		}
+		// Vanilla norm map passthrough:
+		NormalsTexture = &Animation/AtlasSprite/Texture
+		DiffuseShader  = "./Data/default.shader"
+		NormalsShader  = "./Data/no_normals.shader"
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Offset = [-1.5, 0]
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [18, 9]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+		}
+	}
+
+	MediaEffects // Trail
+	{
+		Type = MediaEffects
+		Offset = [1.5, 0]
+	}
+}

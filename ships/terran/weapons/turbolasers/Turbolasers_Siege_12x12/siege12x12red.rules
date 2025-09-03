@@ -8,7 +8,7 @@ Components
 			GetTargetFrom = Turret
 			Location = [9.328125, -1]  //-64,-629
 			OperationalToggle = IsOperational
-			Bullet = &/SW_SHOTS/turretconcussionheavylaserredshot
+			Bullet = &/SW_SHOTS/Laser/Turret/Concussion/Heavy/Red
 			SourceShipCollisions = false
 			FireDelay = .5
 			//Spread = [-2.5d, 2.5d]
@@ -60,9 +60,22 @@ Components
 	}
 LaserStats
 {
-	NameKey = "StatCategories/HeavyRedConcussiveBlastLasershot"
+	NameKey = "StatCategories/SiegeRedTurbolaserLasershot"
 	Stats
 	{
+
+		ShieldDamagePerShot   	= &~/Components/WeaponEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
+		ShieldDamagePerSecond 	= (&ShieldDamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+		ShieldDamage          	= [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+	
+		DamagePerShot   		= &~/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/TotalDamage
+		DamagePerSecond 		= (&DamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+		Damage          		= [&../DamagePerShot, &../DamagePerSecond]
+	
+		ShotSpeed 				= &~/Components/WeaponEmitter/Bullet/Speed
+		ShotHP    				= &~/Components/WeaponEmitter/Bullet/Components/Targetable/Health
+
+	/*
 		ShieldDamagePerShot = &~/Components/WeaponEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
 		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
@@ -71,5 +84,6 @@ LaserStats
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 		//ShotSpeed = &~/Components/WeaponEmitter/Bullet/Speed
 		//ShotHP = &~/Components/WeaponEmitter/Bullet/Components/Targetable/Health
+	*/
 	}
 }
