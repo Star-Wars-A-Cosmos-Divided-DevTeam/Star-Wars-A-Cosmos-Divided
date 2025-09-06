@@ -53,18 +53,12 @@ Part : &<../base_part_terran_droids.rules>/Part
 			Type = CommandToggle
 		}
 
-		IsOperationalAndDroidHealEffectToggle
+		Sensor
 		{
-			Type = MultiToggle
-			Toggles = [IsOperational, DroidHealEffectToggle]
-			Mode = All
-		}
-
-		IsOperationalAndDroidTalkEffectToggle
-		{
-			Type = MultiToggle
-			Toggles = [IsOperational, DroidTalkEffectToggle]
-			Mode = All
+			Type = Sensor
+			OperationalToggle = CommandToggle
+			SightRadius = 400
+			RadarRadius = ceil(400*4.5)
 		}
 
 		DroidHealEffectToggle
@@ -75,35 +69,10 @@ Part : &<../base_part_terran_droids.rules>/Part
 			RequiresCommand = false
 		}
 
-		DroidTalkEffectToggle
-		{
-			Type = UIToggle
-			ToggleID = "SW.droid_talk_effect_on_off"
-			Default = 1
-			RequiresCommand = false
-		}
-
-		/*Sensor
-		{
-			Type = Sensor
-			OperationalToggle = CommandToggle
-			SightRadius = 400
-			RadarRadius = ceil(400*4.5)
-		}*/
-
-		SensorBuffProvider
-		{
-			Type = GridBuffProvider
-			BuffType = SW_Sensor
-			BuffAmount = 20%
-			GridDistance = 50
-			OperationalToggle = IsOperational
-		}
-
 		RepairRepeatingTimerTrigger
 		{
 			Type = Timer
-			OperationalToggle = IsOperationalAndDroidHealEffectToggle
+			OperationalToggle = DroidHealEffectToggle
 			Duration = 1
 			AutoStart = true
 			Repeats = true
@@ -111,7 +80,7 @@ Part : &<../base_part_terran_droids.rules>/Part
 		RepairProgressBar
 		{
 			Type = ProgressBar
-			OperationalToggle = IsOperationalAndDroidHealEffectToggle
+			OperationalToggle = DroidHealEffectToggle
 			ShowProgressFor = RepairRepeatingTimerTrigger
 			Invert = true
 		}
@@ -139,10 +108,18 @@ Part : &<../base_part_terran_droids.rules>/Part
 			]
 		}
 
+		DroidTalkEffectToggle
+		{
+			Type = UIToggle
+			ToggleID = "SW.droid_talk_effect_on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
 		MyRepeatingTimerTrigger
 		{
 			Type = Timer
-			OperationalToggle = IsOperationalAndDroidTalkEffectToggle
+			OperationalToggle = DroidTalkEffectToggle
 			Duration = 21
 			AutoStart = true
 			Repeats = true

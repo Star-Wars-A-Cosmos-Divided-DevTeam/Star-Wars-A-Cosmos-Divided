@@ -8,13 +8,10 @@ Components
 			GetTargetFrom = Turret
 			Location = [9.328125, -1]  //-64,-629
 			OperationalToggle = IsOperational
-			Bullet = &/SW_SHOTS/turretconcussionheavylaserredshot
+			Bullet = &/SW_SHOTS/Laser/Turret/Concussion/Heavy/Red
 			SourceShipCollisions = false
 			FireDelay = .5
-			//Spread = [-2.5d, 2.5d]
 			ResourceStorage = BatteryStorage
-//			ResourcesUsed = 300 //250-350?
-//			Recoil = 1240
 			AntiPhasingRaycastDistance = 5
 		}
 		WeaponEmitter2 : &WeaponEmitter
@@ -22,6 +19,7 @@ Components
 			FireTrigger = ShootTrigger2
 			Location = [9.328125, 1]
 		}
+
 		FireEffect
 		{
 			Type = TriggeredEffects
@@ -40,16 +38,12 @@ Components
 				&/SW_PARTICLES/Shot/Laser/Flare/Large/Red
 				&<./Data/ships/terran/cannon_deck/particles/cannon_smoke_deck.rules>//&<../Turbolasers_Flak_Cannon/particles/flak_cannon_shoot_flash_large.rules> // &/SW_PARTICLES/SWFlakLargeFlash &<./Data/ships/terran/point_defense/particles/flak_cannon_shoot_flash_large.rules>
 
-//				&/SW_PARTICLES/Shot/Laser/Shoot/Large/Red
-//				&<../Turbolasers_Flak_Cannon/particles/flak_cannon_shoot_flash_large.rules> // &/SW_PARTICLES/SWFlakLargeFlash &<./Data/ships/terran/point_defense/particles/flak_cannon_shoot_flash_large.rules>
-//				&<../Turbolasers_Flak_Cannon/particles/flak_cannon_smoke_large.rules> // &/SW_PARTICLES/SWFlakLargeSmoke // &<./Data/ships/terran/point_defense/particles/flak_cannon_smoke_large.rules>
-//				&<./Data/ships/terran/point_defense/particles/point_defense_shoot.rules>
-
 				: /BASE_SHAKE
 				{
 					ShakeAmount = .3
 					Duration = 1
 				}
+
 			] 
 		}
 		FireEffect2 : FireEffect
@@ -57,19 +51,24 @@ Components
 			ChainedTo = WeaponEmitter2
 			Trigger = WeaponEmitter2
 		}
-	}
+}
+
 LaserStats
 {
-	NameKey = "StatCategories/HeavyRedConcussiveBlastLasershot"
+	NameKey = "StatCategories/SiegeRedTurbolaserLasershot"
 	Stats
 	{
-		ShieldDamagePerShot = &~/Components/WeaponEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
-		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = &~/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/TotalDamage
-		DamagePerSecond = (&DamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
-		Damage = [&../DamagePerShot, &../DamagePerSecond]
-		//ShotSpeed = &~/Components/WeaponEmitter/Bullet/Speed
-		//ShotHP = &~/Components/WeaponEmitter/Bullet/Components/Targetable/Health
+
+		ShieldDamagePerShot   	= &~/Components/WeaponEmitter/Bullet/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
+		ShieldDamagePerSecond 	= (&ShieldDamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+		ShieldDamage          	= [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+	
+		DamagePerShot   		= &~/Components/WeaponEmitter/Bullet/Components/Hit/HitOperational/HitEffects/0/TotalDamage
+		DamagePerSecond 		= (&DamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+		Damage          		= [&../DamagePerShot, &../DamagePerSecond]
+	
+		ShotSpeed 				= &~/Components/WeaponEmitter/Bullet/Speed
+		ShotHP    				= &~/Components/WeaponEmitter/Bullet/Components/Targetable/Health
+
 	}
 }

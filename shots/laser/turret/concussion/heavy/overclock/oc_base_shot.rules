@@ -1,0 +1,91 @@
+// LOCATION: shots\laser\turret\concussion\heavy\overclock\oc_base_shot.rules
+// PURPOSE: Overclock stats layer for all heavy concussion laser shots
+// NOTE: Media is intentionally not set here; color OC files will reference non-OC color media.
+
+BASE = &<../base_shot.rules>
+
+ID = "SW.concussion_turret_heavy_laser_base_overclock"
+Range       = (&BASE/Range) * 2
+Speed       = (&BASE/Speed) * 3
+IdealRange  = [200, &~/Range]
+IdealRadius = &BASE/IdealRadius
+
+// ---- Tunables (defaults; adjustable) ----
+DAMAGE_POOL = 100000
+// Uses the OC impulse pattern like deck cannon: 200% of base operational impulse.
+IMPULSE     = (&BASE/Components/Hit/HitOperational/HitEffects/2/Impulse/BaseValue) * 200%
+// Keep same targetable health unless you want OC to be sturdier in-flight.
+HEALTH      = (&BASE/Components/Targetable/Health) * 200%
+
+Components : BASE/Components
+{
+	// Add a damage pool & hook death to it.
+	DamagePool
+	{
+		Type   = DamagePool
+		Damage = { BaseValue = &~/DAMAGE_POOL; EffectScaleExponent = 1 }
+	}
+	DeathByDamagePool
+	{
+		Type       = DeathByDamagePool
+		DamagePool = DamagePool
+	}
+
+	Targetable : ^/0/Targetable
+	{
+		Health = &~/HEALTH
+	}
+
+	Hit : ^/0/Hit
+	{
+		Penetration = infinity
+		FactorHitEffectsWith = DamagePool
+
+		// make all actual damage draw from the pool.
+		HitCrew     = &HitOperational
+		HitShield   = &HitOperational
+
+		HitOperational : ^/0/HitOperational
+		{
+			ReduceEffectsByPenetration = false
+
+			HitEffects
+			[
+				// Convert to pool-based damage.
+				{ Type = Damage;  Damage  = 0; DamagePool = DamagePool }
+				{ Type = Impulse; Impulse = &~/IMPULSE }
+			]
+
+			// No media (see color OC files)
+		}
+
+		HitStructural : ^/0/HitStructural
+		{
+			ReduceEffectsByPenetration = false
+			//  No media (see color OC files)
+		}
+
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			ReduceEffectsByPenetration = false
+
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = 0; DamagePool = DamagePool }
+				{ Type = Impulse; Impulse = &~/IMPULSE }
+			]
+		}
+
+		FinishedPenetratingOperational = &PenetratingOperational
+		// Structural finished stays as-is from base unless you want to redirect it too.
+	}
+
+	// Sprite present (to avoid issues).
+	Sprite : ^/0/Sprite
+	{
+		ReduceScaleWith = DamagePool
+		Animation : ^/0/Animation {}
+	}
+
+	// Leave MediaEffects (trail) untouched here; color OC files will borrow theirs.
+}

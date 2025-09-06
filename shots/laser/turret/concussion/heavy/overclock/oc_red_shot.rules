@@ -1,0 +1,74 @@
+// LOCATION: shots\laser\turret\concussion\heavy\overclock\oc_red_shot.rules
+// PURPOSE: Overclocked Red variant (stats from OC base, visuals from non-OC red)
+
+ID = "SW.concussion_turret_heavy_laser_red_shot_overclock"
+
+Range       = &<../red_shot.rules>/Range
+IdealRange  = &<../red_shot.rules>/IdealRange
+IdealRadius = &<../red_shot.rules>/IdealRadius
+Speed       = &<../red_shot.rules>/Speed
+
+// Bring in OC stats (which already override base behavior to DamagePool model)
+Components : &<../base_shot.rules>/Components
+{
+	// On-death media: use non-OC red’s operational media for consistency.
+	Targetable : ^/0/Targetable
+	{
+		OnDeath : ^/0/OnDeath
+		{
+			MediaEffects = &<../red_shot.rules>/Components/Hit/HitOperational/MediaEffects
+		}
+	}
+
+	// Re-attach all BLUE media from the non-OC file.
+	Hit : ^/0/Hit
+	{
+		HitShield : ^/0/HitShield
+		{
+			MediaEffects = &<../red_shot.rules>/Components/Hit/HitShield/MediaEffects
+		}
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects = &<../red_shot.rules>/Components/Hit/HitOperational/MediaEffects
+		}
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			MediaEffects = &<../red_shot.rules>/Components/Hit/PenetratingOperational/MediaEffects
+		}
+		FinishedPenetratingStructural : ^/0/FinishedPenetratingStructural
+		{
+			MediaEffects = &<../red_shot.rules>/Components/Hit/FinishedPenetratingStructural/MediaEffects
+		}
+	}
+
+	// Re-apply the Red texture & glow settings.
+	Sprite : ^/0/Sprite
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture : ^/0/Texture
+				{
+					File = &<../red_shot.rules>/Components/Sprite/Animation/AtlasSprite/Texture/File
+				}
+			}
+		}
+	}
+
+	GlowSprite : ^/0/GlowSprite
+	{
+		Sprite : ^/0/Sprite
+		{
+			VertexColor            = &<../red_shot.rules>/Components/GlowSprite/Sprite/VertexColor
+			_litReflectiveStrength = &<../red_shot.rules>/Components/GlowSprite/Sprite/_litReflectiveStrength
+			_litAdditiveStrength   = &<../red_shot.rules>/Components/GlowSprite/Sprite/_litAdditiveStrength
+			_unlitAdditiveStrength = &<../red_shot.rules>/Components/GlowSprite/Sprite/_unlitAdditiveStrength
+		}
+	}
+
+	MediaEffects : ^/0/MediaEffects
+	{
+		MediaEffects = &<../red_shot.rules>/Components/MediaEffects/MediaEffects
+	}
+}
