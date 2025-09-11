@@ -1,0 +1,105 @@
+VANILLA_REF = &<./Data/ships/terran/structure/structure.rules>/Part
+MAXHEALTH = &~/VANILLA_REF/MaxHealth
+DENSITY = &~/VANILLA_REF/Density
+COST = &~/VANILLA_REF/Resources/0/1
+//
+//
+//
+
+Part : &<./Data/ships/terran/base_part_terran_structure.rules>/Part
+{
+	//NameKey
+	//IconNameKey
+	//ID
+	//OtherIDs
+	//FlipWhenLoadingIDs
+	EditorGroups = [ Structure ] 														//Initial for Structural Parts
+
+	DontStackInEditorGroups = [ SWTechI, SWTechII, SWTechIII ] 							//Prohibits Stacking in SWTech's
+
+	DescriptionKey = "Parts/StructureDesc"
+	EditorReplacementPartID = cosmoteer.corridor 										//v:""
+	Resources
+	[
+		[steel, (&~/COST)]
+	]
+	AIValueFactor = 0 																	//v:0
+	Size = [1, 1]
+	IsFlippable = true 																	//v: true
+	SelectionTypeID = "structure"
+	//AllowedContiguity = [ Right, Bottom ]												//v: structure_wedge
+	Density = (&~/DENSITY) 																//struct 0.333
+	MaxHealth = (&~/MAXHEALTH)															//struct 1.000
+	ConstructionWork = 0.25 															//v:0.25
+	WorkPerRepairedHealth = 0.25 / 1000 												//v:0.25 / 1000
+	HealthType = Structural 															//v:Structural
+	DamageResistances : ^/0/DamageResistances { thermal=60% }  							// thermal=60%
+	TypeCategories : ^/0/TypeCategories [ structure, non_flammable, SW_STRUCTURE ]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	UnderlyingPartPerTile = "" 															//v:""
+	TempConstructionPartPerTile = cosmoteer.structure 									//v:cosmoteer.structure
+	CreatePartPerTileWhenGrabbed = "" 													//v:""
+	InitialPenetrationResistance = 0 													//v:0
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	CrewSpeedFactor = 0 																//v:0
+	CellOccupancyFactor = 0.25 															//v:0.25
+	IsExternal = true 																	//v: true
+	ExternalWalls = [None] 																//v: NONE
+	InternalWalls = [All] 																//v: ALL
+	IsRotateable = true 																//v: true
+	IsWalled = false 																	//v: false
+	IsSelfDestructible = false 															//v: false
+	AllowedDoorLocations = [] 															//v: EMPTY
+	GeneratorRequiresDoor = false 														//v: false
+	NoAutoDoors = true 																	//v: true
+	FlipHRotate = [1, 0, 3, 2]															//v: structure_wedge
+	FlipVRotate = [3, 2, 1, 0]															//v: structure_wedge
+	GenerateRectCollider = false														//v: false
+	IgnoreRotationForMirroredSelection = true 											//v: true
+	//ConstructionDuration = 0.5
+	//RepairDuration = 0.5
+	//EditorParentParts = []
+	EditorIcon
+	{
+		Texture
+		{
+			File = "./data/ships/terran/structure/structure.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+	Components : ^/0/Components
+	{
+		ConstructionEffects
+		{
+			Type = Sprite
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			GetColorFrom = ConstructionTracker
+			Location = [.5, .5]
+			AtlasSprite
+			{
+				File = "./Data/ships/terran/structure/structure_mask_combined.png"
+				NormalsFile = "./Data/ships/terran/structure/structure_normals.png"
+				Size = [1, 1]
+			}
+			RandomUVRotation = false
+			Layer = "structure_construction"
+			UseConstructionProgressAsDamage = true
+		}
+
+		DestroyedEffects //can just be inherited only need adjusting for 1x1 + sizes
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/StructureDestroyed
+			Location = [.5, .5] 
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "./Data/ships/terran/structure/blueprints.png"
+			Size = [1, 1]
+		}
+	}
+}

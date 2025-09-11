@@ -1,41 +1,42 @@
 Part : &<../base_part_terran_utilities.rules>/Part
 {
-    //IDs
-	ID = sw.resource_collector_compact // Part IDs must always be in the form of "author_name.part_name". If making your own mod, do *not* use "cosmoteer" as your author name, because it may conflict with future vanilla parts.
+	//IDs
+	ID = sw.resource_collector_tiny
+	//OtherIDs = []
 
-    //StringKeys
-	NameKey = "Parts/SWResourceCollectorCompact"
-	IconNameKey = "Parts/SWResourceCollectorCompactIcon"
-	DescriptionKey = "Parts/SWResourceCollectorCompactDesc"
+	//StringKeys
+	NameKey = "Parts/SWResourceCollectorTiny"
+	IconNameKey = "Parts/SWResourceCollectorTinyIcon"
+	DescriptionKey = "Parts/SWResourceCollectorTinyDesc"
 
-    //Groups&Categories
-	TypeCategories = [uses_power, tractor_beam]
-	EditorGroups = ["Storage", "Utilities", "SWTechI"]
+	//Groups&Categories
+	TypeCategories : ^/0/TypeCategories [uses_power]
+	EditorGroups : ^/0/EditorGroups [Storage, SWTechI]
 
-    //Resources&Size&Health
+	//Resources&Size&Health
 	Resources
 	[
 		[SW.durasteel, 15]
-		[steel, 15]
-		[coil, 5]
+		[steel, 12]
+		[coil, 8]
 	]
 	Size = [1, 1]
 	MaxHealth = 1000
 
-    //Rects
+	//Rects
 
-    //Selections
+	//Selections
 
-    //PartSpecific
+	//PartSpecific
 	IsRotateable = false
 	IgnoreRotationForMirroredSelection = true
 
-    //ReceivableBuffs&ProhibitedBy
+	//ReceivableBuffs&ProhibitedBy
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
-    //Doors&Etc
+	//Doors&Etc
 
-    //Editor
+	//Editor
 	EditorIcon
 	{
 		Texture
@@ -46,7 +47,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 		Size = [32, 32]
 	}
 
-    //Components
+	//Components
 	Components : ^/0/Components
 	{
 		IsOperational : ^/0/IsOperational
@@ -83,7 +84,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 2500
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 		BatterySplitter
 		{
@@ -100,7 +101,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/PriorityUtility_Supply
 			ResupplyThreshold = 500
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 		}
 
 		Graphics
@@ -142,7 +143,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 					}
 					{
 						File = "doodads_on_66.png"
-						Size = [1, 1]
+						Size = [0.5, 0.5]
 						Offset = [-0.25, 0.25]
 					}
 				]
@@ -246,7 +247,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 				[
 					{
 						File = "./Data/ships/common/light_blob.png"
-						Size = [.75, .75]
+						Size = [0.75, 0.75]
 						Z = 0.1 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
 						VertexColor = [58*1.5, 159*1.5, 255*1.5]
 					}
@@ -284,7 +285,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 				[
 					{
 						File = "crew_light.png"
-						Size = [1, 1]
+						Size = [0.5, 0.5]
 					}
 				]
 			}
@@ -315,12 +316,12 @@ Part : &<../base_part_terran_utilities.rules>/Part
 			[
 				{
 					File = "batteries1.png"
-					Size = [1, 1]
+					Size = [0.5, 0.5]
 					Offset = [13/128, -12/128]
 				}
 				{
 					File = "batteries2.png"
-					Size = [1, 1]
+					Size = [0.5, 0.5]
 					Offset = [13/128, -12/128]
 				}
 				{
@@ -338,7 +339,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 		Turret1
 		{
 			Type = TurretWeapon
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 			Location = [0.5, 0.5] //Relative to upper-left corner of unrotated part.
 			Rotation = -90d // Relative to unrotated part.
 			FireInterval = &../BeamEmitter1/Duration
@@ -365,11 +366,9 @@ Part : &<../base_part_terran_utilities.rules>/Part
 				{
 					TargetType = CollectNuggets
 				}
-				/*
-				{
+/*				{
 					TargetType = MoveCrew
-				}
-				*/
+				}*/
 			]
 		}
 		Turret1b : Turret1
@@ -397,7 +396,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 		Turret1bSearchingToggle
 		{
 			Type = MultiToggle
-			Toggles = [_Turret1bSearchingToggle, PowerToggle]
+			Toggles = [_Turret1bSearchingToggle, CommandConsumptionToggle]
 			Mode = All
 		}
 		_Turret1cSearchingToggle
@@ -409,7 +408,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 		Turret1cSearchingToggle
 		{
 			Type = MultiToggle
-			Toggles = [_Turret1cSearchingToggle, PowerToggle]
+			Toggles = [_Turret1cSearchingToggle, CommandConsumptionToggle]
 			Mode = All
 		}
 		_Turret1dSearchingToggle
@@ -421,7 +420,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 		Turret1dSearchingToggle
 		{
 			Type = MultiToggle
-			Toggles = [_Turret1dSearchingToggle, PowerToggle]
+			Toggles = [_Turret1dSearchingToggle, CommandConsumptionToggle]
 			Mode = All
 		}
 
@@ -544,7 +543,7 @@ Part : &<../base_part_terran_utilities.rules>/Part
 		}
 	}
 
-    //Stats
+	//Stats
 	Stats
 	{
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000

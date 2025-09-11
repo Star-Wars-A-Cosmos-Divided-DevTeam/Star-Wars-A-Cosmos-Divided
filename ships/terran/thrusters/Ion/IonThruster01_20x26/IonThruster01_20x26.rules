@@ -1,23 +1,26 @@
-/* Skipper do we need something like this?
-		ToggledExtendableBatteryStorage
-		{
-			Type = ResourceStorageProxy
-			ResourceType = battery
-			ComponentID = ExtendableBatteryStorage
-			ProxyToggle = ExtendableBatteryStorage
-			LimitMaxResources = &../LocalBatteryStorage/MaxResources
-		}
-		CombinedBatteryStorage
-		{
-			Type = MultiResourceStorage
-			ResourceType = battery
-			ResourceStorages = [ToggledExtendableBatteryStorage, PrevCombinedBatteryStorage]
-			AddMode = DistributeProportionallyByCapacity
-			RemoveMode = DistributeProportionallyByCapacity
-		}
-*/
+CLASSIFICATION = Giga
+SCALE = (0.81)
+SIZE = [20, 26]
+SIZE_2 = (&~/SIZE/0) * (&~/SIZE/1)
+MULTIPLIKATOR = (&~/SCALE) * (&~/SIZE/0) * (&~/SIZE/1)
+NOZZLE_OFFSET = 7
+LOCATION = [((&~/SIZE/0)/2), ((&~/SIZE/1)/2)]
+MAXHEALTH = 810
 
-Part : &<../base_part_terran_thrusters_ion.rules>/Part
+UPSCALER = 175%
+
+OVERCLOCK : &<./Data/ships/terran/thruster_huge/thruster_huge.rules>/OVERCLOCK
+{
+	THRUST_FACTOR = (ceil((&^/0/THRUST_FACTOR)/1.6*100)/100)									//v:2				//2/1.6 = 1.25 ~= 1.25
+	MAX_POWER_USAGE_FACTOR = (ceil(((&^/0/MAX_POWER_USAGE_FACTOR)/1.6)*100)/100)				//v:1.5				//1.5/1.6 = 0.9375 ~= 0.94
+	POWER_USAGE_FACTOR = (ceil((1 / (&THRUST_FACTOR) * (&MAX_POWER_USAGE_FACTOR))*100)/100)		//v:1/2*1.5=0.75	//1/1.25*0.94 = 0.752 ~= 0.76
+	//POWER_GENERATION_FACTOR																	//					//
+	THRUST_HEAT_PER_SECOND = (floor(((&^/0/THRUST_HEAT_PER_SECOND)*(&~/UPSCALER))/1.6/10)*10)	//v:1100			//1100/1.6*1.75 = 1203.125 ~= 1200
+}
+HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
+HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
+
+Part : &<../base_part_terran_thrusters_ion_omega.rules>/Part
 {
 	//IDs
 	ID = SW.IonThruster01_20x26_switchable
@@ -29,8 +32,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_20x26_Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechIII"]
-	TypeCategories = [ftl, thruster, ion_thruster, uses_power, SW_Hypernodes, SW_Tech_III]
+	EditorGroups : ^/0/EditorGroups [ SWTechIII]
+	TypeCategories : ^/0/TypeCategories [ftl, thruster, ion_thruster, uses_power, SW_Hypernodes, SW_Tech_III]
 	RequiresCategories = [SW_Bridge]
 
 	//Resources&Size&Health
@@ -41,11 +44,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		[coil2, 920] //20/9*20*26=1155*81%
 		//[SW.durasteel, 692]//120%*577 of vanilla		//10/9*20*26=577*81%
 	]
-	Size = [20, 33]
-	MaxHealth = 420000 //421.200 //81% of vanilla 1000 per tile
+	Size = [&~/SIZE/0, ((&~/SIZE/1) + (&~/NOZZLE_OFFSET))]
+	MaxHealth = (ceil((&~/MAXHEALTH)*(&~/MULTIPLIKATOR)/1000)*1000)	//420000 //421.200 //81% of vanilla 1000 per tile
 
 	//Rects
-	PhysicalRect = [0, 0, 20, 26]
+	PhysicalRect = [0, 0, &~/SIZE/0, &~/SIZE/1]
 	SaveRect = &PhysicalRect
 	BoundingRectType = Physical
 
@@ -55,88 +58,676 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	SelectionTypeID = "ion_thrusters"
 
 	//PartSpecific
-	ThrusterForce = 560000 //554.320 //75%sizedegrade*[normalized] 160% of vanilla 1000*8/9 per tile
-	ThrustIncreaseTime = { BaseValue=21; BuffType=SW_Ion_Thruster_Accelerator_RampUpFinal; BuffMode=Multiply; MinValue=(&BaseValue)/10; MaxValue=(&BaseValue)*10; }
-	ThrustDecreaseTime = 4.8	//v:2		//softer deccel
-	ThrustRecoveryTime = { BaseValue=7; BuffType=SW_Ion_Thruster_Accelerator_RampUpFinal; BuffMode=Multiply; MinValue=(&BaseValue)/10; MaxValue=(&BaseValue)*10; }
-	FuelUsage = 14800 //14.790 //160%*40% of vanilla 50*8/9 per tile
+	ThrusterForce = 560000 //554.320 //75%sizedegrade*[normalized] 160% of vanilla 1000*8/9 per tilee 
+	ThrustIncreaseTime
+	{
+		BaseValue = 21		//v:4		//160%*175% of vanilla
+		Modifiers
+		[
+			{
+				Type = Buff
+				BuffType = SW_Ion_Thruster_Accelerator_RampUpFinal
+				ModificationMode = Divide
+			}
+			{
+				Type = BuffRemap
+				BuffType = Overclock
+				ModificationMode = Divide
+				RemapFrom = [0, 1]
+				RemapTo = [1, (&~/OVERCLOCK/THRUST_FACTOR)]
+			}
+		]
+		MinValue=(&BaseValue)/10
+		MaxValue=(&BaseValue)*10
+	}
+	ThrustDecreaseTime : ThrustIncreaseTime
+	{	
+		BaseValue = (&^/0/BaseValue) / 3
+		MinValue=(&BaseValue)/10
+		MaxValue=(&BaseValue)*10
+	}				// = 4.8	//v:2		//softer deccel
+	ThrustRecoveryTime : ThrustIncreaseTime
+	{	
+		BaseValue = (&^/0/BaseValue) * 2 / 3
+		MinValue=(&BaseValue)/10
+		MaxValue=(&BaseValue)*10
+	}				// = 2.5	//v:0
+	FuelUsage = 14.790 //160%*40% of vanilla 50*8/9 per tile
 
 	//ReceivableBuffs&Prohibits
 	//ProhibitRects
 	ProhibitBelow = 20 // 32
 	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Accelerator, SW_Ion_Thruster_Accelerator_Thrust, SW_Ion_Thruster_To_Accelerator, SW_Ion_Thruster_Accelerator_RampUp, SW_Ion_Thruster_Accelerator_RampUpFinal, SW_Display] 
 
-    //Doors&Etc
+	//Doors&Etc
 	ForceManhattenPathInPart = true
-	BlockedTravelCells
-	[
-
-	]
 	AllowedDoorLocations
 	[
-		//LEFT
-		//[-1, 0]
-		//[-1, 1]
-		[-1, 2]
-		[-1, 3]
-		[-1, 4]
-		[-1, 5]
-		[-1, 6]
-		[-1, 7]
-		[-1, 8]
-		[-1, 9]
-		[-1, 10]
-		[-1, 11]
-		[-1, 12]
-		[-1, 13]
-		[-1, 14]
-		[-1, 15]
-		[-1, 16]
-		[-1, 17]
-		[-1, 18]
-		//TOP
-		//[0, -1]
-		//[1, -1]
-		//[2, -1]
-		//[3, -1]
-		//[4, -1]
-		[5, -1]
-		[6, -1]
 		[7, -1]
 		[8, -1]
 		[9, -1]
 		[10, -1]
 		[11, -1]
 		[12, -1]
-		[13, -1]
-		[14, -1]
-		//[15, -1]
-		//[16, -1]
-		//[17, -1]
-		//[18, -1]
-		//[19, -1]
-		//RIGHT
-		//[20, 0]
-		//[20, 1]
+		[-1, 2]
 		[20, 2]
+		[-1, 3]
 		[20, 3]
+		[-1, 4]
 		[20, 4]
+		[-1, 5]
 		[20, 5]
-		[20, 6]
+		[-1, 7]
 		[20, 7]
+		[-1, 8]
 		[20, 8]
+		[-1, 9]
 		[20, 9]
-		[20, 10]
-		[20, 11]
-		[20, 12]
+		[-1, 13]
 		[20, 13]
+		[-1, 14]
 		[20, 14]
+		[-1, 15]
 		[20, 15]
-		[20, 16]
-		[20, 17]
-		[20, 18]
 	]
-
+	BlockedTravelCellDirections
+	[
+		{
+			Key = [5, 10]
+			Value = [Right]
+		}
+		{
+			Key = [5, 9]
+			Value = [Right]
+		}
+		{
+			Key = [5, 8]
+			Value = [Right]
+		}
+		{
+			Key = [5, 11]
+			Value = [Right]
+		}
+		{
+			Key = [5, 12]
+			Value = [Right]
+		}
+		{
+			Key = [5, 13]
+			Value = [Right]
+		}
+		{
+			Key = [5, 14]
+			Value = [Right]
+		}
+		{
+			Key = [5, 15]
+			Value = [Right]
+		}
+		{
+			Key = [5, 16]
+			Value = [Right]
+		}
+		{
+			Key = [5, 17]
+			Value = [Right]
+		}
+		{
+			Key = [5, 18]
+			Value = [Right]
+		}
+		{
+			Key = [5, 19]
+			Value = [Right]
+		}
+		{
+			Key = [13, 7]
+			Value = [Right]
+		}
+		{
+			Key = [14, 7]
+			Value = [Left]
+		}
+		{
+			Key = [5, 7]
+			Value = [Right]
+		}
+		{
+			Key = [6, 7]
+			Value = [Left]
+		}
+		{
+			Key = [14, 8]
+			Value = [Left]
+		}
+		{
+			Key = [14, 9]
+			Value = [Left]
+		}
+		{
+			Key = [14, 10]
+			Value = [Left]
+		}
+		{
+			Key = [14, 11]
+			Value = [Left]
+		}
+		{
+			Key = [14, 12]
+			Value = [Left]
+		}
+		{
+			Key = [14, 15]
+			Value = [Left]
+		}
+		{
+			Key = [14, 13]
+			Value = [Left]
+		}
+		{
+			Key = [14, 14]
+			Value = [Left]
+		}
+		{
+			Key = [14, 16]
+			Value = [Left]
+		}
+		{
+			Key = [14, 17]
+			Value = [Left]
+		}
+		{
+			Key = [14, 18]
+			Value = [Left]
+		}
+		{
+			Key = [14, 19]
+			Value = [Down, Left]
+		}
+		{
+			Key = [4, 20]
+			Value = [Left]
+		}
+		{
+			Key = [4, 21]
+			Value = [Left]
+		}
+		{
+			Key = [4, 22]
+			Value = [Left]
+		}
+		{
+			Key = [4, 23]
+			Value = [Left]
+		}
+		{
+			Key = [4, 24]
+			Value = [Left]
+		}
+		{
+			Key = [3, 24]
+			Value = [Right]
+		}
+		{
+			Key = [3, 23]
+			Value = [Right]
+		}
+		{
+			Key = [3, 22]
+			Value = [Right]
+		}
+		{
+			Key = [3, 21]
+			Value = [Right]
+		}
+		{
+			Key = [3, 20]
+			Value = [Right]
+		}
+		{
+			Key = [15, 24]
+			Value = [Right]
+		}
+		{
+			Key = [16, 24]
+			Value = [Left]
+		}
+		{
+			Key = [15, 23]
+			Value = [Right]
+		}
+		{
+			Key = [16, 23]
+			Value = [Left]
+		}
+		{
+			Key = [15, 22]
+			Value = [Right]
+		}
+		{
+			Key = [16, 22]
+			Value = [Left]
+		}
+		{
+			Key = [15, 21]
+			Value = [Right]
+		}
+		{
+			Key = [16, 21]
+			Value = [Left]
+		}
+		{
+			Key = [15, 20]
+			Value = [Right]
+		}
+		{
+			Key = [16, 20]
+			Value = [Left]
+		}
+		{
+			Key = [15, 19]
+			Value = [Down]
+		}
+		{
+			Key = [3, 25]
+			Value = [Right]
+		}
+		{
+			Key = [4, 25]
+			Value = [Left]
+		}
+		{
+			Key = [15, 25]
+			Value = [Right]
+		}
+		{
+			Key = [16, 25]
+			Value = [Left]
+		}
+		{
+			Key = [6, 8]
+			Value = [Left]
+		}
+		{
+			Key = [6, 9]
+			Value = [Left]
+		}
+		{
+			Key = [6, 10]
+			Value = [Left]
+		}
+		{
+			Key = [6, 11]
+			Value = [Left]
+		}
+		{
+			Key = [6, 12]
+			Value = [Left]
+		}
+		{
+			Key = [6, 13]
+			Value = [Left]
+		}
+		{
+			Key = [6, 14]
+			Value = [Left]
+		}
+		{
+			Key = [6, 15]
+			Value = [Left]
+		}
+		{
+			Key = [6, 16]
+			Value = [Left]
+		}
+		{
+			Key = [6, 17]
+			Value = [Left]
+		}
+		{
+			Key = [6, 18]
+			Value = [Left]
+		}
+		{
+			Key = [6, 19]
+			Value = [Left]
+		}
+		{
+			Key = [13, 8]
+			Value = [Right]
+		}
+		{
+			Key = [13, 9]
+			Value = [Right]
+		}
+		{
+			Key = [13, 10]
+			Value = [Right]
+		}
+		{
+			Key = [13, 11]
+			Value = [Right]
+		}
+		{
+			Key = [13, 13]
+			Value = [Right]
+		}
+		{
+			Key = [13, 12]
+			Value = [Right]
+		}
+		{
+			Key = [13, 14]
+			Value = [Right]
+		}
+		{
+			Key = [13, 16]
+			Value = [Right]
+		}
+		{
+			Key = [13, 15]
+			Value = [Right]
+		}
+		{
+			Key = [13, 17]
+			Value = [Right]
+		}
+		{
+			Key = [13, 18]
+			Value = [Right]
+		}
+		{
+			Key = [13, 19]
+			Value = [Right]
+		}
+	]
+/*
+	BlockedTravelCells
+	[
+		[0, 0]
+		[1, 0]
+		[2, 0]
+		[3, 0]
+		[4, 0]
+		[15, 0]
+		[16, 0]
+		[17, 0]
+		[18, 0]
+		[19, 0]
+		[1, 1]
+		[2, 1]
+		[3, 1]
+		[4, 1]
+		[5, 1]
+		[14, 1]
+		[15, 1]
+		[16, 1]
+		[17, 1]
+		[18, 1]
+		[1, 2]
+		[2, 2]
+		[3, 2]
+		[4, 2]
+		[5, 2]
+		[6, 2]
+		[7, 2]
+		[12, 2]
+		[13, 2]
+		[14, 2]
+		[15, 2]
+		[16, 2]
+		[17, 2]
+		[18, 2]
+		[7, 3]
+		[12, 3]
+		[0, 6]
+		[1, 6]
+		[2, 6]
+		[17, 6]
+		[18, 6]
+		[19, 6]
+		[0, 7]
+		[1, 7]
+		[2, 7]
+		[7, 7]
+		[8, 7]
+		[9, 7]
+		[10, 7]
+		[11, 7]
+		[12, 7]
+		[17, 7]
+		[18, 7]
+		[19, 7]
+		[0, 8]
+		[1, 8]
+		[2, 8]
+		[7, 8]
+		[8, 8]
+		[9, 8]
+		[10, 8]
+		[11, 8]
+		[12, 8]
+		[17, 8]
+		[18, 8]
+		[19, 8]
+		[0, 9]
+		[1, 9]
+		[2, 9]
+		[6, 9]
+		[7, 9]
+		[8, 9]
+		[9, 9]
+		[10, 9]
+		[11, 9]
+		[12, 9]
+		[13, 9]
+		[17, 9]
+		[18, 9]
+		[19, 9]
+		[6, 10]
+		[7, 10]
+		[8, 10]
+		[9, 10]
+		[10, 10]
+		[11, 10]
+		[12, 10]
+		[13, 10]
+		[6, 11]
+		[7, 11]
+		[8, 11]
+		[9, 11]
+		[10, 11]
+		[11, 11]
+		[12, 11]
+		[13, 11]
+		[2, 12]
+		[6, 12]
+		[7, 12]
+		[8, 12]
+		[9, 12]
+		[10, 12]
+		[11, 12]
+		[12, 12]
+		[13, 12]
+		[17, 12]
+		[2, 13]
+		[6, 13]
+		[7, 13]
+		[8, 13]
+		[9, 13]
+		[10, 13]
+		[11, 13]
+		[12, 13]
+		[13, 13]
+		[17, 13]
+		[2, 14]
+		[6, 14]
+		[7, 14]
+		[8, 14]
+		[9, 14]
+		[10, 14]
+		[11, 14]
+		[12, 14]
+		[13, 14]
+		[17, 14]
+		[2, 15]
+		[3, 15]
+		[4, 15]
+		[5, 15]
+		[6, 15]
+		[7, 15]
+		[8, 15]
+		[9, 15]
+		[10, 15]
+		[11, 15]
+		[12, 15]
+		[13, 15]
+		[14, 15]
+		[15, 15]
+		[16, 15]
+		[17, 15]
+		[2, 18]
+		[3, 18]
+		[4, 18]
+		[5, 18]
+		[6, 18]
+		[7, 18]
+		[8, 18]
+		[9, 18]
+		[10, 18]
+		[11, 18]
+		[12, 18]
+		[13, 18]
+		[14, 18]
+		[15, 18]
+		[16, 18]
+		[17, 18]
+		[2, 19]
+		[3, 19]
+		[4, 19]
+		[5, 19]
+		[6, 19]
+		[7, 19]
+		[8, 19]
+		[9, 19]
+		[10, 19]
+		[11, 19]
+		[12, 19]
+		[13, 19]
+		[14, 19]
+		[15, 19]
+		[16, 19]
+		[17, 19]
+		[2, 20]
+		[3, 20]
+		[4, 20]
+		[5, 20]
+		[6, 20]
+		[7, 20]
+		[8, 20]
+		[9, 20]
+		[10, 20]
+		[11, 20]
+		[12, 20]
+		[13, 20]
+		[14, 20]
+		[15, 20]
+		[16, 20]
+		[17, 20]
+		[2, 21]
+		[3, 21]
+		[4, 21]
+		[5, 21]
+		[6, 21]
+		[7, 21]
+		[8, 21]
+		[9, 21]
+		[10, 21]
+		[11, 21]
+		[12, 21]
+		[13, 21]
+		[14, 21]
+		[15, 21]
+		[16, 21]
+		[17, 21]
+		[2, 22]
+		[3, 22]
+		[4, 22]
+		[5, 22]
+		[6, 22]
+		[7, 22]
+		[8, 22]
+		[9, 22]
+		[10, 22]
+		[11, 22]
+		[12, 22]
+		[13, 22]
+		[14, 22]
+		[15, 22]
+		[16, 22]
+		[17, 22]
+		[0, 23]
+		[1, 23]
+		[2, 23]
+		[3, 23]
+		[4, 23]
+		[5, 23]
+		[6, 23]
+		[7, 23]
+		[8, 23]
+		[9, 23]
+		[10, 23]
+		[11, 23]
+		[12, 23]
+		[13, 23]
+		[14, 23]
+		[15, 23]
+		[16, 23]
+		[17, 23]
+		[18, 23]
+		[19, 23]
+		[0, 24]
+		[1, 24]
+		[2, 24]
+		[3, 24]
+		[4, 24]
+		[5, 24]
+		[6, 24]
+		[7, 24]
+		[8, 24]
+		[9, 24]
+		[10, 24]
+		[11, 24]
+		[12, 24]
+		[13, 24]
+		[14, 24]
+		[15, 24]
+		[16, 24]
+		[17, 24]
+		[18, 24]
+		[19, 24]
+		[0, 25]
+		[1, 25]
+		[2, 25]
+		[3, 25]
+		[4, 25]
+		[5, 25]
+		[6, 25]
+		[7, 25]
+		[8, 25]
+		[9, 25]
+		[10, 25]
+		[11, 25]
+		[12, 25]
+		[13, 25]
+		[14, 25]
+		[15, 25]
+		[16, 25]
+		[17, 25]
+		[18, 25]
+		[19, 25]
+	]
+*/
 	//Editor
 	EditorIcon
 	{
@@ -149,7 +740,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components, &<walls.rules>, &<floor.rules>, &<nozzles.rules>, &<nozzle_covers.rules>, &<hyperdrive.rules>, &<engine_doodads.rules>
+	Components : ^/0/Components, &<walls.rules>, &<hyperdrive.rules>, &<engine_doodads.rules>, &<floor.rules>, &<nozzles.rules>, &<nozzle_covers.rules>
 	{
 		IsOperational : ^/0/IsOperational
 		{
@@ -158,19 +749,11 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = All
 		}
 
-		PowerToggle
+		CommandConsumptionToggle : ^/0/CommandConsumptionToggle
 		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-			RequiresCommand = false
-		}
-
-		CommandConsumer
-		{
-			Type = CommandConsumer
-			OperationalToggle = PowerToggle
-			CommandPoints = 260 //1 per tile
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [PowerToggle]
+			Mode = All
 		}
 
 		IsOperationalAndHypernodeConnectedToggle
@@ -185,6 +768,21 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = MultiToggle
 			Toggles = [IsOperational, {Toggle = FtlDrive, Invert = true}]
 			Mode = All
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		CommandConsumer
+		{
+			Type = CommandConsumer
+			OperationalToggle = CommandConsumptionToggle
+			CommandPoints = &~/SIZE_2
 		}
 
 		HypernodeConnectedToggle
@@ -217,7 +815,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			ResourceType = battery
 			MaxResources = 520000
 			DeliveryLocation = [10, 5]
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 		ToggledBatteryConsumer
 		{
@@ -234,7 +832,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 					Storage = BatteryStorage
 					DefaultPriority = &/PRIORITIES/Thruster_Supply
 					ResupplyThreshold = 100000
-					OperationalToggle = PowerToggle
+					OperationalToggle = CommandConsumptionToggle
 				}
 			}
 		}
@@ -273,6 +871,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = ThrusterEffectType
 			OnModes = [0, 1, 2]
 		}
+
 		ThrusterEffectSparksToggle
 		{
 			Type = ModeToggle
@@ -321,6 +920,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Toggle = ThrusterEffectRocketToggle
 			Components = &<particles/thruster_colorable_rocketset.rules>/Components
 		}
+
 		EngineRoofDoodadsOptionToggle
 		{
 			Type = UIToggle
@@ -384,7 +984,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = Add
 		}
 
-		ThrusterActivationBar
+		RampProgressBar
 		{
 			Type = ProgressBar
 			OperationalToggle = ThrusterIsFiringThresholdToggle
@@ -451,18 +1051,289 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			BuffMultiplier = DoodadAnimationSpeedFactorValue
 		}
 
-		RoofGridFlat
+		//OC START
+
+		OverclockModeToggle
 		{
-			Type = BlendSpriteGrid
-			AllowUndefinedBlendSprites = true
-			BlendsWithCategories = []
-			AlwaysBlendWithSelf = true
-			RectType = Physical
-			Location = [0.5, 0.5]
-			//GridSize = [20, 26]
-			Layer = "roofs"
-			//CellOffset = [0, 3]
-			AmbiguousSprites = &<../Ion_Common/RoofGrid/roof_grid_blank.rules>/AmbiguousSprites
+			Type = UIToggle
+			ToggleID = "thermal_overclock"
+			Default = 0
+			AvailableChoices = [0]
+		}
+
+		OverclockStateValue
+		{
+			Type = ToggleValueSelector
+			Toggle = OverclockModeToggle
+			ToggleOffValue = Zero
+			ToggleOnValue = One
+		}
+
+		Zero { Type = StaticValue; Value = 0; }
+		One { Type = StaticValue; Value = 1; }
+
+		OverheatEffects : ^/0/OverheatEffects
+		{
+			Location = [10.0, 13.0]
+		}
+
+		Overclock_CombinedHeatInput
+		{
+			Type = MultiResourceStorage
+			ResourceType = heat
+			ResourceStorages = [ NetworkHeatInput ]
+			ViaBuffs
+			{
+				IncomingBuffTypes = [ EngineHeatCollection ]
+				ComponentIDs = [ EngineHeatCollectionStorage ]
+			}
+		}
+
+		// Overriding to use the combined heat input
+		HeatDistributionStorage : ^/0/HeatDistributionStorage
+		{
+			ResourceStorages = [Overclock_CombinedHeatInput, OverflowHeatStorage]
+		}
+
+		Overclock_ThrusterHeatProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperationalOverclocked
+			HEAT_PER_INTERVAL = ceil((&~/OVERCLOCK/THRUST_HEAT_PER_SECOND) * (&Interval))
+			ToQuantity
+			{
+				BaseValue = (&../HEAT_PER_INTERVAL) * (&~/HEAT_TO_RESOURCE)
+				BuffType = ThermalActivity
+				BuffMode = Multiply
+			}
+			ToStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Interval = 0.5
+		}
+
+		Overclock_ActivationBuff
+		{
+			Type = SelfBuffProvider
+			BuffType = ThermalActivity
+			BuffMultiplier = Overclock_SmoothedThrusterActivation
+		}
+
+		Overclock_SmoothedThrusterActivation
+		{
+			Type = SmoothedValue
+			ValueSource = Overclock_NormalizedThrusterActivation
+			MaxDelta = 1 / (&../Overclock_ThrusterHeatProducer/Interval)
+		}
+
+		Overclock_NormalizedThrusterActivation
+		{
+			Type = ValueOperation
+			Operator = Divide
+			ValueOne = MainThrusterValueProxy
+			ValueTwo = Overclock_MaxActivation
+		}
+
+		Overclock_MaxActivation
+		{
+			Type = BuffableValue
+			Value = &~/Part/Components/MainThruster/MaxActivation
+		}
+
+		// --- Thermal Ports ---
+
+		Port_Thermal_TopLeft : ~/Part/^/0/BASE_THERMAL_PORT
+		{
+			Location = [0, 0]
+			Direction = Left
+		}
+
+		Port_Thermal_LeftUp : Port_Thermal_TopLeft
+		{
+			Direction = Up
+		}
+
+		Port_Thermal_TopRight : Port_Thermal_LeftUp
+		{
+			Location = [19, 0]
+			Direction = Right
+		}
+
+		Port_Thermal_RightUp : Port_Thermal_TopRight
+		{
+			Direction = Up
+		}
+
+		Port_Thermal_MidUp1 : Port_Thermal_RightUp
+		{
+			Location = [1, 0]
+		}
+
+		Port_Thermal_MidUp2 : Port_Thermal_MidUp1
+		{
+			Location = [2, 0]
+		}
+
+		Port_Thermal_MidUp3 : Port_Thermal_MidUp2
+		{
+			Location = [3, 0]
+		}
+
+		Port_Thermal_MidUp4 : Port_Thermal_MidUp3
+		{
+			Location = [4, 0]
+		}
+
+		Port_Thermal_MidUp15 : Port_Thermal_MidUp4
+		{
+			Location = [15, 0]
+		}
+
+		Port_Thermal_MidUp16 : Port_Thermal_MidUp15
+		{
+			Location = [16, 0]
+		}
+
+		Port_Thermal_MidUp17 : Port_Thermal_MidUp16
+		{
+			Location = [17, 0]
+		}
+
+		Port_Thermal_MidUp18 : Port_Thermal_MidUp17
+		{
+			Location = [18, 0]
+		}
+
+		Port_Thermal_MidRight6 : Port_Thermal_MidUp18
+		{
+			Location = [19, 6]
+			Direction = Right
+		}
+
+		Port_Thermal_MidRight7 : Port_Thermal_MidRight6
+		{
+			Location = [19, 7]
+		}
+
+		Port_Thermal_MidRight8 : Port_Thermal_MidRight7
+		{
+			Location = [19, 8]
+		}
+
+		Port_Thermal_MidRight9 : Port_Thermal_MidRight8
+		{
+			Location = [19, 9]
+		}
+
+		Port_Thermal_MidRight12 : Port_Thermal_MidRight9
+		{
+			Location = [19, 12]
+		}
+
+		Port_Thermal_MidRight13 : Port_Thermal_MidRight12
+		{
+			Location = [19, 13]
+		}
+
+		Port_Thermal_MidRight14 : Port_Thermal_MidRight13
+		{
+			Location = [19, 14]
+		}
+
+		Port_Thermal_MidRight15 : Port_Thermal_MidRight14
+		{
+			Location = [19, 15]
+		}
+
+		Port_Thermal_MidRight18 : Port_Thermal_MidRight15
+		{
+			Location = [19, 18]
+		}
+
+		Port_Thermal_MidRight19 : Port_Thermal_MidRight18
+		{
+			Location = [19, 19]
+		}
+
+		Port_Thermal_MidRight20 : Port_Thermal_MidRight19
+		{
+			Location = [19, 20]
+		}
+
+		Port_Thermal_MidRight21 : Port_Thermal_MidRight20
+		{
+			Location = [19, 21]
+		}
+
+		Port_Thermal_MidLeft21 : Port_Thermal_MidRight21
+		{
+			Location = [0, 21]
+			Direction = Left
+		}
+
+		Port_Thermal_MidLeft20 : Port_Thermal_MidLeft21
+		{
+			Location = [0, 20]
+		}
+
+		Port_Thermal_MidLeft19 : Port_Thermal_MidLeft20
+		{
+			Location = [0, 19]
+		}
+
+		Port_Thermal_MidLeft18 : Port_Thermal_MidLeft19
+		{
+			Location = [0, 18]
+		}
+
+		Port_Thermal_MidLeft15 : Port_Thermal_MidLeft18
+		{
+			Location = [0, 15]
+		}
+
+		Port_Thermal_MidLeft14 : Port_Thermal_MidLeft15
+		{
+			Location = [0, 14]
+		}
+
+		Port_Thermal_MidLeft13 : Port_Thermal_MidLeft14
+		{
+			Location = [0, 13]
+		}
+
+		Port_Thermal_MidLeft12 : Port_Thermal_MidLeft13
+		{
+			Location = [0, 12]
+		}
+
+		Port_Thermal_MidLeft9 : Port_Thermal_MidLeft12
+		{
+			Location = [0, 9]
+		}
+
+		Port_Thermal_MidLeft8 : Port_Thermal_MidLeft9
+		{
+			Location = [0, 8]
+		}
+
+		Port_Thermal_MidLeft7 : Port_Thermal_MidLeft8
+		{
+			Location = [0, 7]
+		}
+
+		Port_Thermal_MidLeft6 : Port_Thermal_MidLeft7
+		{
+			Location = [0, 6]
+		}
+
+		//OC END
+
+		//FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
+		//{
+			// Rojama Special Flooring YAY
+		//}
+
+		RoofGrid : &/SW_GRAPHICS/RoofGrid/GridSize_1x1/Roof_Vanilla/RDL
+		{
+			//
 		}
 
 		LightsGraphics2
@@ -493,6 +1364,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
 			AnimationSpeedFactorRenormalize = [0.64, 2.7]
+
 			OperationalLighting
 			{
 				Layer = "lights_add"
@@ -509,42 +1381,41 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 					}
 				]
 			}
-
 			OperationalDoodad
-		    {
-		        Layer = "doodads_high"
+			{
+				Layer = "doodads_high"
 				Offset = [0, 4.5]
-		        DamageLevels
-		        [
-		            {
-		                AnimationFiles
-		                [
-		                    "IonThruster_doodads8_XL_on1.png"// "../Ion_Common/IonThruster_doodads8_XL_on1.png"
-		                    "IonThruster_doodads8_XL_on2.png"// "../Ion_Common/IonThruster_doodads8_XL_on2.png"
-		                    "IonThruster_doodads8_XL_on3.png"// "../Ion_Common/IonThruster_doodads8_XL_on3.png"
-		                    "IonThruster_doodads8_XL_on4.png"// "../Ion_Common/IonThruster_doodads8_XL_on4.png"
-		                    "IonThruster_doodads8_XL_on5.png"// "../Ion_Common/IonThruster_doodads8_XL_on5.png"
-		                    "IonThruster_doodads8_XL_on6.png"// "../Ion_Common/IonThruster_doodads8_XL_on6.png"
-		                    "IonThruster_doodads8_XL_on7.png"// "../Ion_Common/IonThruster_doodads8_XL_on7.png"
-		                    "IonThruster_doodads8_XL_on8.png"// "../Ion_Common/IonThruster_doodads8_XL_on8.png"
-		                ]
-		                Size = [9, 13.435] // Scaled size
-		                AnimationInterval = 0.075
-		            }
-		        ]
-		    }
-
-		    NonOperationalDoodad
-		    {
-		        Layer = "doodads_high"
-		        DamageLevels
-		        [
-		            {
-		                File = "doodads_off_0.png"
-		                Size = [20, 26] // Scaled size
-		            }
-		        ]
-		    }
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"IonThruster_doodads8_XL_on1.png"// "../Ion_Common/IonThruster_doodads8_XL_on1.png"
+							"IonThruster_doodads8_XL_on2.png"// "../Ion_Common/IonThruster_doodads8_XL_on2.png"
+							"IonThruster_doodads8_XL_on3.png"// "../Ion_Common/IonThruster_doodads8_XL_on3.png"
+							"IonThruster_doodads8_XL_on4.png"// "../Ion_Common/IonThruster_doodads8_XL_on4.png"
+							"IonThruster_doodads8_XL_on5.png"// "../Ion_Common/IonThruster_doodads8_XL_on5.png"
+							"IonThruster_doodads8_XL_on6.png"// "../Ion_Common/IonThruster_doodads8_XL_on6.png"
+							"IonThruster_doodads8_XL_on7.png"// "../Ion_Common/IonThruster_doodads8_XL_on7.png"
+							"IonThruster_doodads8_XL_on8.png"// "../Ion_Common/IonThruster_doodads8_XL_on8.png"
+						]
+						Size = [9, 13.435] // Scaled size
+						AnimationInterval = 0.075
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
+				//
+				DamageLevels
+				[
+					{
+						File = "doodads_off_0.png"
+						Size = [20, 26] // Scaled size
+					}
+				]
+			}
 			/*	OperationalRoofDoodad
 				{
 					Layer = "roof_doodads"
@@ -564,7 +1435,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 							Size = [20, 26]
 						}
 					]
-				}	*/
+				}*/
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -579,173 +1450,206 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 				]
 			}
 		}
-	Graphics
-	{
-	    Type = Graphics
-	    Location = [10, 13] // Scaled location
-	    OperationalToggle = IsOperational
+	
+		Graphics
+		{
+			Type = Graphics
+			Location = [10, 13] // Scaled location
+			OperationalToggle = IsOperational
 
-	    //AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
-	    //AnimationSpeedFactorRenormalize = [0.64, 2.7]
+			//AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			//AnimationSpeedFactorRenormalize = [0.64, 2.7]
 
-	//    Floor
-	//    {
-	//        Layer = "doodads_low"
-	//        DamageLevels
-	//        [
-	//            {
-	//                File = "doodads_base.png"
-	//                Size = [20, 26] // Scaled size
-	//            }
-	//			/*
-	//            {
-	//                File = "doodads_base_33.png"
-	//                Size = [20, 26] // Scaled size
-	//            }
-	//            {
-	//                File = "doodads_base_66.png"
-	//                Size = [20, 26] // Scaled size
-	//            }
-	//			*/
-	//        ]
-	//    }
-	Roof
-	{
-        Layer = "doodads_high"
-      	DamageLevels
-        [
-            {
-                File = "doodads_high.png"
-                Size = [20, 26] // Scaled size
-            }
-			/*
-            {
-                File = "doodads_base_33.png"
-                Size = [20, 26] // Scaled size
-            }
-            {
-                File = "doodads_base_66.png"
-                Size = [20, 26] // Scaled size
-            }
-			*/
-        ]
-	}
-	/*
-    OperationalDoodad
-    {
-        Layer = "doodads_high"
-        DamageLevels
-        [
-            {
-                AnimationFiles
-                [
-                    "../Ion_Common/IonThruster_doodads08_on1.png"
-                    "../Ion_Common/IonThruster_doodads08_on2.png"
-                    "../Ion_Common/IonThruster_doodads08_on3.png"
-                    "../Ion_Common/IonThruster_doodads08_on4.png"
-                    "../Ion_Common/IonThruster_doodads08_on5.png"
-                    "../Ion_Common/IonThruster_doodads08_on6.png"
-                    "../Ion_Common/IonThruster_doodads08_on7.png"
-                    "../Ion_Common/IonThruster_doodads08_on8.png"
-                ]
-                Size = [20, 26] // Scaled size
-                AnimationInterval = 0.075
-            }
-        ]
-    }
+	//		Floor
+	//		{
+	//			Layer = "doodads_low"
+	//			DamageLevels
+	//			[
+	//				{
+	//					File = "doodads_base.png"
+	//					Size = [20, 26] // Scaled size
+	//				}
+	//				/*
+	//				{
+	//					File = "doodads_base_33.png"
+	//					Size = [20, 26] // Scaled size
+	//				}
+	//				{
+	//					File = "doodads_base_66.png"
+	//					Size = [20, 26] // Scaled size
+	//				}
+	//				*/
+	//			]
+	//		}
+			Roof
+			{
+			Layer = "doodads_high"
+			DamageLevels
+			[
+				{
+					File = "doodads_high.png"
+					Size = [20, 26] // Scaled size
+				}
+				/*
+				{
+					File = "doodads_base_33.png"
+					Size = [20, 26] // Scaled size
+				}
+				{
+					File = "doodads_base_66.png"
+					Size = [20, 26] // Scaled size
+				}
+				*/
+			]
+		}
+		/*
+		OperationalDoodad
+		{
+			Layer = "doodads_high"
+			DamageLevels
+			[
+				{
+					AnimationFiles
+					[
+						"../Ion_Common/IonThruster_doodads08_on1.png"
+						"../Ion_Common/IonThruster_doodads08_on2.png"
+						"../Ion_Common/IonThruster_doodads08_on3.png"
+						"../Ion_Common/IonThruster_doodads08_on4.png"
+						"../Ion_Common/IonThruster_doodads08_on5.png"
+						"../Ion_Common/IonThruster_doodads08_on6.png"
+						"../Ion_Common/IonThruster_doodads08_on7.png"
+						"../Ion_Common/IonThruster_doodads08_on8.png"
+					]
+					Size = [20, 26] // Scaled size
+					AnimationInterval = 0.075
+				}
+			]
+		}
 
-
-    	NonOperationalDoodad
-    	{
-    	    Layer = "doodads_high"
-    	    DamageLevels
-    	    [
-    	        {
-    	            File = "doodads_off_0.png"
-    	            Size = [20, 26] // Scaled size
-    	        }
-    	    ]
-    	}
+		NonOperationalDoodad
+		{
+			Layer = "doodads_high"
+			DamageLevels
+			[
+				{
+					File = "doodads_off_0.png"
+					Size = [20, 26] // Scaled size
+				}
+			]
+		}
 		*/
 	}
 
 	DoodadGraphics1
 	{
-	    Type = Graphics
-	    Location = [10-3.4, 16] // Scaled location
-	    OperationalToggle = IsOperational
+		Type = Graphics
+		Location = [10-3.4, 16] // Scaled location
+		OperationalToggle = IsOperational
 
-	    Floor
-	    {
-	        Layer = "doodads_low"
-	        DamageLevels
-	        [
-	            {
-	                File = "DoodadXLR.png"
-	                Size = [6.9, 19.9]
+		Floor
+		{
+			Layer = "doodads_low"
+			DamageLevels
+			[
+				{
+					File = "DoodadXLR.png"
+					Size = [6.9, 19.9]
 					MirrorU = true
-	            }
+				}
 				/*
-	            {
-	                File = "doodads_base_33.png"
-	                Size = [20, 26] // Scaled size
-	            }
-	            {
-	                File = "doodads_base_66.png"
-	                Size = [20, 26] // Scaled size
-	            }
+				{
+					File = "doodads_base_33.png"
+					Size = [20, 26] // Scaled size
+				}
+				{
+					File = "doodads_base_66.png"
+					Size = [20, 26] // Scaled size
+				}
 				*/
-	        ]
-	    }
+			]
+		}
 
 	}
 
 
 	DoodadGraphics2
 	{
-	    Type = Graphics
-	    Location = [13.4, 26-10] // Scaled location
-	    OperationalToggle = IsOperational
+		Type = Graphics
+		Location = [13.4, 26-10] // Scaled location
+		OperationalToggle = IsOperational
 	
-	    Floor
-	    {
-	        Layer = "doodads_low"
-	        DamageLevels
-	        [
-	            {
-	                File = "DoodadXLR.png"
-	                Size = [6.9, 19.9]
-	            }
+		Floor
+		{
+			Layer = "doodads_low"
+			DamageLevels
+			[
+				{
+					File = "DoodadXLR.png"
+					Size = [6.9, 19.9]
+				}
 				/*
-	            {
-	                File = "doodads_base_33.png"
-	                Size = [20, 26] // Scaled size
-	            }
-	            {
-	                File = "doodads_base_66.png"
-	                Size = [20, 26] // Scaled size
-	            }
+				{
+					File = "doodads_base_33.png"
+					Size = [20, 26] // Scaled size
+				}
+				{
+					File = "doodads_base_66.png"
+					Size = [20, 26] // Scaled size
+				}
 				*/
-	        ]
-	    }
+			]
+		}
 	}
 
 		MainThruster
 		{
 			Type = Thruster
-			OperationalToggle = IsOperational
 			Location = [10, 26.5]// Relative to upper-left corner of unrotated part.
 			Rotation = 90d// Relative to unrotated part.
+			SoftOperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Accelerator_Thrust; BuffMode=Multiply; MinValue=(&BaseValue)/10; MaxValue=(&BaseValue)*10; }
+			MaxActivation
+			{
+				BaseValue=1;
+				Modifiers
+				[
+					{
+						Type = Buff
+						BuffType = SW_Ion_Thruster_Accelerator_Thrust
+						ModificationMode = Multiply
+					}
+					{
+						Type = BuffRemap
+						BuffType = Overclock
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, (&~/OVERCLOCK/THRUST_FACTOR)]
+					}
+				]
+				MinValue=(&BaseValue)/10
+				MaxValue=(&BaseValue)*10
+			}
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = BatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			FuelUsagePerSecond
+			{
+				BaseValue = &~/Part/FuelUsage
+				Modifiers
+				[
+					{
+						Type = BuffRemap
+						BuffType = Overclock
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, (&~/OVERCLOCK/POWER_USAGE_FACTOR)]
+					}
+				]
+			}
 		}
 		LateralThruster : MainThruster
 		{
@@ -762,10 +1666,25 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		{
 			Rotation = -90d
 			MinActivation = 0
-			MaxActivation = 0.10
+			MaxActivation = 0.20
+			ActivationIncreaseTime = &../../ThrustIncreaseTime/BaseValue
+			ActivationRecoveryTime = &../../ThrustRecoveryTime/BaseValue
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
+			FuelUsagePerSecond
+			{
+				BaseValue = ceil((&~/Part/FuelUsage)*2.5)
+				Modifiers
+				[
+					{
+						Type = BuffRemap
+						BuffType = Overclock
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, (&~/OVERCLOCK/POWER_USAGE_FACTOR)]
+					}
+				]
+			}
 			AllowAutoFire = false
 		}
 
@@ -774,6 +1693,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = ContinuousEffects
 			ChainedTo = MainThrusterLocationProxy
 			FactorMediaEffectsIntensityWith = DoodadAnimationSpeedFactorValue
+			IntensityTweenDuration = 0.1
+			MinMediaEffectsIntensity = 1%
 			MediaEffects
 			[
 				: /SW_SOUNDS/ThrusterRumble
@@ -792,12 +1713,13 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			MinAmount = 0.5
 		}
 
-		BurstEffects
+		BurstEffectsSounds
 		{
 			Type = TriggeredEffects
 			ChainedTo = MainThrusterLocationProxy
 			Trigger = BurstTrigger
 			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
+			MinMediaEffectsIntensity = 1%
 			AnchorMediaEffects = true
 			MediaEffects
 			[
@@ -820,7 +1742,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			[
 				: /SW_SOUNDS/ThrusterHum
 				{
-					Volume = .5
+					Volume = 0.5
 					Speed = 1.25
 					MaxConcurrentVolume = 1
 				}
@@ -831,7 +1753,6 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-
 			Location = [10, 5]
 			OperationalDoodad
 			{
@@ -898,6 +1819,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
 
+		ScorchedEffects : ^/0/ScorchedEffects
+		{
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/HugePartScorched //Small Med Big Huge
+		}
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
@@ -911,6 +1838,16 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Location = [10, 13]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite : &/INDICATORS/Scorched
+					{
+						Size = [8, 8]
+					}
+					HidesIndicators = [1,2,3]
+				}
+
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -919,6 +1856,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [8, 8]
 					}
+					HidesIndicators = [2,3]
 				}
 
 				// Out of power.
@@ -927,6 +1865,15 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
+						Size = [8, 8]
+					}
+				}
+
+				// Resetting from overclock
+				{
+					Toggle = &~/Part/^/0/OVERCLOCK_OPERATIONAL
+					AtlasSprite : &/INDICATORS/OverclockReset
+					{
 						Size = [8, 8]
 					}
 				}
@@ -940,20 +1887,35 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Size = [20, 35.44134]
 			Offset = [0, 1.22067] //[0, 9.44134]
 		}
+
+		PeakHeatGenerationStatValue
+		{
+			Type = StaticValue
+			Value = (&~/OVERCLOCK/THRUST_HEAT_PER_SECOND)
+		}
+
+		HeatGenerationStatProvider
+		{
+			Type = StatProvider
+			Stat = HeatGeneration
+			OperationalToggle = OverclockModeToggle
+			ValueFrom = PeakHeatGenerationStatValue
+		}
 	}
 
-	//Stats&StatsByCategory&StatsNotes
+	//Stats
 	Stats
 	{
 		ThrusterForce = &~/Part/ThrusterForce
-		ThrusterRampUp = ceil(&~/Part/ThrustIncreaseTime/BaseValue)
-		ThrusterRampDown = ceil(&~/Part/ThrustDecreaseTime)
+		ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
+		ThrusterRampDown = &~/Part/ThrustDecreaseTime/BaseValue
 		ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 
 		RecPower = (&ThrusterPowerUsage) / 2
 		RecCrew = (&RecPower) * 4
 	}
+
 	StatsByCategory
 	[
 		{
@@ -964,6 +1926,18 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		}
 	]
+
+	SecondaryToolTip
+	{
+		TitleKey = "StatCategories/Overclocked"
+		DescriptionKey = "Parts/ThrusterLargeOverclockDesc"
+		Stats
+		{
+			ThrusterForce = (&~/Part/ThrusterForce) * (&~/OVERCLOCK/THRUST_FACTOR)
+			//PowerGeneration
+			ThrusterHeatGeneration = &~/OVERCLOCK/THRUST_HEAT_PER_SECOND
+			ThrusterPowerUsage = (&~/Part/FuelUsage) * (&~/OVERCLOCK/MAX_POWER_USAGE_FACTOR) / 1000
+		}
+	}
 	StatsNotesKey = "Stats/SWIonAccelerator_Notes"
 }
-Size = Omega

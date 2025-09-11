@@ -10,8 +10,8 @@ Part : &<../base_part_terran_small.rules>/Part
 	DescriptionKey = "Parts/ProtonLauncherDesc"
 
 	//Groups&Categories
-	EditorGroups = ["WeaponsEnergy","WeaponsProjectile", "SWTechI"]
-	TypeCategories = [weapon, uses_power]
+	EditorGroups : ^/0/EditorGroups ["WeaponsEnergy","WeaponsProjectile", SWTechI]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power]
 
 	//Resources&Size&Health
 	Resources
@@ -135,7 +135,7 @@ Part : &<../base_part_terran_small.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 20000 // previously 4000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -144,7 +144,7 @@ Part : &<../base_part_terran_small.rules>/Part
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
 			ResupplyThreshold = 0
-			OperatinalToggle = PowerToggle
+			OperationalToggle = PowerToggle
 		}
 		BatteryStorageBar
 		{
@@ -353,30 +353,82 @@ Part : &<../base_part_terran_small.rules>/Part
 			}
 		}
 
-		WeaponSprite
+		TurretGraphics
 		{
-			Type = Sprite
-			//ChainedTo = Turret
+			Type = Graphics
+			OperationalToggle = IsOperational
 			Location = [0.5, 0.39]
 			Rotation = 0d
-			Layer = "weapons"
-			ResetAnimationTrigger = BulletEmitter
-			AtlasSprite
+			OperationalDoodad
 			{
-				AnimationFiles
+				Layer = "weapons"
+				DamageLevels
 				[
-					"turret.png"
+					{
+						File = "turret.png"
+						NormalsFile = "turret_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "turret_33.png"
+						NormalsFile = "turret_33_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "turret_66.png"
+						NormalsFile = "turret_66_normals.png"
+						Size = [1, 1]
+					}
 				]
-				NormalsAnimationFiles
+			}
+			NonOperationalDoodad
+			{
+				Layer = "weapons"
+				DamageLevels
 				[
-					"turret_normals.png"
+					{
+						File = "turret.png"
+						NormalsFile = "turret_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "turret_33.png"
+						NormalsFile = "turret_33_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "turret_66.png"
+						NormalsFile = "turret_66_normals.png"
+						Size = [1, 1]
+					}
 				]
-				Size = [1, 1]
-				AnimationInterval = 0.01
-				AnimationStartTime = MinValue
-				ClampAnimation = true
 			}
 		}
+
+//		WeaponSprite
+//		{
+//			Type = Sprite
+//			//ChainedTo = Turret
+//			Location = [0.5, 0.39]
+//			Rotation = 0d
+//			Layer = "weapons"
+//			ResetAnimationTrigger = BulletEmitter
+//			AtlasSprite
+//			{
+//				AnimationFiles
+//				[
+//					"turret.png"
+//				]
+//				NormalsAnimationFiles
+//				[
+//					"turret_normals.png"
+//				]
+//				Size = [1, 1]
+//				AnimationInterval = 0.01
+//				AnimationStartTime = MinValue
+//				ClampAnimation = true
+//			}
+//		}
 
 		BatterySprites
 		{

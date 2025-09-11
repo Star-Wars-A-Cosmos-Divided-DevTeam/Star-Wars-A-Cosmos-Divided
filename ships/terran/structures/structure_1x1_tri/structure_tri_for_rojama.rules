@@ -1,0 +1,200 @@
+Part
+{
+	FractionalNonPlayerRefund = 25%
+	FractionalCostToRepair = 25%
+	Density = 1
+	HealthType = Operational
+	ExplosiveDamageAbsorption = 50%
+	DamageResistances = {} //Can add damage resistances by putting "default = 50%" in the curly with no quotations. ie. salvage, explosive, fire, heat
+	Flammable = true
+	UnderlyingPartPerTile = cosmoteer.structure
+	CreatePartPerTileWhenGrabbed = corridor
+	DestroyedPartHealthFraction = 50%
+	CrewKillChanceWhenDestroyed = 25%
+	CrewThrowSpeedWhenDestroyed = 10
+	CrewSpeedFactor = .5
+	CrewCongestedSpeedFactor = .3
+	CrewMinimumSpeedFactor = .2;
+	ProhibitLeft = 0
+	ProhibitRight = 0
+	ProhibitAbove = 0
+	ProhibitBelow = 0
+	Prohibits = [default]
+	ProhibitedBy = [default]
+	SelectionPriority = 0
+	SelectionTypeByRotation = false
+	IsExternal = false
+	IsRotateable = true
+	IsFlippable = false
+	IsWalled = true
+	IsSelfDestructible = true
+	GeneratorRequiresDoor = true
+	AutoDoorMaxPathLength = 6
+	ExternalWalls = [All]
+	InternalWalls = [None]
+	TypeCategories = []
+	RequiresCategories = []
+	EditorReplacementPartID = corridor
+	FlipHRotate = [0, 3, 2, 1]
+	FlipVRotate = [2, 1, 0, 3]
+	InitialPenetrationResistance = 1
+	ContinuingPenetrationResistance = .5
+	ReceivableBuffs = []
+	SalvageProgressMediaEffectsTimeout = 1
+	SalvageProgressMediaEffects
+	[
+		&<../common/particles/salvage_progress_sparks.rules>
+		&<../common/particles/salvage_progress_ship_smoke.rules>
+		&<../common/particles/salvage_progress_ship_quad.rules>
+	]
+
+	ConstructionFinishedMediaEffects
+	[
+		: /BASE_SOUNDS/AudioExterior
+		{
+			Sound = "../common/construction_complete_structure.wav"
+			Speed = 0.95
+			SpeedVariation = 0.15
+		}
+	]
+	NameKey = "Parts/StructureTri"
+	IconNameKey = "Parts/StructureTriIcon"
+	ID = cosmoteer.structure_tri // Part IDs must always be in the form of "author_name.part_name". If making your own mod, do *not* use "cosmoteer" as your author name, because it may conflict with future vanilla parts.
+	EditorGroup = "Structure"
+	DescriptionKey = "Parts/StructureTriDesc"
+	EditorReplacementPartID = ""
+	Resources
+	[
+		[steel, 1]
+	]
+	AIValueFactor = 0
+	Size = [1, 1]
+	SelectionTypeID = "structure"
+	AllowedContiguity = [Bottom]
+	Density = .333
+	MaxHealth = 250
+	HealthType = Structural
+	DamageResistances = { thermal=60% }
+	TypeCategories = [structure, non_flammable]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	UnderlyingPartPerTile = ""
+	CreatePartPerTileWhenGrabbed = ""
+	InitialPenetrationResistance = 0
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	CrewSpeedFactor = 0
+	CellOccupancyFactor = 0.25
+	IsExternal = true
+	ExternalWalls = [None]
+	InternalWalls = [All]
+	IsRotateable = true
+	IsWalled = false
+	IsSelfDestructible = false
+	AllowedDoorLocations = []
+	GeneratorRequiresDoor = false
+	NoAutoDoors = true
+	GenerateRectCollider = false
+	EditorIcon
+	{
+		Texture
+		{
+			File = "structure.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+	Components : ^/0/Components
+	{
+		SalvagedEffects
+		{
+			Type = DeathEffects
+			//Location = [0.5, 0.5]
+			WhenSalvaged = true
+
+			MediaEffects
+			[
+				&<../common/particles/salvage_complete_ship_shrapnel.rules>
+				&<../common/particles/salvage_complete_ship_flash.rules>
+				&<../common/particles/salvage_complete_ship_smoke.rules>
+
+				: /BASE_SOUNDS/AudioExteriorDetail
+				{
+					Sound = "../common/salvage_finish.wav"
+					Volume = 0.75
+					SpeedVariation = .25
+				}
+			]
+		}
+
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0, 1]
+				[.5, .5]
+				[1, 1]
+			]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [.5, .5]
+			Floor
+			{
+				Layer = "structure"
+				DamageLevels
+				[
+					{
+						File = "structure.png"
+						NormalsFile = "structure_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "structure_33.png"
+						NormalsFile = "structure_normals_33.png"
+						Size = [1, 1]
+					}
+					{
+						File = "structure_66.png"
+						NormalsFile = "structure_normals_66.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+
+		ConstructionEffects
+		{
+			Type = Sprite
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			GetColorFrom = ConstructionTracker
+			Location = [.5, .5]
+			AtlasSprite
+			{
+				File = "structure_mask_combined.png"
+				NormalsFile = "structure_normals.png"
+				Size = [1, 1]
+				//VertexColor = [255, 0, 0, 255]
+			}
+			RandomUVRotation = false
+			Layer = "structure_construction"
+			UseConstructionProgressAsDamage = true
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/StructureDestroyed
+			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+	}
+}

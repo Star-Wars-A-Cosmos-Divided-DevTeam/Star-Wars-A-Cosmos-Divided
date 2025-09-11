@@ -4,7 +4,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	IconNameKey = "Parts/CockpitIcon"
 	ID = SW.cockpit1
 	OtherIDs = ["cockpit1"]
-	EditorGroups = ["Flight", "SWTechI"]
+	EditorGroups : ^/0/EditorGroups [ SWTechI ]
 	DescriptionKey = "Parts/CockpitDesc"
 	Resources
 	[
@@ -20,7 +20,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	InitialPenetrationResistance = 4
 	ContiguityOriginPriority = 1
 	SelectionTypeID = "control_room"
-	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits, provides_power, reactor]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits, provides_power, reactor]
 
 	ReceivableBuffs : ^/0/ReceivableBuffs [] 
 
@@ -312,14 +312,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			MaxMediaEffectsZoom = 4
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioInterior
-				{
-					Sound = "./Data/ships/terran/control_room_small/operating.wav"
-					Volume = .15
-					MaxConcurrentVolume = .3
-					Speed = .75
-					MaxConcurrent = 1
-				}
+				&/SW_SOUNDS/ControlRoomSmallOperating
 			]
 		}
 
@@ -329,15 +322,21 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			Location = [0.5, 1]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [.75, .75]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
 				// Out of power.
 				{

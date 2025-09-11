@@ -2,7 +2,7 @@ MINING_LASER_SMALL_PATH = &./Data/ships/terran/mining_laser_small
 
 OVERCLOCK
 {
-	FIRING_HEAT_PER_SECOND = 225
+	FIRING_HEAT_PER_SECOND = 450
 	BEAM = &/SW_SHOTS/Beam/Mining/Magenta_OC
 }
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
@@ -20,8 +20,8 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 	DescriptionKey = "Parts/SWMiningLaserHugeDesc"
 
 	//Groups&Categories
-	EditorGroups = ["WeaponsEnergy", "Utilities", "SWTechII"]
-	TypeCategories = [weapon, uses_power, is_crewed, mining]
+	EditorGroups : ^/0/EditorGroups ["WeaponsEnergy",  SWTechII]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power, is_crewed, mining]
 
 	//Resoures&Size&Health
 	Resources
@@ -96,7 +96,7 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 64000 //v: 10000 at 2 x 3 Tiles
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -105,7 +105,7 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 			Storage = BatteryStorage
 			DefaultPriority = &<./Data/ships/base_ship.rules>/DefaultSalvagePriority
 			ResupplyThreshold = 1000
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 		}
 
 		FireModeToggle
@@ -147,25 +147,6 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 			ToQuantity = (&HEAT_PER_INTERVAL) * (&~/HEAT_TO_RESOURCE)
 			ToStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
 			Interval = 0.5
-		}
-		
-		Router
-		{
-			Type = NetworkRouter
-			RouteGenerators
-			[
-				{
-					Type = Simple
-					HEAT_INPUT = &~/Part/^/0/HEAT_NETWORK_INPUT
-					Routes
-					[
-						[&../../HEAT_INPUT, Port_Thermal_Left, 0]
-						[&../../HEAT_INPUT, Port_Thermal_Left_2, 0]
-						[&../../HEAT_INPUT, Port_Thermal_Right, 0]
-						[&../../HEAT_INPUT, Port_Thermal_Right_2, 0]
-					]
-				}
-			]
 		}
 
 		Port_Thermal_Left : ~/Part/^/0/BASE_THERMAL_PORT
@@ -355,13 +336,13 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 		Turret
 		{
 			Type = TurretWeapon
-			Location = [2, 3.8]//2, 4 // Relative to upper-left corner of unrotated part.
+			Location = [2, 4]//2, 4 // Relative to upper-left corner of unrotated part.
 			Rotation = -90d // Relative to unrotated part.
 			OperationalToggle = IsOperational
 			AutoFireToggle = AutoFireToggle
-			FireInterval = 0.4
+			FireInterval = 0.2
 			FiringArc = 270d
-			RotateSpeed = 30d
+			RotateSpeed = 45d
 			FireThresholdAngle = 20d
 			AIFirepowerRating = &~/Part/StatsByCategory/0/Stats/DamageContinuousEnemies
 			CanSalvage = true
@@ -399,6 +380,15 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 				VertexColor = [255, 255, 255, 51]
 				QuadCount = 64
 			}
+		}
+
+		InterpolatedTurret // Do not hook any gameplay logic to this! It will cause desyncs!
+		{
+			Type = TransformMatch
+			Location = &../Turret/Location
+			MatchTransformOf = Turret
+			MatchRotationSpeed = Infinity
+			InterpolateRotation = true
 		}
 
 		TurretCollider
@@ -444,16 +434,34 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 			Type = Oscillator
 			ChainedTo = Turret
 			OperationalToggle = BeamEmissionToggleLeft
-			Location = [110/64, -28/64]
+			Location = [108/64, -28/64]
 			Angle = -0.3333333333d
 			Interval = 4.0
 			ResetWhenOperational = true
 		}
+		InterpolatedLeftOscillator // Do not hook any gameplay logic to this! It will cause desyncs!
+		{
+			Type = TransformMatch
+			MatchTransformOf = LeftOscillator
+			MatchLocationSpeed = Infinity
+			MatchRotationSpeed = Infinity
+			InterpolateLocation = true
+			InterpolateRotation = true
+		}
 		RightOscillator : LeftOscillator
 		{
 			OperationalToggle = BeamEmissionToggleRight
-			Location = [110/64, 28/64]
+			Location = [108/64, 28/64]
 			Angle = -(&../LeftOscillator/Angle)
+		}
+		InterpolatedRightOscillator // Do not hook any gameplay logic to this! It will cause desyncs!
+		{
+			Type = TransformMatch
+			MatchTransformOf = RightOscillator
+			MatchLocationSpeed = Infinity
+			MatchRotationSpeed = Infinity
+			InterpolateLocation = true
+			InterpolateRotation = true
 		}
 		BeamEmitterLeft : BeamEmitterBase
 		{
@@ -461,6 +469,7 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 			FireTrigger = Turret
 			Location = [0, -28/64]
 			Width =  &/SW_SHOTS/Beam/Mining/Magenta/Width // BeamEmitterBase overrides width for targeting purposes.
+			AttachBeamMediaEffectsTo = InterpolatedLeftOscillator
 		}
 		BeamEmitterRight : BeamEmitterBase
 		{
@@ -468,6 +477,7 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 			FireTrigger = Turret
 			Location = [0, 28/64]
 			Width =  &/SW_SHOTS/Beam/Mining/Magenta/Width // BeamEmitterBase overrides width for targeting purposes.
+			AttachBeamMediaEffectsTo = InterpolatedRightOscillator
 		}
 		
 		BeamEmissionToggleLeft
@@ -810,6 +820,13 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 			Location = [2, 3]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3,4]
+				}
+
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -818,7 +835,7 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [2, 2]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3,4]
 				}
 
 				// Out of power.
@@ -835,8 +852,11 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 				// Resetting from overclock
 				{
 					Toggle = &~/Part/^/0/OVERCLOCK_OPERATIONAL
-					AtlasSprite = &/INDICATORS/OverclockReset
-					HidesIndicators = [3] //HI4
+					AtlasSprite : /INDICATORS/OverclockReset
+					{
+						Size = [2, 2]
+					}
+					HidesIndicators = [4]
 				}
 
 				// No crew.
@@ -903,20 +923,28 @@ Part : &<../base_part_terran_utilities_overclock.rules>/Part
 				PowerUsageContinuous = (&PowerPerShot) / (&~/Part/Components/Turret/FireInterval)
 			}
 		}
-		
-		{
-			NameKey = "StatCategories/Overclocked"
-			Stats
-			{
-				FiringHeatGeneration = (&~/OVERCLOCK/FIRING_HEAT_PER_SECOND)
-				DamageArea = (&~/OVERCLOCK/BEAM/RADIUS)
-				DamageAreaFalloff = (&~/OVERCLOCK/BEAM/RADIUS_FALLOFF)
-				DamageContinuousEnemies = (&../../0/Stats/DamageContinuousEnemies) * (&~/OVERCLOCK/BEAM/DAMAGE_FACTOR)
-				DamageContinuousShields = (&../../0/Stats/DamageContinuousEnemies) * (&~/OVERCLOCK/BEAM/SHIELD_DAMAGE_FACTOR)
-				DamageContinuousJunk = (&../../0/Stats/DamageContinuousJunk) * (&~/OVERCLOCK/BEAM/DAMAGE_FACTOR)
-				DamageContinuousAsteroids = (&../../0/Stats/DamageContinuousAsteroids) * (&~/OVERCLOCK/BEAM/DAMAGE_FACTOR)
-				Range = &~/OVERCLOCK/BEAM/RANGE
-			}
-		}
 	]
+
+	SecondaryToolTip
+		{
+		TitleKey = "StatCategories/Overclocked"
+		DescriptionKey = "Parts/MiningLaserSmallOverclockDesc"
+		StatsByCategory
+		[
+			{
+				NameKey = "StatCategories/MiningBeamOverclocked"
+				Stats
+				{
+					HeatGeneration = (&~/OVERCLOCK/FIRING_HEAT_PER_SECOND)
+					DamageArea = (&~/OVERCLOCK/BEAM/RADIUS)
+					DamageAreaFalloff = (&~/OVERCLOCK/BEAM/RADIUS_FALLOFF)
+					DamageContinuousEnemies = (&~/Part/StatsByCategory/0/Stats/DamageContinuousEnemies) * (&~/OVERCLOCK/BEAM/DAMAGE_FACTOR)
+					DamageContinuousShields = (&~/Part/StatsByCategory/0/Stats/DamageContinuousEnemies) * (&~/OVERCLOCK/BEAM/SHIELD_DAMAGE_FACTOR)
+					DamageContinuousJunk = (&~/Part/StatsByCategory/0/Stats/DamageContinuousJunk) * (&~/OVERCLOCK/BEAM/DAMAGE_FACTOR)
+					DamageContinuousAsteroids = (&~/Part/StatsByCategory/0/Stats/DamageContinuousAsteroids) * (&~/OVERCLOCK/BEAM/DAMAGE_FACTOR)
+					Range = &~/OVERCLOCK/BEAM/RANGE
+				}
+			}
+		]
+	}
 }

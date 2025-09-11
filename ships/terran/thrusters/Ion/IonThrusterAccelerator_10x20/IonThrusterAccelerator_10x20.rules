@@ -11,8 +11,8 @@ Part : &<../base_part_terran_accelerator_ion.rules>/Part
 	DescriptionKey = "Parts/IonThrusterAccelerator10x20Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechIII"]
-	TypeCategories = [engine_room, uses_power, SW_Ion_Accelerator, SW_Tech_III, /*Ion_Accelerator_Limit*/] //, is_crewed
+	EditorGroups : ^/0/EditorGroups [ SWTechIII]
+	TypeCategories : ^/0/TypeCategories [engine_room, uses_power, SW_Ion_Accelerator, SW_Tech_III, /*Ion_Accelerator_Limit*/] //, is_crewed
 	RequiresCategories = [SW_Bridge]
 
 	//Resources & Size & Health
@@ -181,7 +181,7 @@ Part : &<../base_part_terran_accelerator_ion.rules>/Part
 				ComponentID = BatteryStorage //s = [BatteryStorage, CombinedBatteryStorage]
 			}
 			AddMode = PrioritizeLeastResources
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -249,18 +249,14 @@ Part : &<../base_part_terran_accelerator_ion.rules>/Part
 			Value = { BaseValue=1; BuffType=SW_Ion_Thruster_To_Accelerator; BuffMode=Add; MinValue=(&BaseValue)/10; MaxValue=(&BaseValue)*10;}
 		}
 
-		FloorGrid = &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
-
-		RoofGridFlat
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
 		{
-			Type = BlendSpriteGrid
-			AllowUndefinedBlendSprites = true
-			BlendsWithCategories = []
-			AlwaysBlendWithSelf = true
-			RectType = Physical
-			Location = [0.5, 0.5]
-			Layer = "roofs"
-			AmbiguousSprites = &<../Ion_Common/RoofGrid/roof_grid_blank.rules>/AmbiguousSprites
+			//
+		}
+
+		RoofGrid : &/SW_GRAPHICS/RoofGrid/GridSize_1x1/Roof_Vanilla/RDL
+		{
+			//
 		}
 
 		ColorPickerThruster
@@ -813,4 +809,4 @@ Part : &<../base_part_terran_accelerator_ion.rules>/Part
 		RecCrew = (&RecPower) * 4
 	}
 }
-Size = Omega
+CLASSIFICATION = Omega

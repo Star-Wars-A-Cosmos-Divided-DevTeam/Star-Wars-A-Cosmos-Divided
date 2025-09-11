@@ -1,29 +1,63 @@
-Part : &<base_part_terran_sw.rules>/Part, &<base_part_terran_scorched.rules>/Part
+Part : &<base_part_terran_sw_operational.rules>/Part
 {
-	TypeCategories : ^/0/TypeCategories []
+	SignificanceToggle = ScorchedToggle
+
+	TypeCategories : ^/0/TypeCategories [SW_SC_Parts]
 
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
-	Components : ^/0/Components, ^/1/Components
+	Components : ^/0/Components
 	{
-		IsOperational : ^/0/IsOperational, ^/1/IsOperational
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles, ^/1/Toggles []
+			Toggles : ^/0/Toggles [ScorchedToggle]
 			Mode = All
 		}
 
-		CommandConsumptionToggle : ^/0/CommandConsumptionToggle, ^/1/CommandConsumptionToggle
+		CommandConsumptionToggle : ^/0/CommandConsumptionToggle
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles, ^/1/Toggles []
+			Toggles : ^/0/Toggles [ScorchedToggle]
 			Mode = All
 		}
-		Indicators : ^/1/Indicators
+
+		ScorchedToggle
 		{
-			Indicators : ^/0/Indicators
+			Type = StatusToggle
+			StatusType = cosmoteer.scorched
+			MinStatusValue = 1
+			Invert = true
+		}
+
+		ScorchedTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = ScorchedToggle
+			TriggerWhenOn = false
+		}
+
+		ScorchedEffects
+		{
+			Type = TriggeredEffects
+			Trigger = ScorchedTrigger
+			Location = [0.5, 0.5]
+			//Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/SmallPartScorched
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [0.5, 0.5]
+			Indicators
 			[
-
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					//HidesIndicators = [1,2,3]
+				}
 			]
 		}
 	}

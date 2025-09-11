@@ -1,29 +1,229 @@
-Part : &<./Data/ships/terran/base_part_terran_overclock.rules>/Part, &<base_part_terran_scorched.rules>/Part
+Part : &<base_part_terran_sw_scorched.rules>/Part
 {
-	TypeCategories : ^/0/TypeCategories []
+	TypeCategories : ^/0/TypeCategories [SW_OC_Parts]
 
-	ReceivableBuffs : ^/0/ReceivableBuffs []
-
-	Components : ^/0/Components, ^/1/Components
+	ReceivableBuffs : ^/0/ReceivableBuffs [ Overclock ]
+	
+	// Common network port base for connecting to thermal networks
+	BASE_THERMAL_PORT
 	{
-		IsOperational : ^/1/IsOperational
+		Type = NetworkPort
+		OperationalToggle = OverclockModeToggle
+		BlueprintOperationalToggle = &OperationalToggle
+		Types = [ thermal, thermal_out ]
+		// Refuse connection to other 'output' ports
+		IncompatibleTypes = [ thermal_out ]
+		// Allow creating routes *outbound* from the heat input
+		RouteSource = &../HEAT_NETWORK_INPUT
+		Overlay
+		{
+			OverlayIcon = "ThermalPort"
+			RouteLine = "Thermal"
+			DrawRouteHub = false
+			ConnectedEdgeIcon = "ThermalDot"
+			HighlightPartOnPrimaryConnection = true
+			PartHighlightColor = [255, 217, 0, 61]
+		}
+	}
+	
+	// Inheritors should use this as the destination storage for heat generation.
+	HEAT_TARGET_STORAGE = HeatDistributionStorage
+	// Inheritors should connect this to one of their network ports.
+	HEAT_NETWORK_INPUT = NetworkHeatInput
+	// Inheritors should include this in their IsOperational toggle
+	OVERCLOCK_OPERATIONAL = OverclockReset
+
+	Components : ^/0/Components
+	{
+		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles [OverclockReset]
+			Toggles : ^/0/Toggles [ OverclockReset ]
 			Mode = All
 		}
-		Indicators : ^/1/Indicators
+		OverclockModeToggle
 		{
-			Indicators : ^/0/Indicators
-			[
+			Type = UIToggle
+			ToggleID = "thermal_overclock"
+			Default = 0
+		}
+		OverclockConstructionOverride
+		{
+			Type = UIToggleModeOverride
+			TargetUIToggle = OverclockModeToggle
+			TargetMode = 0
+			OverrideTrigger = ShipConstructionStarted
+			ResetTrigger = ShipConstructionEnded
+		}
+		ShipConstructionStarted
+		{
+			Type = ToggleTrigger
+			Toggle = ShipConstructionToggle
+			TriggerWhenOff = false
+			AllowOperationalBypass = true
+		}
+		ShipConstructionEnded
+		{
+			Type = ToggleTrigger
+			Toggle = ShipConstructionToggle
+			TriggerWhenOn = false
+			AllowOperationalBypass = true
+		}
+		ShipConstructionToggle
+		{
+			Type = ShipConstructionToggle
+			IgnoreRepairs = true
+		}
+		
+		// Inheritors can override this component to change how overclock responds to being toggled on/off.
+		OverclockStateValue
+		{
+			Type = ValueTween
+			IsOnToggle = OverclockModeToggle
+			OnTweenDuration = 1;
+			OffTweenDuration = 0.1;
+		}
+		OverclockToggledOnTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = OverclockModeToggle
+			TriggerWhenOff = false
+			TriggerWhenOn = true
+		}
+		OverclockEnabledTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = IsOperationalOverclocked
+			TriggerWhenOff = false
+			TriggerWhenOn = true
+		}
+		OverclockEnabledDelayedTrigger
+		{
+			Type = DelayTrigger
+			OperationalToggle = IsOperationalOverclocked
+			Trigger = OverclockEnabledTrigger
+			Delay = 0.5 / (&/Simulation/PhysicsUpdatesPerSecond)
+		}
+		OverclockDisabledTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = OverclockModeToggle
+			TriggerWhenOff = true
+			TriggerWhenOn = false
+		}
+		WasOperationalOverclockDisabled
+		{
+			Type = TriggerProxy
+			ProxyToggle = WasOperationalOverclocked
+			ComponentID = OverclockDisabledTrigger
+		}
+		WasOperationalOverclocked
+		{
+			Type = TriggeredToggle
+			OnTrigger = OverclockEnabledDelayedTrigger
+			OffTrigger = OverclockReset
+		}
 
+		OverclockReset
+		{
+			Type = Timer
+			Duration = 3
+			StartExpired = true
+			StartTrigger = WasOperationalOverclockDisabled
+			StopTrigger = OverclockToggledOnTrigger
+			ResetTrigger = OverclockToggledOnTrigger
+			DurationAfterResetTrigger = 0
+		}
+		OverclockResetProgress
+		{
+			Type = ProgressBar
+			OperationalToggle = OverclockReset
+			InvertOperationalToggle = true
+			ShowProgressFor = OverclockReset
+			LowColor = [255, 113, 25]
+			HighColor = &LowColor
+			FullColor = &LowColor
+			Height = 10
+		}
+		OverclockBuff
+		{
+			Type = SelfBuffProvider
+			OperationalToggle = IsOverclocked
+			BuffType = Overclock
+			BuffMultiplier = OverclockStateValue
+		}
+		IsOverclocked
+		{
+			Type = ThresholdToggle
+			ValueFrom = OverclockStateValue
+			MinAmount = 0
+			MaxAmount = 0
+			Invert = true
+		}
+		IsOperationalOverclocked
+		{
+			Type = MultiToggle
+			Toggles = [ IsOperational, IsOverclocked ]
+			Mode = All
+		}
+		
+		NetworkHeatInput
+		{
+			Type = NetworkResourceInput
+			ResourceType = heat
+			Mode = DistributeProportionallyByAvailable
+			Categories = [ thermal_storage ]
+		}
+		OverflowHeatStorage
+		{
+			Type = ResourceConsumingStorage
+			ResourceType = heat
+			TriggerThreshold = 0
+			ProvidedValuePerResource = (&<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO)
+		}
+		
+		HeatDistributionStorage
+		{
+			Type = MultiResourceStorage
+			ResourceType = heat
+			ResourceStorages = [NetworkHeatInput, OverflowHeatStorage]
+			AddMode = InOrder
+			RemoveMode = InReverseOrder
+		}
+		
+		OverheatEffects
+		{
+			Type = TriggeredEffects
+			Trigger = OverflowHeatStorage
+			FactorHitEffectsWith = OverflowHeatStorage
+			HitEffects
+			[
+				{
+					Type = StatusApplication
+					StatusType = cosmoteer.heat
+					StatusValue
+					{
+						BaseValue = 1
+						Modifiers
+						[
+							{
+								Type = EffectScale
+								ModificationMode = Multiply
+							}
+						]
+					}
+					ApplyToAllHitPartTiles = true
+					DivideValueByPartArea = true
+					Filter 
+					{
+						Self = true
+					}
+				}
 			]
 		}
 	}
 }
 
-/*
-*/
 /* 
 *	WHY?	--	This File Allows us for short/long term avoid changes made to base part terran && Make Modifications to all Parts Drawing from here at once.
 *	Like?	--	We could do SW part specific effects or IDK what.

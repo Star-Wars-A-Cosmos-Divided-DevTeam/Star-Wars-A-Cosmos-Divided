@@ -1,3 +1,26 @@
+CLASSIFICATION = Large
+SIZE = [2, 3]
+LOCATION = [((&~/SIZE/0)/2), ((&~/SIZE/1)/2)]
+//UPSCALER = 100%
+
+OVERCLOCK : &<./Data/ships/terran/thruster_boost/thruster_boost.rules>/OVERCLOCK
+{
+	//THRUST_FACTOR = 250%
+	//MAX_POWER_USAGE_FACTOR = 175%
+	//POWER_USAGE_FACTOR = 1 / (&THRUST_FACTOR) * (&MAX_POWER_USAGE_FACTOR)
+	//THRUST_HEAT_PER_SECOND = 675
+
+	//BASE_BOOST_HEAT_FACTOR = 175%
+	//BOOST_HEAT_FACTOR_PER_BATTERY = 20%
+	//BOOST_HEAT_FACTOR_PER_SECOND = -6%
+	//BOOST_HEAT_FACTOR_POWER_THRESHOLD = (&~/Part/Components/RealBatteryStorage/MaxResources)
+
+	//BOOST_MAX_POWER_USAGE_FACTOR = 175%
+	//BOOST_POWER_RAMP_TIME = 2
+}
+HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
+HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
+
 Part : &<../base_part_terran_thrusters_ion.rules>/Part
 {
 	//IDs
@@ -10,8 +33,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	DescriptionKey = "Parts/IonThruster01_2x3_Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechII"]
-	TypeCategories = [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_II]
+	EditorGroups : ^/0/EditorGroups [ SWTechII]
+	TypeCategories : ^/0/TypeCategories [thruster, ion_thruster, self_buffing, uses_power, SW_Tech_II]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -37,9 +60,27 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 
 	//PartSpecific
 	ThrusterForce = 5120 		//v:3200		//160%*3200 of vanilla = 5120 managed thru ramping buff 
-	ThrustIncreaseTime = { BaseValue=5.6; BuffType=SW_Ion_Thruster_Boost_RampUpFinal; BuffMode=Divide; }
-	ThrustDecreaseTime = 2.6 	//v:0			//softer deccel
-	ThrustRecoveryTime = { BaseValue=3.0; BuffType=SW_Ion_Thruster_Boost_RampUpFinal; BuffMode=Divide; }
+	ThrustIncreaseTime
+	{ 
+		BaseValue=2
+		Modifiers
+		[
+			{
+				Type = Buff
+				BuffType=SW_Ion_Thruster_Boost_RampUpFinal
+				ModificationMode = Divide
+			}
+			{
+				Type = BuffRemap
+				BuffType = Overclock
+				ModificationMode = Divide
+				RemapFrom = [0, 1]
+				RemapTo = [1, (&~/OVERCLOCK/THRUST_FACTOR)]
+			}
+		]
+	}
+	ThrustDecreaseTime = 0 	//v:0			//softer deccel
+	ThrustRecoveryTime = 2.0
 	FuelUsage = 128 			//v:200			// 64%*200 of vanilla
 	
 	//Boosted
@@ -48,45 +89,52 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 	BoostedThrustDecreaseTime = 0		//ONLY HERE FOR STAT DISPLAY
 	BoostedThrustRecoveryTime = 0		//ONLY HERE FOR STAT DISPLAY
 	BoostedFuelUsage = 384				//ONLY HERE FOR STAT DISPLAY
-	BoostedPowerDrain = { BaseValue=-10; BuffType=Engine;  BuffMode=Multiply; MinValue=(&BaseValue)*10; MaxValue=(&BaseValue)/10; }
+	BoostedPowerDrain = { BaseValue=-10; BuffType=Engine; BuffMode=Multiply; }
 	BoostedPowerDrainInterval = 0.1
+	BOOSTED_BASE_POWER_DRAIN_PER_SEC = (&BoostedPowerDrain/BaseValue) / (&BoostedPowerDrainInterval)
 	
 	//ReceivableBuffs&Prohibits
 	//
 	ProhibitBelow = 18			//v:18
-	ReceivableBuffs : ^/0/ReceivableBuffs [Engine, EnginePowerDistribution, SW_Hypernode_Interface, SW_Ion_Thruster_Boost, SW_Ion_Thruster_Boost_Thrust, SW_Ion_Thruster_Boost_RampUp, SW_Ion_Thruster_Boost_RampUpFinal]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Hypernode_Interface, SW_Ion_Thruster_Boost, SW_Ion_Thruster_Boost_Thrust, SW_Ion_Thruster_Boost_RampUp, SW_Ion_Thruster_Boost_RampUpFinal]
 
 	//Doors&Etc
 	ForceManhattenPathInPart = true
 	BlockedTravelCells
 	[
-		[0, 1]
-		[1, 1]
-		//
+		//[0, 1]
+		//[1, 1]
+		//[2, 1]
 		[0, 2]
 		[1, 2]
-		//
-		//
-		//
-		//
-		//
-		//
-		//
+		//[2, 2]
+		//[0, 3]
+		//[1, 3]
+		//[2, 3]
+		//[0, 4]
+		//[1, 4]
+		//[2, 4]
 	]
 	AllowedDoorLocations
 	[
 		[-1, 0]
-		//
-		//
+		//[-1, 1]
+		//[-1, 2]
 		[0, -1]
 		[1, -1]
-		//
+		//[2, -1]
+		//[1, 0]
 		//[2, -1]
 		[2, 0]
-		//
-		//
-		//
+		//[3, -1]
+		//[3, 0]
+		//[3, 1]
+		//[3, 2]
+		//[4, 0]
+		//[4, 1]
+		//[4, 2]
 	]
+	//
 
 	//Editor
 	EditorIcon
@@ -109,6 +157,18 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = All
 		}
 
+		CommandConsumptionToggle : ^/0/CommandConsumptionToggle
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [PowerToggle]
+			Mode = All
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
 		IsOperationalAndHypernodeConnectedToggle
 		{
 			Type = MultiToggle
@@ -127,7 +187,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		CommandConsumer
 		{
 			Type = CommandConsumer
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 			CommandPoints = 6
 		}
 
@@ -141,6 +201,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		{
 			Type = BuffToggle
 			BuffType = Engine
+		}
+
+		PowerDistributionBuffToggle
+		{
+			Type = BuffToggle
+			BuffType = EnginePowerDistribution
 		}
 
 		BoostToggle
@@ -158,19 +224,29 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 8000 //v:6000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 			ToggleOnResources = (&MaxResources) - 999
 			ToggleOffResources = 0
+			ProvidedValueRange = 0
+			ProvidedValuePerResource = 1
 		}
 
-		BoostProgressBar
+		PowerDrainTimer
 		{
-			Type = ProgressBar
+			Type = Timer
 			OperationalToggle = BoostToggle
-			ShowProgressFor = RealBatteryStorage
-			LowColor = [64, 0, 64]
-			HighColor = [0, 0, 255]
-			FullColor = [0, 0, 255]
+			Duration = &~/Part/BoostedPowerDrainInterval
+			AutoStart = true
+			Repeats = true
+		}
+
+		PowerDrain
+		{
+			Type = ResourceChange
+			Trigger = PowerDrainTimer
+			ResourceStorage = RealBatteryStorage
+			Amount = &~/Part/BoostedPowerDrain
+			InitialDelay = 0
 		}
 
 		FullAmmoToggle
@@ -185,7 +261,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		BoostOffInstantDrainToggles
 		{
 			Type = MultiToggle
-			Toggles = [BoostToggle, PowerToggle]
+			Toggles = [BoostToggle, CommandConsumptionToggle]
 			Mode = All
 		}
 
@@ -209,163 +285,55 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 
 		AutoBoostOffTrigger
 		{
+			Type = MultiTrigger
+			Triggers = [ BatteryDepletedTrigger, OverclockDisabledTrigger ]
+		}
+
+		BatteryDepletedTrigger
+		{
 			Type = ToggleTrigger
 			Toggle = RealBatteryStorage
 			TriggerWhenOn = false
 			TriggerWhenOff = true
 		}
 
-		Graphics
+		CanReceivePower
 		{
-			Type = Graphics
-			Location = [1, 1.5]
-			OperationalToggle = IsOperational
-
-			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
-			AnimationSpeedFactorRenormalize = [0.64, 2.7]
-
-			Floor
-			{
-				Layer = "doodads_low"
-				DamageLevels
-				[
-					{
-						File = "doodads_base.png"
-						Size = [2, 3]
-					}
-					/*{
-						File = "doodads_base_33.png"
-						Size = [2, 3]
-					}
-					{
-						File = "doodads_base_66.png"
-						Size = [2, 3]
-					}*/
-				]
-			}
-			/*
-			OperationalDoodad
-			{
-				Layer = "doodads_high"
-				//
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"doodads_on_1.png"
-							"doodads_on_2.png"
-							"doodads_on_3.png"
-							"doodads_on_4.png"
-							"doodads_on_5.png"
-							"doodads_on_6.png"
-							"doodads_on_7.png"
-							"doodads_on_8.png"
-						]
-						Size = [2, 3]
-						AnimationInterval = 0.075
-					}
-				]
-			}
-			NonOperationalDoodad
-			{
-				Layer = "doodads_high"
-				//
-				DamageLevels
-				[
-					{
-						File = "doodads_off_0.png"
-						Size = [2, 3]
-					}
-				]
-			}
-			*/
-			Walls
-			{
-				Layer = "walls"
-				DamageLevels
-				[
-					{
-						File = "walls.png"
-						Size = [2, 3]
-					}
-					{
-						File = "walls_33.png"
-						Size = [2, 3]
-					}
-					{
-						File = "walls_66.png"
-						Size = [2, 3]
-					}
-				]
-			}
-			Roof
-			{
-				Layer = "roofs"
-				DamageLevels
-				[
-					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
-						Size = [2, 3]
-					}
-					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
-						Size = [2, 3]
-					}
-					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
-						Size = [2, 3]
-					}
-				]
-			}
+			Type = MultiToggle
+			Toggles
+			[
+				{ Toggle = BoostToggle; Invert = true }
+				IsOverclocked
+			]
+			Mode = Any
 		}
 
-		PowerDistributionBuffToggle
+		BatteryStorage
 		{
-			Type = BuffToggle
-			BuffType = EnginePowerDistribution
+			Type = ResourceStorageProxy
+			ProxyToggle = CanReceivePower
+			ResourceType = battery
+			ComponentID = RealBatteryStorage
 		}
-
-		BoostOffComponents
+		ToggledBatteryConsumer
 		{
 			Type = ToggledComponents
-			Toggle = BoostToggle
+			Toggle = PowerDistributionBuffToggle
 			Invert = true
 			IncludeInBlueprints = true
 			Components
 			{
-				BatteryStorage
+				BatteryConsumer
 				{
-					Type = ResourceStorageProxy
+					Type = ResourceConsumer
 					ResourceType = battery
-					ComponentID = RealBatteryStorage
-					//
-				}
-				ToggledBatteryConsumer
-				{
-					Type = ToggledComponents
-					Toggle = PowerDistributionBuffToggle
-					Invert = true
-					IncludeInBlueprints = true
-					Components
-					{
-						BatteryConsumer
-						{
-							Type = ResourceConsumer
-							ResourceType = battery
-							Storage = RealBatteryStorage
-							DefaultPriority = &/PRIORITIES/Thruster_Supply
-							ResupplyThreshold = 500
-							OperationalToggle = PowerToggle
-						}
-					}
+					Storage = BatteryStorage
+					DefaultPriority = &/PRIORITIES/Thruster_Supply
+					ResupplyThreshold = 500
+					OperationalToggle = CommandConsumptionToggle
 				}
 			}
 		}
-
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -485,27 +453,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Toggle = IsOperationalAndHypernodeConnectedToggle
 			Components = &<particles/thruster_cyan_hypernodeset.rules>/Components
 		}
-/*
-		NozzleArtOptionToggle
-		{
-			Type = UIToggle
-			ToggleID = "nozzle_art_option_switch03"
-			Default = 0
-			AvailableChoices = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18]
-			AlwaysAllowInBuildMode = true
-			RequiresCommand = false
-		}
 
-		NozzleRoofCoverOptionToggle
-		{
-			Type = UIToggle
-			ToggleID = "nozzle_roof_option_switch_sm"
-			Default = 0
-			AvailableChoices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18] //patch me @Rojamahorse
-			AlwaysAllowInBuildMode = true
-			RequiresCommand = false
-		}
-*/
 		ThrusterEffectBoostsetComponents
 		{
 			Type = ToggledComponents
@@ -518,23 +466,6 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = MultiToggle
 			Toggles = [IsOperational,  {Toggle = BoostToggle; Invert = true},]
 			Mode = All
-		}
-
-		PowerDrainTimer
-		{
-			Type = Timer
-			OperationalToggle = BoostToggle
-			Duration = &~/Part/BoostedPowerDrainInterval
-			AutoStart = true
-			Repeats = true
-		}
-		PowerDrain
-		{
-			Type = ResourceChange
-			Trigger = PowerDrainTimer
-			ResourceStorage = RealBatteryStorage
-			Amount = &~/Part/BoostedPowerDrain
-			InitialDelay = 0
 		}
 
 		MainThrusterLocationProxy
@@ -576,7 +507,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Mode = Add
 		}
 
-		ThrusterActivationBar
+		RampProgressBar
 		{
 			Type = ProgressBar
 			OperationalToggle = ThrusterIsFiringThresholdToggle
@@ -593,22 +524,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			MinAmount = 10%
 		}
 
-		BoostTween
-		{
-			Type = ValueTween
-			OffValue = 1
-			OnValue = 3
-			OnTweenDuration = 0
-			OffTweenDuration = 0
-			IsOnToggle = BoostToggle
-		}
-
 		EngineBuffProvider
 		{
 			Type = SelfBuffProvider
 			BuffType = SW_Ion_Thruster_Boost
 			ChainsFromBuffType = Engine
-			BuffAmount = { BaseValue=0%; BuffType=Engine; BuffMode=Add; }
+			BuffAmount = { BaseValue=-100%; BuffType=Engine; BuffMode=Add; }
 			OperationalToggle = EngineBuffToggle
 		}
 
@@ -619,6 +540,26 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			ChainsFromBuffType = SW_Ion_Thruster_Boost
 			BuffAmount = { BaseValue=100%; BuffType=SW_Ion_Thruster_Boost; BuffMode=Add; }
 			BuffMultiplier = BoostTween
+			OperationalToggle = IsOperational
+		}
+		BoostTween
+		{
+			Type = ValueTween
+			OffValue = 1
+			OnValue = 3
+			OnTweenDuration = 0
+			OffTweenDuration = 0
+			IsOnToggle = BoostToggle
+		}
+
+		BoostProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = BoostToggle
+			ShowProgressFor = RealBatteryStorage
+			LowColor = [64, 0, 64]
+			HighColor = [0, 0, 255]
+			FullColor = [0, 0, 255]
 		}
 
 		RampUpBuffProvider
@@ -638,16 +579,253 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			BuffAmount = { BaseValue=100%; BuffType=SW_Ion_Thruster_Boost_RampUp;  BuffMode=Multiply; MaxValue=900%; }
 		}
 
-		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
-		{	
-			GridSize = [2, 3]
+		//OC START
+
+		IsOverclockedBoosting
+		{
+			Type = MultiToggle
+			Toggles = [ IsOverclocked, BoostToggle ]
+			Mode = All
 		}
-		
+
+		Overclock_OnBoostPowerUsed
+		{
+			Type = ValueChangeTrigger
+			OperationalToggle = IsOverclockedBoosting
+			ValueSource = RealBatteryStorage
+			TriggerOnIncrease = false
+		}
+
+		Overclock_TotalBoostPowerUsed
+		{
+			Type = ValueAccumulator
+			OperationalToggle = IsOverclockedBoosting
+			NonOperationalBehaviour = Reset
+			AccumulatingToggle = Overclock_IsThrusterActive
+			THRUST_DISSIPATION_PER_SECOND = -(&~/OVERCLOCK/BOOST_HEAT_FACTOR_PER_SECOND) / (&~/OVERCLOCK/BOOST_HEAT_FACTOR_PER_BATTERY)
+			DISSIPATION_PER_SECOND = (&THRUST_DISSIPATION_PER_SECOND)
+			DissipationRate
+			{
+				BaseValue = (&../DISSIPATION_PER_SECOND) * 1000
+				Modifiers
+				[
+					{
+						Type = ScaledBuff
+						BuffType = Engine
+						Scale = -(&~/Part/BOOSTED_BASE_POWER_DRAIN_PER_SEC)
+						ModificationMode = Add
+					}
+				]
+			}
+			MinValue = 0
+			AccumulationTriggers
+			[
+				{
+					Trigger = Overclock_OnBoostPowerUsed
+					// Negative to flip the sign of the negative resource change value
+					Value = { BaseValue = -1; EffectScaleExponent = 1; }
+					AllowWhenNonOperational = false
+				}
+			]
+		}
+		Overclock_RampingBoostPowerUseFactor
+		{
+			Type = ValueAccumulator
+			OperationalToggle = IsOverclockedBoosting
+			NonOperationalBehaviour = Reset
+			AccumulatingToggle = Overclock_IsThrusterActive
+			AccumulationRate = 1 / (&~/OVERCLOCK/BOOST_POWER_RAMP_TIME)
+			DissipationRate = &AccumulationRate
+			MinValue = 0
+			MaxValue = 1
+		}
+		Overclock_BoostPowerUseBuff
+		{
+			Type = SelfBuffProvider
+			BuffType = BoostOverclockPowerRamp
+			BuffMultiplier = Overclock_RampingBoostPowerUseFactor
+		}
+		Overclock_BoostPowerUseBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOverclockedBoosting
+			ShowProgressFor = Overclock_RampingBoostPowerUseFactor
+			LowColor = [201, 239, 0]
+			HighColor = [201, 239, 0]
+			FullColor = [201, 239, 0]
+		}
+
+		Overclock_BoostHeatFactorPowerThreshold
+		{
+			Type = StaticValue
+			Value = (&~/OVERCLOCK/BOOST_HEAT_FACTOR_POWER_THRESHOLD)
+		}
+
+		Overclock_BoostPowerUsedOverThreshold
+		{
+			Type = ValueOperation
+			Operator = Subtract
+			ValueOne = Overclock_TotalBoostPowerUsed
+			ValueTwo = Overclock_BoostHeatFactorPowerThreshold
+			MinValue = 0
+		}
+
+		Overclock_BoostHeatFactorPerPower
+		{
+			Type = StaticValue
+			Value = (&~/OVERCLOCK/BOOST_HEAT_FACTOR_PER_BATTERY) / 1000
+		}
+
+		Overclock_BoostPowerUsedAdditionalHeatFactor
+		{
+			Type = MultiValue
+			Values = [Overclock_BoostHeatFactorPerPower, Overclock_BoostPowerUsedOverThreshold]
+			Mode = Multiply
+		}
+		Overclock_BoostBaseHeatFactor
+		{
+			Type = StaticValue
+			Value = (&~/OVERCLOCK/BASE_BOOST_HEAT_FACTOR)
+		}
+		Overclock_BaseHeatFactor
+		{
+			Type = ToggleValueSelector
+			Toggle = BoostToggle
+			ToggleOffValue = One
+			ToggleOnValue = Overclock_BoostBaseHeatFactor
+		}
+		Overclock_BoostPowerUsedHeatFactor
+		{
+			Type = MultiValue
+			Values = [One, Overclock_BoostPowerUsedAdditionalHeatFactor]
+			Mode = Add
+		}
+
+		OverclockStateValue
+		{
+			Type = ToggleValueSelector
+			Toggle = OverclockModeToggle
+			ToggleOffValue = Zero
+			ToggleOnValue = One
+		}
+
+		Zero { Type = StaticValue; Value = 0; }
+		One { Type = StaticValue; Value = 1; }
+
+		Overclock_CombinedHeatInput
+		{
+			Type = MultiResourceStorage
+			ResourceType = heat
+			ResourceStorages = [ NetworkHeatInput ]
+			ViaBuffs
+			{
+				IncomingBuffTypes = [ EngineHeatCollection ]
+				ComponentIDs = [ EngineHeatCollectionStorage ]
+			}
+		}
+
+		// Overriding to use the combined heat input
+		HeatDistributionStorage : ^/0/HeatDistributionStorage
+		{
+			ResourceStorages = [Overclock_CombinedHeatInput, OverflowHeatStorage]
+		}
+
+		Overclock_ThrusterHeatProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperationalOverclocked
+			HEAT_PER_INTERVAL = ceil((&~/OVERCLOCK/THRUST_HEAT_PER_SECOND) * (&Interval))
+			ToQuantity
+			{
+				BaseValue = (&../HEAT_PER_INTERVAL) * (&~/HEAT_TO_RESOURCE)
+				BuffType = ThermalActivity
+				BuffMode = Multiply
+			}
+			ToStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Interval = 0.5
+		}
+
+		Overclock_ActivationBuff
+		{
+			Type = SelfBuffProvider
+			BuffType = ThermalActivity
+			BuffMultiplier = Overclock_HeatProductionFactor
+		}
+
+		Overclock_HeatProductionFactor
+		{
+			Type = MultiValue
+			Values = [Overclock_BoostPowerUsedHeatFactor, Overclock_SmoothedThrusterActivation]
+			Mode = Multiply
+		}
+
+		Overclock_SmoothedThrusterActivation
+		{
+			Type = SmoothedValue
+			ValueSource = Overclock_NormalizedThrusterActivation
+			MaxDelta = 1 / (&../Overclock_ThrusterHeatProducer/Interval)
+		}
+
+		Overclock_NormalizedThrusterActivation
+		{
+			Type = ValueOperation
+			Operator = Divide
+			ValueOne = MainThrusterValueProxy
+			ValueTwo = Overclock_MaxActivation
+		}
+
+		//Overclock_CombinedThrusterActivation
+		//
+			//
+			//
+			//
+		//
+		Overclock_IsThrusterActive
+		{
+			Type = ThresholdToggle
+			ValueFrom = MainThrusterValueProxy
+			MinAmount = 0
+			MaxAmount = 0
+			Invert = true
+		}
+
+		Overclock_MaxActivation
+		{
+			Type = BuffableValue
+			Value = &~/Part/Components/MainThruster/MaxActivation
+		}
+
+		Port_Thermal_Left : ~/Part/^/0/BASE_THERMAL_PORT
+		{
+			Location = [0, 0]
+			Direction = Left
+		}
+		Port_Thermal_LeftUp : Port_Thermal_Left
+		{
+			Direction = Up
+		}
+		Port_Thermal_RightUp : Port_Thermal_LeftUp
+		{
+			Location = [1, 0]
+		}
+		Port_Thermal_Right : Port_Thermal_Left
+		{
+			Location = [1, 0]
+			Direction = Right
+		}
+
+		//OC END
+
+		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_01/RDL
+		{
+			//
+		}
+
 		LightGraphics
 		{
 			Type = Graphics
 			Location = [1, 2.5]
-			OperationalToggle = IsOperationalAndNotBoostToggle
+			OperationalToggle = IsOperational
 			GetColorFrom = ColorPickerThruster
 
 			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
@@ -723,7 +901,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 						Size = [2, 3]
 					}
 				]
-			}	
+			}
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -754,7 +932,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 			*/
 		}
-		
+
 		BoostLightGraphics
 		{
 			Type = Graphics
@@ -800,7 +978,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 						Size = [1, 2]
 					}
 				]
-			}	*/
+			}*/
 			OperationalRoofLighting
 			{
 				Layer = "roof_lights_fancy"
@@ -816,28 +994,112 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		}
 
-		
+		Graphics
+		{
+			Type = Graphics
+			Location = [1, 1.5]
+			OperationalToggle = IsOperational
 
-		CircleCollider
-		{
-			Type = CircleCollider
-			Location = [1, 3.39]
-			Radius = 50/64
-			Density = 1.35
-		}
-		NozzleCollider
-		{
-			Type = PolygonCollider
-			Vertices
-			[
-				[0 + 32/64  , 4		 ]
-				[1 + 32/64  , 4		 ]
+			AnimationSpeedFactor = DoodadAnimationSpeedFactorValue
+			AnimationSpeedFactorRenormalize = [0.64, 2.7]
+
+			Floor
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						File = "doodads_base.png"
+						Size = [2, 3]
+					}
+					/*{
+						File = "doodads_base_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "doodads_base_66.png"
+						Size = [2, 3]
+					}*/
+				]
+			}
+			/*
+			OperationalDoodad
+			{
+				Layer = "doodads_high"
 				//
-				[1 + 56/64  , 4 + 0.7   ]
-				[0 +  8/64  , 4 + 0.7   ]
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"doodads_on_1.png"
+							"doodads_on_2.png"
+							"doodads_on_3.png"
+							"doodads_on_4.png"
+							"doodads_on_5.png"
+							"doodads_on_6.png"
+							"doodads_on_7.png"
+							"doodads_on_8.png"
+						]
+						Size = [2, 3]
+						AnimationInterval = 0.075
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "doodads_high"
 				//
-			]
-			Density = 1.35
+				DamageLevels
+				[
+					{
+						File = "doodads_off_0.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			*/
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [2, 3]
+					}
+					{
+						File = "walls_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "walls_66.png"
+						Size = [2, 3]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [2, 3]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [2, 3]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [2, 3]
+					}
+				]
+			}
 		}
 
 		NozzleGraphics
@@ -871,19 +1133,50 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		MainThruster
 		{
 			Type = Thruster
-			OperationalToggle = IsOperational
 			Location = [1, 4.5]
 			Rotation = 90d// Relative to unrotated part.
+			SoftOperationalToggle = IsOperational
 			Force = &../../ThrusterForce
 			MinActivation = 0
-			MaxActivation = { BaseValue=1; BuffType=SW_Ion_Thruster_Boost_Thrust;  BuffMode=Multiply; MaxValue=900%; }
+			MaxActivation
+			{
+				BaseValue=1;
+				Modifiers
+				[
+					{
+						Type = Buff
+						BuffType = SW_Ion_Thruster_Boost_Thrust
+						ModificationMode = Multiply
+					}
+					{
+						Type = BuffRemap
+						BuffType = Overclock
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, (&~/OVERCLOCK/THRUST_FACTOR)]
+					}
+				]
+			}
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
 			ActivationIncreaseTime = &../../ThrustIncreaseTime
 			ActivationDecreaseTime = &../../ThrustDecreaseTime
 			ActivationRecoveryTime = &../../ThrustRecoveryTime
 			FuelStorage = RealBatteryStorage
-			FuelUsagePerSecond = &../../FuelUsage
+			FuelUsagePerSecond
+			{
+				BaseValue = &~/Part/FuelUsage
+				Modifiers
+				[
+					{
+						Type = BuffRemap
+						BuffType = Overclock
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, (&~/OVERCLOCK/POWER_USAGE_FACTOR)]
+					}
+				]
+			}
 		}
 		LateralThruster : MainThruster
 		{
@@ -901,9 +1194,20 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			MaxActivation = 0.20
 			MinUncommandedActivation = &MinActivation
 			MaxUncommandedActivation = &MaxActivation
-			ActivationIncreaseTime = &../../ThrustIncreaseTime/BaseValue
-			ActivationRecoveryTime = &../../ThrustRecoveryTime/BaseValue
-			FuelUsagePerSecond = (&../../FuelUsage)*2.5//Penalty for reverse Thrust
+			FuelUsagePerSecond
+			{
+				BaseValue = ceil((&~/Part/FuelUsage)*2.5)
+				Modifiers
+				[
+					{
+						Type = BuffRemap
+						BuffType = Overclock
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, (&~/OVERCLOCK/POWER_USAGE_FACTOR)]
+					}
+				]
+			}
 			AllowAutoFire = false
 		}
 
@@ -912,6 +1216,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = ContinuousEffects
 			ChainedTo = MainThrusterLocationProxy
 			FactorMediaEffectsIntensityWith = DoodadAnimationSpeedFactorValue
+			IntensityTweenDuration = 0.1
+			MinMediaEffectsIntensity = 1%
 			MediaEffects
 			[
 				: /SW_SOUNDS/ThrusterRumble
@@ -936,6 +1242,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			ChainedTo = MainThrusterLocationProxy
 			Trigger = BurstTrigger
 			FactorMediaEffectsIntensityWith = MainThrusterValueProxy
+			MinMediaEffectsIntensity = 1%
 			AnchorMediaEffects = true
 			MediaEffects
 			[
@@ -1011,6 +1318,28 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			]
 		}
 
+		CircleCollider
+		{
+			Type = CircleCollider
+			Location = [1, 3.39]
+			Radius = 50/64
+			Density = 1.35
+		}
+		NozzleCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[0 + 32/64  , 4		 ]
+				[1 + 32/64  , 4		 ]
+				//
+				[1 + 56/64  , 4 + 0.7   ]
+				[0 +  8/64  , 4 + 0.7   ]
+				//
+			]
+			Density = 1.35
+		}
+
 		OperationEffects
 		{
 			Type = ToggleEffects
@@ -1018,6 +1347,12 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/MachinesOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
+		}
+
+		ScorchedEffects : ^/0/ScorchedEffects
+		{
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/MedPartScorched //Small Med Big Huge
 		}
 
 		DestroyedEffects
@@ -1033,6 +1368,13 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Location = [1, 1.5]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
+
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -1041,7 +1383,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [1]
+					HidesIndicators = [2,3]
 				}
 
 				// Out of power.
@@ -1053,6 +1395,15 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 						Size = [1, 1]
 					}
 				}
+
+				// Resetting from overclock
+				{
+					Toggle = &~/Part/^/0/OVERCLOCK_OPERATIONAL
+					AtlasSprite : /INDICATORS/OverclockReset
+					{
+						Size = [1, 1]
+					}
+				}
 			]
 		}
 
@@ -1061,6 +1412,20 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Type = BlueprintSprite
 			File = "blueprints.png"
 			Size = [2, 5]
+		}
+
+		// Since heat ramps during refuelled boost, this just provides the base boost peak heat
+		PeakHeatGenerationValue
+		{
+			Type = StaticValue
+			Value = (&~/OVERCLOCK/THRUST_HEAT_PER_SECOND) * (&~/OVERCLOCK/BASE_BOOST_HEAT_FACTOR)
+		}
+		HeatGenerationStatProvider
+		{
+			Type = StatProvider
+			Stat = HeatGeneration
+			OperationalToggle = OverclockModeToggle
+			ValueFrom = PeakHeatGenerationValue
 		}
 	}
 
@@ -1076,6 +1441,7 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 		RecPower = ((&../StatsByCategory/1/Stats/ThrusterPowerUsage) + (&../StatsByCategory/1/Stats/BoostedPowerUsageContinuous)) / 2
 		RecCrew = (&RecPower) * 4
 	}
+
 	StatsByCategory
 	[
 		{
@@ -1083,8 +1449,8 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			Stats
 			{
 				ThrusterForce = &~/Part/ThrusterForce
-				ThrusterRampUp = ceil(&~/Part/ThrustIncreaseTime/BaseValue)
-				ThrusterRampDown = ceil(&~/Part/ThrustDecreaseTime)
+				ThrusterRampUp = &~/Part/ThrustIncreaseTime/BaseValue
+				ThrusterRampDown = &~/Part/ThrustDecreaseTime
 				ThrusterPowerUsage = (&~/Part/FuelUsage) / 1000
 			}
 		}
@@ -1107,5 +1473,37 @@ Part : &<../base_part_terran_thrusters_ion.rules>/Part
 			}
 		}
 	]
+
+	SecondaryToolTip
+	{
+		TitleKey = "StatCategories/Overclocked"
+		DescriptionKey = "Parts/ThrusterBoostOverclockDesc"
+		Stats
+		{
+			ThrusterForce = (&~/Part/ThrusterForce) * (&~/OVERCLOCK/THRUST_FACTOR)
+			ThrusterHeatGeneration = &~/OVERCLOCK/THRUST_HEAT_PER_SECOND
+			ThrusterPowerUsage = (&~/Part/FuelUsage) * (&~/OVERCLOCK/MAX_POWER_USAGE_FACTOR) / 1000
+		}
+		StatsByCategory
+		[
+			{
+				NameKey = "StatCategories/OverclockedBoost"
+				Stats
+				{
+					ThrusterForce = (&~/Part/BoostedThrusterForce) * (&~/OVERCLOCK/THRUST_FACTOR)
+					BASE_THRUSTER_POWER_USAGE = (&~/Part/BoostedFuelUsage) * (&~/OVERCLOCK/MAX_POWER_USAGE_FACTOR) / 1000
+					ThrusterPowerUsageRamp = [&../BASE_THRUSTER_POWER_USAGE, (&../BASE_THRUSTER_POWER_USAGE) * (&~/OVERCLOCK/BOOST_MAX_POWER_USAGE_FACTOR)]
+					ThrusterPowerUsageRampTime = (&~/OVERCLOCK/BOOST_POWER_RAMP_TIME)
+					BaseHeatFactor = [(&~/OVERCLOCK/BASE_BOOST_HEAT_FACTOR) * 100, (&~/OVERCLOCK/THRUST_HEAT_PER_SECOND) * (&~/OVERCLOCK/BASE_BOOST_HEAT_FACTOR)]
+					BoostHeatFactorPerBattery = (&~/OVERCLOCK/BOOST_HEAT_FACTOR_PER_BATTERY) * 100
+					BoostHeatFactorPerSecond = (&~/OVERCLOCK/BOOST_HEAT_FACTOR_PER_SECOND) * 100
+					BoostHeatFactorBatteryThreshold = (&~/OVERCLOCK/BOOST_HEAT_FACTOR_POWER_THRESHOLD) / 1000
+				}
+				Features
+				[
+					CanReceivePower
+				]
+			}
+		]
+	}
 }
-Size = Large

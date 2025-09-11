@@ -1,7 +1,7 @@
 Part : &<../Cockpit/cockpit.rules>/Part
 {
 	//IDs
-	ID = SW.cockpitT85
+	ID = SW.cockpit_N1
 	OtherIDs = [] //Clears the array
 
 	//StringKeys
@@ -10,8 +10,8 @@ Part : &<../Cockpit/cockpit.rules>/Part
 	DescriptionKey = "Parts/CockpitT85Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits]
+	EditorGroups : ^/0/EditorGroups [ SWTechI ]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits]
 
 	//Resources&Size&Health
 	Resources
@@ -238,8 +238,52 @@ Part : &<../Cockpit/cockpit.rules>/Part
 			ActivationIncreaseTime = 0.1
 			ActivationRecoveryTime = 0.1
 			AllowAutoFire = false
-		}	
+		}
 		// Maneuvering Thrusters - End
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [0.5, 1]
+			Indicators
+			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [.75, .75]
+					}
+					HidesIndicators = [2,3]
+				}
+				// Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [.75, .75]
+					}
+				}
+
+				// No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [.75, .75]
+					}
+				}
+			]
+		}
 
 		// Extinguisher Graphics - Start
 		ExtinguisherSprite

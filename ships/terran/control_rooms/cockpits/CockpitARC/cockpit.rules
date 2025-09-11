@@ -4,7 +4,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	IconNameKey = "Parts/CockpitARCIcon"
 	ID = SW.cockpitARC
 //	OtherIDs = []
-	EditorGroups = ["Flight", "SWTechI"]
+	EditorGroups : ^/0/EditorGroups [ SWTechI ]
 	DescriptionKey = "Parts/CockpitARCDesc"
 	Resources
 	[
@@ -18,12 +18,9 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	SelectionPriority = 0
 	MaxHealth = 4500
 	InitialPenetrationResistance = 4
-//	PenetrationRectType = Normal
-//	IsContiguityOrigin = true //No longer Used
 	ContiguityOriginPriority = 1
-//	IsShipForward = true //No longer Used
 	SelectionTypeID = "control_room"
-	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits, provides_power, reactor]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_2Cockpits, provides_power, reactor]
 	MaxDoors = 3
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	AllowedDoorLocations
@@ -54,78 +51,6 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
-		/* SPECIAL COCKPIT ITEMS */
-
-		// Airlock - Start
-//		AirLock
-//		{
-//			Type = Airlock
-//			EnterExitPoint = [0.5, .3]
-//			NuggetEjectVelocity = [1, 1]
-//			NuggetEjectDirection = [-100d, -80d]
-//			NuggetEjectDoorOpenDuration = 0.65
-//			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
-//
-//			CrewEnterEffects
-//			[
-//				: /BASE_SOUNDS/AudioInterior
-//				{
-//					RandomSounds = 
-//					[
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_01.wav", 
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_02.wav", 
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_04.wav", 
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_05.wav"
-//					]
-//					SpeedVariation = .1
-//				}
-//			]
-//
-//			CrewLeaveEffects
-//			[
-//				: /BASE_SOUNDS/AudioInterior
-//				{
-//					RandomSounds = 
-//					[
-//						"./Data/ships/terran/airlock/crew_leave/crew_leave_01.wav", 
-//						"./Data/ships/terran/airlock/crew_leave/crew_leave_02.wav", 
-//						"./Data/ships/terran/airlock/crew_leave/crew_leave_03.wav"
-//					]
-//					SpeedVariation = .1
-//				}
-//			]	
-//		}
-//		// Airlock - End
-
-//		// Fire Extinguisher - Start
-//		ExtinguisherStorage
-//		{
-//			Type = ResourceStorage
-//			ResourceType = fire_extinguisher
-//			MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
-//			StartingResources = &MaxResources
-//			SuppliesResources = true
-//		}
-//
-//		ExtinguisherProducer
-//		{
-//			Type = ResourceConverter
-//			OperationalToggle = ExtinguisherStorage
-//			InvertOperationalToggle = true
-//			ToStorage = ExtinguisherStorage
-//			ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
-//			Interval = 45
-//		}
-
-		ProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = ExtinguisherProducer
-			ShowProgressFor = ExtinguisherProducer
-		}
-		// Fire Extinguisher - End
 
 		// Maneuvering Thrusters - Start
 		MainAuxThruster
@@ -197,7 +122,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 //			Type = ResourceStorage
 //			ResourceType = battery
 //			MaxResources = 2000
-//			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+//			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 //		}
 //
 //		BatteryConsumer
@@ -439,14 +364,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			MaxMediaEffectsZoom = 4
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioInterior
-				{
-					Sound = "./Data/ships/terran/control_room_small/operating.wav"
-					Volume = 0.15
-					MaxConcurrentVolume = 0.3
-					Speed = .75
-					MaxConcurrent = 1
-				}
+				&/SW_SOUNDS/ControlRoomSmallOperating
 			]
 		}
 
@@ -456,15 +374,21 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			Location = [0.5, 1]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [.75, .75]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
 
 				// Out of power.

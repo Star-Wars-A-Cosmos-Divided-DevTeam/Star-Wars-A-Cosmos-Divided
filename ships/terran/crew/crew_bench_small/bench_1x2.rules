@@ -1,3 +1,9 @@
+CLASSIFICATION = Small
+SCALE = (1/1)
+SIZE = [1, 2]
+MULTIPLIKATOR = (&~/SCALE) * (&~/SIZE/0) * (&~/SIZE/1)
+LOCATION = [((&~/SIZE/0)/2), ((&~/SIZE/1)/2)]
+
 Part : &<../base_part_terran_crew.rules>/Part
 {
 	//IDs
@@ -9,10 +15,12 @@ Part : &<../base_part_terran_crew.rules>/Part
 	NameKey = "Parts/BenchSW1x2"
 	IconNameKey = "Parts/BenchSW1x2Icon"
 	DescriptionKey = "Parts/BenchSW1x2Desc"
+	//JobsNameKey = "JobNames/General"
+	//JobsIcon = &<./Data/gui/game/crew/crew_gui.rules>/ToolIcon
 	
 	//Groups&Categories
-	EditorGroups = ["Crew", "SWTechI"]
-	TypeCategories = [provides_crew, SW_Tech_I]
+	EditorGroups : ^/0/EditorGroups [ SWTechI ]
+	TypeCategories : ^/0/TypeCategories [provides_crew, SW_Tech_I]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -21,7 +29,7 @@ Part : &<../base_part_terran_crew.rules>/Part
 		[steel, 24]
 		[coil, 8]
 	]
-	Size = [1, 2]
+	Size = [&~/SIZE/0, &~/SIZE/1]
 	MaxHealth = 2000
 
 	//Selections
@@ -44,30 +52,6 @@ Part : &<../base_part_terran_crew.rules>/Part
 		[1, 1]
 		[0, 2]
 	]
-	ExternalWallsByCell
-	[
-		{
-			Key = [0, 0]
-			Value = [Left, TopLeft, Top, TopRight, Right]
-		}
-		{
-			Key = [0, 1]
-			Value = [Right, BottomRight, Bottom, BottomLeft, Left]
-		}
-	]
-	/*
-	InternalWallsByCell
-	[
-		{
-			Key = [0, 0]
-			Value = [Left, TopLeft, Top, TopRight, Right]
-		}
-		{
-			Key = [0, 1]
-			Value = [Right, BottomRight, Bottom, BottomLeft, Left]
-		}
-	]
-	*/
 
 	//Editor
 	EditorIcon
@@ -83,6 +67,11 @@ Part : &<../base_part_terran_crew.rules>/Part
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
 		CrewSource
 		{
 			Type = CrewSource
@@ -94,67 +83,35 @@ Part : &<../base_part_terran_crew.rules>/Part
 		Graphics
 		{
 			Type = Graphics
-			Location = [0.5, 1]
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
+			OperationalToggle = CommandToggle
 			Floor
 			{
 				Layer = "floors"
 				DamageLevels
 				[
 					{
-						File = "floor01.png"
-						Size = [1, 2]
+						File = "floor.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 					{
-						File = "floor01_33.png"
-						Size = [1, 2]
+						File = "floor_33.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 					{
-						File = "floor01_66.png"
-						Size = [1, 2]
-					}
-				]
-			}
-
-			OperationalDoodad
-			{
-				Layer = "doodads_low"
-				DamageLevels
-				[
-					{
-						File = "benches_4single.png"
-						Size = [1, 2]
-					}
-					{
-						File = "benches_4single_33.png"
-						Size = [1, 2]
-					}
-					{
-						File = "benches_4single_66.png"
-						Size = [1, 2]
+						File = "floor_66.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 				]
 			}
-
-			NonOperationalDoodad = &OperationalDoodad	
-			Roof
+			NonOperationalDoodad	
 			{
-				Layer = "roofs"
+				Layer = "doodads_high"
 				DamageLevels
 				[
 					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
-						Size = [1, 2]
-					}
-					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
-						Size = [1, 2]
-					}
-					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
-						Size = [1, 2]
+						File = "./data/ships/terran/darkness/darkness1x2.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 				]
 			}
@@ -165,15 +122,37 @@ Part : &<../base_part_terran_crew.rules>/Part
 				[
 					{
 						File = "walls.png"
-						Size = [1, 2]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 					{
 						File = "walls_33.png"
-						Size = [1, 2]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 					{
 						File = "walls_66.png"
-						Size = [1, 2]
+						Size = [&~/SIZE/0, &~/SIZE/1]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 				]
 			}
@@ -182,7 +161,7 @@ Part : &<../base_part_terran_crew.rules>/Part
 		ColoredGraphics
 		{
 			Type = Graphics
-			Location = [0.5, 1]
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
 			GetColorFrom = CrewSource
 			Floor
 			{
@@ -191,32 +170,32 @@ Part : &<../base_part_terran_crew.rules>/Part
 				[
 					{
 						File = "sheets.png"
-						Size = [1, 2]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 					{
 						File = "sheets_33.png"
-						Size = [1, 2]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 					{
 						File = "sheets_66.png"
-						Size = [1, 2]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 				]
 			}
 		}
+
 		DestroyedEffects
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
-			Location = [0.5, 1]
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
 		}
 
 		Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [1, 2]
+			Size = [&~/SIZE/0, &~/SIZE/1]
 		}
 	}
 }
-Size = Small

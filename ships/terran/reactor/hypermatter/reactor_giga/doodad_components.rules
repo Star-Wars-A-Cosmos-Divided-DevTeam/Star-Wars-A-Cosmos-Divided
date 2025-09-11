@@ -1,0 +1,1205 @@
+//COPY THIS FILE AND PLACE IN PART FOLDER
+//
+//
+// RENAME TO: doodads_components.rules
+// One ModeToggle + ToggledComponents per option (0..19).
+// Each block builds a DoodadsGraphics with Operational/NonOperational
+// and optional OperationalLighting. Animation supported.
+//
+// REQUIREMENT in part.rules:
+//   InternalDoodadOptionToggle
+//   {
+//       Type = UIToggle
+//       ToggleID = "internal_doodad_option_switch01"
+//       Default = 0
+//       AvailableChoices = [0,1,2,3,4,5,6,7,8,9,10/*,11,12,13,14,15,16,17,18,19*/]
+//       AlwaysAllowInBuildMode = true
+//       RequiresCommand = false
+//   }
+//
+// Include this file in Components inheritance line:
+//   Components : ^/0/Components, &<doodads_components.rules>
+//
+// Art files assumed (per option):
+//   doodads/Default.png, doodads/Default_33.png, doodads/Default_66.png (if you need floor/ghost layers)
+//   doodads/Default_Off.png (non-operational single frame)
+//   doodads/Default_On1.png, Default_On2.png, Default_On3.png (operational anim frames)
+//   (repeat with Option_A*, Option_B*, ... Option_S*)
+//
+// Adjust Location/Size/Layer per "part defauls" footprint.
+//
+//----------- Part Defaults -------------------
+
+
+
+// ---------- Option 0 (Default) ----------
+InternalDoodadOptionToggle0
+{
+    Type = ModeToggle;
+    Mode = InternalDoodadOptionToggle;
+    OnMode = 0;
+}
+InternalDoodadComponents0
+{
+    Type = ToggledComponents;
+    Toggle = InternalDoodadOptionToggle0;
+    Components
+    {
+        // Floor card (unchanged)
+        DoodadsGraphics
+        {
+            Type = Graphics;
+            //OperationalToggle = IsOperational;
+            Location = [6, 6];
+            Floor
+            {
+                Layer = "doodads_high";
+                DamageLevels
+                [
+                    { File = "doodads/doodad_default.png";    Size = [8, 10] }
+                    { File = "doodads/doodad_default_33.png"; Size = [8, 10] }
+                    { File = "doodads/doodad_default_66.png"; Size = [8, 10] }
+                ]
+            }
+        }
+
+        // Colored roof blob (tinted)
+        DoodadsColoredRoof
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy";
+                DamageLevels
+                [
+                    { File = "./Data/ships/common/light_blob.png"; Size = [16, 16]; Z = 2.5 }
+                ]
+            }
+        }
+
+        // Ambient additive lights (tinted)
+        DoodadsAmbient
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalLighting
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    { File = "Hypermatterreactor_ambient_lights.png"; Size = [12, 12] }
+                ]
+            }
+        }
+
+        // Spinner emissive (tinted)
+        DoodadsSpinner
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "light_spinner.png"
+                            "light_spinner1.png"
+                            "light_spinner2.png"
+                            "light_spinner3.png"
+                        ]
+                        Size = [12, 12];
+                        AnimationInterval = 0.12;
+                    }
+                ]
+            }
+        }
+
+        // Static emissive plate (tinted)
+        DoodadsPlate
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                Offset = [0, 0];
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"; Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}
+
+// ---------- Option 1 (A) ----------
+InternalDoodadOptionToggle1
+{
+    Type = ModeToggle;
+    Mode = InternalDoodadOptionToggle;
+    OnMode = 1;
+}
+InternalDoodadComponents1
+{
+    Type = ToggledComponents;
+    Toggle = InternalDoodadOptionToggle1;
+    Components
+    {
+        // Floor card (Option A art)
+        DoodadsGraphics
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            Location = [6, 6];
+            Floor
+            {
+                Layer = "doodads_high";
+                DamageLevels
+                [
+                    { File = "doodads/doodad_option_a.png";    Size = [8, 10] }
+                    { File = "doodads/doodad_option_a_33.png"; Size = [8, 10] }
+                    { File = "doodads/doodad_option_a_66.png"; Size = [8, 10] }
+                ]
+            }
+        }
+        // Same three tinted components as Option 0, kept as siblings:
+        DoodadsColoredRoof
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy";
+                DamageLevels
+                [
+                    { File = "./Data/ships/common/light_blob.png"; Size = [16, 16]; Z = 2.5 }
+                ]
+            }
+        }
+        DoodadsAmbient
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalLighting
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    { File = "Hypermatterreactor_ambient_lights.png"; Size = [12, 12] }
+                ]
+            }
+        }
+        DoodadsSpinner
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "light_spinner.png"
+                            "light_spinner1.png"
+                            "light_spinner2.png"
+                            "light_spinner3.png"
+                        ]
+                        Size = [12, 12];
+                        AnimationInterval = 0.12;
+                    }
+                ]
+            }
+        }
+        DoodadsPlate
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                Offset = [0, 0];
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"; Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}
+
+// ---------- Option 2 (B) ----------
+InternalDoodadOptionToggle2
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 2
+}
+InternalDoodadComponents2
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle2
+    Components
+    {
+        DoodadsGraphics
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [6, 6]
+            //ChainedTo = Turret       // uncomment if you need to bind rotation
+            //Rotation = 90d
+            Floor
+            {
+                Layer = "doodads_high"
+                DamageLevels
+                [
+                    {
+                        File = "doodads/doodad_option_b.png"
+                        Size = [8, 10]
+                    }
+                    {
+                        File = "doodads/doodad_option_b_33.png"
+                        Size = [8, 10]
+                    }
+                    {
+                        File = "doodads/doodad_option_b_66.png"
+                        Size = [8, 10]
+                    }
+                ]
+            }
+        }
+        DoodadsColoredRoof
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy";
+                DamageLevels
+                [
+                    { File = "./Data/ships/common/light_blob.png"; Size = [16, 16]; Z = 2.5 }
+                ]
+            }
+        }
+        DoodadsAmbient
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalLighting
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    { File = "Hypermatterreactor_ambient_lights.png"; Size = [12, 12] }
+                ]
+            }
+        }
+        DoodadsSpinner
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "light_spinner.png"
+                            "light_spinner1.png"
+                            "light_spinner2.png"
+                            "light_spinner3.png"
+                        ]
+                        Size = [12, 12];
+                        AnimationInterval = 0.12;
+                    }
+                ]
+            }
+        }
+        DoodadsPlate
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                Offset = [0, 0];
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"; Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}
+/*
+// ---------- Option 2 (B) ----------
+InternalDoodadOptionToggle2
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 2
+}
+InternalDoodadComponents2
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle2
+    Components
+    {
+        DoodadsGraphics2
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [6, 6]
+            //ChainedTo = Turret
+            //Rotation = 90d
+            CoreGraphics
+            {
+                Floor
+                {
+                    Layer = "doodads_high"
+                    DamageLevels
+                    [
+                        { File = "doodads/doodad_option_b.png"      Size = [8, 10] }
+                        { File = "doodads/doodad_option_b_33.png"   Size = [8, 10] }
+                        { File = "doodads/doodad_option_b_66.png"   Size = [8, 10] }
+                    ]
+                }
+            }
+        }
+        DoodadsColoredLighting2
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            GetColorFrom = ColorPicker
+            Location = [6, 6]
+            //ChainedTo = Turret
+            //Rotation = 90d
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy"
+                DamageLevels
+                [
+                    {
+                        File = "./Data/ships/common/light_blob.png"
+                        Size = [16, 16]
+                        Z = 2.5
+                    }
+                ]
+            }
+            CoreGraphicsMid
+            {
+                Type = Graphics
+                OperationalToggle = IsOperational
+                OperationalLighting
+                {
+                    Layer = "lights_add"
+                    DamageLevels
+                    [
+                        {
+                            File = "Hypermatterreactor_ambient_lights.png"
+                            Size = [12, 12]
+                        }
+                    ]
+                }
+            }
+            CoreSpinner
+            {
+                Type = Graphics
+                OperationalToggle = IsOperational
+                OperationalDoodad
+                {
+                    Layer = "lights_add"
+                    DamageLevels
+                    [
+                        {
+                            AnimationFiles
+                            [
+                                "light_spinner.png"
+                                "light_spinner1.png"
+                                "light_spinner2.png"
+                                "light_spinner3.png"
+                            ]
+                            Size = [12, 12]
+                            AnimationInterval = 0.12
+                        }
+                    ]
+                }
+            }
+            OperationalDoodad
+            {
+                Layer = "lights_add"
+                Offset = [0, 0]
+                OperationalToggle = IsOperational
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"  Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}
+*/
+// ---------- Option 3 (C) ----------
+InternalDoodadOptionToggle3
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 3
+}
+InternalDoodadComponents3
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle3
+    Components
+    {
+        DoodadsGraphics
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [6, 6]
+            //ChainedTo = Turret
+            //Rotation = 90d
+            Floor
+            {
+                Layer = "doodads_high"
+                DamageLevels
+                [
+                    { File = "doodads/doodad_option_c.png"    ;   Size = [8, 10] }
+                    { File = "doodads/doodad_option_c_33.png" ;   Size = [8, 10] }
+                    { File = "doodads/doodad_option_c_66.png" ;   Size = [8, 10] }
+                ]
+            }
+        }
+        DoodadsColoredRoof
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy";
+                DamageLevels
+                [
+                    { File = "./Data/ships/common/light_blob.png"; Size = [16, 16]; Z = 2.5 }
+                ]
+            }
+        }
+        DoodadsAmbient
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalLighting
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    { File = "Hypermatterreactor_ambient_lights.png"; Size = [12, 12] }
+                ]
+            }
+        }
+        DoodadsSpinner
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "light_spinner.png"
+                            "light_spinner1.png"
+                            "light_spinner2.png"
+                            "light_spinner3.png"
+                        ]
+                        Size = [12, 12];
+                        AnimationInterval = 0.12;
+                    }
+                ]
+            }
+        }
+        DoodadsPlate
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                Offset = [0, 0];
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"; Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}
+
+// ---------- Option 4 (D) ----------
+InternalDoodadOptionToggle4
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 4
+}
+InternalDoodadComponents4
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle4
+    Components
+    {
+        DoodadsGraphics
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [6, 6]
+            //ChainedTo = Turret
+            //Rotation = 90d
+            Floor
+            {
+                Layer = "doodads_high"
+                DamageLevels
+                [
+                    { File = "doodads/doodad_option_d.png"    ;  Size = [8, 10] }
+                    { File = "doodads/doodad_option_d_33.png" ;  Size = [8, 10] }
+                    { File = "doodads/doodad_option_d_66.png" ;  Size = [8, 10] }
+                ]
+            }
+        }
+        DoodadsColoredRoof
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy";
+                DamageLevels
+                [
+                    { File = "./Data/ships/common/light_blob.png"; Size = [16, 16]; Z = 2.5 }
+                ]
+            }
+        }
+        DoodadsAmbient
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalLighting
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    { File = "Hypermatterreactor_ambient_lights.png"; Size = [12, 12] }
+                ]
+            }
+        }
+        DoodadsSpinner
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "light_spinner.png"
+                            "light_spinner1.png"
+                            "light_spinner2.png"
+                            "light_spinner3.png"
+                        ]
+                        Size = [12, 12];
+                        AnimationInterval = 0.12;
+                    }
+                ]
+            }
+        }
+        DoodadsPlate
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                Offset = [0, 0];
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"; Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}
+
+// ---------- Option 5 (E) ----------
+InternalDoodadOptionToggle5
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 5
+}
+InternalDoodadComponents5
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle5
+    Components
+    {
+        DoodadsGraphics
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [6, 6]
+            //ChainedTo = Turret
+            //Rotation = 90d
+            Floor
+            {
+                Layer = "doodads_high"
+                DamageLevels
+                [
+                    { File = "doodads/doodad_option_e.png"    ;  Size = [8, 10] }
+                    { File = "doodads/doodad_option_e_33.png" ;  Size = [8, 10] }
+                    { File = "doodads/doodad_option_e_66.png" ;  Size = [8, 10] }
+                ]
+            }
+        }
+        DoodadsColoredRoof
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy";
+                DamageLevels
+                [
+                    { File = "./Data/ships/common/light_blob.png"; Size = [16, 16]; Z = 2.5 }
+                ]
+            }
+        }
+        DoodadsAmbient
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalLighting
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    { File = "Hypermatterreactor_ambient_lights.png"; Size = [12, 12] }
+                ]
+            }
+        }
+        DoodadsSpinner
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "light_spinner.png"
+                            "light_spinner1.png"
+                            "light_spinner2.png"
+                            "light_spinner3.png"
+                        ]
+                        Size = [12, 12];
+                        AnimationInterval = 0.12;
+                    }
+                ]
+            }
+        }
+        DoodadsPlate
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                Offset = [0, 0];
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"; Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}
+
+// ---------- Option 6 (F) ----------
+InternalDoodadOptionToggle6
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 6
+}
+InternalDoodadComponents6
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle6
+    Components
+    {
+        DoodadsGraphics
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [6, 6]
+            //ChainedTo = Turret
+            //Rotation = 90d
+            Floor
+            {
+                Layer = "doodads_high"
+                DamageLevels
+                [
+                    { File = "doodads/doodad_option_f.png"    ;  Size = [8, 10] }
+                    { File = "doodads/doodad_option_f_33.png" ;  Size = [8, 10] }
+                    { File = "doodads/doodad_option_f_66.png" ;  Size = [8, 10] }
+                ]
+            }
+        }
+        DoodadsColoredRoof
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy";
+                DamageLevels
+                [
+                    { File = "./Data/ships/common/light_blob.png"; Size = [16, 16]; Z = 2.5 }
+                ]
+            }
+        }
+        DoodadsAmbient
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalLighting
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    { File = "Hypermatterreactor_ambient_lights.png"; Size = [12, 12] }
+                ]
+            }
+        }
+        DoodadsSpinner
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "light_spinner.png"
+                            "light_spinner1.png"
+                            "light_spinner2.png"
+                            "light_spinner3.png"
+                        ]
+                        Size = [12, 12];
+                        AnimationInterval = 0.12;
+                    }
+                ]
+            }
+        }
+        DoodadsPlate
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                Offset = [0, 0];
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"; Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}
+
+// ---------- Option 7 (G) ----------
+InternalDoodadOptionToggle7
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 7
+}
+InternalDoodadComponents7
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle7
+    Components
+    {
+        DoodadsGraphics
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [6, 6]
+            //ChainedTo = Turret
+            //Rotation = 90d
+            Floor
+            {
+                Layer = "doodads_high"
+                DamageLevels
+                [
+                    { File = "doodads/doodad_option_g.png"    ; Size = [8, 10] }
+                    { File = "doodads/doodad_option_g_33.png" ; Size = [8, 10] }
+                    { File = "doodads/doodad_option_g_66.png" ; Size = [8, 10] }
+                ]
+            }
+        }
+        DoodadsColoredRoof
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy";
+                DamageLevels
+                [
+                    { File = "./Data/ships/common/light_blob.png"; Size = [16, 16]; Z = 2.5 }
+                ]
+            }
+        }
+        DoodadsAmbient
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalLighting
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    { File = "Hypermatterreactor_ambient_lights.png"; Size = [12, 12] }
+                ]
+            }
+        }
+        DoodadsSpinner
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "light_spinner.png"
+                            "light_spinner1.png"
+                            "light_spinner2.png"
+                            "light_spinner3.png"
+                        ]
+                        Size = [12, 12];
+                        AnimationInterval = 0.12;
+                    }
+                ]
+            }
+        }
+        DoodadsPlate
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                Offset = [0, 0];
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"; Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}
+
+// ---------- Option 8 (H) ----------
+InternalDoodadOptionToggle8
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 8
+}
+InternalDoodadComponents8
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle8
+    Components
+    {
+        DoodadsGraphics
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [6, 6]
+            //ChainedTo = Turret
+            //Rotation = 90d
+            Floor
+            {
+                Layer = "doodads_high"
+                DamageLevels
+                [
+                    { File = "doodads/doodad_option_h.png"    ; Size = [8, 10] }
+                    { File = "doodads/doodad_option_h_33.png" ;  Size = [8, 10] }
+                    { File = "doodads/doodad_option_h_66.png" ;  Size = [8, 10] }
+                ]
+            }
+        }
+        DoodadsColoredRoof
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy";
+                DamageLevels
+                [
+                    { File = "./Data/ships/common/light_blob.png"; Size = [16, 16]; Z = 2.5 }
+                ]
+            }
+        }
+        DoodadsAmbient
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalLighting
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    { File = "Hypermatterreactor_ambient_lights.png"; Size = [12, 12] }
+                ]
+            }
+        }
+        DoodadsSpinner
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "light_spinner.png"
+                            "light_spinner1.png"
+                            "light_spinner2.png"
+                            "light_spinner3.png"
+                        ]
+                        Size = [12, 12];
+                        AnimationInterval = 0.12;
+                    }
+                ]
+            }
+        }
+        DoodadsPlate
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                Offset = [0, 0];
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"; Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}
+// ---------- Option 9 (I) ----------
+InternalDoodadOptionToggle9
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 9
+}
+InternalDoodadComponents9
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle9
+    Components
+    {
+        DoodadsGraphics
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [6, 6]
+            //ChainedTo = Turret
+            //Rotation = 90d
+            Floor
+            {
+                Layer = "doodads_high"
+                DamageLevels
+                [
+                    { File = "doodads/doodad_option_i.png"    ; Size = [8, 10] }
+                    { File = "doodads/doodad_option_i_33.png" ;  Size = [8, 10] }
+                    { File = "doodads/doodad_option_i_66.png" ;  Size = [8, 10] }
+                ]
+            }
+        }
+        DoodadsColoredRoof
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalRoofLighting
+            {
+                Layer = "roof_lights_fancy";
+                DamageLevels
+                [
+                    { File = "./Data/ships/common/light_blob.png"; Size = [16, 16]; Z = 2.5 }
+                ]
+            }
+        }
+        DoodadsAmbient
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalLighting
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    { File = "Hypermatterreactor_ambient_lights.png"; Size = [12, 12] }
+                ]
+            }
+        }
+        DoodadsSpinner
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "light_spinner.png"
+                            "light_spinner1.png"
+                            "light_spinner2.png"
+                            "light_spinner3.png"
+                        ]
+                        Size = [12, 12];
+                        AnimationInterval = 0.12;
+                    }
+                ]
+            }
+        }
+        DoodadsPlate
+        {
+            Type = Graphics;
+            OperationalToggle = IsOperational;
+            GetColorFrom = ColorPicker;
+            Location = [6, 6];
+            OperationalDoodad
+            {
+                Layer = "lights_add";
+                Offset = [0, 0];
+                DamageLevels
+                [
+                    { File = "reactor_lights1_12x12.png"; Size = [12, 12] }
+                ]
+            }
+        }
+    }
+}

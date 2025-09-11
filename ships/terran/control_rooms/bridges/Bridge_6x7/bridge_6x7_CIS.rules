@@ -1,0 +1,772 @@
+Part : &<../base_part_terran_bridges.rules>/Part
+{
+	//IDs
+	ID = SW.CommandBridgeCIS
+	OtherIDs = [/* commandbridge1, SW.commandbridge1, commandbridge2, SW.commandbridge2,SW.commandbridge_test,SW.commandbridge_test2 */]
+
+	//StringKeys
+	NameKey = "Parts/CommandBridgeCIS"
+	IconNameKey = "Parts/CommandBridgeCISIcon"
+	DescriptionKey = "Parts/CommandBridgeDesc"
+	
+	//Groups&Categories
+	EditorGroups : ^/0/EditorGroups [ /*SWTechIII*/ ]
+	EditorParentParts = [ "SW.CommandBridge" ]
+	//DontStackInEditorGroups = []
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, SW_Bridge, SW_Tech_III]
+	//RequiresCategories = []
+
+	//Resources&Size&Health
+	Resources
+	[
+		//[steel, 336]
+		[SW.durasteel, 480] 
+		[coil2, 122]
+		[processor, 12]
+	]  //336*25+122*300+12*2500=75000  //Cost = 75000
+	Size = [6, 7]
+	MaxHealth = 42000//7000
+
+	//Selections
+	SelectionPriority = 0
+	SelectionTypeID = "control_room"
+
+	//PartSpecific
+	AIValueFactor = 5
+	InitialPenetrationResistance = 2
+	ContiguityOriginPriority = 4 // 1 - Note this should be prioretized over smaller cockpits - E.g., Vanilla S = 1 / M = 2 / L = 3 ; 
+
+	//ReceivableBuffs&Prohibits
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor, SW_Sensor_Radar]
+
+	//Doors&Etc
+	MaxDoors = 4
+	AllowedDoorLocations
+	[
+		[-1, 5]
+		[1, 7]
+		[2, 7]
+		[3, 7]
+		[4, 7]
+		[6, 5]
+	]
+	BlockedTravelCells
+	[
+		[0, 0]
+		[1, 0]
+		[4, 0]
+		[5, 0]
+		[0, 1]
+		[5, 1]
+		[0, 2]
+		[5, 2]
+		[0, 3]
+		[5, 3]
+	]
+	ForceManhattanPathInPart = true
+	RadarRotSpeed = 130d // SFX is 2.00151927 seconds long, so 360d/2.00151927=179.8633694893d
+	BlockedTravelCellDirections
+	[
+		{
+			Key = [1, 5]
+			Value = [Left]
+		}
+		{
+			Key = [1, 4]
+			Value = [Left]
+		}
+		{
+			Key = [4, 5]
+			Value = [Right]
+		}
+		{
+			Key = [4, 4]
+			Value = [Right]
+		}	
+	]
+
+	//Editor
+	EditorIcon
+	{
+		Texture
+		{
+			File = "CIS/icon.png"
+			SampleMode = Linear
+		}
+		Size = [47, 55]
+	}
+
+	//Components&Inheritance
+	Components : ^/0/Components
+	{
+		IsOperational : ^/0/IsOperational
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
+			Mode = All
+		}
+
+		CommandProvider
+		{
+			Type = CommandProvider
+			OperationalToggle = IsOperational
+			CommandPoints = 1200 // Remember to update tooltip.
+		}
+
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
+		{
+			Type = MultiToggle
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
+			Mode = All
+		}
+
+		CommandToggle
+		{
+			Type = CommandToggle
+		}
+
+		PowerToggle
+		{
+			Type = UIToggle
+			ToggleID = "on_off"
+			Default = 1
+			RequiresCommand = false
+		}
+
+		BatteryStorage
+		{
+			Type = ResourceStorage
+			ResourceType = battery
+			MaxResources = 10000
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
+		}
+		BatteryConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = battery
+			Storage = BatteryStorage
+			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
+			ResupplyThreshold = 500
+			OperationalToggle = PowerToggle
+			AllowNonContiguousCrewSearch = true
+		}
+		PowerDrain
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
+			FromQuantity = 1000
+			MinFromQuantityForConversion = 1
+			Interval = 10 // Drains 1 power every 10 seconds.
+		}
+		
+		GridBuffProvider
+		{
+			Type = GridBuffProvider
+			BuffType = SW_Sensor
+			BuffAmount = 500^2
+			GridDistance = 1000
+			OperationalToggle = IsOperational
+			BuffsSelf = false
+		}
+		
+		GridBuffProviderRadar : &GridBuffProvider
+		{
+			BuffType = SW_Sensor_Radar
+			BuffAmount = (500^2)*2
+		}
+		
+		SelfBuffProvider
+		{
+			Type = SelfBuffProvider
+			BuffType =	SW_Sensor
+			BuffAmount = (1000)^2 //1200 radius
+		}
+		SelfBuffProviderRadar : &SelfBuffProvider
+		{
+			BuffType =	SW_Sensor_Radar
+			BuffAmount = (2000)^2 //2400 radius
+		}
+
+		Sensor
+		{
+			Type = Sensor
+			OperationalToggle = IsOperationalAndCommandToggle
+			SightRadius = { BaseValue=1; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=3000; } //was 2500
+			RadarRadius = { BaseValue=1; BuffType=SW_Sensor_Radar; BuffMode=Multiply; MaxValue=5000; } //was 4500
+		}
+
+		Antenna_Graphics
+		{
+			Type = Graphics
+			Location = [3, 3.75]
+			OperationalToggle = IsOperational
+			OperationalDoodad
+			{
+				Layer = "roof_turrets"
+				DamageLevels
+				[
+					{
+						File = "../_common/graphics/radar_antenna_off.png"
+						NormalsFile = "../_common/graphics/radar_antenna_normals.png"
+						Size = [2, 2]
+						RotSpeed = &~/Part/RadarRotSpeed
+						AnimationStartTime = WhenSpawned
+					}
+					{
+						File = "../_common/graphics/radar_antenna_off_33.png"
+						NormalsFile = "../_common/graphics/radar_antenna_normals_33.png"
+						Size = [2, 2]
+						RotSpeed = &~/Part/RadarRotSpeed
+						AnimationStartTime = WhenSpawned
+					}
+					{
+						File = "../_common/graphics/radar_antenna_off_66.png"
+						NormalsFile = "../_common/graphics/radar_antenna_normals_66.png"
+						Size = [2, 2]
+						RotSpeed = &~/Part/RadarRotSpeed
+						AnimationStartTime = WhenSpawned
+					}
+				]
+			}
+			NonOperationalDoodad
+			{
+				Layer = "roof_turrets"
+				DamageLevels
+				[
+					{
+						File = "../_common/graphics/radar_antenna_off.png"
+						NormalsFile = "../_common/graphics/radar_antenna_normals.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../_common/graphics/radar_antenna_off_33.png"
+						NormalsFile = "../_common/graphics/radar_antenna_normals_33.png"
+						Size = [2, 2]
+					}
+					{
+						File = "../_common/graphics/radar_antenna_off_66.png"
+						NormalsFile = "../_common/graphics/radar_antenna_normals_66.png"
+						Size = [2, 2]
+					}
+				]
+			}
+		}
+		CrewLocation1 //Front "Captian"
+		{
+			Type = CrewLocation
+			Location = [3, 0 + 48/64]
+			Rotation = 0d
+		}
+		//Row 1 L
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [2 + 5/64, 2 + 22/64]
+			Rotation = 0d
+		}
+		//Row 2 L
+		CrewLocation3
+		{
+			Type = CrewLocation
+			Location = [2 + 5/64, 3 + 1/64]
+			Rotation = 0d
+		}
+		//Row 3 L
+		CrewLocation4
+		{
+			Type = CrewLocation
+			Location = [2 + 5/64, 3 + 43/64]
+			Rotation = 0d
+		}
+		//Row 4 L
+		CrewLocation5
+		{
+			Type = CrewLocation
+			Location = [2 + 5/64, 4 + 22/64]
+			Rotation = 0d
+		}
+		//Row 5 L
+		CrewLocation6
+		{
+			Type = CrewLocation
+			Location = [2 + 5/64, 5]
+			Rotation = 0d
+		}
+		//Side 1 L
+		CrewLocation7
+		{
+			Type = CrewLocation
+			Location = [1 + 25/64, 4 + 3/64]
+			Rotation = -90d
+		}
+		//Side 2 L
+		CrewLocation8
+		{
+			Type = CrewLocation
+			Location = [1 + 25/64, 4 + 45/64]
+			Rotation = -90d
+		}
+		//Side 3 L
+		CrewLocation9
+		{
+			Type = CrewLocation
+			Location = [1 + 25/64, 5 + 25/64]
+			Rotation = -90d
+		}
+		//Row 1 R
+		CrewLocation10
+		{
+			Type = CrewLocation
+			Location = [3 + 59/64, 2 + 22/64]
+			Rotation = 0d
+		}
+		//Row 2 R
+		CrewLocation11
+		{
+			Type = CrewLocation
+			Location = [3 + 59/64, 3 + 1/64]
+			Rotation = 0d
+		}
+		//Row 3 R
+		CrewLocation12
+		{
+			Type = CrewLocation
+			Location = [3 + 59/64, 3 + 43/64]
+			Rotation = 0d
+		}
+		//Row 4 R
+		CrewLocation13
+		{
+			Type = CrewLocation
+			Location = [3 + 59/64, 4 + 22/64]
+			Rotation = 0d
+		}
+		//Row 5 R
+		CrewLocation14
+		{
+			Type = CrewLocation
+			Location = [3 + 59/64, 5]
+			Rotation = 0d
+		}
+		//Side 1 R
+		CrewLocation15
+		{
+			Type = CrewLocation
+			Location = [4 + 39/64, 4 + 3/64]
+			Rotation = 90d
+		}
+		//Side 2 R
+		CrewLocation16
+		{
+			Type = CrewLocation
+			Location = [4 + 39/64, 4 + 45/64]
+			Rotation = 90d
+		}
+		//Side 3 R
+		CrewLocation17
+		{
+			Type = CrewLocation
+			Location = [4 + 39/64, 5 + 25/64]
+			Rotation = 90d
+		}
+
+		PartCrew
+		{
+			Type = MultiToggle
+			Toggles = [PartCrewCaptian, PartCrewNavigatorsL, PartCrewNavigatorsR, PartCrewOfficers]
+			Mode = All
+		}
+		PartCrewCaptian
+		{
+			Type = PartCrew
+			Crew = 1
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			//HighPriorityPrerequisites = [BatteryStorage]
+			AbandonWhenOnFire = false
+			CrewDestinations
+			[
+				&../../CrewLocation1/Location
+			]
+			CrewLocations
+			[
+				CrewLocation1
+			]
+		}
+		PartCrewNavigatorsL
+		{
+			Type = PartCrew
+			Crew = 3
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			AbandonWhenOnFire = false
+			CrewDestinations
+			[
+				//L
+				&../../CrewLocation7/Location
+				&../../CrewLocation8/Location
+				&../../CrewLocation9/Location
+			]
+			CrewLocations
+			[
+				//L
+				CrewLocation7
+				CrewLocation8
+				CrewLocation9
+			]
+		}
+		PartCrewNavigatorsR
+		{
+			Type = PartCrew
+			Crew = 3
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			AbandonWhenOnFire = false
+			CrewDestinations
+			[
+				//R
+				&../../CrewLocation15/Location
+				&../../CrewLocation16/Location
+				&../../CrewLocation17/Location
+			]
+			CrewLocations
+			[
+				//R
+				CrewLocation15
+				CrewLocation16
+				CrewLocation17
+			]
+		}
+		PartCrewOfficers
+		{
+			Type = PartCrew
+			Crew = 6
+			DefaultPriority = &/PRIORITIES/ControlRoom_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			AbandonWhenOnFire = false
+			CrewDestinations
+			[
+				&../../CrewLocation2/Location
+				&../../CrewLocation3/Location
+				&../../CrewLocation4/Location
+				&../../CrewLocation5/Location
+				&../../CrewLocation6/Location
+				&../../CrewLocation10/Location
+				&../../CrewLocation11/Location
+				&../../CrewLocation12/Location
+				&../../CrewLocation13/Location
+				&../../CrewLocation14/Location
+			]
+			CrewLocations
+			[
+				CrewLocation2
+				CrewLocation3
+				CrewLocation4
+				CrewLocation5
+				CrewLocation6
+				CrewLocation10
+				CrewLocation11
+				CrewLocation12
+				CrewLocation13
+				CrewLocation14
+			]
+			SwitchLocationInterval = [5, 10]
+		}
+
+		//Thermal Connection for Build-In sensor OC?
+/*
+		Port_Thermal_MidRight5 : ~/Part/^/0/BASE_THERMAL_PORT
+		{
+			Location = [5, 5]
+			Direction = Right
+		}
+
+
+		Port_Thermal_MidDown3 : Port_Thermal_MidRight5
+		{
+			Location = [3, 6]
+			Direction = Down
+		}
+
+		Port_Thermal_MidDown2 : Port_Thermal_MidDown3
+		{
+			Location = [2, 6]
+		}
+
+		Port_Thermal_MidLeft5 : Port_Thermal_MidDown2
+		{
+			Location = [0, 5]
+			Direction = Left
+		}
+*/
+
+		Graphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [3, 3.5]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "CIS/floor.png"
+						Size = [6, 7]
+					}
+					{
+						File = "CIS/floor_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "CIS/floor_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			OperationalLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "CIS/lights.png"
+						Size = [6, 7]
+						VertexColor = [72, 72, 164]
+					}
+				]
+			}
+			OperationalDoodad
+			{
+				Layer = "doodads_low"
+				DamageLevels
+				[
+					{
+						AnimationFiles
+						[
+							"CIS/doodads_on.png"
+							"CIS/doodads_on1.png"
+							"CIS/doodads_on2.png"
+							"CIS/doodads_on3.png"
+						]
+						Size = [6, 7]
+						AnimationInterval = 0.80
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "CIS/walls.png"
+						Size = [6, 7]
+					}
+					{
+						File = "CIS/walls_33.png"
+						Size = [6, 7]
+					}
+					{
+						File = "CIS/walls_66.png"
+						Size = [6, 7]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "CIS/roof.png"
+						NormalsFile = "CIS/roof_normals.png"
+						Size = [6, 7]
+					}
+					{
+						File = "CIS/roof_33.png"
+						NormalsFile = "CIS/roof_33_normals.png"
+						Size = [6, 7]
+					}
+					{
+						File = "CIS/roof_66.png"
+						NormalsFile = "CIS/roof_66_normals.png"
+						Size = [6, 7]
+					}
+				]
+			}
+		}
+/*
+		LightGraphics
+		{
+			Type = Graphics
+			OperationalToggle = IsOperational
+			Location = [3, 3.5]
+
+			OperationalRoofLighting
+			{
+				Layer = "lights_add"
+				DamageLevels
+				[
+					{
+						File = "lights.png"
+						Size = [6, 7]
+						VertexColor = [16, 16, 255]
+					}
+				]
+			}
+		}
+*/
+		BatterySprites
+		{
+			Type = ResourceSprites
+			Location = [3, 3.5]
+			ResourceStorage = BatteryStorage
+			Layer = "doodads_low"
+			HasZeroResourceSprite = false
+			ResourceLevels
+			[
+				{
+					File = "CIS/batteries1.png"
+					Size = [6, 7]
+				}
+				{
+					File = "CIS/batteries2.png"
+					Size = [6, 7]
+				}
+				{
+					File = "CIS/batteries3.png"
+					Size = [6, 7]
+				}
+				{
+					File = "CIS/batteries4.png"
+					Size = [6, 7]
+				}
+				{
+					File = "CIS/batteries5.png"
+					Size = [6, 7]
+				}
+				{
+					File = "CIS/batteries6.png"
+					Size = [6, 7]
+				}
+				{
+					File = "CIS/batteries7.png"
+					Size = [6, 7]
+				}
+				{
+					File = "CIS/batteries8.png"
+					Size = [6, 7]
+				}
+				{
+					File = "CIS/batteries9.png"
+					Size = [6, 7]
+				}
+				{
+					File = "CIS/batteries10.png"
+					Size = [6, 7]
+				}
+			]
+		}
+
+		OperationEffects
+		{
+			Type = ToggleEffects
+			Toggle = IsOperational
+			Location = [3, 3.5]
+			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
+			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
+		}
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/HugePartDestroyed
+			Location = [3, 3.5]
+		}
+		OperationSoundLoop
+		{
+			Type = ContinuousEffects
+			Location = [3, 3.5]
+			OperationalToggle = IsOperational
+			MaxMediaEffectsZoom = 4
+			MediaEffects
+			[
+				&/SW_SOUNDS/ControlRoomSmallOperating
+			]
+		}
+
+		Indicators
+		{
+			Type = IndicatorSprites
+			Location = [3, 3.5]
+			Indicators
+			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
+
+				// Turned off.
+				{
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [2, 2]
+					}
+					HidesIndicators = [2,3]
+				}
+
+				//Out of power.
+				{
+					Toggle = BatteryStorage
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoPower
+						Size = [3, 3]
+					}
+				}
+
+				//No crew.
+				{
+					Toggle = PartCrew
+					AtlasSprite
+					{
+						File = &/INDICATORS/NoCrew
+						Size = [4, 4]
+					}
+				}
+			]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "CIS/blueprints.png"
+			Size = [6, 7]
+		}
+	}
+
+	//Stats
+	Stats
+	{
+		CrewRequired = (&~/Part/Components/PartCrewCaptian/Crew) + (&~/Part/Components/PartCrewNavigatorsL/Crew) + (&~/Part/Components/PartCrewNavigatorsR/Crew) + (&~/Part/Components/PartCrewOfficers/Crew)
+		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+		SightRange = (&~/Part/Components/SelfBuffProvider/BuffAmount)^0.5
+		RadarRange = (&~/Part/Components/SelfBuffProviderRadar/BuffAmount)^0.5
+
+		RecPower = (&PowerUsageContinuousMinutes) / 60
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
+	}
+	Features
+	[
+		CanBuffSWSensor
+	]
+}

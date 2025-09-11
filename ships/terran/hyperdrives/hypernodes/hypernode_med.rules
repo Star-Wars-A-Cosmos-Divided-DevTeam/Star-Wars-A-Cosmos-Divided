@@ -10,8 +10,9 @@ Part : &<../base_part_terran_hypernodes.rules>/Part
 	DescriptionKey = "Parts/HyperdriveNodeMedDesc"
 
 	//Groups&Categories
-	EditorGroups = [Flight, SWTechII]
-	TypeCategories = [ftl, uses_power, SW_Hypernodes, SW_Hypernode_Medium, SW_Tech_II]
+	EditorGroups : ^/0/EditorGroups [ SWTechII ]
+	EditorParentParts = [ "SW.HyperdriveMed" ]
+	TypeCategories : ^/0/TypeCategories [ftl, uses_power, SW_Hypernodes, SW_Hypernode_Medium, SW_Tech_II]
 	AffectsValidityOfCategories = [SW_Hypernode_Medium]
 	RequiresCategories = [SW_Hyperdrive_Medium]
 
@@ -81,7 +82,7 @@ Part : &<../base_part_terran_hypernodes.rules>/Part
 			ResourceType = battery
 			MaxResources = 6000
 			InitToMaxResources = 0
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 
 		// We need these resource consumers to always exist even though they don't do anything,
@@ -124,7 +125,7 @@ Part : &<../base_part_terran_hypernodes.rules>/Part
 			ResourceType = hyperium
 			MaxResources = 10
 			UITileRect = [0 + 7/64, 0 + 7/64, 1 - 14/64, 1 - 14/64]
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/ElementDeliver
 			DropResourcesWhenDestroyed = true
 		}
 
@@ -318,15 +319,8 @@ Part : &<../base_part_terran_hypernodes.rules>/Part
 			OperationalToggle = PowerToggle
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/ships/terran/hyperdrive_small/spin.wav"
-					Volume = 0.64
-					Speed = 3.5
-					MaxConcurrent = 0
-					VolumeOverIntensity = 1
-					SpeedOverIntensity = [0, 1]
-				}
+				&/SW_SOUNDS/HyperdriveMediumSpin
+				&/SW_SOUNDS/HyperdriveMediumRumble
 			]
 		}
 
@@ -464,5 +458,5 @@ Part : &<../base_part_terran_hypernodes.rules>/Part
 
 	StatsNotesKey = "Stats/HyperNodeMed_Notes"
 }
-Size = Small
+CLASSIFICATION = Small
 Scale = (1/1)

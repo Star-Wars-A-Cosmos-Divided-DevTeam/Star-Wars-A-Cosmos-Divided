@@ -1,0 +1,175 @@
+// =============================
+// File: floors_components.rules (SpriteGrid inheritance; exact coords/sizes)
+// =============================
+// Include in your part file:
+//   Components : ^/0/Components, &<floors_components.rules>
+// And add the UI toggle:
+//   DecorativeFloorOptionToggle { Type = UIToggle; ToggleID = "decor_floor_option_switch01"; Default = 0; AvailableChoices = [0,1]; AlwaysAllowInBuildMode = true; RequiresCommand = false }
+// Notes:
+// - Inherit your precise SpriteGrid layouts from graphics_12x12.rules.
+// - We only swap file paths; keep Location/GridSize/UVRotation as-is.
+
+// ---------- Option 0: Default skin ----------
+DecorativeFloorOptionToggle0 { Type = ModeToggle; Mode = DecorativeFloorOptionToggle; OnMode = 0 }
+DecorativeFloorComponents0
+{
+    Type = ToggledComponents
+    Toggle = DecorativeFloorOptionToggle0
+    Components
+    {
+        // Floors
+        FloorGrid0 : &<graphics_12x12.rules>/FloorGrid
+        {
+            // Base has Location = [0.5,0.5], GridSize = [12,12], Size per tile = [1,1]
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/floor.png";     Size = [1,1] }
+                    { File = "floors/floor_33.png";  Size = [1,1] }
+                    { File = "floors/floor_66.png";  Size = [1,1] }
+                ]
+            ]
+        }
+
+        // Roof overlay
+        RoofGrid0 : &<graphics_12x12.rules>/RoofGrid
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/roof.png";     Size = [1,1] }
+                    { File = "floors/roof_33.png";  Size = [1,1] }
+                    { File = "floors/roof_66.png";  Size = [1,1] }
+                ]
+            ]
+        }
+
+        // Walls (Top/Right/Bottom/Left) — Locations & GridSizes inherited exactly
+        TopWall0 : &<graphics_12x12.rules>/TopWall
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/walls_2.png";     Size = [1,1]; UVRotation = 0 }
+                    { File = "floors/walls_2_33.png";  Size = [1,1]; UVRotation = 0 }
+                    { File = "floors/walls_2_66.png";  Size = [1,1]; UVRotation = 0 }
+                ]
+            ]
+        }
+
+        RightWall0 : &<graphics_12x12.rules>/RightWall
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/walls_2.png";     Size = [1,1]; UVRotation = 1 }
+                    { File = "floors/walls_2_33.png";  Size = [1,1]; UVRotation = 1 }
+                    { File = "floors/walls_2_66.png";  Size = [1,1]; UVRotation = 1 }
+                ]
+            ]
+        }
+
+        BottomWall0 : &<graphics_12x12.rules>/BottomWall
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/walls_2.png";     Size = [1,1]; UVRotation = 2 }
+                    { File = "floors/walls_2_33.png";  Size = [1,1]; UVRotation = 2 }
+                    { File = "floors/walls_2_66.png";  Size = [1,1]; UVRotation = 2 }
+                ]
+            ]
+        }
+
+        LeftWall0 : &<graphics_12x12.rules>/LeftWall
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/walls_2.png";     Size = [1,1]; UVRotation = 3 }
+                    { File = "floors/walls_2_33.png";  Size = [1,1]; UVRotation = 3 }
+                    { File = "floors/walls_2_66.png";  Size = [1,1]; UVRotation = 3 }
+                ]
+            ]
+        }
+    }
+}
+
+// ---------- Option 1 (A): Alternate skin (same grids; different textures) ----------
+DecorativeFloorOptionToggle1 { Type = ModeToggle; Mode = DecorativeFloorOptionToggle; OnMode = 1 }
+DecorativeFloorComponents1
+{
+    Type = ToggledComponents
+    Toggle = DecorativeFloorOptionToggle1
+    Components
+    {
+        FloorGrid1 : &<graphics_12x12.rules>/FloorGrid
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/Option_A.png";     Size = [1,1] }
+                    { File = "floors/Option_A_33.png";  Size = [1,1] }
+                    { File = "floors/Option_A_66.png";  Size = [1,1] }
+                ]
+            ]
+        }
+        RoofGrid1 : &<graphics_12x12.rules>/RoofGrid
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/Option_A_Roof.png";     Size = [1,1] }
+                    { File = "floors/Option_A_Roof_33.png";  Size = [1,1] }
+                    { File = "floors/Option_A_Roof_66.png";  Size = [1,1] }
+                ]
+            ]
+        }
+        TopWall1 : &<graphics_12x12.rules>/TopWall
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/Option_A_Walls1.png";     Size = [1,1]; UVRotation = 0 }
+                    { File = "floors/Option_A_Walls1_33.png";  Size = [1,1]; UVRotation = 0 }
+                    { File = "floors/Option_A_Walls1_66.png";  Size = [1,1]; UVRotation = 0 }
+                ]
+            ]
+        }
+        RightWall1 : &<graphics_12x12.rules>/RightWall
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/Option_A_Walls2.png";     Size = [1,1]; UVRotation = 1 }
+                    { File = "floors/Option_A_Walls2_33.png";  Size = [1,1]; UVRotation = 1 }
+                    { File = "floors/Option_A_Walls2_66.png";  Size = [1,1]; UVRotation = 1 }
+                ]
+            ]
+        }
+        BottomWall1 : &<graphics_12x12.rules>/BottomWall
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/Option_A_Walls1.png";     Size = [1,1]; UVRotation = 2 }
+                    { File = "floors/Option_A_Walls1_33.png";  Size = [1,1]; UVRotation = 2 }
+                    { File = "floors/Option_A_Walls1_66.png";  Size = [1,1]; UVRotation = 2 }
+                ]
+            ]
+        }
+        LeftWall1 : &<graphics_12x12.rules>/LeftWall
+        {
+            RandomDamageLevels
+            [
+                [
+                    { File = "floors/Option_A_Walls2.png";     Size = [1,1]; UVRotation = 3 }
+                    { File = "floors/Option_A_Walls2_33.png";  Size = [1,1]; UVRotation = 3 }
+                    { File = "floors/Option_A_Walls2_66.png";  Size = [1,1]; UVRotation = 3 }
+                ]
+            ]
+        }
+    }
+}
+
+// --- End of files ---

@@ -10,8 +10,8 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 	DescriptionKey = "Parts/TurbolaserHuge01Desc"
 
 	//Groups&Categories
-	EditorGroups = ["WeaponsEnergy", "SWTechIII"]
-	TypeCategories = [weapon, uses_power, is_crewed]
+	EditorGroups : ^/0/EditorGroups [] //["WeaponsEnergy", SWTechIII]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power, is_crewed]
 	RequiresCategories = [SW_WarRoom]
 
 	//Resources&Size&Health
@@ -100,7 +100,7 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 	}
 
 	//Components&Inheritance
-	Components : ^/0/Components
+	Components : ^/0/Components, &<huge_turbolaserx1_doodad_toggles.rules> /*, &<floors_components.rules>*/ 
 	{
 		IsOperational : ^/0/IsOperational
 		{
@@ -171,32 +171,51 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 			ComponentID = CommonReloadResetTrigger
 		}
 
-		SwitchWeaponCooldownProgressBar
+//		SwitchWeaponCooldownProgressBar
+//		{
+//			Type = ProgressBar
+//			OperationalToggle = SwitchWeaponCooldownTimer
+//			InvertOperationalToggle = true
+//			ShowProgressFor = SwitchWeaponCooldownTimer
+//			Invert = true
+//			LowColor = [16, 16, 16]
+//			HighColor = [255, 255, 255]
+//		}
+//		SwitchWeaponCooldownTimer
+//		{
+//			Type = Timer
+//			Duration = 6.3
+//			AutoStart = true
+//			Repeats = false
+//			StartsOn = 0
+//			StartTrigger = SwitchWeaponCooldownTrigger
+//		}
+//		SwitchWeaponCooldownTrigger
+//		{
+//			Type = ModeTrigger
+//			Mode = MunitionType
+//			TriggerInModes = [0, 1, 2]
+//		}
+		/*
+		DecorativeFloorOptionToggle
 		{
-			Type = ProgressBar
-			OperationalToggle = SwitchWeaponCooldownTimer
-			InvertOperationalToggle = true
-			ShowProgressFor = SwitchWeaponCooldownTimer
-			Invert = true
-			LowColor = [16, 16, 16]
-			HighColor = [255, 255, 255]
+			Type = UIToggle
+			ToggleID = "decor_floor_option_switch01"
+			Default = 0
+			AvailableChoices = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19] // comment as desired
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
 		}
-		SwitchWeaponCooldownTimer
+		*/
+		InternalDoodadOptionToggle
 		{
-			Type = Timer
-			Duration = 6.3
-			AutoStart = true
-			Repeats = false
-			StartsOn = 0
-			StartTrigger = SwitchWeaponCooldownTrigger
+			Type = UIToggle
+			ToggleID = "internal_doodad_option_switch01"
+			Default = 0
+			AvailableChoices = [0,1/*,2,3,4,5,6,7,8,9,10/*,11,12,13,14,15,16,17,18,19*/]
+			AlwaysAllowInBuildMode = true
+			RequiresCommand = false
 		}
-		SwitchWeaponCooldownTrigger
-		{
-			Type = ModeTrigger
-			Mode = MunitionType
-			TriggerInModes = [0, 1, 2]
-		}
-
 		MunitionType
 		{
 			Type = UIToggle
@@ -287,7 +306,7 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 10000 //7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -389,48 +408,6 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 			}
 			*/
 		}
-		ConsoleGraphics
-		{
-			Type = Graphics
-			ChainedTo = Turret
-			//Location = [4, 4]
-			Rotation = 90d
-			OperationalToggle = IsOperational
-			//DoodadToggle = IsOperational
-			//ShowToggledDoodadsWhenNotOperational = true
-			OperationalLighting
-			{
-				Layer = "lights_add"
-				DamageLevels
-				[
-					{
-						File = "lights.png"
-						Size = [8, 8]
-					}
-				]
-			}
-			OperationalDoodad
-			{
-				Layer = "lights_add"
-				Offset = [0.015625, 0.359375]
-				DamageLevels
-				[
-					{
-						AnimationFiles
-						[
-							"A1.png"
-							"A2.png"
-							"A3.png"
-							"A4.png"
-							"A5.png"
-						]
-						Size = [2.4, 2.4]
-						AnimationInterval = 0.075
-						AnimationStartTime = Zero
-					}
-				]
-			}
-			}
 
 /*
 		TurretGhostGraphics
@@ -456,7 +433,7 @@ Part : &<huge_turbolaser_switchable.rules>/Part
 		FirePermissionToggle
 		{
 			Type = MultiToggle
-			Toggles = [CommonReloadTimer, SwitchWeaponCooldownTimer, FireModeToggle]
+			Toggles = [CommonReloadTimer, FireModeToggle] //, SwitchWeaponCooldownTimer
 			Mode = All
 		}
 
@@ -942,7 +919,7 @@ BulletEmitterBase : &<huge_turbolaser_switchable.rules>/BulletEmitterBase
 ReloadProgressBarBase
 {
 	Type = ProgressBar
-	OperationalToggle = SwitchWeaponCooldownTimer
+	OperationalToggle = IsOperational //SwitchWeaponCooldownTimer
 	ShowProgressFor = CommonReloadTimer
 	Invert = true
 }

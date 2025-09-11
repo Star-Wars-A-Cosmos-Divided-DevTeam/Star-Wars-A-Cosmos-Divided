@@ -10,8 +10,8 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 	DescriptionKey = "Parts/LightTurbolaserSwitchableDesc"
 
 	//Groups&Categories
-	EditorGroups = ["WeaponsEnergy", "SWTechI", "SWTechII"]
-	TypeCategories = [weapon, uses_power, is_crewed]
+	EditorGroups : ^/0/EditorGroups ["WeaponsEnergy", SWTechI, SWTechII]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power, is_crewed]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -136,31 +136,31 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			ComponentID = CommonReloadResetTrigger
 		}
 */	
-		SwitchWeaponCooldownProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = SwitchWeaponCooldownTimer
-			InvertOperationalToggle = true
-			ShowProgressFor = SwitchWeaponCooldownTimer
-			Invert = true
-			LowColor = [16, 16, 16]
-			HighColor = [255, 255, 255]
-		}
-		SwitchWeaponCooldownTimer
-		{
-			Type = Timer
-			Duration = 8
-			AutoStart = true
-			Repeats = false
-			StartsOn = 0
-			StartTrigger = SwitchWeaponCooldownTrigger
-		}
-		SwitchWeaponCooldownTrigger
-		{
-			Type = ModeTrigger
-			Mode = MunitionType
-			TriggerInModes = [0, 1, 2]
-		}
+//		SwitchWeaponCooldownProgressBar
+//		{
+//			Type = ProgressBar
+//			OperationalToggle = SwitchWeaponCooldownTimer
+//			InvertOperationalToggle = true
+//			ShowProgressFor = SwitchWeaponCooldownTimer
+//			Invert = true
+//			LowColor = [16, 16, 16]
+//			HighColor = [255, 255, 255]
+//		}
+//		SwitchWeaponCooldownTimer
+//		{
+//			Type = Timer
+//			Duration = 8
+//			AutoStart = true
+//			Repeats = false
+//			StartsOn = 0
+//			StartTrigger = SwitchWeaponCooldownTrigger
+//		}
+//		SwitchWeaponCooldownTrigger
+//		{
+//			Type = ModeTrigger
+//			Mode = MunitionType
+//			TriggerInModes = [0, 1, 2]
+//		}
 	
 		MunitionType
 		{
@@ -216,7 +216,7 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 5000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 
 		BatteryConsumer
@@ -523,7 +523,7 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 		FirePermissionToggle
 		{
 			Type = MultiToggle
-			Toggles = [FireTimerProxy, FireModeToggle, /*SwitchWeaponCooldownTimer*/] //Not currently necessary since only FX.
+			Toggles = [FireTimerProxy, FireModeToggle] //, SwitchWeaponCooldownTimer - Not currently necessary since only FX.
 			Mode = All
 		}
 

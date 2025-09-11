@@ -1,3 +1,10 @@
+SCALE = (1)
+SIZE = [1, 1]
+MULTIPLIKATOR = (&~/SCALE) * (&~/SIZE/0) * (&~/SIZE/1)
+LOCATION = [((&~/SIZE/0)/2), ((&~/SIZE/1)/2)]
+COST = &<../base_part_terran_storages.rules>/COST
+MAXHEALTH = &<../base_part_terran_storages.rules>/MAXHEALTH
+
 Part : &<../base_part_terran_storages.rules>/Part
 {
 	//IDs
@@ -9,25 +16,18 @@ Part : &<../base_part_terran_storages.rules>/Part
 	IconNameKey = "Parts/Storage1x1Icon"
 	DescriptionKey = "Parts/Storage1x1Desc"
 
-	//Groups&Categories
-	EditorGroups = ["Storage", "SWTechI"]
-	TypeCategories : ^/0/TypeCategories [storage, SW_Tech_I]
-	RequiresCategories = []
-
 	//Resources&Size&Health
 	Resources
 	[
-		[steel, 16]
+		[steel, ceil((&~/COST)*(&~/MULTIPLIKATOR))]
 	]
-	Size = [1, 1]
-	MaxHealth = 1000
-
-	//Selections
-	SelectionTypeID = "storage"
-	IgnoreRotationForMirroredSelection = true
+	Size = [&~/SIZE/0, &~/SIZE/1]
+	MaxHealth = ceil((&~/MAXHEALTH)*(&~/MULTIPLIKATOR))
 
 	//PartSpecific
 	IsRotateable = false
+	FlipHRotate = [0, 1, 2, 3] // Disable flipping UI.
+	FlipVRotate = [0, 1, 2, 3] // Disable flipping UI.
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
@@ -40,7 +40,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [32, 32]
+		Size = [20, 20]
 	}
 
 	//Components&Inheritance
@@ -49,9 +49,10 @@ Part : &<../base_part_terran_storages.rules>/Part
 		Storage
 		{
 			Type = FlexResourceGrid
-			GridRect = [0, 0, 1, 1]
+			GridRect = [0, 0, &~/SIZE/0, &~/SIZE/1]
+			OverridePriorityPart = cosmoteer.storage_2x2
 			Layer = "doodads_low"
-			SpriteInset = 8/64
+			SpriteInset = 0/64
 			RandomSpriteRotation = true
 			AllowExternalPickupAndDelivery = true
 		}
@@ -60,7 +61,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [0.5, 0.5]
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
 			Floor
 			{
 				Layer = "floors"
@@ -68,15 +69,15 @@ Part : &<../base_part_terran_storages.rules>/Part
 				[
 					{
 						File = "floor.png"
-						Size = [1, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 					{
 						File = "floor.png"
-						Size = [1, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 					{
 						File = "floor.png"
-						Size = [1, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 				]
 			}
@@ -87,7 +88,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 				[
 					{
 						File = "./Data/Ships/terran/darkness/darkness1x1.png"
-						Size = [1, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 				]
 			}
@@ -98,15 +99,15 @@ Part : &<../base_part_terran_storages.rules>/Part
 				[
 					{
 						File = "walls.png"
-						Size = [1, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 					{
 						File = "walls_33.png"
-						Size = [1, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 					{
 						File = "walls_66.png"
-						Size = [1, 1]
+						Size = [&~/SIZE/0, &~/SIZE/1]
 					}
 				]
 			}
@@ -117,10 +118,11 @@ Part : &<../base_part_terran_storages.rules>/Part
 			Type = CrewDestinationProximityToggle
 			Distance = 3
 		}
+
 		RoofDoorSprite
 		{
 			Type = OpenCloseSprite
-			Location = [0.5, 0.5]
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
 			OperationalToggle = RoofDoorOpenToggle
 			Layer = "roofs"
 			OpenDamageLevels
@@ -144,7 +146,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 						"roof_normals5.png"
 						"roof_normals6.png"
 					]
-					Size = [1, 1]
+					Size = [&~/SIZE/0, &~/SIZE/1]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -168,7 +170,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 						"roof_normals5_33.png"
 						"roof_normals6_33.png"
 					]
-					Size = [1, 1]
+					Size = [&~/SIZE/0, &~/SIZE/1]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -192,7 +194,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 						"roof_normals5_66.png"
 						"roof_normals6_66.png"
 					]
-					Size = [1, 1]
+					Size = [&~/SIZE/0, &~/SIZE/1]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -219,7 +221,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 						"roof_normals2.png"
 						"roof_normals1.png"
 					]
-					Size = [1, 1]
+					Size = [&~/SIZE/0, &~/SIZE/1]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -243,7 +245,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 						"roof_normals2_33.png"
 						"roof_normals1_33.png"
 					]
-					Size = [1, 1]
+					Size = [&~/SIZE/0, &~/SIZE/1]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -267,7 +269,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 						"roof_normals2_66.png"
 						"roof_normals1_66.png"
 					]
-					Size = [1, 1]
+					Size = [&~/SIZE/0, &~/SIZE/1]
 					AnimationInterval = 0.06
 					AnimationStartTime = MinValue
 					ClampAnimation = true
@@ -279,14 +281,14 @@ Part : &<../base_part_terran_storages.rules>/Part
 		{
 			Type = DeathEffects
 			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
-			Location = [1, 1]
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
 		}
 
 		Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [1, 1]
+			Size = [&~/SIZE/0, &~/SIZE/1]
 		}
 	}
 

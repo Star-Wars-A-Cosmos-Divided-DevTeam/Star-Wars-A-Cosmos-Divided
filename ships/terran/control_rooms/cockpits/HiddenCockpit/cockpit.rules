@@ -10,8 +10,8 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 	DescriptionKey = "Parts/CockpitHidDesc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechI"]
-	TypeCategories = [command, uses_power, is_crewed, fire_extinguisher]
+	EditorGroups : ^/0/EditorGroups [ SWTechI ]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, fire_extinguisher]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -39,7 +39,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 
 	//Doors&Etc
-	MaxDoors = 2
+	MaxDoors = 3
 	AllowedDoorLocations
 	[
 		[1,1]
@@ -173,7 +173,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
 			ResupplyThreshold = 1000
 			OperationalToggle = PowerToggle
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 			AllowNonContiguousCrewSearch = true
 		}
 		PowerDrain
@@ -206,6 +206,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 				CrewLocation
 			]
 		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -368,14 +369,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			MaxMediaEffectsZoom = 4
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioInterior
-				{
-					Sound = "./Data/ships/terran/control_room_small/operating.wav"
-					Volume = .15
-					MaxConcurrentVolume = .3
-					Speed = .75
-					MaxConcurrent = 1
-				}
+				&/SW_SOUNDS/ControlRoomSmallOperating
 			]
 		}
 
@@ -385,6 +379,12 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			Location = [0.5, 1]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -393,7 +393,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
 				// Out of power.
 				{

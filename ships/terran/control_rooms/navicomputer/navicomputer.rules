@@ -10,8 +10,9 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 	DescriptionKey = "Parts/NavicomputerDesc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechII"]
-	TypeCategories : ^/0/TypeCategories [navicomputer, uses_power, is_crewed, SW_Navicomputer, SW_Tech_II]
+	EditorGroups : ^/0/EditorGroups [ Utilities, SWTechII ]
+	EditorParentParts = [ "SW.HyperdriveMed" ]
+	TypeCategories : ^/0/TypeCategories [uses_power, is_crewed, SW_Navicomputer, SW_Tech_II]
 	RequiresCategories = []
 
 	//Resources&Size&Health
@@ -32,10 +33,9 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 	//PartSpecific
 	AIValueFactor = 2
 	AutoDoorMaxPathLength = 5
-	
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor]
+	ReceivableBuffs : ^/0/ReceivableBuffs [SW_Sensor, SW_Sensor_Radar]
 
 	//Doors&Etc
 	AllowedDoorLocations
@@ -44,6 +44,14 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		[2, 1]
 		[1, 2]
 		[0, 2]
+	]
+	ForceManhattanPathInPart = true
+	BlockedTravelCellDirections
+	[
+		{
+			Key = [0, 0]
+			Value = [Right]
+		}
 	]
 
 	//Editor
@@ -67,10 +75,10 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			Mode = All
 		}
 
-		IsOperationalAndCommandToggle
+		IsOperationalAndCommandToggle : ^/0/IsOperationalAndCommandToggle 
 		{
 			Type = MultiToggle
-			Toggles = [IsOperational, CommandToggle]
+			Toggles : ^/0/Toggles [IsOperational, CommandToggle]
 			Mode = All
 		}
 
@@ -93,40 +101,41 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			OperationalToggle = PowerToggle
 			CommandPoints = 0
 		}
-		/*
+		
 		GridBuffProvider
 		{
 			Type = GridBuffProvider
 			BuffType = SW_Sensor
-			BuffAmount = 40%
+			BuffAmount = 300^2
 			GridDistance = 1000
 			OperationalToggle = IsOperational
+			BuffsSelf = false
 		}
-
+		
+		GridBuffProviderRadar : &GridBuffProvider
+		{
+			BuffType = SW_Sensor_Radar
+			BuffAmount = (300^2)*2
+		}
+		
 		SelfBuffProvider
 		{
 			Type = SelfBuffProvider
 			BuffType =	SW_Sensor
-			ChainsFromBuffType = SW_Sensor
-			BuffAmount = { BaseValue=100%; BuffType=SW_Sensor; BuffMode=Add; }
+			BuffAmount = (640)^2 //640 radius
+		}
+		SelfBuffProviderRadar : &SelfBuffProvider
+		{
+			BuffType =	SW_Sensor_Radar
+			BuffAmount = (2100)^2 //2100 radius
 		}
 
 		Sensor
 		{
 			Type = Sensor
 			OperationalToggle = IsOperationalAndCommandToggle
-			SightRadius 
-			{ BaseValue=400; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 1200 } //640
-			RadarRadius
-			{ BaseValue=1200; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue = 3600 } //2100
-		}
-		*/
-		Sensor
-		{
-			Type = Sensor
-			OperationalToggle = IsOperationalAndCommandToggle
-			SightRadius = 640
-			RadarRadius = 2100
+			SightRadius = { BaseValue=1; BuffType=SW_Sensor; BuffMode=Multiply; MaxValue=3000; } //was 2500
+			RadarRadius = { BaseValue=1; BuffType=SW_Sensor_Radar; BuffMode=Multiply; MaxValue=5000; } //was 4500
 		}
 
 		BatteryStorage
@@ -135,7 +144,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			ResourceType = battery
 			MaxResources = 6000
 			DrainOnFtlJump = true
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -328,6 +337,13 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 			Location = [1, 1]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
+
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -336,7 +352,7 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 						File = &/INDICATORS/PowerOff
 						Size = [1, 1]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
 				// Out of power.
 				{
@@ -372,8 +388,8 @@ Part : &<../base_part_terran_control_rooms.rules>/Part
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerUsageContinuousMinutes = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000 * 60
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		SightRange = &~/Part/Components/Sensor/SightRadius // /BaseValue
-		RadarRange = &~/Part/Components/Sensor/RadarRadius // /BaseValue
+		SightRange = (&~/Part/Components/SelfBuffProvider/BuffAmount)^0.5
+		RadarRange = (&~/Part/Components/SelfBuffProviderRadar/BuffAmount)^0.5
 
 		RecPower = (&PowerUsageContinuousMinutes) / 60
 		RecCrew = (&CrewRequired) + (&RecPower) * 4

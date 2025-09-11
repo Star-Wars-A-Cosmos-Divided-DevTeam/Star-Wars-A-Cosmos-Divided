@@ -1,0 +1,349 @@
+//COPY THIS FILE AND PLACE IN PART FOLDER
+//
+//
+// RENAME TO: doodads_components.rules
+// One ModeToggle + ToggledComponents per option (0..19).
+// Each block builds a DoodadsGraphics with Operational/NonOperational
+// and optional OperationalLighting. Animation supported.
+//
+// REQUIREMENT in your part.rules:
+//   InternalDoodadOptionToggle
+//   {
+//       Type = UIToggle
+//       ToggleID = "internal_doodad_option_switch02"
+//       Default = 0
+//       AvailableChoices = [0,1,2,3,4,5,6,7,8,9,10/*,11,12,13,14,15,16,17,18,19*/]
+//       AlwaysAllowInBuildMode = true
+//       RequiresCommand = false
+//   }
+//
+// Include this file in your Components inheritance line:
+//   Components : ^/0/Components, &<doodads_components.rules>
+//
+// Art files assumed (per option):
+//   doodads/Default.png, doodads/Default_33.png, doodads/Default_66.png (if you need floor/ghost layers)
+//   doodads/Default_Off.png (non-operational single frame)
+//   doodads/Default_On1.png, Default_On2.png, Default_On3.png (operational anim frames)
+//   (repeat with Option_A*, Option_B*, ... Option_S*)
+//
+// Adjust Location/Size/Layer per "part defauls" footprint.
+//
+
+// ---------- Option 0 (Default) ----------
+InternalDoodadOptionToggle0
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 0
+}
+
+InternalDoodadComponents0
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle0
+    Components
+    {
+        // Inside turret floor (moved from TurretGraphics.Floor)
+        DoodadsGraphics_TurretInterior0
+        {
+            Type = Graphics
+            ChainedTo = Turret
+            Location = [0, 0]
+            Rotation = 90d
+            //OperationalToggle = IsOperational  // (not required for static floor)
+
+            Floor
+            {
+                Layer = "turrets"      // kept from original
+                Offset = [0, -0.4]
+                DamageLevels
+                [
+                    {
+                        File = "doodads/default_turretinside.png"
+					    Size = [8, 7.2] // scaled for new size
+                    }
+                ]
+            }
+        }
+
+        // Console (moved from ConsoleGraphics)
+        DoodadsGraphics_Console0
+        {
+            Type = Graphics
+            ChainedTo = Turret
+            Rotation = 90d
+            OperationalToggle = IsOperational
+
+            OperationalLighting
+            {
+                Layer = "lights_add"
+                DamageLevels
+                [
+                    { File = "doodads/default_lights.png";  Size = [8, 8]; }
+                ]
+            }
+
+            OperationalDoodad
+            {
+                Layer = "lights_add"
+				Offset = [0.015625, 0.359375]
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "doodads/default_A1.png"
+                            "doodads/default_A2.png"
+                            "doodads/default_A3.png"
+                            "doodads/default_A4.png"
+                            "doodads/default_A5.png"
+                        ]
+						Size = [2.4, 2.4]
+                        AnimationInterval = 0.075
+                        AnimationStartTime = Zero
+                    }
+                ]
+            }
+
+            // Optional “off” state
+            // NonOperationalDoodad
+            // {
+            //     Layer = "doodads_low"
+            //     DamageLevels
+            //     [
+            //         { File = "console_off.png"  Size = [3,3] }
+            //     ]
+            // }
+        }
+    }
+}
+
+// ---------- Option 1 (A) ----------
+InternalDoodadOptionToggle1
+{
+    Type = ModeToggle
+    Mode = InternalDoodadOptionToggle
+    OnMode = 1
+}
+
+InternalDoodadComponents1
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle1
+    Components
+    {
+        // Inside turret floor (moved from TurretGraphics.Floor)
+        DoodadsGraphics_TurretInterior1
+        {
+            Type = Graphics
+            ChainedTo = Turret
+            Location = [0, 0]
+            Rotation = 90d
+            //OperationalToggle = IsOperational  // (not required for static floor)
+
+            Floor
+            {
+                Layer = "turrets"      // kept from original
+                Offset = [0, -0.4]
+                DamageLevels
+                [
+                    {
+                        File = "doodads/option_a_turretinside.png"
+					    Size = [8, 7.2] // scaled for new size
+                    }
+                ]
+            }
+        }
+
+        // Console (moved from ConsoleGraphics)
+        DoodadsGraphics_Console1
+        {
+            Type = Graphics
+            ChainedTo = Turret
+            Rotation = 90d
+            OperationalToggle = IsOperational
+
+            OperationalLighting
+            {
+                Layer = "lights_add"
+                DamageLevels
+                [
+                    { File = "doodads/default_lights.png";  Size = [8, 8]; }
+                ]
+            }
+
+            OperationalDoodad
+            {
+                Layer = "lights_add"
+				Offset = [0.015625, 0.359375]
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "doodads/default_A1.png"
+                            "doodads/default_A2.png"
+                            "doodads/default_A3.png"
+                            "doodads/default_A4.png"
+                            "doodads/default_A5.png"
+                        ]
+						Size = [2.4, 2.4]
+                        AnimationInterval = 0.075
+                        AnimationStartTime = Zero
+                    }
+                ]
+            }
+
+            // Optional “off” state
+            // NonOperationalDoodad
+            // {
+            //     Layer = "doodads_low"
+            //     DamageLevels
+            //     [
+            //         { File = "console_off.png"  Size = [3,3] }
+            //     ]
+            // }
+        }
+    }
+}
+/*
+// ---------- Option 2 (B) ----------
+InternalDoodadOptionToggle2 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 2 }
+InternalDoodadComponents2
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle2
+    Components
+    {
+        DoodadsGraphics2
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [&~/LOCATION/0, &~/LOCATION/1]
+
+            OperationalLighting
+            {
+                Layer = "lights_add"
+                DamageLevels
+                [
+                    { File = "doodads/Option_B_Lights.png"  Size = [&~/SIZE/0, &~/SIZE/1] }
+                ]
+            }
+
+            OperationalDoodad
+            {
+                Layer = "doodads_low"
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "doodads/Option_B_On1.png"
+                            "doodads/Option_B_On2.png"
+                            "doodads/Option_B_On3.png"
+                        ]
+                        Size = [&~/SIZE/0, &~/SIZE/1]
+                        AnimationInterval = 0.50
+                    }
+                ]
+            }
+
+            NonOperationalDoodad
+            {
+                Layer = "doodads_low"
+                DamageLevels
+                [
+                    { File = "doodads/Option_B_Off.png"  Size = [&~/SIZE/0, &~/SIZE/1] }
+                ]
+            }
+        }
+    }
+}
+
+// ---------- Option 3 (C) ----------
+InternalDoodadOptionToggle3 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 3 }
+InternalDoodadComponents3
+{
+    Type = ToggledComponents
+    Toggle = InternalDoodadOptionToggle3
+    Components
+    {
+        DoodadsGraphics3
+        {
+            Type = Graphics
+            OperationalToggle = IsOperational
+            Location = [&~/LOCATION/0, &~/LOCATION/1]
+
+            OperationalLighting
+            {
+                Layer = "lights_add"
+                DamageLevels
+                [
+                    { File = "doodads/Option_C_Lights.png"  Size = [&~/SIZE/0, &~/SIZE/1] }
+                ]
+            }
+
+            OperationalDoodad
+            {
+                Layer = "doodads_low"
+                DamageLevels
+                [
+                    {
+                        AnimationFiles
+                        [
+                            "doodads/Option_C_On1.png"
+                            "doodads/Option_C_On2.png"
+                            "doodads/Option_C_On3.png"
+                        ]
+                        Size = [&~/SIZE/0, &~/SIZE/1]
+                        AnimationInterval = 0.50
+                    }
+                ]
+            }
+
+            NonOperationalDoodad
+            {
+                Layer = "doodads_low"
+                DamageLevels
+                [
+                    { File = "doodads/Option_C_Off.png"  Size = [&~/SIZE/0, &~/SIZE/1] }
+                ]
+            }
+        }
+    }
+}
+
+// ---------- Options 4..19 (D..S) ----------
+InternalDoodadOptionToggle4  { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 4  }
+InternalDoodadComponents4    { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle4    Components { DoodadsGraphics4  { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_D_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_D_On1.png" "doodads/Option_D_On2.png" "doodads/Option_D_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_D_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle5  { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 5  }
+InternalDoodadComponents5    { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle5    Components { DoodadsGraphics5  { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_E_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_E_On1.png" "doodads/Option_E_On2.png" "doodads/Option_E_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_E_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle6  { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 6  }
+InternalDoodadComponents6    { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle6    Components { DoodadsGraphics6  { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_F_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_F_On1.png" "doodads/Option_F_On2.png" "doodads/Option_F_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_F_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle7  { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 7  }
+InternalDoodadComponents7    { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle7    Components { DoodadsGraphics7  { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_G_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_G_On1.png" "doodads/Option_G_On2.png" "doodads/Option_G_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_G_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle8  { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 8  }
+InternalDoodadComponents8    { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle8    Components { DoodadsGraphics8  { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_H_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_H_On1.png" "doodads/Option_H_On2.png" "doodads/Option_H_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_H_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle9  { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 9  }
+InternalDoodadComponents9    { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle9    Components { DoodadsGraphics9  { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_I_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_I_On1.png" "doodads/Option_I_On2.png" "doodads/Option_I_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_I_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle10 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 10 }
+InternalDoodadComponents10   { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle10   Components { DoodadsGraphics10 { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_J_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_J_On1.png" "doodads/Option_J_On2.png" "doodads/Option_J_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_J_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle11 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 11 }
+InternalDoodadComponents11   { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle11   Components { DoodadsGraphics11 { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_K_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_K_On1.png" "doodads/Option_K_On2.png" "doodads/Option_K_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_K_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle12 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 12 }
+InternalDoodadComponents12   { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle12   Components { DoodadsGraphics12 { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_L_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_L_On1.png" "doodads/Option_L_On2.png" "doodads/Option_L_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_L_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle13 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 13 }
+InternalDoodadComponents13   { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle13   Components { DoodadsGraphics13 { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_M_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_M_On1.png" "doodads/Option_M_On2.png" "doodads/Option_M_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_M_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle14 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 14 }
+InternalDoodadComponents14   { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle14   Components { DoodadsGraphics14 { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_N_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_N_On1.png" "doodads/Option_N_On2.png" "doodads/Option_N_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_N_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle15 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 15 }
+InternalDoodadComponents15   { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle15   Components { DoodadsGraphics15 { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_O_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_O_On1.png" "doodads/Option_O_On2.png" "doodads/Option_O_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_O_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle16 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 16 }
+InternalDoodadComponents16   { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle16   Components { DoodadsGraphics16 { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_P_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_P_On1.png" "doodads/Option_P_On2.png" "doodads/Option_P_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_P_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle17 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 17 }
+InternalDoodadComponents17   { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle17   Components { DoodadsGraphics17 { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_Q_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_Q_On1.png" "doodads/Option_Q_On2.png" "doodads/Option_Q_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_Q_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle18 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 18 }
+InternalDoodadComponents18   { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle18   Components { DoodadsGraphics18 { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_R_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_R_On1.png" "doodads/Option_R_On2.png" "doodads/Option_R_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_R_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+InternalDoodadOptionToggle19 { Type = ModeToggle  Mode = InternalDoodadOptionToggle  OnMode = 19 }
+InternalDoodadComponents19   { Type = ToggledComponents  Toggle = InternalDoodadOptionToggle19   Components { DoodadsGraphics19 { Type = Graphics  OperationalToggle = IsOperational  Location = [&~/LOCATION/0, &~/LOCATION/1]  OperationalLighting { Layer = "lights_add" DamageLevels [ { File = "doodads/Option_S_Lights.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } OperationalDoodad { Layer = "doodads_low" DamageLevels [ { AnimationFiles [ "doodads/Option_S_On1.png" "doodads/Option_S_On2.png" "doodads/Option_S_On3.png" ] Size = [&~/SIZE/0, &~/SIZE/1] AnimationInterval = 0.50 } ] } NonOperationalDoodad { Layer = "doodads_low" DamageLevels [ { File = "doodads/Option_S_Off.png" Size = [&~/SIZE/0, &~/SIZE/1] } ] } } } }
+*/

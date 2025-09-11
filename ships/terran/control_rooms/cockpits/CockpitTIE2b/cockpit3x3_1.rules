@@ -3,7 +3,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 	NameKey = "Parts/Cockpit2_1"
 	IconNameKey = "Parts/Cockpit2_1Icon"
 	ID = SW.tie_cockpit1b
-	EditorGroup = "SWTIE"
+	EditorGroups = ["SWTIE"]
 	DescriptionKey = "Parts/Cockpit2_1Desc"
 	Resources
 	[
@@ -23,7 +23,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 	//IsContiguityOrigin = true
 	//IsShipForward = true
 	SelectionTypeID = "control_room"
-	TypeCategories = [command,weapon, provides_power, uses_power, thruster]
+	TypeCategories : ^/0/TypeCategories [command,weapon, provides_power, uses_power, thruster]
 
 	ThrusterForce = 200
 	ThrustIncreaseTime = 0
@@ -218,7 +218,6 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = "floor.png"
 						Size = [3, 4]
 					}
-/*
 					{
 						File = "floor_33.png"
 						Size = [3, 4]
@@ -227,7 +226,6 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = "floor_66.png"
 						Size = [3, 4]
 					}
-*/
 				]
 			}
 			OperationalDoodad
@@ -244,9 +242,9 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 							"on3.png"
 							"on4.png"
 							"on5.png"
-						    "on6.png"
-						    "on7.png"
-						    "on8.png"
+							"on6.png"
+							"on7.png"
+							"on8.png"
 						]
 						Size = [1, 2]
 						AnimationInterval = 0.100
@@ -275,11 +273,11 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = "walls.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "walls_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "walls_66.png"
 						Size = [1, 2]
 					}
@@ -317,11 +315,11 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 						File = "Cockpit Window.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Cockpit Window_33.png"
 						Size = [1, 2]
 					}
-				    {
+					{
 						File = "Cockpit Window_66.png"
 						Size = [1, 2]
 					}
@@ -566,14 +564,7 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			MaxMediaEffectsZoom = 4
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioInterior
-				{
-					Sound = "./Data/ships/terran/control_room_small/operating.wav"
-					Volume = .15
-					MaxConcurrentVolume = .3
-					Speed = .75
-					MaxConcurrent = 1
-				}
+				&/SW_SOUNDS/ControlRoomSmallOperating
 			]
 		}
 
@@ -583,15 +574,21 @@ Part : &<../base_part_terran_cockpits.rules>/Part
 			Location = [1.5, 1.5]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [.75, .75]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
 				// Out of power.
 				{

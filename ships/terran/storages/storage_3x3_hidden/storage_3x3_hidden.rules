@@ -1,4 +1,11 @@
-Part : &<../base_part_terran_storages.rules>/Part
+SCALE = (1)
+SIZE = [3, 3]
+MULTIPLIKATOR = (&~/SCALE) * (&~/SIZE/0) * (&~/SIZE/1)
+LOCATION = [((&~/SIZE/0)/2), ((&~/SIZE/1)/2)]
+COST = &<../base_part_terran_storages_hidden.rules>/COST
+MAXHEALTH = &<../base_part_terran_storages_hidden.rules>/MAXHEALTH
+
+Part : &<../base_part_terran_storages_hidden.rules>/Part
 {
 	//IDs
 	ID = SW.storage_3x3_hidden
@@ -9,29 +16,16 @@ Part : &<../base_part_terran_storages.rules>/Part
 	IconNameKey = "Parts/Storage3x3IntIcon"
 	DescriptionKey = "Parts/Storage3x3IntDesc"
 
-	//Groups&Categories
-	EditorGroups = ["Storage", "SWTechI"]
-	TypeCategories : ^/0/TypeCategories [corridor, storage, SW_Hidden, SW_Storage, SW_Tech_I]
-	RequiresCategories = []
-
 	//Resources&Size&Health
 	Resources
 	[
-		[steel, 108]
+		[steel, ceil((&~/COST)*(&~/MULTIPLIKATOR))]
 	]
-	Size = [3, 3]
-	MaxHealth = 1000
-
-	//Selections
-	SelectionTypeID = "storage"
-	IgnoreRotationForMirroredSelection = true
+	Size = [&~/SIZE/0, &~/SIZE/1]
+	MaxHealth = ceil((&~/MAXHEALTH)*(&~/MULTIPLIKATOR))
 
 	//PartSpecific
 	IsRotateable = false
-	CrewSpeedFactor = 1
-	CrewCongestedSpeedFactor = .5
-	IsWalled = false
-	GeneratorRequiresDoor = false
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
@@ -44,7 +38,7 @@ Part : &<../base_part_terran_storages.rules>/Part
 			File = "icon.png"
 			SampleMode = Linear
 		}
-		Size = [64, 64]
+		Size = [60, 60]
 	}
 
 	//Components&Inheritance
@@ -53,7 +47,8 @@ Part : &<../base_part_terran_storages.rules>/Part
 		Storage
 		{
 			Type = FlexResourceGrid
-			GridRect = [0, 0, 3, 3]
+			GridRect = [0, 0, &~/SIZE/0, &~/SIZE/1]
+			OverridePriorityPart = cosmoteer.storage_2x2
 			Layer = "doodads_low"
 			SpriteInset = 0/64
 			RandomSpriteRotation = true
@@ -64,52 +59,47 @@ Part : &<../base_part_terran_storages.rules>/Part
 		{
 			Type = BlendSpriteGrid
 			Location = [0.5, 0.5]
-			GridSize = &~/Part/Size
-			AllowUndefinedBlendSprites = true
-			AlwaysBlendWithSelf = true
 			BlendsWithCategories = [corridor]
 		}
 
 		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_Storage_Hidden/RDL
 		{
-			GridSize = &~/Part/Size
+
 		}
 
 		RoofGrid : &/SW_GRAPHICS/RoofGrid/GridSize_1x1/Roof_Vanilla/RDL
 		{
-			GridSize = &~/Part/Size
+
 		}
 
-		Graphics
-		{
-			Type = Graphics
-			OperationalToggle = IsOperational
-			Location = [1.5, 1.5]
-			NonOperationalDoodad
-			{
-				Layer = "doodads_high"
-				DamageLevels
-				[
-					{
-						File = "./Data/Ships/terran/darkness/darkness3x3.png"
-						Size = [3, 3]
-					}
-				]
-			}
-		}
+//		Darkness_Components
+//		{
+//			Type = ToggledComponents
+//			Toggle = IsOperational
+//			Invert = true
+//			Components
+//			{
+//				DarknessGrid : &/SW_GRAPHICS/DarknessGrid/GridSize_1x1/Darkness
+//				{
+//					Type = BlendSpriteGrid
+//					Location = [.5, .5]
+//					BlendsWithCategories = [corridor]
+//				}
+//			}
+//		}
 
 		DestroyedEffects
 		{
 			Type = DeathEffects
-			MediaEffects = &/COMMON_EFFECTS/SmallPartDestroyedDry
-			Location = [1.5, 1.5]
+			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyedDry
+			Location = [&~/LOCATION/0, &~/LOCATION/1]
 		}
 
 		Blueprints
 		{
 			Type = BlueprintSprite
 			File = "blueprints.png"
-			Size = [3, 3]
+			Size = [&~/SIZE/0, &~/SIZE/1]
 		}
 	}
 

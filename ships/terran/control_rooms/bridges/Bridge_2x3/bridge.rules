@@ -10,8 +10,8 @@ Part : &<../base_part_terran_bridges.rules>/Part
 	DescriptionKey = "Parts/SWBridge2x3Desc"
 
 	//Groups&Categories
-	EditorGroups = ["Flight", "SWTechII"]
-	TypeCategories = [command, uses_power, is_crewed, fire_extinguisher, airlock]
+	EditorGroups : ^/0/EditorGroups [ SWTechII ]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, fire_extinguisher, airlock]
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -35,7 +35,7 @@ Part : &<../base_part_terran_bridges.rules>/Part
 	//IsShipForward = true
 	ContiguityOriginPriority = 2
 	ExternalWalls = [None]
-	AllowedContiguity = [Right, Bottom, Left]//, Bottom Left, Bottom Right]
+	AllowedContiguity = [Right, Bottom, Left]//, Bottom Left, Bottom Right
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
@@ -180,7 +180,7 @@ Part : &<../base_part_terran_bridges.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 3000
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -258,6 +258,7 @@ Part : &<../base_part_terran_bridges.rules>/Part
 
 			]
 		}
+
 		Graphics
 		{
 			Type = Graphics
@@ -492,16 +493,24 @@ Part : &<../base_part_terran_bridges.rules>/Part
 			Location = [1, 1.5]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
+
 				// Turned off.
 				{
 					Toggle = PowerToggle
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [2, 2]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
+
 				// Out of power.
 				{
 					Toggle = BatteryStorage

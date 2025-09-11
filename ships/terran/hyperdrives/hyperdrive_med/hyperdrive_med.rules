@@ -1,3 +1,6 @@
+CLASSIFICATION = Med
+Scale = (1/1)
+
 Part : &<../base_part_terran_hyperdrives.rules>/Part
 {
 	//IDs
@@ -10,10 +13,11 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 	DescriptionKey = "Parts/MedHyperdriveDesc"
 
 	//Groups&Categories
-	EditorGroups = [Flight, SWTechII]
-	TypeCategories = [ftl, uses_power, SW_Hyperdrive_Medium, SW_Hyperdrives, SW_Tech_II]
+	EditorGroups : ^/0/EditorGroups [ SWTechII ]
+	DontStackInEditorGroups : ^/0/ DontStackInEditorGroups []
+	TypeCategories : ^/0/TypeCategories [ftl, uses_power, SW_Hyperdrive_Medium, SW_Hyperdrives, SW_Tech_II]
 	AffectsValidityOfCategories = [SW_Hyperdrive_Medium, SW_Hyperdrives]
-	RequiresCategories = [navicomputer]
+	RequiresCategories = [SW_Navicomputer]
 
 	//Resoures&Size&Health
 	Resources
@@ -27,9 +31,9 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 
 	//Selections
 	SelectionPriority = 0
+	SelectionTypeID = "hyperdrives"
 	//SelectionTypeByRotation = true
 	IgnoreRotationForMirroredSelection = true
-	SelectionTypeID = "hyperdrives"
 
 	//PartSpecific
 	AutoDoorMaxPathLength = 5
@@ -37,6 +41,12 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs []
 	//ProhibitedBy : ^/0/ProhibitedBy [tall]
+
+	//
+	//
+		//
+	//
+	//
 
 	//Editor
 	EditorIcon
@@ -83,7 +93,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			ResourceType = battery
 			MaxResources = 12000 //2*2*3000
 			InitToMaxResources = 0
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 		CombinedBatteryStorage
 		{
@@ -96,7 +106,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 				ComponentID = NodeBatteryStorage
 			}
 			AddMode = PrioritizeLeastResources
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -126,7 +136,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			ResourceType = hyperium
 			MaxResources = 80 // + 80 max thru nodes = 160
 			//UITileRect = [0.5 + 7/64, 0.5 + 7/64, 1 - 14/64, 1 - 14/64]
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/ElementDeliver
 			DropResourcesWhenDestroyed = true
 		}
 		CombinedHyperiumStorage
@@ -142,7 +152,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			AddMode = PrioritizeLeastResources
 			RemoveMode = PrioritizeMostResources
 			UITileRect = [0.5 + 7/64, 0.5 + 7/64, 1 - 14/64, 1 - 14/64]
-			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/ElementDeliver
+			ReceiveResourceMediaEffects = &/SW_SOUNDS/ElementDeliver
 			DropResourcesWhenDestroyed = true
 		}
 		HyperiumConsumer
@@ -152,7 +162,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			Storage = CombinedHyperiumStorage
 			DefaultPriority = &/PRIORITIES/Utility_Supply
 			AdditionalStorageForJobPriority = [HyperiumStorage]
-			OperationalToggle = PowerToggle
+			OperationalToggle = IsOperational
 			ConsumptionToggleButtonOffset = [0, -.4]
 		}
 		HyperiumStorageBar
@@ -167,7 +177,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 		FtlDrive
 		{
 			Type = FtlDrive
-			OperationalToggle = PowerToggle
+			OperationalToggle = IsOperational
 			PowerStorage = BatteryStorage
 			FuelStorage = HyperiumStorage
 			SpinDownDuration = 5
@@ -188,35 +198,17 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 
 		FloorGrid : &/SW_GRAPHICS/FloorGrid/GridSize_1x1/Floor_05/RDL
 		{	
-			GridSize = &~/Part/Size
+			
 		}
 
 		Graphics
 		{
 			Type = Graphics
 			Location = [1, 1]
-			OperationalToggle = PowerToggle
+			OperationalToggle = IsOperational
 			AnimationSpeedFactor = FtlDrive
 			AnimationSpeedFactorRenormalize = [0.1, 1.0]
-			/*Floor
-			{
-				Layer = "floors"
-				DamageLevels
-				[
-					{
-						File = "floor.png"
-						Size = [2, 2]
-					}
-					{
-						File = "floor_33.png"
-						Size = [2, 2]
-					}
-					{
-						File = "floor_66.png"
-						Size = [2, 2]
-					}
-				]
-			}*/
+
 			OperationalDoodad
 			{
 				Layer = "doodads_high"
@@ -324,20 +316,14 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			Location = [1, 1]
 			FactorMediaEffectsIntensityWith = FtlDrive
 			MinMediaEffectsIntensity = 1%
-			OperationalToggle = PowerToggle
+			OperationalToggle = IsOperational
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/ships/terran/hyperdrive_small/spin.wav"
-					Volume = 0.75
-					Speed = 3.5
-					MaxConcurrent = 0
-					VolumeOverIntensity = 1
-					SpeedOverIntensity = [0, 1]
-				}
+				&/SW_SOUNDS/HyperdriveMediumSpin
+				&/SW_SOUNDS/HyperdriveMediumRumble
 			]
 		}
+
 		BatterySprites
 		{
 			Type = ResourceSprites
@@ -423,7 +409,7 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 		{
 			Type = ToggleEffects
 			Location = [1, 1]
-			Toggle = PowerToggle
+			Toggle = IsOperational
 			ToggledOnMediaEffects = &/COMMON_EFFECTS/PowerOn
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/PowerOff
 		}
@@ -441,6 +427,12 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 			Location = [1, 1]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1]
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle
@@ -469,5 +461,5 @@ Part : &<../base_part_terran_hyperdrives.rules>/Part
 		HyperiumCapacity = &~/Part/Components/HyperiumStorage/MaxResources
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
 	}
-	StatsNotesKey = "Stats/MediumHyperdriver_Notes"
+	StatsNotesKey = "Stats/MediumHyperdrive_Notes"
 }

@@ -4,7 +4,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	IconNameKey = "Parts/Cockpit2Icon"
 	ID = SW.tie_cockpit
 	OtherIDs = ["tie_cockpit"]
-	EditorGroups = ["Flight", "SWTechI"]
+	EditorGroups : ^/0/EditorGroups [ SWTechI ]
 	DescriptionKey = "Parts/Cockpit2Desc"
 	Resources
 	[
@@ -23,7 +23,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	ContiguityOriginPriority = 1
 //	IsShipForward = true
 	SelectionTypeID = "control_room"
-	TypeCategories = [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits, provides_power, reactor]
+	TypeCategories : ^/0/TypeCategories [command, uses_power, is_crewed, provides_crew, airlock, fire_extinguisher, limit_1Cockpits, provides_power, reactor]
 	
 	ReceivableBuffs : ^/0/ReceivableBuffs [] 
 
@@ -45,79 +45,6 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 	}
 	Components : ^/0/Components
 	{
-		/* SPECIAL COCKPIT ITEMS */
-
-		// Airlock - Start
-//		AirLock
-//		{
-//			Type = Airlock
-//			EnterExitPoint = [0.5, .3]
-//			NuggetEjectVelocity = [1, 1]
-//			NuggetEjectDirection = [-100d, -80d]
-//			NuggetEjectDoorOpenDuration = 0.65
-//			UITileRect = [7/64, 7/64, 1 - 14/64, 1 - 14/64]
-//
-//			CrewEnterEffects
-//			[
-//				: /BASE_SOUNDS/AudioInterior
-//				{
-//					RandomSounds = 
-//					[
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_01.wav", 
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_02.wav", 
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_03.wav", 
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_04.wav", 
-//						"./Data/ships/terran/airlock/crew_enter/crew_enter_05.wav"
-//					]
-//					SpeedVariation = .1
-//				}
-//			]
-//
-//			CrewLeaveEffects
-//			[
-//				: /BASE_SOUNDS/AudioInterior
-//				{
-//					RandomSounds = 
-//					[
-//						"./Data/ships/terran/airlock/crew_leave/crew_leave_01.wav", 
-//						"./Data/ships/terran/airlock/crew_leave/crew_leave_02.wav", 
-//						"./Data/ships/terran/airlock/crew_leave/crew_leave_03.wav"
-//					]
-//					SpeedVariation = .1
-//				}
-//			]	
-//		}
-		// Airlock - End
-
-		// Fire Extinguisher - Start
-//		ExtinguisherStorage
-//		{
-//			Type = ResourceStorage
-//			ResourceType = fire_extinguisher
-//			MaxResources = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
-//			StartingResources = &MaxResources
-//			SuppliesResources = true
-//		}
-//
-//		ExtinguisherProducer
-//		{
-//			Type = ResourceConverter
-//			OperationalToggle = ExtinguisherStorage
-//			InvertOperationalToggle = true
-//			ToStorage = ExtinguisherStorage
-//			ToQuantity = &<./Data/resources/fire_extinguisher/fire_extinguisher.rules>/MaxPerNugget
-//			Interval = 45
-//		}
-
-		ProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = ExtinguisherProducer
-			ShowProgressFor = ExtinguisherProducer
-		}
-		// Fire Extinguisher - End
-
 		// Maneuvering Thrusters - Start
 		MainAuxThruster
 		{
@@ -181,37 +108,6 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 		}
 		// Toggles - End
 
-		// Battery Storage and Use - Start
-//		BatteryStorage
-//		{
-//			Type = ResourceStorage
-//			ResourceType = battery
-//			MaxResources = 2000
-//			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
-//		}
-//
-//		BatteryConsumer
-//		{
-//			Type = ResourceConsumer
-//			ResourceType = battery
-//			Storage = BatteryStorage
-//			DefaultPriority = &/PRIORITIES/ControlRoom_Supply
-//			ResupplyThreshold = 1000
-//			OperationalToggle = PowerToggle
-//			AllowNonContiguousCrewSearch = true
-//		}
-//
-//		PowerDrain
-//		{
-//			Type = ResourceConverter
-//			OperationalToggle = IsOperational
-//			FromStorage = BatteryStorage
-//			FromQuantity = 100				//uses less power
-//			MinFromQuantityForConversion = 1
-//			Interval = 8					// Drains 1,5 power every minute.
-//		}
-		// Battery Storage and Use - End
-
 		// Pilot & Crew - Start
 		CrewSource
 		{
@@ -244,19 +140,6 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			]
 		}
 		// Pilot & Crew - End
-/*
-		// Buffs - Start
-		BuffProvider
-		{
-			//square, 3fore, 3sides, 3aft
-			Type = AreaBuffProvider
-			BuffType = SWCockpitSpeed
-			BuffAmount = 300%
-			BuffArea = [-3, -3, 7, 8]
-			OperationalToggle = IsOperational
-		}
-		// Buffs - End
-*/
 
 		Graphics
 		{
@@ -465,14 +348,7 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			MaxMediaEffectsZoom = 4
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioInterior
-				{
-					Sound = "./Data/ships/terran/control_room_small/operating.wav"
-					Volume = .15
-					MaxConcurrentVolume = .3
-					Speed = .75
-					MaxConcurrent = 1
-				}
+				&/SW_SOUNDS/ControlRoomSmallOperating
 			]
 		}
 
@@ -482,15 +358,21 @@ Part : &<../base_part_terran_automagic_cockpits.rules>/Part
 			Location = [0.5, 1]
 			Indicators
 			[
+				// Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3]
+				}
 				// Turned off.
 				{
 					Toggle = PowerToggle
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [1, 1]
+						Size = [.75, .75]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3]
 				}
 				// Out of power.
 				{
