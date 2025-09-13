@@ -117,14 +117,36 @@ Components
 	FirePermissionToggle
 	{
 		Type = MultiToggle
-		Toggles = [CommonReloadTimerLong, FireModeToggle]
+		Toggles = [CommonReloadTimerLong, FireModeToggle, ReadyToFireAfterOpen]
 		Mode = All
 	}
 
 	CommonReloadResetTrigger
 	{
 		Type = MultiTrigger
-		Triggers = [WeaponA/*, WeaponB, WeaponC*/]
+		Triggers = [WeaponA]
+	}
+
+	OpenDelayAfterFullyOpenTween
+	{
+		Type = ValueTween
+		IsOnToggle = IsLaunchBayFullyOpen
+		OnTweenDuration = 1.0
+		OffTweenDuration = 0.0
+	}
+
+	TargetingAndCanShoot_Missile
+	{
+		Type = MultiToggle
+		Toggles = [FireModeToggle, CommonReloadTimerLong, WeaponA, MissilesPrereq]
+		Mode = All
+	}
+
+	ReadyToFireAfterOpen
+	{
+		Type = ThresholdToggle
+		ValueFrom = OpenDelayAfterFullyOpenTween
+		MinAmount = 100%
 	}
 
 	LaunchEffectA : ~/LaunchEffectBase
@@ -155,9 +177,9 @@ Components
 	LaunchBayChangingValueTween
 	{
 		Type = ValueTween
-		OnTweenDuration = .1
-		OffTweenDuration = .1
-		IsOnToggle = LauchBayShouldOpen
+		OnTweenDuration = 1.5
+		OffTweenDuration = 2
+		IsOnToggle = LaunchBayShouldOpen
 	}
 	IsLaunchBayFullyOpen
 	{
@@ -165,16 +187,16 @@ Components
 		ValueFrom = LaunchBayChangingValueTween
 		MinAmount = 100%
 	}
-	IsLauchBayFullyClosed
+	IsLaunchBayFullyClosed
 	{
 		Type = ThresholdToggle
 		ValueFrom = LaunchBayChangingValueTween
 		MaxAmount = 0%
 	}
-	LauchBayShouldOpen
+	LaunchBayShouldOpen
 	{
 		Type = MultiToggle
-		Toggles = [IsOperational, MissilesPrereq, FireModeToggle, WeaponA]
+		Toggles = [IsOperational, TargetingAndCanShoot_Missile]
 		Mode = All
 	}
 
@@ -182,7 +204,7 @@ Components
 	{
 		Type = OpenCloseSprite
 		Location = [0.5, 1.5]
-		OperationalToggle = LauchBayShouldOpen
+		OperationalToggle = LaunchBayShouldOpen
 		Layer = "SW.roof_engines"
 		OpenDamageLevels
 		[
@@ -462,30 +484,11 @@ Components
 			]
 		}
 	}*/
+
 	MissileLightsA
 	{
 		Type = Graphics
-		OperationalToggle = MissilesPrereq
-		Location = [0.5, 2.5] //[(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)+0.5]
-		OperationalRoofLighting
-		{
-			Layer = "roof_lights_fancy"
-			DamageLevels
-			[
-				{
-					File = "../sprites/light_blob.png"
-					Size = [1, 1]
-					Z = 0.35 // Controls the "height" of the light for the purposes of normal mapping. Set to -1 (or any negative number) to disable normal lighting for this light.
-					VertexColor = [0, 255, 128]
-				}
-			]
-		}
-	}
-/*
-	MissileLightsA
-	{
-		Type = Graphics
-		OperationalToggle = MissilesPrereq
+		OperationalToggle = TargetingAndCanShoot_Missile
 		Location = [0.5, 1.5] //[(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)+0.5]
 		OperationalRoofLighting
 		{
@@ -508,7 +511,7 @@ Components
 		OperationalToggle = MissilesPrereq
 		Location = [0.5, 2.5] //[2-(&~/Components/MissileLightsA/Location/0), (&~/Components/MissileLightsA/Location/1)]
 	}
-*/
+
 	MissileSpritesA
 	{
 		Type = ResourceSprites
