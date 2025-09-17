@@ -29,7 +29,6 @@ Components
 		AddMode = PrioritizeLeastEmptyCapacity
 		RemoveMode = PrioritizeMostEmptyCapacity
 		ReceiveResourceMediaEffects = &/COMMON_EFFECTS/MissileLoad
-		//UITileRect = [.9 + 7/64, 1 + 7/64, 1 - 14/64, 1 - 14/64]
 		UITileRect = [0.0625, 1.0625, 0.875, 0.875]  // Adjusted for padding within the tile
 	}
 
@@ -121,7 +120,7 @@ Components
 	FirePermissionToggle
 	{
 		Type = MultiToggle
-		Toggles = [CommonReloadTimerMed, FireModeToggle]
+		Toggles = [CommonReloadTimerMed, FireModeToggle, ReadyToFireAfterOpen]
 		Mode = All
 	}
 
@@ -129,6 +128,28 @@ Components
 	{
 		Type = MultiTrigger
 		Triggers = [WeaponA]
+	}
+
+	OpenDelayAfterFullyOpenTween
+	{
+		Type = ValueTween
+		IsOnToggle = IsLaunchBayFullyOpen
+		OnTweenDuration = 1.0
+		OffTweenDuration = 0.0
+	}
+
+	TargetingAndCanShoot_Missile
+	{
+		Type = MultiToggle
+		Toggles = [FireModeToggle, CommonReloadTimerMed, WeaponA, MissilesPrereq]
+		Mode = All
+	}
+
+	ReadyToFireAfterOpen
+	{
+		Type = ThresholdToggle
+		ValueFrom = OpenDelayAfterFullyOpenTween
+		MinAmount = 100%
 	}
 
 	LaunchEffectA : ~/LaunchEffectBase
@@ -147,9 +168,9 @@ Components
 	LaunchBayChangingValueTween
 	{
 		Type = ValueTween
-		OnTweenDuration = .2
-		OffTweenDuration = .2
-		IsOnToggle = LauchBayShouldOpen
+		OnTweenDuration = 1.5
+		OffTweenDuration = 2
+		IsOnToggle = LaunchBayShouldOpen
 	}
 	IsLaunchBayFullyOpen
 	{
@@ -157,16 +178,16 @@ Components
 		ValueFrom = LaunchBayChangingValueTween
 		MinAmount = 100%
 	}
-	IsLauchBayFullyClosed
+	IsLaunchBayFullyClosed
 	{
 		Type = ThresholdToggle
 		ValueFrom = LaunchBayChangingValueTween
 		MaxAmount = 0%
 	}
-	LauchBayShouldOpen
+	LaunchBayShouldOpen
 	{
 		Type = MultiToggle
-		Toggles = [IsOperational, MissilesPrereq, FireModeToggle, WeaponA]
+		Toggles = [IsOperational, TargetingAndCanShoot_Missile]
 		Mode = All
 	}
 
@@ -174,7 +195,7 @@ Components
 	{
 		Type = OpenCloseSprite
 		Location = [0.5, 1.5]
-		OperationalToggle = LauchBayShouldOpen
+		OperationalToggle = LaunchBayShouldOpen
 		Layer = "SW.roof_engines"
 		OpenDamageLevels
 		[
@@ -452,10 +473,11 @@ Components
 			ClampAnimation = true
 		}
 	}
+
 	MissileLightsA
 	{
 		Type = Graphics
-		OperationalToggle = MissilesPrereq
+		OperationalToggle = TargetingAndCanShoot_Missile
 		Location = [0.5, 1.5]//[(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)+0.5]
 		OperationalRoofLighting
 		{
@@ -478,7 +500,7 @@ Components
 		Location = [0.5, 2.5] //[2-(&~/Components/MissileLightsA/Location/0), (&~/Components/MissileLightsA/Location/1)]
 	}
 
-	MissileSpritesA //1
+	MissileSpritesA
 	{
 		Type = ResourceSprites
 		Location = [(&~/Components/WeaponA/Location/0), (&~/Components/WeaponA/Location/1)/*+1.0*/]
