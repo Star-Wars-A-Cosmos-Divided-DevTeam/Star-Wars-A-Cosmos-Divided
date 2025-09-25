@@ -1,0 +1,90 @@
+Part : <../base_part_terran_structure.rules>/Part
+{
+	NameKey = "Parts/DooniumStructure1x1Wedge4BB02R"
+	IconNameKey = "Parts/DooniumStructure1x1Wedge4BB02RIcon"
+	ID = SW.doonium_structure_1x1_Wedge_4B_B02_R
+
+	Resources
+	[
+		[&<../base_part_terran_structure.rules>/DefaultResource, ceil((ceil((&<../base_part_terran_structure.rules>/Cost)*(&~/Scale)))/4)]
+	]
+	AllowedContiguity = [Top, Left, Bottom]
+	MaxHealth = floor((&<../base_part_terran_structure.rules>/DefaultHealth) * (&~/Scale))
+	Density = (&<../base_part_terran_structure.rules>/DefaultDensity)
+	CellOccupancyFactor = ceil((&~/Scale))
+	IsRotateable = true
+//	VirtualInternalCells
+//	[
+//		{ExternalCell=[-1, 0]; InternalCell=[0, 1]}
+//		{ExternalCell=[1, 0]; InternalCell=[0, 1]}
+//	]
+	//FlipHRotate = [2, 1, 0, 3]
+	//FlipVRotate = [0, 3, 2, 1]
+	GenerateRectCollider = false
+	EditorIcon
+	{
+		Texture
+		{
+			File = "icon.png"
+			SampleMode = Linear
+		}
+		Size = [32, 32]
+	}
+	Components : ^/0/Components
+	{
+		ConstructionEffects : ^/0/ConstructionEffects
+		{
+			Location = [.5, .5]
+			AtlasSprite
+			{
+				File = "structure_mask_combined.png"
+				NormalsFile = "structure_normals.png"
+				Size = [1, 1]
+				//VertexColor = [255, 0, 0, 255]
+			}
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 0.5]
+			Floor
+			{
+				Layer = "structure"
+				DamageLevels
+				[
+					{
+						File = "structure.png"
+						NormalsFile = "structure_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "structure_33.png"
+						NormalsFile = "structure_33_normals.png"
+						Size = [1, 1]
+					}
+					{
+						File = "structure_66.png"
+						NormalsFile = "structure_66_normals.png"
+						Size = [1, 1]
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/StructureDestroyed
+			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+	}
+}
+Scale = (1.0)
