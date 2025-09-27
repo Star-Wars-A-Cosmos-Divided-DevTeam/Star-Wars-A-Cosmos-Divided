@@ -1,0 +1,105 @@
+Part : <../base_part_terran_structure.rules>/Part
+{
+	NameKey = "Parts/DooniumStructure1x2Wedge"
+	IconNameKey = "Parts/DooniumStructure1x2WedgeIcon"
+	ID = SW.doonium_structure_1x2_Wedge
+	OtherIDs = ["SW.structure_1x2_wedge_doonium"]
+
+	Resources
+	[
+		[&<../base_part_terran_structure.rules>/DefaultResource, ceil((ceil((&<../base_part_terran_structure.rules>/Cost)*(&~/Scale)))/4)]
+	]
+	Size = [1, 2]
+	AllowedContiguity = [Right, Bottom]
+	MaxHealth = floor((&<../base_part_terran_structure.rules>/DefaultHealth) * (&~/Scale))
+	InitialPenetrationResistance = ceil((&<../base_part_terran_structure.rules>/DefaultInitialPenetrationResistance) * (&~/Scale) * 0.9)
+	Density = (&<../base_part_terran_structure.rules>/DefaultDensity)
+	CellOccupancyFactor = ceil((&~/Scale))
+	IsRotateable = true
+//	VirtualInternalCells
+//	[
+//		{ExternalCell=[-1, 0]; InternalCell=[0, 1]}
+//		{ExternalCell=[1, 0]; InternalCell=[0, 1]}
+//	]
+	//FlipHRotate = [2, 1, 0, 3]
+	//FlipVRotate = [0, 3, 2, 1]
+	TempConstructionPartPerTile = SW.doonium_structure
+	GenerateRectCollider = false
+	EditorIcon
+	{
+		Texture
+		{
+			File = "structure.png"
+			SampleMode = Linear
+		}
+		Size = [32, 64]
+	}
+	Components : ^/0/Components
+	{
+		ConstructionEffects : ^/0/ConstructionEffects
+		{
+			Location = [.5, 1]
+			AtlasSprite
+			{
+				File = "structure_mask_combined.png"
+				NormalsFile = "structure_normals.png"
+				Size = [1, 2]
+				//VertexColor = [255, 0, 0, 255]
+			}
+		}
+
+		Collider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[1, 0]
+				[1, 2]
+				[0, 2]
+			]
+		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [0.5, 1]
+			Floor
+			{
+				Layer = "structure"
+				DamageLevels
+				[
+					{
+						File = "structure.png"
+						NormalsFile = "structure_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "structure_33.png"
+						NormalsFile = "structure_33_normals.png"
+						Size = [1, 2]
+					}
+					{
+						File = "structure_66.png"
+						NormalsFile = "structure_66_normals.png"
+						Size = [1, 2]
+					}
+				]
+			}
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/StructureDestroyed
+			Location = [.5, 1]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 2]
+		}
+	}
+}
+Scale = (1)
