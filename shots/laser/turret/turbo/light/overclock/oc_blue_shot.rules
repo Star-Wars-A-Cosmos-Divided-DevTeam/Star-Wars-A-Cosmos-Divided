@@ -1,0 +1,62 @@
+// LOCATION: shots/laser/turret/turbo/light/overclock/oc_blue_shot.rules
+// PURPOSE: Overclocked Blue variant (OC stats/behavior from oc_base_shot; visuals from non-OC blue)
+
+BASE_OC = &<oc_base_shot.rules>
+BLUE    = &<../blue_shot.rules>
+
+ID           = SW.turbolaser_turret_light_laser_blue_shot_overclock
+Range        = &BASE_OC/Range
+IdealRange   = &BASE_OC/IdealRange
+IdealRadius  = &BASE_OC/IdealRadius
+Speed        = &BASE_OC/Speed
+ReceivableBuffs = &BASE_OC/ReceivableBuffs
+
+Components : &BASE_OC/Components
+{
+	// Re-apply BLUE hit/flash/sparks media (keep OC damage model)
+	Hit : ^/0/Hit
+	{
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects = &~/BLUE/Components/Hit/HitOperational/MediaEffects
+		}
+		HitShield : ^/0/HitShield
+		{
+			MediaEffects = &~/BLUE/Components/Hit/HitOperational/MediaEffects
+		}
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			MediaEffects = &~/BLUE/Components/Hit/PenetratingOperational/MediaEffects
+		}
+		FinishedPenetratingStructural : ^/0/FinishedPenetratingStructural
+		{
+			MediaEffects = &~/BLUE/Components/Hit/PenetratingOperational/MediaEffects
+		}
+	}
+
+	// Reuse the BLUE textures & glow tuning
+	Sprite : ^/0/Sprite
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture : ^/0/Texture
+				{
+					File = &~/BLUE/Components/Sprite/Animation/AtlasSprite/Texture/File
+				}
+			}
+		}
+	}
+
+	GlowSprite : ^/0/GlowSprite
+	{
+		Sprite : ^/0/Sprite
+		{
+			VertexColor            = &~/BLUE/Components/GlowSprite/Sprite/VertexColor
+			_litReflectiveStrength = &~/BLUE/Components/GlowSprite/Sprite/_litReflectiveStrength
+			_litAdditiveStrength   = &~/BLUE/Components/GlowSprite/Sprite/_litAdditiveStrength
+			_unlitAdditiveStrength = &~/BLUE/Components/GlowSprite/Sprite/_unlitAdditiveStrength
+		}
+	}
+}

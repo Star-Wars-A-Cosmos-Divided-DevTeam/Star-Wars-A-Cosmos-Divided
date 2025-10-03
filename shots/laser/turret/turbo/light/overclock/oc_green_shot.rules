@@ -1,0 +1,62 @@
+// LOCATION: shots/laser/turret/turbo/light/overclock/oc_green_shot.rules
+// PURPOSE: Overclocked Green variant (OC stats/behavior from oc_base_shot; visuals from non-OC green)
+
+BASE_OC = &<oc_base_shot.rules>
+GREEN    = &<../green_shot.rules>
+
+ID           = SW.turbolaser_turret_light_laser_green_shot_overclock
+Range        = &BASE_OC/Range
+IdealRange   = &BASE_OC/IdealRange
+IdealRadius  = &BASE_OC/IdealRadius
+Speed        = &BASE_OC/Speed
+ReceivableBuffs = &BASE_OC/ReceivableBuffs
+
+Components : &BASE_OC/Components
+{
+	// Re-apply GREEN hit/flash/sparks media (keep OC damage model)
+	Hit : ^/0/Hit
+	{
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects = &~/GREEN/Components/Hit/HitOperational/MediaEffects
+		}
+		HitShield : ^/0/HitShield
+		{
+			MediaEffects = &~/GREEN/Components/Hit/HitOperational/MediaEffects
+		}
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			MediaEffects = &~/GREEN/Components/Hit/PenetratingOperational/MediaEffects
+		}
+		FinishedPenetratingStructural : ^/0/FinishedPenetratingStructural
+		{
+			MediaEffects = &~/GREEN/Components/Hit/PenetratingOperational/MediaEffects
+		}
+	}
+
+	// Reuse the GREEN textures & glow tuning
+	Sprite : ^/0/Sprite
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture : ^/0/Texture
+				{
+					File = &~/GREEN/Components/Sprite/Animation/AtlasSprite/Texture/File
+				}
+			}
+		}
+	}
+
+	GlowSprite : ^/0/GlowSprite
+	{
+		Sprite : ^/0/Sprite
+		{
+			VertexColor            = &~/GREEN/Components/GlowSprite/Sprite/VertexColor
+			_litReflectiveStrength = &~/GREEN/Components/GlowSprite/Sprite/_litReflectiveStrength
+			_litAdditiveStrength   = &~/GREEN/Components/GlowSprite/Sprite/_litAdditiveStrength
+			_unlitAdditiveStrength = &~/GREEN/Components/GlowSprite/Sprite/_unlitAdditiveStrength
+		}
+	}
+}

@@ -548,7 +548,7 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			//No Location is dual barrel
 			OperationalToggle = IsOperational
 			FireDelay = 0.05
-			Bullet = &/SW_SHOTS/turretturbolaserlightlaserredshot
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Light/Red
 			ResourceStorage = BatteryStorage
 			ResourcesUsed = 500
 			MinResourcesUsed = 1
@@ -782,10 +782,23 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 	StatsByCategory
 	[
 		&~/TurretStats
-		&<light_turbolaser_red.rules>/LaserStats
-		&<light_turbolaser_blue.rules>/LaserStats
-		&<light_turbolaser_green.rules>/LaserStats
+		&~/LaserStats
 	]
+}
+LaserStats
+{
+	NameKey = "StatCategories/LightTurbolasershot"
+	Stats
+	{
+		ShieldDamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
+		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&~/TurretStats/Stats/ROF)
+		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+		DamagePerShot = &~/Part/Components/BulletEmitterBase/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
+		DamagePerSecond = (&DamagePerShot) * (&~/TurretStats/Stats/ROF)
+		Damage = [&../DamagePerShot, &../DamagePerSecond]
+		//ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
+		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
+	}
 }
 TurretStats
 {
@@ -822,7 +835,7 @@ BulletEmitterBase : &~/Part/Components/BulletEmitter
 //	FireDelay = 0.05
 //	ResourceStorage = BatteryStorage
 //	ResourcesUsed = 250
-//	Bullet = &/SW_SHOTS/turretturbolaserlightlaserredshot
+//	Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Light/Red
 //	Recoil = 15
 //	Spread = [-2.5d, 2.5d]
 //	TargetLeadPrediction = false

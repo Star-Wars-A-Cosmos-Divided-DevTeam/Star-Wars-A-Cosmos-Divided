@@ -1,0 +1,91 @@
+// LOCATION: shots/laser/turret/turbo/light/overclock/oc_base_shot.rules
+// PURPOSE: Shared overclock stats/behavior for all light turbolaser shots
+// NOTE: No color media here — color OC files pull visuals from their non-OC counterparts.
+
+BASE = &<../base_shot.rules>
+
+ID = "SW.turbolaser_turret_light_laser_base_overclock"
+Range        = &BASE/Range
+IdealRange   = &BASE/IdealRange
+IdealRadius  = &BASE/IdealRadius
+Speed        = &BASE/Speed
+ReceivableBuffs = &BASE/ReceivableBuffs
+
+// OC scalars
+DAMAGE         = 175% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
+DAMAGE_SHIELD  = 150% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
+DAMAGE_RADIUS  = 3
+IMPULSE        = 200% * (&BASE/Components/Hit/HitOperational/HitEffects/1/Impulse/BaseValue)
+HEALTH         = 175% * (&BASE/Components/Targetable/Health)
+
+Components : &BASE/Components
+{
+	Targetable : ^/0/Targetable
+	{
+		Health = &~/HEALTH
+	}
+
+	Hit : ^/0/Hit
+	{
+		
+		HitCrew   = &HitOperational
+		HitShield = &HitOperational
+
+		HitOperational : ^/0/HitOperational
+		{
+			HitEffects
+			[
+				//Non-shield area damage
+				{
+					Type = AreaDamage
+					Damage : ~/BASE/Components/Hit/HitOperational/HitEffects/0/Damage { BaseValue = &~/DAMAGE }
+					Radius = &~/DAMAGE_RADIUS
+					RectType = Normal
+					Falloff = 0.5
+					Filter { Shields = false }
+				}
+				//Shield-only damage
+				: 0 {
+					Damage : ^/0/Damage { BaseValue = &~/DAMAGE_SHIELD }
+					Filter
+					{
+						Shields = true
+						OperationalHealth = false
+						StructuralHealth  = false
+					}
+				}
+				//Impulse (scaled)
+				: ../^/0/HitEffects/1 {
+					Impulse : ^/0/Impulse { BaseValue = &~/IMPULSE }
+				}
+			]
+			//No media here — letting color OC files decide.
+		}
+
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			ReduceEffectsByPenetration = false
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = 0 }         //OC model uses AoE above
+				{ Type = Impulse; Impulse = &~/IMPULSE }
+			]
+			//No media here — let color OC files decide.
+		}
+
+		HitStructural : ^/0/HitStructural
+		{
+			HitEffects
+			[
+				: ../^/0/HitEffects/0 { Damage  : ^/0/Damage  { BaseValue = floor((&~/DAMAGE)  / 2) } }
+				: ../^/0/HitEffects/1 { Impulse : ^/0/Impulse { BaseValue = floor((&~/IMPULSE) / 2) } }
+			]
+		}
+
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural  = &PenetratingStructural
+	}
+
+	//Needed because base Sprite has ReduceScaleWith=Hit
+	Sprite : ^/0/Sprite {}
+}
