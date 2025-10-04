@@ -115,7 +115,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles [PowerToggle, PartCrew, BatteryStorage]
+			Toggles : ^/0/Toggles [PowerToggle, PartCrew, BatteryStorage, ScorchedToggle, &~/Part/^/0/OVERCLOCK_OPERATIONAL]
 			Mode = All
 		}
 
@@ -131,6 +131,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Type = UIToggle
 			ToggleID = "on_off"
 			Default = 1
+			RequiresCommand = false
 		}
 
 		ScorchedToggle
@@ -495,21 +496,12 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Components = &<turbolaser_octuple_grey.rules>/Components
 		}
 
-		//AmmoPrereq
-		//{
-		//	Type = MultiResourceStorage
-		//	ResourceType = battery
-		//	ResourceStorages = [BatteryStorage]
-		//	//ToggleOnResources = 19001
-		//	//ToggleOffResources = 3750
-		//}
 		BatteryStorage
 		{
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 20000
-			//ToggleOnResources = 10001
-			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -518,8 +510,116 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
 			ResupplyThreshold = 2000
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 		}
+
+		Graphics
+		{
+			Type = Graphics
+			Location = [4, 4]
+			Floor
+			{
+				Layer = "floors"
+				DamageLevels
+				[
+					{
+						File = "floor.png"
+						Size = [8, 8]
+					}
+					{
+						File = "floor_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "floor_66.png"
+						Size = [8, 8]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "walls"
+				DamageLevels
+				[
+					{
+						File = "walls.png"
+						Size = [8, 8]
+					}
+					{
+						File = "walls_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "walls_66.png"
+						Size = [8, 8]
+					}
+				]
+			}
+			Roof
+			{
+				Layer = "roofs"
+				DamageLevels
+				[
+					{
+						File = "roof.png"
+						NormalsFile = "roof_normals.png"
+						Size = [8, 8]
+					}
+					{
+						File = "roof_33.png"
+						NormalsFile = "roof_normals_33.png"
+						Size = [8, 8]
+					}
+					{
+						File = "roof_66.png"
+						NormalsFile = "roof_normals_66.png"
+						Size = [8, 8]
+					}
+				]
+			}
+		}
+
+			ConsoleGraphics
+			{
+				Type = Graphics
+				ChainedTo = Turret
+				//Location = [4, 4]
+				Rotation = 90d
+				OperationalToggle = IsOperational
+				OperationalLighting
+				{
+					Layer = "lights_add"
+					DamageLevels
+					[
+						{
+							File = "lights.png"
+							Size = [8, 8]
+						}
+					]
+				}
+				OperationalDoodad
+				{
+					Layer = "doodads_low"
+					DamageLevels
+					[
+						{
+							File = "consoles_on.png"
+							Size = [8, 8]
+						}
+					]
+				}
+				NonOperationalDoodad
+				{
+					Layer = "doodads_low"
+					DamageLevels
+					[
+						{
+							File = "consoles_off.png"
+							Size = [8, 8]
+						}
+					]
+				}
+			}
 
 		Turret
 		{
@@ -533,7 +633,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			RotateSpeed = 13d
 			FireThresholdAngle = 1d
 			HoldTargetAfterCancel = 0.5
-			AIFirepowerRating = 6400
+			AIFirepowerRating = &~/Part/StatsByCategory/1/Stats/DamagePerSecond
 			FirePermissionToggle = FirePermissionToggle
 			IgnoreSourceShipLOSChecks = true
 			IgnoreSourceShipLowLOSChecks = true
@@ -840,114 +940,6 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Spread = [-0.2d, 0.2d]
 		}
 
-		Graphics
-		{
-			Type = Graphics
-			Location = [4, 4]
-			Floor
-			{
-				Layer = "floors"
-				//Offset = [-1, 0]
-				DamageLevels
-				[
-					{
-						File = "floor.png"
-						Size = [8, 8]
-					}
-					{
-						File = "floor_33.png"
-						Size = [8, 8]
-					}
-					{
-						File = "floor_66.png"
-						Size = [8, 8]
-					}
-				]
-			}
-			Walls
-			{
-				Layer = "walls"
-				DamageLevels
-				[
-					{
-						File = "walls.png"
-						Size = [8, 8]
-					}
-					{
-						File = "walls_33.png"
-						Size = [8, 8]
-					}
-					{
-						File = "walls_66.png"
-						Size = [8, 8]
-					}
-				]
-			}
-			Roof
-			{
-				Layer = "roofs"
-				DamageLevels
-				[
-					{
-						File = "roof.png"
-						NormalsFile = "roof_normals.png"
-						Size = [8, 8]
-					}
-					{
-						File = "roof_33.png"
-						NormalsFile = "roof_normals_33.png"
-						Size = [8, 8]
-					}
-					{
-						File = "roof_66.png"
-						NormalsFile = "roof_normals_66.png"
-						Size = [8, 8]
-					}
-				]
-			}
-		}
-
-			ConsoleGraphics
-			{
-				Type = Graphics
-				ChainedTo = Turret
-				//Location = [4, 4]
-				Rotation = 90d
-				OperationalToggle = IsOperational
-				OperationalLighting
-				{
-					Layer = "lights_add"
-					DamageLevels
-					[
-						{
-							File = "lights.png"
-							Size = [8, 8]
-						}
-					]
-				}
-				OperationalDoodad
-				{
-					Layer = "doodads_low"
-					DamageLevels
-					[
-						{
-							File = "consoles_on.png"
-							Size = [8, 8]
-						}
-					]
-				}
-				NonOperationalDoodad
-				{
-					Layer = "doodads_low"
-					DamageLevels
-					[
-						{
-							File = "consoles_off.png"
-							Size = [8, 8]
-						}
-					]
-				}
-			}
 
 			BatterySprites
 			{
