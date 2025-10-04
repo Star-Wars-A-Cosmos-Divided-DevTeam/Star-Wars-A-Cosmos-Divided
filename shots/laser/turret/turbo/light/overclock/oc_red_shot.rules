@@ -18,7 +18,27 @@ Components : &BASE_OC/Components
 	{
 		HitOperational : ^/0/HitOperational
 		{
-			MediaEffects = &~/RED/Components/Hit/HitOperational/MediaEffects
+			MediaEffects
+			[
+				&<particles/laser_bolt_large_overclock_hit_red.rules>
+				&<particles/laser_bolt_large_overclock_flash.rules>
+				&<particles/laser_bolt_large_overclock_sparks.rules>
+				
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["sounds/heavy_laser_overclocked_impact_01.wav",
+									"sounds/heavy_laser_overclocked_impact_02.wav",
+									"sounds/heavy_laser_overclocked_impact_03.wav"]
+					Volume = 1
+					SpeedVariation = .05
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .06
+					Duration = .3
+				}
+			]
 		}
 		HitShield : ^/0/HitShield
 		{
@@ -48,6 +68,18 @@ Components : &BASE_OC/Components
 			}
 		}
 	}
+	MediaEffects
+	{
+		Type = MediaEffects
+		//Offset = [-0.5, 0]
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&<particles/laser_bolt_large_overclock_lightning.rules>
+		]
+	}
+
 
 	GlowSprite : ^/0/GlowSprite
 	{
@@ -59,4 +91,5 @@ Components : &BASE_OC/Components
 			_unlitAdditiveStrength = &~/RED/Components/GlowSprite/Sprite/_unlitAdditiveStrength
 		}
 	}
+
 }
