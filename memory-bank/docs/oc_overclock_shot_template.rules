@@ -1,0 +1,251 @@
+﻿/*
+================================================================================
+Overclock Shot Implementation Template
+--------------------------------------------------------------------------------
+Copy this file alongside your color-specific overclock shot and replace the
+placeholder parents/IDs. Toggle sections by uncommenting the blocks you need.
+================================================================================
+USAGE OVERVIEW
+1. Set BASE / OC_BASE / COLOR_BASE to match your inheritance chain.
+2. Adjust the scalar values in "PRIMARY SCALARS" and "STRUCTURAL SCALARS".
+3. Uncomment optional HitEffects / MediaEffects blocks needed for this projectile.
+4. Replace placeholder particle/sound IDs with actual assets.
+================================================================================
+*/
+
+BASE       = &<../base_shot.rules>                 // Non-overclock parent
+OC_BASE    = &<../overclock/oc_base_shot.rules>    // Shared OC behavior (set to BASE if unused)
+COLOR_BASE = &<../red_shot.rules>                  // Color visuals (optional blend)
+
+COMPONENT_SOURCE = &OC_BASE/Components             // Change to &COLOR_BASE/Components or &BASE/Components if desired
+
+ID = "SW.example_overclock_shot"
+Range        = &BASE/Range
+IdealRange   = &BASE/IdealRange
+IdealRadius  = &BASE/IdealRadius
+Speed        = &BASE/Speed
+ReceivableBuffs = &BASE/ReceivableBuffs
+
+// ============================================================================
+// PRIMARY SCALARS (edit these first)
+// ============================================================================
+PRIMARY_DAMAGE_SCALE      = 125%
+SHIELD_DAMAGE_SCALE       = 125%
+AREA_RADIUS_OVERRIDE      = &BASE/Components/Hit/HitOperational/HitEffects/0/Radius
+EXPLOSIVE_DAMAGE_SCALE    = 110%
+EXPLOSIVE_RADIUS_OVERRIDE = &BASE/Components/Hit/HitOperational/HitEffects/1/Radius
+IMPULSE_SCALE             = 200%
+SHIELD_IMPULSE_SCALE      = 200%
+PROJECTILE_HEALTH_SCALE   = 175%
+
+// ============================================================================
+// STRUCTURAL SCALARS (multipliers relative to operational hits)
+// ============================================================================
+STRUCT_PRIMARY_SCALE   = 100%
+STRUCT_SECONDARY_SCALE = 100%
+STRUCT_IMPULSE_SCALE   = 100%
+
+// ============================================================================
+// OPTIONAL SECONDARY TUNING (uncomment as needed)
+// ============================================================================
+//RESOURCE_DRAIN_SCALE   = 150%      // For ResourceDrain effects (battery/energy drain)
+//EMP_DAMAGE_SCALE       = 125%      // For EMP/SystemDamage pulses
+//PENETRATION_DISTANCE   = &BASE/Components/Hit/PenetratingOperational/PenetrationDistance
+//STATUS_TO_APPLY        = &<../../statuses/example_status.rules>   // Example status payload
+
+// ============================================================================
+// DERIVED VALUES (auto-calculated)
+// ============================================================================
+PRIMARY_DAMAGE_BASE        = &BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
+PRIMARY_DAMAGE             = (&~/PRIMARY_DAMAGE_SCALE) * (&~/PRIMARY_DAMAGE_BASE)
+
+SHIELD_DAMAGE_BASE         = &BASE/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
+PRIMARY_SHIELD_DAMAGE      = (&~/SHIELD_DAMAGE_SCALE) * (&~/SHIELD_DAMAGE_BASE)
+
+EXPLOSIVE_DAMAGE_BASE      = &BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage/BaseValue
+PRIMARY_EXPLOSIVE          = (&~/EXPLOSIVE_DAMAGE_SCALE) * (&~/EXPLOSIVE_DAMAGE_BASE)
+
+IMPULSE_BASE               = &BASE/Components/Hit/HitOperational/HitEffects/2/Impulse/BaseValue
+PRIMARY_IMPULSE            = (&~/IMPULSE_SCALE) * (&~/IMPULSE_BASE)
+
+SHIELD_IMPULSE_BASE        = &BASE/Components/Hit/HitShield/HitEffects/1/Impulse/BaseValue
+PRIMARY_SHIELD_IMPULSE     = (&~/SHIELD_IMPULSE_SCALE) * (&~/SHIELD_IMPULSE_BASE)
+
+STRUCT_EXPLOSIVE_RATIO     = (&BASE/Components/Hit/HitStructural/HitEffects/1/TotalDamage/BaseValue) / (&~/EXPLOSIVE_DAMAGE_BASE)
+STRUCT_AREA_RATIO          = (&BASE/Components/Hit/HitStructural/HitEffects/0/Damage/BaseValue) / (&~/PRIMARY_DAMAGE_BASE)
+STRUCT_IMPULSE_RATIO       = (&BASE/Components/Hit/HitStructural/HitEffects/2/Impulse/BaseValue) / (&~/IMPULSE_BASE)
+
+STRUCT_PRIMARY_DAMAGE      = ceil((&~/PRIMARY_EXPLOSIVE) * (&~/STRUCT_PRIMARY_SCALE) * (&~/STRUCT_EXPLOSIVE_RATIO))
+STRUCT_SECONDARY_DAMAGE    = ceil((&~/PRIMARY_DAMAGE)    * (&~/STRUCT_SECONDARY_SCALE) * (&~/STRUCT_AREA_RATIO))
+STRUCT_IMPULSE             = floor((&~/PRIMARY_IMPULSE)  * (&~/STRUCT_IMPULSE_SCALE)   * (&~/STRUCT_IMPULSE_RATIO))
+
+PROJECTILE_HEALTH_BASE     = &BASE/Components/Targetable/Health
+PROJECTILE_HEALTH          = (&~/PROJECTILE_HEALTH_SCALE) * (&~/PROJECTILE_HEALTH_BASE)
+
+AREA_RADIUS_FINAL          = &~/AREA_RADIUS_OVERRIDE
+EXPLOSIVE_RADIUS_FINAL     = &~/EXPLOSIVE_RADIUS_OVERRIDE
+
+// ============================================================================
+// MAIN COMPONENT OVERRIDES
+// ============================================================================
+Components : &COMPONENT_SOURCE
+{
+	Targetable : ^/0/Targetable
+	{
+		Health = &~/PROJECTILE_HEALTH
+	}
+
+	Hit : ^/0/Hit
+	{
+		HitCrew = &HitOperational
+
+		HitOperational : ^/0/HitOperational
+		{
+			HitEffects
+			[
+				// --- REQUIRED: Non-shield impact ---
+				{
+					Type = AreaDamage
+					Damage : ~/BASE/Components/Hit/HitOperational/HitEffects/0/Damage { BaseValue = &~/PRIMARY_DAMAGE }
+					Radius = &~/AREA_RADIUS_FINAL
+					RectType = Normal
+					Falloff = 0.5
+					Filter { Shields = false }
+				}
+
+				// --- OPTIONAL: Shield-only hit ---
+				: 0
+				{
+					Damage : ^/0/Damage { BaseValue = &~/PRIMARY_SHIELD_DAMAGE }
+					Filter
+					{
+						Shields = true
+						OperationalHealth = false
+						StructuralHealth  = false
+					}
+				}
+
+				// --- OPTIONAL: Explosive payload ---
+				//{
+				//	Type = ExplosiveDamage
+				//	TotalDamage : ~/BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage { BaseValue = &~/PRIMARY_EXPLOSIVE }
+				//	Radius = &~/EXPLOSIVE_RADIUS_FINAL
+				//	Filter { Friendlies = false }
+				//}
+
+				// --- OPTIONAL: Resource drain (see disruptor bolts) ---
+				//{
+				//	Type = ResourceDrain
+				//	ResourceType = battery
+				//	Amount : ~/BASE/Components/Hit/HitOperational/HitEffects/0/Amount { BaseValue = (&~/RESOURCE_DRAIN_SCALE) * (&BASE/Components/Hit/HitOperational/HitEffects/0/Amount/BaseValue) }
+				//	MediaEffectsOnDrain
+				//	[
+				//		&<particles/your_overclock_drain.rules>
+				//	]
+				//}
+
+				// --- OPTIONAL: Apply status effect ---
+				//{
+				//	Type = Status
+				//	StatusEffect = &~/STATUS_TO_APPLY
+				//}
+
+				// --- OPTIONAL: EMP pulse ---
+				//{
+				//	Type = SystemDamage
+				//	Systems = ["Power"]
+				//	Damage : ~/BASE/Components/Hit/HitOperational/HitEffects/0/Damage { BaseValue = (&~/EMP_DAMAGE_SCALE) * (&~/PRIMARY_DAMAGE_BASE) }
+				//}
+
+				// --- OPTIONAL: Custom impulse override ---
+				: ../^/0/HitEffects/2
+				{
+					Impulse : ^/0/Impulse { BaseValue = &~/PRIMARY_IMPULSE }
+				}
+			]
+
+			// --- OPTIONAL: Override impact media ---
+			//MediaEffects
+			//[
+			//	&<particles/your_overclock_flash.rules>
+			//	&<particles/your_overclock_sparks.rules>
+			//	: /BASE_SOUNDS/AudioExterior
+			//	{
+			//		RandomSounds = ["sounds/your_oc_hit_01.wav"]
+			//		Volume = 1
+			//	}
+			//]
+		}
+
+		HitShield : ^/0/HitShield
+		{
+			HitEffects
+			[
+				// Mirror the shield hit from operational damage
+				&../^/0/HitEffects/0
+				: ../^/0/HitEffects/1
+				{
+					Impulse : ^/0/Impulse { BaseValue = &~/PRIMARY_SHIELD_IMPULSE }
+				}
+			]
+		}
+
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			ReduceEffectsByPenetration = false
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = 0 }
+				{ Type = Impulse; Impulse = &~/PRIMARY_IMPULSE }
+			]
+			//PenetrationDistance = &~/PENETRATION_DISTANCE
+		}
+
+		HitStructural : ^/0/HitStructural
+		{
+			HitEffects
+			[
+				: ../^/0/HitEffects/0
+				{
+					Damage : ^/0/Damage { BaseValue = &~/STRUCT_SECONDARY_DAMAGE }
+				}
+				: ../^/0/HitEffects/1
+				{
+					TotalDamage : ^/0/TotalDamage { BaseValue = &~/STRUCT_PRIMARY_DAMAGE }
+					Radius = &~/EXPLOSIVE_RADIUS_FINAL
+				}
+				: ../^/0/HitEffects/2
+				{
+					Impulse : ^/0/Impulse { BaseValue = &~/STRUCT_IMPULSE }
+				}
+			]
+		}
+
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural  = &PenetratingStructural
+	}
+
+	// --- OPTIONAL: Override projectile visuals ---
+	//Sprite : ^/0/Sprite
+	//{
+	//	Texture = &COLOR_BASE/Components/Sprite/Texture
+	//	ReduceScaleWith = Hit
+	//}
+
+	// --- OPTIONAL: Trail / flight media scaling ---
+	//MediaEffects
+	//{
+	//	Type = MediaEffects
+	//	FactorEffectsWith = Hit
+	//	FactorEffectsExponent = 0.6
+	//	MediaEffects
+	//	[
+	//		&<particles/your_overclock_trail.rules>
+	//	]
+	//}
+}
+
+
+
+
+
