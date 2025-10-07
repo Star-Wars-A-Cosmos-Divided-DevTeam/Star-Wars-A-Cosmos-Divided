@@ -1,0 +1,46 @@
+Components
+{
+	WeaponEmitter : &<../cis_turbolaser_switchable.rules>/Part/Components/WeaponEmitterBase
+	{
+		Type = BulletEmitter
+		ChainedTo = Turret
+		FireTrigger = Turret
+		GetTargetFrom = Turret
+		Location = [2.567, -1.152]
+		FireDelay = 0.15
+		OperationalToggle = IsOperational
+		Bullet = &/SW_SHOTS/Laser/Turret/Turbo/CIS/Red
+		ResourceStorage = BatteryStorage
+		ResourcesUsed = 1000
+		Recoil = 200
+		TargetLeadPrediction = false
+		AntiPhasingRaycastDistance = 2
+	}
+
+	WeaponEmitter2 : WeaponEmitter
+	{
+		Type = BulletEmitter
+		FireTrigger = Turret
+		Location = [2.567, 1.152]	
+	}
+
+
+		FireEffect1
+		{
+			Type = TriggeredEffects
+			ChainedTo = WeaponEmitter
+			Trigger = ShootTrigger1
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Med/Red
+			]
+		}
+
+		FireEffect2 : FireEffect1
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = ShootTrigger2
+		}
+}

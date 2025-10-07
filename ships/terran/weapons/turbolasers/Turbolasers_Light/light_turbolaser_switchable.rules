@@ -66,7 +66,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 
 	//PartSpecific
 	AIValueFactor = 2
-	InitialPenetrationResistance = 5
+	InitialPenetrationResistance = 2
 
 	//ReceivableBuffs&Prohibits
 	ReceivableBuffs : ^/0/ReceivableBuffs [ElectronBuff]
@@ -134,23 +134,6 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			OperationalToggle = CommandConsumptionToggle
 			CommandPoints = 4
 		}
-		//OverclockSettings
-
-		OverclockStateValue
-		{
-			Type = ToggleValueSelector
-			Toggle = OverclockModeToggle
-			ToggleOffValue = Zero
-			ToggleOnValue = One
-		}
-
-		Zero { Type = StaticValue; Value = 0; }
-		One { Type = StaticValue; Value = 1; }
-
-		OverheatEffects : ^/0/OverheatEffects
-		{
-			Location = [1, 1]
-		}
 
 		WeaponEmitterProxy
 		{
@@ -177,31 +160,6 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			ToQuantity = (&HEAT_PER_INTERVAL) * (&~/HEAT_TO_RESOURCE)
 			ToStorage  = &~/Part/^/0/HEAT_TARGET_STORAGE
 			Interval = 0.5
-		}
-		Overclock_ShotHeatProducer
-		{
-			Type = ResourceChange
-			ResourceStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
-			Trigger = Overclock_EmissionTriggered
-			Amount = (&~/OVERCLOCK/HEAT_PER_SHOT) * (&~/HEAT_TO_RESOURCE)
-		}
-
-		Port_Thermal_TopLeft : ~/Part/^/0/BASE_THERMAL_PORT
-		{
-			Location = [0, 0]
-			Direction = Left
-		}
-		Port_Thermal_LeftUp : Port_Thermal_TopLeft
-		{
-			Direction = Up
-		}
-		Port_Thermal_RightUp : Port_Thermal_LeftUp
-		{
-			Location = [1, 0]
-		}
-		Port_Thermal_TopRight : Port_Thermal_RightUp
-		{
-			Direction = Right
 		}
 
 		FireModeToggle
@@ -260,6 +218,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Mode = MunitionType
 			OnMode = 2
 		}
+
 		// ---- RED: Non-OC ----
 		RedMunitionNonOC_Toggle
 		{
@@ -327,7 +286,6 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Toggles = [ BlueMunitionToggle, IsOverclocked ]
 			Mode = All
 		}
-		//Overclocked Components
 		BlueMunitionComponents_Overclocked
 		{
 			Type = ToggledComponents
@@ -444,6 +402,49 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
 			ResupplyThreshold = 800
 			OperationalToggle = CommandConsumptionToggle
+		}
+
+		//OverclockSettings
+		OverclockStateValue
+		{
+			Type = ToggleValueSelector
+			Toggle = OverclockModeToggle
+			ToggleOffValue = Zero
+			ToggleOnValue = One
+		}
+
+		Zero { Type = StaticValue; Value = 0; }
+		One  { Type = StaticValue; Value = 1; }
+
+		OverheatEffects : ^/0/OverheatEffects
+		{
+			Location = [1, 1]
+		}
+
+		Overclock_ShotHeatProducer
+		{
+			Type = ResourceChange
+			ResourceStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Trigger = Overclock_EmissionTriggered
+			Amount = (&~/OVERCLOCK/HEAT_PER_SHOT) * (&~/HEAT_TO_RESOURCE)
+		}
+
+		Port_Thermal_TopLeft : ~/Part/^/0/BASE_THERMAL_PORT
+		{
+			Location = [0, 0]
+			Direction = Left
+		}
+		Port_Thermal_LeftUp : Port_Thermal_TopLeft
+		{
+			Direction = Up
+		}
+		Port_Thermal_RightUp : Port_Thermal_LeftUp
+		{
+			Location = [1, 0]
+		}
+		Port_Thermal_TopRight : Port_Thermal_RightUp
+		{
+			Direction = Right
 		}
 
 		Graphics
@@ -587,14 +588,11 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			RotateSpeed = 34d 
 			FireThresholdAngle = 1d
 			AIFirepowerRating = &~/Part/StatsByCategory/1/Stats/DamagePerSecond
-			//CanBeGivenExplicitTarget = true
-			//TargetSearchesPerSecond = 4
 			Emitter = WeaponEmitterBase
 			HoldTargetAfterCancel = &../WeaponEmitterBase/FireDelay
 			AutoTargetCrewSafetyDist = 8
 			IgnoreFriendlyShipLowLOSChecks = true
-			//AllowFireWithBlockedLOS = false
-			//TargetLeadPrediction = false //Normally in Emitter?
+
 
 			AutoTargets
 			[
@@ -919,19 +917,12 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 				&/SW_SOUNDS/TurbolaserSFX
 			]
 		}
-/*
-		CommonReloadResetTrigger
-		{
-			Type = MultiTrigger
-			Triggers = [Turret]
-		}
-*/
+
 		TurretLocationProxy
 		{
 			Type = ChainableProxy
 			ComponentID = Turret
 		}
-
 
 		CrewLocation1
 		{
@@ -971,14 +962,6 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			InitialPenetrationResistance = 5
 			//IsHigh = true
 
-			//Type = PolygonCollider
-			//Vertices
-			//[
-			//	[-1.0, -1.2]
-			//	[1.0, -1.2]
-			//	[0.9, 1.4]
-			//	[-0.9, 1.4]
-			//]
 		}
 
 		BatterySprites
@@ -1156,7 +1139,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 	SecondaryToolTip
 	{
 		TitleKey = "StatCategories/Overclocked"
-		DescriptionKey = "Parts/QuadBarbetteTurbolaserOverclockDesc"
+		DescriptionKey = "Parts/LightTurbolaserswitchableOverclockDesc"
 		StatsByCategory
 		[
 			{
