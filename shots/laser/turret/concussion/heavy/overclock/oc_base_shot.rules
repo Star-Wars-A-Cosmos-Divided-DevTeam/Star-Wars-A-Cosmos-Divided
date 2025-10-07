@@ -29,25 +29,29 @@ Components : BASE/Components
 	{
 		Type       = DeathByDamagePool
 		DamagePool = DamagePool
-        /*
         OnDeath
         {
             HitEffects
             [
                 {
                     Type = ExplosiveDamage
-                    // Use the DamagePool as total damage so the explosion corresponds to the pool consumed
-                    TotalDamage = 50000 // &~/DAMAGE_POOL
+                    TotalDamage = { BaseValue = 50000; EffectScaleExponent = 1 }
                     Radius = 10
                     ExpandDuration = 0.9
-                    ExpandStartRadius = 1
+                    ExpandStartRadius = 2
                     ExpandLoss = 100%
                     ImpulsePerNDamage = 10
                     NDamage = 10000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = true
+						Friendlies = true
+					}
                 }
             ]
+            MediaEffects = &<./Data/shots/missile_nuke/missile_nuke_stage1.rules>/Components/Hit/HitOperational/MediaEffects //TODO: Implement Custom Graphics
         }
-        */
 	}
 
 	Targetable : ^/0/Targetable
@@ -112,6 +116,39 @@ Components : BASE/Components
 	{
 		ReduceScaleWith = DamagePool
 		Animation : ^/0/Animation {}
+	}
+
+	GlowSprite2
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Offset = [1, 0]
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					MipLevels = max
+					SampleMode = Linear
+				}
+				Size = [20, 20]
+				//VertexColor = [255, 255, 255]
+				TargetBlendMode = Add
+				Shader = "./Data/common_effects/fancy_light.shader"
+				_z = 1
+				_nrmlStrengthLimit = 1
+				//_litReflectiveStrength = 24
+				//_litAdditiveStrength = 0
+				//_unlitAdditiveStrength = 1
+			}
+		FrameCount = 16
+		FrameSize = [512, 512]
+		FramesPerRow = 4
+		FramesPerSecond = 120
+		}
 	}
 
 	// Leave MediaEffects (trail) untouched here; color OC files will borrow theirs.
