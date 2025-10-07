@@ -1,6 +1,5 @@
 // LOCATION: shots\laser\turret\concussion\heavy\overclock\oc_base_shot.rules
 // PURPOSE: Overclock stats layer for all heavy concussion laser shots
-// NOTE: Media is intentionally not set here; color OC files will reference non-OC color media.
 
 BASE = &<../base_shot.rules>
 
@@ -14,7 +13,7 @@ ReceivableBuffs = &BASE/ReceivableBuffs
 // ---- Tunables (defaults; adjustable) ----
 DAMAGE_POOL = 100000
 // Uses the OC impulse pattern like deck cannon: 200% of base operational impulse.
-IMPULSE     = (&BASE/Components/Hit/HitOperational/HitEffects/2/Impulse/BaseValue) * 200%
+IMPULSE     = (&BASE/Components/Hit/HitOperational/HitEffects/1/Impulse/BaseValue) * 200%
 // Keep same targetable health unless you want OC to be sturdier in-flight.
 HEALTH      = (&BASE/Components/Targetable/Health) * 200%
 
@@ -24,12 +23,31 @@ Components : BASE/Components
 	DamagePool
 	{
 		Type   = DamagePool
-		Damage = { BaseValue = &~/DAMAGE_POOL; EffectScaleExponent = 1 }
+		Damage = { BaseValue = &~/DAMAGE_POOL; EffectScaleExponent = 1; }
 	}
 	DeathByDamagePool
 	{
 		Type       = DeathByDamagePool
 		DamagePool = DamagePool
+        /*
+        OnDeath
+        {
+            HitEffects
+            [
+                {
+                    Type = ExplosiveDamage
+                    // Use the DamagePool as total damage so the explosion corresponds to the pool consumed
+                    TotalDamage = 50000 // &~/DAMAGE_POOL
+                    Radius = 10
+                    ExpandDuration = 0.9
+                    ExpandStartRadius = 1
+                    ExpandLoss = 100%
+                    ImpulsePerNDamage = 10
+                    NDamage = 10000
+                }
+            ]
+        }
+        */
 	}
 
 	Targetable : ^/0/Targetable
@@ -41,11 +59,9 @@ Components : BASE/Components
 	{
 		Penetration = infinity
 		FactorHitEffectsWith = DamagePool
-
 		// make all actual damage draw from the pool.
 		HitCrew     = &HitOperational
 		HitShield   = &HitOperational
-
 		HitOperational : ^/0/HitOperational
 		{
 			ReduceEffectsByPenetration = false
@@ -53,8 +69,8 @@ Components : BASE/Components
 			HitEffects
 			[
 				// Convert to pool-based damage.
-				{ Type = Damage;  Damage  = 0; DamagePool = DamagePool }
-				{ Type = Impulse; Impulse = &~/IMPULSE }
+				{ Type = Damage;  Damage  = 0; DamagePool = DamagePool; }
+				{ Type = Impulse; Impulse = &~/IMPULSE }             
 			]
 
 			// No media (see color OC files)
@@ -72,7 +88,17 @@ Components : BASE/Components
 
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = 0; DamagePool = DamagePool }
+				{ Type = Damage;  Damage  = 0; DamagePool = DamagePool; }
+				//{
+				//	Type = ExplosiveDamage
+				//	TotalDamage       = 10000
+				//	Radius            = 10
+				//	ExpandDuration    = 0.9
+				//	ExpandStartRadius = 1
+				//	ExpandLoss        = 100%
+				//	ImpulsePerNDamage = 10
+				//	NDamage           = 10000
+				//}
 				{ Type = Impulse; Impulse = &~/IMPULSE }
 			]
 		}

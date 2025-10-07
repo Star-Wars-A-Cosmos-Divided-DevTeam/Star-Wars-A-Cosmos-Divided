@@ -1,0 +1,56 @@
+// DEBUG: Overclocked explosive test variant
+// - Avoids Penetration = infinity (sets very large finite value)
+// - Adds an ExplosiveDamage on OnDeath (uses the DamagePool value)
+
+BASE_OC = &<oc_base_shot.rules>
+RED = &<../red_shot.rules>
+
+ID = "SW.concussion_turret_heavy_laser_debug_explosive_overclock"
+Range       = &BASE_OC/Range
+IdealRange  = &BASE_OC/IdealRange
+IdealRadius = &BASE_OC/IdealRadius
+Speed       = &BASE_OC/Speed
+ReceivableBuffs = &BASE_OC/ReceivableBuffs
+
+// Keep the same tunables as OC base but ensure Penetration is finite for testing.
+Components : &BASE_OC/Components
+{
+    // Force a very large finite penetration (avoid using 'infinity' which can sometimes cause edge cases)
+    Hit : ^/0/Hit
+    {
+        Penetration = 100000.0
+        // Keep PenetrationSpeed as-is from base (inherited)
+
+        // Add an OnDeath explosive so that when the DamagePool is exhausted the projectile creates an explosion
+        PenetratingOperational : ^/0/PenetratingOperational
+        {
+            // keep existing behavior
+        }
+    }
+
+    // Attach an explosive on death to the Targetable so the object explodes when it dies (DamagePool consumed)
+    Targetable : ^/0/Targetable
+    {
+        OnDeath : ^/0/OnDeath
+        {
+            // Trigger an explosive damage effect at death using the same DAMAGE_POOL value (from oc_base_shot.rules)
+            HitEffects
+            [
+                {
+                    Type = ExplosiveDamage
+                    // Use the DamagePool as total damage so the explosion corresponds to the pool consumed
+                    TotalDamage = &~/DAMAGE_POOL
+                    Radius = 10
+                    ExpandDuration = 0.9
+                    ExpandStartRadius = 1
+                    ExpandLoss = 100%
+                    ImpulsePerNDamage = 10
+                    NDamage = 10000
+                }
+            ]
+
+            // Reuse the RED impact media for visual/audio feedback
+            MediaEffects = &~/RED/Components/Hit/HitOperational/MediaEffects
+        }
+    }
+}

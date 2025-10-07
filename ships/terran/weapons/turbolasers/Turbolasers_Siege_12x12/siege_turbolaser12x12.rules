@@ -1362,9 +1362,24 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 	StatsByCategory
 	[
 		&~/TurretStats
-		&<siege12x12red.rules>/LaserStats
-		&<siege12x12blue.rules>/LaserStats
-		&<siege12x12green.rules>/LaserStats
+		{
+			NameKey = "StatCategories/SiegeTurbolaserLasershot"
+			Stats
+			{
+
+				ShieldDamagePerShot   	= &~/EMITTER_BASE/Bullet/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
+				ShieldDamagePerSecond 	= (&ShieldDamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+				ShieldDamage          	= [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+			
+				DamagePerShot   		= &~/EMITTER_BASE/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
+				DamagePerSecond 		= (&DamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+				Damage          		= [&../DamagePerShot, &../DamagePerSecond]
+			
+				ShotSpeed 				= &~/EMITTER_BASE/Bullet/Speed
+				ShotHP    				= &~/EMITTER_BASE/Bullet/Components/Targetable/Health
+
+			}
+		}
 	]
 
 	SecondaryToolTip
@@ -1410,13 +1425,36 @@ TurretStats
 		//ReloadTime = &~/Part/Components/WeaponTimerBuffProvider/BuffAmount
 		Salvo = [&../Barrels, &../ROF]
 		ROF = 1 / (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration)
-		Range = &~/Part/Components/WeaponEmitterBase/Bullet/Range
+		Range = &~/EMITTER_BASE/Bullet/Range
 		Arc = deg(&~/Part/Components/Turret/FiringArc)
 		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-		PowerPerShot = (&~/Part/Components/WeaponEmitterBase/ResourcesUsed) / 1000
+		PowerPerShot = (&~/EMITTER_BASE/ResourcesUsed) / 1000
 		PowerPerSecond = (&PowerPerShot) * (&ROF)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 		//Spread = deg(&~/BulletEmitterBase/Spread/1)
 		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
+	}
+}
+
+EMITTER_BASE =  &~/Part/Components/WeaponEmitterBase
+EMITTER_BASE_OVERCLOCK = &~/Part/Components/WeaponEmitterBase
+
+LaserStats
+{
+	NameKey = "StatCategories/SiegeTurbolaserLasershot"
+	Stats
+	{
+
+		ShieldDamagePerShot   	= &~/EMITTER_BASE/Bullet/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
+		ShieldDamagePerSecond 	= (&ShieldDamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+		ShieldDamage          	= [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+	
+		DamagePerShot   		= &~/EMITTER_BASE/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
+		DamagePerSecond 		= (&DamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+		Damage          		= [&../DamagePerShot, &../DamagePerSecond]
+	
+		ShotSpeed 				= &~/EMITTER_BASE/Bullet/Speed
+		ShotHP    				= &~/EMITTER_BASE/Bullet/Components/Targetable/Health
+
 	}
 }
