@@ -1,0 +1,139 @@
+// LOCATION: shots/laser/turret/turbo/CIS/base_shot.rules
+// BASE FOR: CIS turbolaser turret shots (shared stats & damage profile)
+// STRINGKEY: NONE
+ID = "SW.turbolaser_turret_CIS_laser_base"
+Range = 500
+IdealRange = [200, 500]
+IdealRadius = [5, 50]
+Speed = 70
+ReceivableBuffs = [ElectronBuff]
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.2
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 4000
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+
+		CrewCollisions = { Enemies = true; Junk = true }
+		FriendlyShipLowCollisions = false
+		SourceShipLowCollisions = false
+		PenetratesCrew = true
+
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = { BaseValue = 2000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
+				{ Type = Impulse; Impulse = { BaseValue = 6.5 } }
+			]
+
+			//MediaEffects[]
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{ Type = Damage;        	Damage  = { BaseValue = 2000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
+				{ Type = ExplosiveDamage; TotalDamage = { BaseValue = 3000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; }; Radius = 2; Filter = { Friendlies = false } }
+				{ Type = Impulse;       	Impulse = { BaseValue = 2.5 } }
+			]
+
+			//MediaEffects[]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{ Type = Damage; 			Damage  = { BaseValue = 1000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
+				{ Type = ExplosiveDamage; TotalDamage = { BaseValue = 2000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; }; Radius = 3; Filter = { Friendlies = false } }
+				{ Type = Impulse; 			Impulse = { BaseValue = 10.25 } }
+			]
+
+			//MediaEffects[]
+		}
+		PenetratingOperational
+		{
+			//ReduceEffectsByPenetration = true
+			//HitEffects[]
+			//MediaEffects[]
+		}
+		PenetratingStructural
+		{
+			//HitEffects[]
+			//MediaEffects[]
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [1.8, 1.8]
+			}
+			FrameCount = 8
+			FrameSize = [128, 128]
+			FramesPerRow = 2
+			FramesPerSecond = 32
+		}
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [9, 9]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+		}
+	}
+
+}
+
