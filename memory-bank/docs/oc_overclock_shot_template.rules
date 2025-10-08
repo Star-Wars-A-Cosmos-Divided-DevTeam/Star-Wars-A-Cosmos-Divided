@@ -10,14 +10,31 @@ USAGE OVERVIEW
 2. Adjust the scalar values in "PRIMARY SCALARS" and "STRUCTURAL SCALARS".
 3. Uncomment optional HitEffects / MediaEffects blocks needed for this projectile.
 4. Replace placeholder particle/sound IDs with actual assets.
+
+General Shot folder structure should be 
+- ShotFolder/ (found in ./shots/<shot_type>/<direct LOS or turret weapon>/<shot_category>/<size type>/)
+--> /particles/ (for particles)
+--> /sounds/ (for related sounds)
+--> base_shot.rules
+--> blue_shot.rules
+--> green_shot.rules
+--> red_shot.rules
+--> /overclock/ (also include particles and sounds folders)
+--------> oc_base_shot.rules
+--------> oc_blue_shot.rules
+--------> oc_green_shot.rules
+--------> oc_red_shot.rules
+
 ================================================================================
-*/
+*/ // Inheritable values shorthand should go here depending on the file being edited
 
 BASE       = &<../base_shot.rules>                 // Non-overclock parent
 OC_BASE    = &<../overclock/oc_base_shot.rules>    // Shared OC behavior (set to BASE if unused)
 COLOR_BASE = &<../red_shot.rules>                  // Color visuals (optional blend)
 
 COMPONENT_SOURCE = &OC_BASE/Components             // Change to &COLOR_BASE/Components or &BASE/Components if desired
+
+// All shots require the following:
 
 ID = "SW.example_overclock_shot"
 Range        = &BASE/Range
@@ -28,6 +45,7 @@ ReceivableBuffs = &BASE/ReceivableBuffs
 
 // ============================================================================
 // PRIMARY SCALARS (edit these first)
+// These tunable scalars should be added for anything in the file that should be tune-able
 // ============================================================================
 PRIMARY_DAMAGE_SCALE      = 125%
 SHIELD_DAMAGE_SCALE       = 125%
@@ -54,7 +72,7 @@ STRUCT_IMPULSE_SCALE   = 100%
 //STATUS_TO_APPLY        = &<../../statuses/example_status.rules>   // Example status payload
 
 // ============================================================================
-// DERIVED VALUES (auto-calculated)
+// Examples of DERIVED VALUES (auto-calculated)
 // ============================================================================
 PRIMARY_DAMAGE_BASE        = &BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
 PRIMARY_DAMAGE             = (&~/PRIMARY_DAMAGE_SCALE) * (&~/PRIMARY_DAMAGE_BASE)
@@ -86,7 +104,8 @@ AREA_RADIUS_FINAL          = &~/AREA_RADIUS_OVERRIDE
 EXPLOSIVE_RADIUS_FINAL     = &~/EXPLOSIVE_RADIUS_OVERRIDE
 
 // ============================================================================
-// MAIN COMPONENT OVERRIDES
+// Examples of MAIN COMPONENT OVERRIDES
+// Most shot components include full blocks for one or two of the different hit types.  E.g., Operation vs Shield.  This gives flexibility to provide different damage values if there is need to be granular.  Otherwise it is best to inherit e.g., HitOperational = HitShield or HitOperational : HitShield {} to inherit and override values within the brackets.
 // ============================================================================
 Components : &COMPONENT_SOURCE
 {
