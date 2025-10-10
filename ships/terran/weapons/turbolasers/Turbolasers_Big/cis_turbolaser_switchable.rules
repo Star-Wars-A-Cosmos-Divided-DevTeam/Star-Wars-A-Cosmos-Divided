@@ -7,10 +7,10 @@ OVERCLOCK
 	REDBULLET   = &<../../../../../shots/laser/turret/turbo/CIS/overclock/oc_red_shot.rules>
 
 	// Rate-of-fire scaler (2 = twice as fast)
-	FIRE_RATE_FACTOR = 50%
+	FIRE_RATE_FACTOR = 125%
 
 	// OC spread/recoil modifiers
-	HALF_SPREAD   = (&~/Part/Components/WeaponEmitterBase/Spread/1) * 2
+	HALF_SPREAD   = (&~/Part/Components/WeaponEmitterBase/Spread/1) * 3
 	RECOIL_FACTOR = 150%
 
 	// Heat hookup
@@ -18,8 +18,8 @@ OVERCLOCK
 	HEAT_PER_SECOND = 100
 	POWER_USE_FACTOR = 200%
 
-	HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
-	HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
+	//HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
+	//HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
 
 	// Stun scaling
 	//CREW_STUN_DURATION = ((&~/Part/Components/StunEffect/HitEffects/0/Duration/BaseValue) * 3)
@@ -30,6 +30,7 @@ OVERCLOCK
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS   = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
 
+RESOURCES_USED = 500
 
 Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 {	
@@ -99,7 +100,6 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		Size = [100, 80]
 	}
 
-
 	//Components&Inheritance
 	Components : ^/0/Components
 	{
@@ -150,12 +150,20 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		{
 			ComponentID = WeaponEmitter2
 		}
+		WeaponEmitter3Proxy : WeaponEmitterProxy
+		{
+			ComponentID = WeaponEmitter3
+		}
+		WeaponEmitter4Proxy : WeaponEmitterProxy
+		{
+			ComponentID = WeaponEmitter4
+		}
 
 		Overclock_EmissionTriggered
 		{
 			Type = MultiTrigger
 			OperationalToggle = IsOverclocked
-			Triggers = [ WeaponEmitterProxy, WeaponEmitter2Proxy ]
+			Triggers = [ WeaponEmitterProxy, WeaponEmitter2Proxy, WeaponEmitter3Proxy, WeaponEmitter4Proxy ]
 		}
 		Overclock_ConstantHeatProducer
 		{
@@ -174,14 +182,12 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Default = 1
 			ToggledOnChoices = [0, 1, 2]
 		}
-
 		AutoTargetToggle
 		{
 			Type = ModeToggle
 			Mode = FireModeToggle
 			OnModes = [1, 2]
 		}
-
 		AutoFireToggle
 		{
 			Type = ModeToggle
@@ -258,12 +264,28 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					Bullet  = &~/OVERCLOCK/REDBULLET
 					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
 					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed = floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
 				}
 				WeaponEmitter2 : ^/0/WeaponEmitter2
 				{
 					Bullet  = &~/OVERCLOCK/REDBULLET
 					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
 					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed = floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
+				}
+				WeaponEmitter3 : ^/0/WeaponEmitter3
+				{
+					Bullet  = &~/OVERCLOCK/REDBULLET
+					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed = floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
+				}
+				WeaponEmitter4 : ^/0/WeaponEmitter4
+				{
+					Bullet  = &~/OVERCLOCK/REDBULLET
+					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed = floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
 				}
 			}
 		}
@@ -310,6 +332,18 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
 					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
 				}
+				WeaponEmitter3 : ^/0/WeaponEmitter3
+				{
+					Bullet  = &~/OVERCLOCK/BLUEBULLET
+					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+				}
+				WeaponEmitter4 : ^/0/WeaponEmitter4
+				{
+					Bullet  = &~/OVERCLOCK/BLUEBULLET
+					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+				}
 			}
 		}
 
@@ -349,6 +383,18 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
 				}
 				WeaponEmitter2 : ^/0/WeaponEmitter2
+				{
+					Bullet  = &~/OVERCLOCK/GREENBULLET
+					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+				}
+				WeaponEmitter3 : ^/0/WeaponEmitter3
+				{
+					Bullet  = &~/OVERCLOCK/GREENBULLET
+					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+				}
+				WeaponEmitter4 : ^/0/WeaponEmitter4
 				{
 					Bullet  = &~/OVERCLOCK/GREENBULLET
 					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
@@ -616,10 +662,9 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			FireThresholdAngle = 2d
 			AIFirepowerRating = &~/Part/StatsByCategory/1/Stats/DamagePerSecond
 			Emitter = WeaponEmitterBase
-			HoldTargetAfterCancel = &../WeaponEmitterBase/FireDelay
-			AutoTargetCrewSafetyDist = 8
+			//HoldTargetAfterCancel = &../WeaponEmitterBase/FireDelay
+			//AutoTargetCrewSafetyDist = 8
 			IgnoreFriendlyShipLowLOSChecks = true
-
 
 			AutoTargets
 			[
@@ -910,9 +955,9 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			FireDelay = 0
 			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/CIS/Red
 			ResourceStorage = BatteryStorage
-			ResourcesUsed = 250
+			ResourcesUsed = &~/RESOURCES_USED
 			MinResourcesUsed = 1
-			Recoil = 15
+			Recoil = 200
 			AntiPhasingRaycastDistance = 2
 			TargetLeadPrediction = false			
 			Spread = [-2.5d, 2.5d]
@@ -983,15 +1028,15 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 				CrewLocation2
 			]
 		}
+
 		TurretCollider
 		{
 			Type = CircleCollider
 			Location = &../Turret/Location
-			Radius = 2
+			Radius = 1.8
 			Density = .75
 			InitialPenetrationResistance = 5
 			//IsHigh = true
-
 		}
 
 		BatterySprites
@@ -1075,7 +1120,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		DestroyedEffects
 		{
 			Type = DeathEffects
-			MediaEffects = &/COMMON_EFFECTS/MedPartDestroyed
+			MediaEffects = &/COMMON_EFFECTS/HugePartScorched
 			Location = [2, 2]
 		}
 
@@ -1097,38 +1142,35 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					HidesIndicators = [2,3,4]
 				}
-
 				// 2 Out of power.
 				{
 					Toggle = BatteryStorage
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				}
-
 				// 3 Resetting from overclock
 				{
 					Toggle = &~/Part/^/0/OVERCLOCK_OPERATIONAL
 					AtlasSprite : /INDICATORS/OverclockReset
 					{
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 					HidesIndicators = [4]
 				}
-
 				// 4 No crew.
 				{
 					Toggle = PartCrew
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoCrew
-						Size = [2, 2]
+						Size = [1, 1]
 					}
 				}
 			]
@@ -1165,7 +1207,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		TurretPenResist = &~/Part/Components/TurretCollider/InitialPenetrationResistance
 
 		RecPower =  &../StatsByCategory/1/Stats/PowerPerSecond
-		RecCrew = (&CrewRequired) + (&RecPower) * 2
+		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
 
 	StatsByCategory

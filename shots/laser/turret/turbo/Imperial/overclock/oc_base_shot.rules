@@ -1,24 +1,24 @@
-﻿// LOCATION: shots/laser/turret/turbo/CIS/overclock/oc_base_shot.rules
-// PURPOSE: Shared overclock stats/behavior for all CIS turbolaser shots
+﻿// LOCATION: shots/laser/turret/turbo/Imperial/overclock/oc_base_shot.rules
+// PURPOSE: Shared overclock stats/behavior for all Imperial turbolaser shots
 // NOTE: No color media here -- color OC files pull visuals from their non-OC counterparts.
 
 BASE = &<../base_shot.rules>
 
-ID = "SW.turbolaser_turret_CIS_laser_base_overclock"
-Range        = (&~/BASE/Range) * .75
-IdealRange   = [150, (&~/BASE/Range) * .75]
+ID = "SW.turbolaser_turret_Imperial_laser_base_overclock"
+Range        = (&~/BASE/Range) * 2
+IdealRange   = [200, (&~/BASE/Range) * 2]
 IdealRadius  = &BASE/IdealRadius
 Speed        = (&~/BASE/Speed) * 130%
 ReceivableBuffs = &BASE/ReceivableBuffs
 
 // OC scalars
-DAMAGE             = 125% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
-DAMAGE_SHIELD      = 125% * (&BASE/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue)
-DAMAGE_RADIUS      = 3
-EXPLOSIVE_DAMAGE   = 110% * (&BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage/BaseValue)
-EXPLOSIVE_RADIUS   = &BASE/Components/Hit/HitOperational/HitEffects/1/Radius
+DAMAGE             = 50% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
+DAMAGE_SHIELD      = 150% * (&BASE/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue)
+DAMAGE_RADIUS      = 6
+EXPLOSIVE_DAMAGE   = 400% * (&BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage/BaseValue)
+EXPLOSIVE_RADIUS   = 200% * (&BASE/Components/Hit/HitOperational/HitEffects/1/Radius)
 IMPULSE            = 200% * (&BASE/Components/Hit/HitOperational/HitEffects/2/Impulse/BaseValue)
-IMPULSE_SHIELD     = 200% * (&BASE/Components/Hit/HitShield/HitEffects/1/Impulse/BaseValue)
+IMPULSE_SHIELD     = 100% * (&BASE/Components/Hit/HitShield/HitEffects/1/Impulse/BaseValue)
 HEALTH             = 175% * (&BASE/Components/Targetable/Health)
 STRUCT_RATIO_PRIMARY   = (&BASE/Components/Hit/HitStructural/HitEffects/1/TotalDamage/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage/BaseValue)
 STRUCT_RATIO_SECONDARY = (&BASE/Components/Hit/HitStructural/HitEffects/0/Damage/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
@@ -38,6 +38,45 @@ Components : &BASE/Components
 	Hit : ^/0/Hit
 	{
 		HitCrew   = &HitOperational
+
+		HitShield : ^/0/HitShield
+		{
+			HitEffects
+			[
+				// Area damage still filtered off shields
+				{
+					Type = AreaDamage
+					Damage : ~/BASE/Components/Hit/HitShield/HitEffects/0/Damage { BaseValue = &~/DAMAGE;  }
+					Radius = &~/DAMAGE_RADIUS
+					RectType = Normal
+					Falloff = 0.5
+					Filter { Shields = false }
+				}
+				// Shield-only hit
+				: 0
+				{
+					Damage : ^/0/Damage { BaseValue = &~/DAMAGE_SHIELD }
+					Filter
+					{
+						Shields = true
+						OperationalHealth = false
+						StructuralHealth  = false
+					}
+				}
+				// Explosive payload (scaled)
+				{
+					Type = ExplosiveDamage
+					TotalDamage : ~/BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage { BaseValue = &~/EXPLOSIVE_DAMAGE }
+					Radius = &~/EXPLOSIVE_RADIUS
+					Filter { Friendlies = false }
+				}
+				// Impulse (scaled)
+				: ../^/0/HitEffects/1
+				{
+					Impulse : ^/0/Impulse { BaseValue = &~/IMPULSE_SHIELD }
+				}
+			]
+		}
 
 		HitOperational : ^/0/HitOperational
 		{
@@ -78,55 +117,6 @@ Components : &BASE/Components
 			]
 		}
 
-		HitShield : ^/0/HitShield
-		{
-			HitEffects
-			[
-				// Area damage still filtered off shields
-				{
-					Type = AreaDamage
-					Damage : ~/BASE/Components/Hit/HitShield/HitEffects/0/Damage { BaseValue = &~/DAMAGE }
-					Radius = &~/DAMAGE_RADIUS
-					RectType = Normal
-					Falloff = 0.5
-					Filter { Shields = false }
-				}
-				// Shield-only hit
-				: 0
-				{
-					Damage : ^/0/Damage { BaseValue = &~/DAMAGE_SHIELD }
-					Filter
-					{
-						Shields = true
-						OperationalHealth = false
-						StructuralHealth  = false
-					}
-				}
-				// Explosive payload (scaled)
-				{
-					Type = ExplosiveDamage
-					TotalDamage : ~/BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage { BaseValue = &~/EXPLOSIVE_DAMAGE }
-					Radius = &~/EXPLOSIVE_RADIUS
-					Filter { Friendlies = false }
-				}
-				// Impulse (scaled)
-				: ../^/0/HitEffects/1
-				{
-					Impulse : ^/0/Impulse { BaseValue = &~/IMPULSE_SHIELD }
-				}
-			]
-		}
-
-		PenetratingOperational : ^/0/PenetratingOperational
-		{
-			ReduceEffectsByPenetration = false
-			HitEffects
-			[
-				{ Type = Damage;  Damage  = 0 }
-				{ Type = Impulse; Impulse = &~/IMPULSE }
-			]
-		}
-
 		HitStructural : ^/0/HitStructural
 		{
 			HitEffects
@@ -144,6 +134,16 @@ Components : &BASE/Components
 				{
 					Impulse : ^/0/Impulse { BaseValue = &~/STRUCT_IMPULSE }
 				}
+			]
+		}
+
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			ReduceEffectsByPenetration = false
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = 0 }
+				{ Type = Impulse; Impulse = &~/IMPULSE }
 			]
 		}
 

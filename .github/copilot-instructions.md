@@ -22,7 +22,7 @@ This file contains concise, actionable notes for AI coding agents working on the
 ### Examples (copy into edits or PR descriptions)
 - Add a shot into the SW registry (typical):
   - define projectile under `shots/` (e.g. `shots/sw_shots.rules`) and then wire it in `mod.rules` using `OverrideIn = <cosmoteer.rules>/SW_SHOTS` and `Overrides = &<shots/sw_shots.rules>` (see actions //12 and //13 in `mod.rules`).
-- Minimal diff style preferred when suggesting fixes (show Replace/With sections rather than full-file rewrites). Example reference file: `memory-bank/docs/oc_overclock_shot_template.rules`.
+- Minimal diff style preferred when suggesting fixes (show Replace/With sections rather than full-file rewrites). Example reference shot folder at: `shots/laser/turret/turbo/light/*` and references at `memory-bank/docs/oc_overclock_shot_template.rules`.
 
 ### Common pitfalls and error modes (what to check)
 - Missing/case-mismatched asset (png/sound) paths — sprite files typically sit next to the `.rules` that reference them.
