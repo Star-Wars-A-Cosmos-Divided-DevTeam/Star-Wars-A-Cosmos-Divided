@@ -1,0 +1,80 @@
+Components
+{
+	WeaponEmitter : &<../republic_turbolaser_switchable.rules>/Part/Components/WeaponEmitterBase
+	{
+		Type = BulletEmitter
+		ChainedTo = Turret
+		FireTrigger = ShootTrigger1
+		GetTargetFrom = Turret
+		Location = [2.75, -1.11]
+		FireDelay = 0.15
+		OperationalToggle = IsOperational
+		Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Republic/Blue
+		ResourceStorage = BatteryStorage
+		Recoil = 200
+		TargetLeadPrediction = false
+		AntiPhasingRaycastDistance = 2
+	}
+
+	WeaponEmitter2 : WeaponEmitter
+	{
+		Type = BulletEmitter
+		FireTrigger = ShootTrigger2
+		Location = [2.75, 1.11]
+	}
+
+
+		FireEffect1
+		{
+			Type = TriggeredEffects
+			ChainedTo = WeaponEmitter
+			Trigger = WeaponEmitter
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Med/Blue
+			]
+		}
+
+		FireEffect2 : FireEffect1
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = WeaponEmitter2
+		}
+}
+/*
+		BulletEmitterLeft : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [2.75, -1.11]
+		}
+
+		BulletEmitterRight : BulletEmitterBase
+		{
+			Type = BulletEmitter
+			FireTrigger = Turret
+			Location = [2.75, 1.11]
+		}
+*/
+/*
+		FireEffectLeft
+		{
+			Type = TriggeredEffects
+			ChainedTo = BulletEmitterLeft
+			Trigger = BulletEmitterLeft
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Large/Blue
+			]
+		}
+
+		FireEffectRight : FireEffectLeft
+		{
+			ChainedTo = BulletEmitterRight
+			Trigger = BulletEmitterRight
+		}
+*/
