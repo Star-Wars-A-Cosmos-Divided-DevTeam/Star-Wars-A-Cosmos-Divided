@@ -1,189 +1,109 @@
 // LOCATION: sw_effects/shots/overclock/oc_base_shot.rules
 // PURPOSE: Shared overclock stats & drain behavior for the Republic blue laser effect
 
-BASE = &<../base_shot.rules>
+BASE = &<disruptor_bolt.rules>
+BASEORIG = &<../base_shot.rules>
 
-TOTAL_DRAIN = 300% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
-TOTAL_SHIELD_DRAIN = 300% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
+// In disruptor_bolt.rules, HitOperational/HitEffects/0 is a ResourceDrain effect
+// with an Amount field (not Damage). Use Amount/BaseValue here.
+TOTAL_DRAIN = 300% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Amount/BaseValue)
+TOTAL_SHIELD_DRAIN = 300% * (&BASE/Components/Hit/HitShield/HitEffects/0/Amount/BaseValue)
 DRAIN_DURATION = 8
-PENETRATION = 13
+PENETRATION = 50
 ARMOR_PENETRATION_FACTOR = 2/7
 
 DRAIN_PER_SECOND = (&TOTAL_DRAIN) / (&DRAIN_DURATION)
 SHIELD_DRAIN_PER_SECOND = (&TOTAL_SHIELD_DRAIN) / (&DRAIN_DURATION)
 
-DAMAGE             = 100% * (&BASE/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue) //Swaps Shield w/ Operational
-DAMAGE_SHIELD      = 100% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue) //Swaps Shield w/ Operational
+DAMAGE             = 100% * (&BASEORIG/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue) //Swaps Shield w/ Operational
+DAMAGE_SHIELD      = 100% * (&BASEORIG/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue) //Swaps Shield w/ Operational
 DAMAGE_RADIUS      = 6
-EXPLOSIVE_DAMAGE   = 400% * (&BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage/BaseValue)
-EXPLOSIVE_RADIUS   = 200% * (&BASE/Components/Hit/HitOperational/HitEffects/1/Radius)
-HEALTH             = 175% * (&BASE/Components/Targetable/Health)
-STRUCT_RATIO_PRIMARY   = (&BASE/Components/Hit/HitStructural/HitEffects/1/TotalDamage/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage/BaseValue)
-STRUCT_RATIO_SECONDARY = (&BASE/Components/Hit/HitStructural/HitEffects/0/Damage/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
-STRUCT_DAMAGE_PRIMARY   = ceil((&~/EXPLOSIVE_DAMAGE) * (&~/STRUCT_RATIO_PRIMARY))
-STRUCT_DAMAGE_SECONDARY = ceil((&~/DAMAGE) * (&~/STRUCT_RATIO_SECONDARY))
-STRUCT_IMPULSE_RATIO    = (&BASE/Components/Hit/HitStructural/HitEffects/2/Impulse/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/2/Impulse/BaseValue)
-STRUCT_IMPULSE          = floor((&~/IMPULSE) * (&~/STRUCT_IMPULSE_RATIO))
-STRUCT_RADIUS_PRIMARY   = &BASE/Components/Hit/HitStructural/HitEffects/1/Radius
+EXPLOSIVE_DAMAGE   = 400% * (&BASEORIG/Components/Hit/HitOperational/HitEffects/1/TotalDamage/BaseValue)
+EXPLOSIVE_RADIUS   = 200% * (&BASEORIG/Components/Hit/HitOperational/HitEffects/1/Radius)
+HEALTH             = 175% * (&BASEORIG/Components/Targetable/Health)
+//STRUCT_RATIO_PRIMARY   = (&BASE/Components/Hit/HitStructural/HitEffects/1/TotalDamage/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage/BaseValue)
+//STRUCT_RATIO_SECONDARY = (&BASE/Components/Hit/HitStructural/HitEffects/0/Damage/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
+//STRUCT_DAMAGE_PRIMARY   = ceil((&~/EXPLOSIVE_DAMAGE) * (&~/STRUCT_RATIO_PRIMARY))
+//STRUCT_DAMAGE_SECONDARY = ceil((&~/DAMAGE) * (&~/STRUCT_RATIO_SECONDARY))
+//STRUCT_IMPULSE_RATIO    = (&BASE/Components/Hit/HitStructural/HitEffects/2/Impulse/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/2/Impulse/BaseValue)
+//STRUCT_IMPULSE          = floor((&~/IMPULSE) * (&~/STRUCT_IMPULSE_RATIO))
+//STRUCT_RADIUS_PRIMARY   = &BASE/Components/Hit/HitStructural/HitEffects/1/Radius
 
-
-ID = "SW.blue_republic_laser_shot_base_overclock"
-Range = (&~/BASE/Range) * 1.5
-IdealRange   = [200, (&~/BASE/Range) * 1.5]
-IdealRadius  = &BASE/IdealRadius
-Speed = (&~/BASE/Speed) * 125%
-ReceivableBuffs = &BASE/ReceivableBuffs
-
-Components : &BASE/Components
+Bullet : BASE
 {
-	Targetable : ^/0/Targetable
+	ID = "SW.republic_laser_shot_base_overclock"
+	Range = (&~/BASE/Range) * 1.5
+	IdealRange   = [200, (&~/BASE/Range) * 1.5]
+	//IdealRange = [&../^/0/IdealRange/0, &~/RANGE]
+	Speed = (&~/BASE/Speed) * 125%
+	//ReceivableBuffs = &BASE/ReceivableBuffs
+
+	Components : ^/0/Components
 	{
-		Health = &~/HEALTH
-	}
-
-	Hit : ^/0/Hit
-	{
-		Penetration = &~/PENETRATION
-		PenetratesOperational = true
-		PartCategoryPenetrationFactors
+		Hit : ^/0/Hit
 		{
-			armor = &~/ARMOR_PENETRATION_FACTOR
+			Penetration = &~/PENETRATION
+			PenetratesOperational = true
+			PartCategoryPenetrationFactors
+			{
+				armor = &~/ARMOR_PENETRATION_FACTOR
+			}
+			HitShield : ^/0/HitShield
+			{
+				HitEffects
+				[
+					: ../../PenetratingOperational/HitEffects/0
+					{
+						StatusValue = { BaseValue = (&~/SHIELD_DRAIN_PER_SECOND) / 1000; EffectScaleExponent = 1 }
+					}
+				]
+			}
+			HitOperational : PenetratingOperational
+			{
+				HitEffects : ^/0/HitEffects
+				[
+					&~/BASE/Components/Hit/HitOperational/HitEffects/1
+				]
+			}
+			PenetratingOperational : ^/0/HitOperational
+			{
+				HitEffects
+				[
+					{
+						Type = StatusApplication
+						StatusType = cosmoteer.disruptor_drain
+						StatusDuration = &~/DRAIN_DURATION
+						StatusValue = { BaseValue = (&~/DRAIN_PER_SECOND) / 1000; EffectScaleExponent = 1 }
+					}
+				]
+			}
 		}
-		HitCrew = &HitOperational
-
-		HitShield : ^/0/HitShield
-		{
-			HitEffects
-			[
-				: ../../PenetratingOperational/HitEffects/0
-				{
-					StatusValue = { BaseValue = (&~/SHIELD_DRAIN_PER_SECOND) / 1000; EffectScaleExponent = 1 }
-				}
-			]
-
-		}
-
-		HitOperational : PenetratingOperational
-		{
-			HitEffects
-			[
-				{
-					Type = ResourceDrain
-					ResourceType = battery
-					Amount = { BaseValue = 600; EffectScaleExponent = 1 }
-
-					MediaEffectsOnDrain
-					[
-						&<particles/ship_drain.rules>
-						&<particles/disruptor_bolt_hit_center_bounce.rules>
-						&<particles/disruptor_bolt_hit_center_bounce2.rules>
-						&<particles/disruptor_bolt_hit_sizzle.rules>
-
-						: /BASE_SOUNDS/AudioExterior
-						{
-							RandomSounds = ["./Data/shots/disruptor_bolt/sounds/disruptor_discharge_01.wav",
-											"./Data/shots/disruptor_bolt/sounds/disruptor_discharge_02.wav",
-											"./Data/shots/disruptor_bolt/sounds/disruptor_discharge_03.wav",
-											"./Data/shots/disruptor_bolt/sounds/disruptor_discharge_04.wav"]
-							Volume = 1
-							SpeedVariation = .15
-						}
-					]
-				}
-				{ Type = Damage;	Damage = { BaseValue = &~/DAMAGE; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1 } }
-			]
-		}
-
-
-		PenetratingOperational : ^/0/HitOperational
-		{
-			HitEffects
-			[
-				{
-					Type = StatusApplication
-					StatusType = cosmoteer.disruptor_drain
-					StatusDuration = &~/DRAIN_DURATION
-					StatusValue = { BaseValue = (&~/DRAIN_PER_SECOND) / 1000; EffectScaleExponent = 1 }
-				}
-			]
-		}
-
-		PenetratingStructural : ^/0/PenetratingStructural {}
-
-		HitStructural : ^/0/HitStructural
-		{
-			//HitEffects
-			//[
-			//	: ../^/0/HitEffects/0
-			//	{
-			//		TotalDamage = &~/STRUCT_SECONDARY_DAMAGE
-			//		Radius = &~/STRUCT_SECONDARY_RADIUS
-			//	}
-			//	: ../^/0/HitEffects/1
-			//	{
-			//		TotalDamage = &~/STRUCT_PRIMARY_DAMAGE
-			//		Radius = &~/STRUCT_PRIMARY_RADIUS
-			//	}
-			//	: ../^/0/HitEffects/2
-			//	{
-			//		Impulse = &~/STRUCT_IMPULSE
-			//	}
-			//]
-		}
-
-		FinishedPenetratingOperational = &PenetratingOperational
-		FinishedPenetratingStructural = &PenetratingStructural
-	}
-/*
-	MediaEffects
-	{
-		Type = MediaEffects
-		FactorEffectsWith = Hit
-		FactorEffectsExponent = 0.0
 		MediaEffects
-		[
-			&<particles/cyan_ion_shot_trail_lightning.rules>
-		]
-	}
-*/
-	Sprite 
-	{
-		Type = Sprite
-		ReduceScaleWith = Hit
-		ReduceScaleExponent = 0.5
-		Sprite
 		{
-			Texture
-			{
-				File = "particles/disruptor_bolt_hit_orb.png"
-				SampleMode = Linear
-				MipLevels = max
-			}
-			VertexColor = [0, 240, 240, 255]
-			Size = [2, 2] //0.35
+			Type = MediaEffects
+			FactorEffectsWith = Hit
+			FactorEffectsExponent = 0.5
+			MediaEffects
+			[
+				&<particles/disruptor_bolt_oc_lightning.rules>
+			]
 		}
-	}
-	GlowSprite
-	{
-		Type = Sprite
-		RenderBucket = BulletUpper2
-		Z = 0
-		IsLight = true
 		Sprite
 		{
-			Texture
+			Type = Sprite
+			ReduceScaleWith = Hit
+			ReduceScaleExponent = 0.5
+			Sprite
 			{
-				File = "./Data/common_effects/particles/blob.png"
-				MipLevels = max
-				SampleMode = Linear
+				Texture
+				{
+					File = "particles/disruptor_bolt_hit_orb.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				VertexColor = [0, 0, 255, 255]
+				Size = [2.5, 2.5] //0.35
 			}
-			Size = [2.5, 1.2]
-			VertexColor = [0, 240, 240]
-			TargetBlendMode = Add
-			Shader = "./Data/common_effects/fancy_light.shader"
-			_litReflectiveStrength = 24
-			_litAdditiveStrength = 0.05
-			_unlitAdditiveStrength = 0.25
 		}
 	}
 }
