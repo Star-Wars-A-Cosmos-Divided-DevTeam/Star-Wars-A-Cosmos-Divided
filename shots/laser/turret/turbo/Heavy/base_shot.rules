@@ -1,13 +1,34 @@
 // LOCATION: shots/laser/turret/turbo/heavy/base_shot.rules
 // USED IN: shots/laser/turret/turbo/heavy/blue_shot.rules, shots/laser/turret/turbo/heavy/red_shot.rules, shots/laser/turret/turbo/heavy/green_shot.rules
 // BASE FOR: Turbolaser Heavy Turret Shots
+// TURRETS: Quad Turbo, Heavy Turbo, & XX9 Turbo
 // STRINGKEY: NONE
+
+//Base Stats
+DAMAGE_SHIELD_BASE = 4000
+DAMAGE_BASE = 4000
+DAMAGE_STRUCT_BASE = (&~/DAMAGE_BASE)/2
+IMPULSE_BASE = 100
+EXPLOSIVE_DAMAGE_BASE = 0
+AREA_DAMAGE_BASE = 0
+DAMAGE_POOL_BASE = 0
+PENETRATION_DAMAGE_BASE = (&~/DAMAGE_BASE)/2
+PENETRATION_BASE = 5
+PENETRATION_SPEED_BASE = 20
+ARMOR_PENETRATION_FACTOR_BASE = 0
+DRAIN_DURATION_BASE = 0
+DRAIN_PER_SECOND_BASE = 0
+SHIELD_DRAIN_PER_SECOND_BASE = 0
+DAMAGE_RADIUS_BASE = 1
+
+
+//Base Shot
 ID = "SW.turbolaser_turret_heavy_laser_base" 
 // OtherIDs = [""]
 Range = 400
 IdealRange = [120, &~/Range]
 IdealRadius = [5, 50]
-Speed = 140
+Speed = 80
 ReceivableBuffs = [ElectronBuff]
 
 Components
@@ -28,37 +49,46 @@ Components
 	Targetable
 	{
 		Type = Targetable
-		Health = 1000
+		Health = 4000
 		TargetCategory = "laser"
 	}
 
 	Hit
 	{
 		Type = PenetratingHit
-		FactorEffectsWith = Targetable
+		//FactorEffectsWith = Targetable
+		Penetration = (&~/PENETRATION_BASE)
+		PenetrationSpeed = (&~/PENETRATION_SPEED_BASE)
 
-		FriendlyShipLowCollisions = false
 		CrewCollisions = {Enemies=true; Junk=true}
+		FriendlyShipLowCollisions = false
+		PenetratesCrew = true
+
 		HitCrew = &HitOperational
 
 		HitShield = &HitOperational
+
 		HitOperational
 		{
+			ReduceEffectsByPenetration = true
 			Offset = [-0.15, 0]
 
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = { BaseValue = 1000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
-				{ Type = Impulse; Impulse = { BaseValue =   15; EffectScaleExponent = 1 } }
+				{ Type = Damage;  Damage  = { BaseValue = (&~/DAMAGE_BASE); BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue = (&~/IMPULSE_BASE); EffectScaleExponent = 1 } }
 			]
 
 		}
 		HitStructural
 		{
+			ReduceEffectsByPenetration = true
+			Offset = [0.5, 0]
+
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = { BaseValue = 500; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
-				{ Type = Impulse; Impulse = { BaseValue =   5; EffectScaleExponent = 1 } }
+				{ Type = Damage;  Damage  = { BaseValue = (&~/DAMAGE_STRUCT_BASE); BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue = (&~/IMPULSE_BASE)/2; EffectScaleExponent = 1 } }
 			]
 		}
 
@@ -68,15 +98,10 @@ Components
 
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = { BaseValue = 500; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
-				{ Type = Impulse; Impulse = { BaseValue =   5; EffectScaleExponent = 1 } }
+				{ Type = Damage;  Damage  = { BaseValue = (&~/PENETRATION_DAMAGE_BASE); BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue =  &~/IMPULSE_BASE; EffectScaleExponent = 1 } }
 			]
 
-			/*MediaEffects
-			[
-				&/SW_PARTICLES/Shot/Laser/Flash/Med/Blue
-				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Blue
-			]*/
 		}
 		PenetratingStructural
 		{
@@ -101,17 +126,13 @@ Components
 					SampleMode = Linear
 					MipLevels = max
 				}
-				Size = [0.64, 0.64]
+				Size = [2, .75]
 			}
 			FrameCount = 8
-			FrameSize = [128, 128]
+			FrameSize = [192, 128]
 			FramesPerRow = 2
 			FramesPerSecond = 32
 		}
-		// Vanilla norm map passthrough:
-		//NormalsTexture = &Animation/AtlasSprite/Texture
-		//DiffuseShader  = "./Data/default.shader"
-		//NormalsShader  = "./Data/no_normals.shader"
 	}
 
 	GlowSprite
@@ -128,9 +149,13 @@ Components
 				MipLevels = max
 				SampleMode = Linear
 			}
-			Size = [3, 3]
+			Size = [9, 9]
+			//VertexColor = [0, 0, 255]
 			TargetBlendMode = Add
 			Shader = "./Data/common_effects/fancy_light.shader"
+			//_litReflectiveStrength = 24
+			//_litAdditiveStrength = 0.05
+			//_unlitAdditiveStrength = 0.25
 		}
 	}
 

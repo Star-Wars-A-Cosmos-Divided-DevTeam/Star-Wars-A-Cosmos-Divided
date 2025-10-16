@@ -1,0 +1,214 @@
+ID = "cosmoteer.bullet_large"
+OtherIDs = ["big_bullet", "bullet_big"]
+Range = 190
+IdealRange = [75, 190]
+IdealRadius = [5, 50]
+Speed = 150
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.3
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 1000
+		TargetCategory = "bullet"
+
+		OnDeath
+		{
+			MediaEffects = &~/Components/Hit/HitOperational/MediaEffects
+		}
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		Penetration = 7.0
+		PenetrationSpeed = 25
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
+		HitShield = &HitOperational
+		HitOperational
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = { BaseValue = 2400; EffectScaleExponent = 1 }
+				}
+				{
+					Type = Impulse
+					Impulse = { BaseValue = 60; EffectScaleExponent = 1 }
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/bullet_hit_large.rules>
+				&<particles/bullet_hit_large_sparks.rules>
+				&<particles/bullet_smoke_large.rules>
+				&<particles/bullet_flash_large.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["sounds/large_cannon_impact_01.wav",
+									"sounds/large_cannon_impact_01.wav",
+									"sounds/large_cannon_impact_01.wav"]
+					Volume = 1
+					SpeedVariation = .2
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .1
+					Duration = .75
+				}
+			]
+		}
+		HitStructural
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [0.5, 0]
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = { BaseValue = 1200; EffectScaleExponent = 1 }
+				}
+				{
+					Type = Impulse;
+					Impulse = { BaseValue = 30; EffectScaleExponent = 1 }
+				}
+			]
+
+			MediaEffects
+			[
+				&<../bullet_med/particles/bullet_hit_med.rules>
+				&<particles/bullet_hit_large_sparks.rules>
+				&<particles/bullet_flash_large_struct.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["sounds/large_cannon_impact_01.wav",
+									"sounds/large_cannon_impact_01.wav",
+									"sounds/large_cannon_impact_01.wav"]
+					Volume = 1
+					SpeedVariation = .2
+				}
+			]
+		}
+		PenetratingOperational
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = { BaseValue = 2400; EffectScaleExponent = 1 }
+				}
+				{
+					Type = StatusApplication
+					StatusType = cosmoteer.fire
+					StatusChance = { BaseValue = .4; EffectScaleExponent = 1 }
+					ValueType = Interpolated
+				}
+				{
+					Type = Impulse
+					Impulse = { BaseValue = 60; EffectScaleExponent = 1 }
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/bullet_hit_large.rules>
+				&<particles/bullet_hit_large_sparks.rules>
+			]
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = bullet_large.png
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [0.7, 0.7]
+			}
+			FrameCount = 16
+			FrameSize = [256, 256]
+			FramesPerRow = 4
+			FramesPerSecond = 120
+		}
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Offset = [-1, 0]
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [12, 6]
+			VertexColor = [255, 100, 0]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_z = 1
+            _nrmlStrengthLimit = 1
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.125
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		MediaEffects
+		[
+			&<particles/bullet_trail_large.rules>
+		]
+	}
+}

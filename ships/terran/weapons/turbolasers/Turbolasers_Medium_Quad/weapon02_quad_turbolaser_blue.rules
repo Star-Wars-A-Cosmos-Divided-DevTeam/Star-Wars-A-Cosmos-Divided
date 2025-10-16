@@ -1,6 +1,60 @@
 Components
 {
 
+		WeaponEmitter : &<medium_turbolaser_quad_switchable.rules>/Part/Components/WeaponEmitterBase
+		{
+			FireTrigger = ShootTrigger1
+			Type = BulletEmitter
+			Location = [2.125, 0.78125]
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Heavy/Blue
+		}
+
+		WeaponEmitter2 : WeaponEmitter
+		{
+			FireTrigger = ShootTrigger2
+			Type = BulletEmitter
+			Location = [2.125, -0.78125]
+		}
+		WeaponEmitter3 : WeaponEmitter
+		{
+			Location = [((2.125)-(0.5)), 0.76125]
+		}
+		WeaponEmitter4 : WeaponEmitter2
+		{
+			Location = [((2.125)-(0.5)), -0.76125]
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = WeaponEmitter
+			Trigger = ShootTrigger1
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Large/Blue
+			]
+		}
+
+		FireEffect2 : FireEffect
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = ShootTrigger2
+		}
+		FireEffect3 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter3
+			Trigger = WeaponEmitter3
+		}
+		FireEffect4 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter4
+			Trigger = WeaponEmitter4
+		}
+
+	}
+
 		/* TurretGraphics
 		{
 			Type = Graphics
@@ -22,6 +76,7 @@ Components
 				]
 			}
 		} */
+		/*
 		BarrelSpriteL
 		{
 			Type = Sprite
@@ -85,12 +140,13 @@ Components
 			LowColor = [0, 0, 64]
 			HighColor = [0, 0, 255]
 		}
+*/
 
-		BulletEmitterLeft : &<medium_turbolaser_quad_switchable.rules>/BulletEmitterBase
+/*		BulletEmitterLeft : &<medium_turbolaser_quad_switchable.rules>/BulletEmitterBase
 		{
 			Type = BulletEmitter
 			Location = [2.125, 0.78125]
-			Bullet = &/SW_SHOTS/turretturbolaserheavylaserblueshot
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Heavy/Blue
 		}
 
 		BulletEmitterRight : BulletEmitterLeft
@@ -98,7 +154,8 @@ Components
 			Type = BulletEmitter
 			Location = [2.125, -0.78125]
 		}
-
+*/
+/*
 		FireEffectLeft
 		{
 			Type = TriggeredEffects
@@ -117,7 +174,8 @@ Components
 			ChainedTo = BulletEmitterRight
 			Trigger = BulletEmitterRight
 		}
-
+*/
+/*
 		LightGraphics
 		{
 			Type = Graphics
@@ -140,8 +198,8 @@ Components
 				]
 			}
 		}
-	}
-LaserStats
+		*/
+/*LaserStats
 {
 	NameKey = "StatCategories/HeavyBlueLasershot"
 	Stats
@@ -155,4 +213,4 @@ LaserStats
 		//ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
 		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
 	}
-}
+}*/
