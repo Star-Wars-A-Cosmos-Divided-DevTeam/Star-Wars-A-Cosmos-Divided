@@ -19,7 +19,7 @@ contains example blocks for behaviors (e.g., EMP, status effects, drain, media o
 ## Recommended Workflow
 
 ### 1. Copy the Existing Light Turbolaser Folder
-Use `shots/laser/turret/turbo/light/` as your **base template** — this includes a complete inheritance-ready structure:
+Use `shots/laser/turret/turbo/heavy/` as your **base template** — this includes a complete inheritance-ready structure:
 - `base_shot.rules` → shared projectile stats  
 - `red_shot.rules`, `blue_shot.rules`, `green_shot.rules` → color-specific visuals  
 - `overclock/` → contains `oc_base_shot.rules` and the OC color variants  
@@ -30,7 +30,7 @@ Use `shots/laser/turret/turbo/light/` as your **base template** — this include
 ---
 
 ### 2. Create the Target Folder
-Copy the `light` folder (and its `overclock/` subfolder) into your new path, for example:
+Copy the contents of `heavy` folder from `shots/laser/turret/turbo/` (and its `overclock/` subfolder) into your new path, for example:
 
 ```
 
@@ -211,7 +211,7 @@ shots/
 ## Related References
 
 * Snippet reference: `memory-bank/docs/oc_overclock_shot_template.rules`
-* Example baseline: `shots/laser/turret/turbo/light/overclock/`
+* Example baseline: `shots/laser/turret/turbo/heavy/`
 * Vanilla comparison: `./Data/shots/laser_bolt_large_overclock.rules`
 
 ---
@@ -219,6 +219,3 @@ shots/
 ```
 
 ---
-
-Would you like me to also generate the corresponding **front-matter YAML block** (`title`, `category`, `last_updated`, etc.) for your documentation index (so it can be slotted into your `memory-bank/docs` folder cleanly)?
-```
