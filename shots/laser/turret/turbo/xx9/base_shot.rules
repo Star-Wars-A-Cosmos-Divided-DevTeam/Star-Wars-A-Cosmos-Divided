@@ -1,0 +1,165 @@
+// LOCATION: shots/laser/turret/turbo/xx9/base_shot.rules
+// USED IN: shots/laser/turret/turbo/xx9/blue_shot.rules, shots/laser/turret/turbo/xx9/red_shot.rules, shots/laser/turret/turbo/xx9/green_shot.rules
+// BASE FOR: Turbolaser Heavy Turret Shots
+// TURRETS: Quad Turbo, Heavy Turbo, & XX9 Turbo
+// STRINGKEY: NONE
+
+//Base Stats
+DAMAGE_SHIELD_BASE = 2600
+DAMAGE_BASE = 2600
+DAMAGE_STRUCT_BASE = (&~/DAMAGE_BASE)/2
+DAMAGE_EXPLOSIVE_BASE = 2600
+AREA_DAMAGE_BASE = 0
+DAMAGE_POOL_BASE = 0
+IMPULSE_BASE = 100
+IMPULSE_EXPLOSIVE_BASE = 10
+PENETRATION_DAMAGE_BASE = (&~/DAMAGE_BASE)/2
+PENETRATION_BASE = 9
+PENETRATION_SPEED_BASE = 20
+ARMOR_PENETRATION_FACTOR_BASE = 0
+DRAIN_DURATION_BASE = 0
+DRAIN_PER_SECOND_BASE = 0
+SHIELD_DRAIN_PER_SECOND_BASE = 0
+DAMAGE_RADIUS_BASE = 5
+DAMAGE_SLICES_BASE = 5
+HEALTH_BASE = 4000
+
+//Base Shot
+ID = "SW.turbolaser_turret_xx9_laser_base" 
+// OtherIDs = [""]
+Range = 450
+IdealRange = [120, &~/Range]
+IdealRadius = [5, 50]
+Speed = 80
+ReceivableBuffs = [ElectronBuff]
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.2
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = &~/HEALTH_BASE
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		//FactorEffectsWith = Targetable
+		Penetration = (&~/PENETRATION_BASE)
+		PenetrationSpeed = (&~/PENETRATION_SPEED_BASE)
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		FriendlyShipLowCollisions = false
+		PenetratesCrew = true
+
+		HitCrew = &HitOperational
+
+		HitShield = &HitOperational
+
+		HitOperational
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [-0.25, 0]
+
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = { BaseValue = (&~/DAMAGE_BASE); BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue = (&~/IMPULSE_BASE); EffectScaleExponent = 1 } }
+			]
+
+		}
+		HitStructural
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [0.5, 0]
+
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = { BaseValue = (&~/DAMAGE_STRUCT_BASE); BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue = (&~/IMPULSE_BASE)/2; EffectScaleExponent = 1 } }
+			]
+		}
+
+		PenetratingOperational
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = { BaseValue = (&~/PENETRATION_DAMAGE_BASE); BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue =  &~/IMPULSE_BASE; EffectScaleExponent = 1 } }
+				{ Type = ExplosiveDamage; TotalDamage = { BaseValue=&~/DAMAGE_EXPLOSIVE_BASE; EffectScaleExponent=1; }; Radius = &~/DAMAGE_RADIUS_BASE; Slices = &~/DAMAGE_SLICES_BASE; ImpulsePerNDamage = &~/IMPULSE_EXPLOSIVE_BASE; NDamage = &TotalDamage/BaseValue; }
+			]
+
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [2.2, .75]
+			}
+			FrameCount = 2
+			FrameSize = [304, 105]
+			FramesPerRow = 1
+			FramesPerSecond = 32
+		}
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [9, 9]
+			//VertexColor = [0, 0, 255]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			//_litReflectiveStrength = 24
+			//_litAdditiveStrength = 0.05
+			//_unlitAdditiveStrength = 0.25
+		}
+	}
+
+}

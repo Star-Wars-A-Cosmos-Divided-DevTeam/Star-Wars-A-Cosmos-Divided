@@ -1,0 +1,301 @@
+// LOCATION: shots/laser/turret/turbo/xx9/overclock/oc_base_shot.rules
+// PURPOSE: Shared overclock stats/behavior for all xx9 turbolaser shots
+// NOTE: No color media here -- color OC files pull visuals from their non-OC counterparts.
+
+BASE = &<../base_shot.rules>
+
+ID = "SW.turbolaser_turret_xx9_laser_base_overclock"
+
+// OC scalars (match base values but keep hooks for tuning)
+DAMAGE_SHIELD   			= 200% * (&BASE/DAMAGE_SHIELD_BASE)
+DAMAGE    					= 85% * (&BASE/DAMAGE_BASE)
+DAMAGE_STRUCT   			= 100% * (&BASE/DAMAGE_STRUCT_BASE)
+DAMAGE_EXPLOSIVE			= (&BASE/DAMAGE_EXPLOSIVE_BASE)
+AREA_DAMAGE					= (&BASE/AREA_DAMAGE_BASE)
+PENETRATION  				= 200% * (&BASE/PENETRATION_BASE)
+PENETRATION_DAMAGE   		= 85% * (&BASE/PENETRATION_DAMAGE_BASE)
+PENETRATION_SPEED  	 		= 175% * (&BASE/PENETRATION_SPEED_BASE)
+ARMOR_PENETRATION_FACTOR	= (&BASE/ARMOR_PENETRATION_FACTOR_BASE)
+IMPULSE      				= 100% * (&BASE/IMPULSE_BASE)
+IMPULSE_EXPLOSIVE			= (&BASE/IMPULSE_EXPLOSIVE_BASE)
+DRAIN_DURATION				= (&BASE/DRAIN_DURATION_BASE)
+DRAIN_PER_SECOND			= (&BASE/DRAIN_PER_SECOND_BASE)
+SHIELD_DRAIN_PER_SECOND		= (&BASE/SHIELD_DRAIN_PER_SECOND_BASE)
+HEALTH       				= 200% * (&BASE/HEALTH_BASE)
+DAMAGE_RADIUS				= 100% * (&BASE/DAMAGE_RADIUS_BASE)
+DAMAGE_SLICES				= (&BASE/DAMAGE_SLICES_BASE)
+DAMAGE_POOL 				= 3000 // (&BASE/DAMAGE_POOL_BASE)
+
+MODIFIABLE_DAMAGE
+{
+	Modifiers
+	[
+		{
+			Type = Buff
+			BuffType = ElectronBuff
+			ModificationMode = Multiply
+		}
+		{
+			Type = EffectScale
+			ModificationMode = Multiply
+		}
+	]
+}
+
+// Top-level properties tied to OC scalars
+Range           = 125% * (&BASE/Range)
+IdealRange      = [120, &~/Range]
+IdealRadius     = &BASE/IdealRadius
+Speed           = 175% * (&BASE/Speed)
+ReceivableBuffs = &BASE/ReceivableBuffs
+
+// Inherit base, but override key BaseValue fields to use OC scalars
+Components : &BASE/Components
+{
+
+	DamagePool
+	{
+		Type   = DamagePool
+		Damage = { BaseValue = &~/DAMAGE_POOL; EffectScaleExponent = 1; }
+	}
+	Death : ^/0/Death
+	{
+        OnDeath
+        {
+            HitEffects
+			[
+				{
+                    Type = ExplosiveDamage
+                    TotalDamage	= { BaseValue = &~/DAMAGE_POOL; EffectScaleExponent = 1 }
+                    Radius = 3
+                    ExpandDuration = 0.9
+                    ExpandStartRadius = 2
+                    ExpandLoss = 100%
+                    ImpulsePerNDamage = 10
+                    NDamage = 10000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = true
+						Friendlies = true
+					}
+                }
+            ]
+            //MediaEffects = &<./Data/shots/missile_nuke/missile_nuke_stage1.rules>/Components/Hit/HitOperational/MediaEffects //TODO: Implement Custom Graphics
+        }
+	}
+
+	Targetable : ^/0/Targetable
+	{
+		Health = &~/HEALTH
+	}
+
+	Hit : ^/0/Hit
+	{
+		Penetration      = &~/PENETRATION
+		PenetrationSpeed = &~/PENETRATION_SPEED
+		// Keep same structure & media; only scale values via variables above
+		HitShield = &HitOperational
+		HitOperational : ^/0/HitOperational
+		{
+			Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{	Type = Damage; Damage = { BaseValue= &~/DAMAGE; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; }	}
+				{
+					Type = ChainLightning
+					MaxChainLength = [3, 5]
+					InitialRadius = &~/DAMAGE_RADIUS
+					ChainRadius = &~/DAMAGE_RADIUS
+					InitialChance = 100%
+					InitialStrikes = [1, 1]
+					InitialStrikeRandomOffsetRadius = 0
+					RaycastInitialTargets = true
+					ChainChance = 100%
+					ChainStrikes = [3, 6]
+					MaxInitialAngle = 90d
+					MaxChainAngle = 90d
+					ChainDelay = 0.15
+					ChainEffectFalloff = 0.5
+					HitEffects
+					[
+						{	Type = Damage; Damage : ~/MODIFIABLE_DAMAGE	{	BaseValue = 150;	}; Filter	{	Self = false;	};	}
+						{
+							Type = ExplosiveDamage
+							TotalDamage = { BaseValue = 15; EffectScaleExponent = 1 }
+							Radius = 3
+							ExpandDuration = 1
+							ExpandStartRadius = 2
+							ExpandLoss = 100%
+							ImpulsePerNDamage = 10
+							NDamage = 10
+							Filter
+							{
+								OperationalHealth = true
+								StructuralHealth = true
+								Friendlies = false
+							}
+						}
+
+					]
+					MediaEffects
+					[
+						&<particles/StaticCharge_overclock_lightning_hit.rules>
+						&<particles/StaticCharge_overclock_flash.rules>
+						&<particles/StaticCharge_hit_sparks.rules>
+					]
+					ChainMediaEffects
+					[
+						&<particles/StaticCharge_overclock_lightning_chain.rules>
+						&<particles/StaticCharge_overclock_flash.rules>
+						&<particles/StaticCharge_hit_sparks.rules>
+					]
+					HitFilter
+					{
+						Self = false
+						Friendlies = false
+						Enemies = true
+						Neutrals = true
+						Junk = true
+					
+						Ships = true
+						OperationalHealth = true
+						StructuralHealth = true
+						Shields = true
+						Bullets = true
+						Crew = true
+						Nuggets = true
+						IgnoreInvulnerability = true
+					}
+					InitialFilter
+					{
+						IgnoreInvulnerability = true
+					}
+				}
+				{
+					Type = Impulse;
+					Impulse = { BaseValue = 10; EffectScaleExponent = 1 }
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/laser_bolt_large_overclock_hit_red.rules>
+				&<particles/laser_bolt_large_overclock_sparks.rules>
+				&<particles/laser_bolt_large_overclock_flash.rules>
+
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/sw_ion_impact.wav"
+					Volume = .4
+					SpeedVariation = .4
+				}
+				
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["sounds/ion_lightning_strike_01.wav",
+									"sounds/ion_lightning_strike_02.wav",
+									"sounds/ion_lightning_strike_03.wav",
+									"sounds/ion_lightning_strike_04.wav",
+									"sounds/ion_lightning_strike_05.wav",
+									"sounds/ion_lightning_strike_06.wav",
+									"sounds/ion_lightning_strike_07.wav"]
+					Volume = 0.75
+					Speed = .5
+					SpeedVariation = .15
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .06
+					Duration = .3
+				}
+				
+				: <particles/StaticCharge_overclock_spikes.rules>
+				{
+					Filter
+					{
+					}
+				}
+				
+				: <particles/StaticCharge_overclock_sparks_radial.rules>
+				{
+					Filter
+					{
+					}
+				}
+		
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/sw_ion_impact.wav"
+					Db = 2
+					MaxConcurrent = 1
+					MaxConcurrentVolume = 1
+					RampUpTime = 0.25
+					RampDownTime = 0.25
+					Filter
+					{
+					}
+				}
+				{
+					Type = Quad
+					Bucket = IonHitSpikes
+					IntensityScaleFactor = 1
+					IntensityScaleExponent = 0.5
+					FadeInTime = 0.2
+					FadeOutTime = 0.2
+					Sprite
+					{
+						Color = [255, 255, 255, 255]
+						Size = [24, 24]
+						Shader = particles/ion_storm.shader
+						Texture
+						{
+							File = ./Data/common_effects/particles/noise_voronoi.png
+							SampleMode = Linear
+							MipLevels = max
+							UMode = Wrap
+							VMode = Wrap
+						}
+						_noiseTex1
+						{
+							File = ./Data/common_effects/particles/noise_cracks.png
+							SampleMode = Linear
+							MipLevels = max
+							UMode = Wrap
+							VMode = Wrap
+						}
+						_color1 = [255 * 0.9, 0, 0, 255]
+						_color2 = [255, 255 * 0.8, 255 * 0.8, 255]
+						_noise1ScrollSpeed = [-0.03, -0.3]
+						_noise2ScrollSpeed = [0.04, -0.34]
+						TargetBlendMode = Add
+					}
+					Filter
+					{
+					}
+				}
+			]
+		}
+
+		HitStructural = &HitOperational
+
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			HitEffects
+			[
+				: ../^/0/HitEffects/0 { Damage  : ^/0/Damage  { BaseValue = &~/PENETRATION_DAMAGE } }
+				: ../^/0/HitEffects/1 { Impulse : ^/0/Impulse { BaseValue = &~/IMPULSE } }
+				: ../^/0/HitEffects/2 {}
+			]
+		}
+
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural  = &PenetratingStructural
+	}
+
+	// Keep Sprite present (base uses ReduceScaleWith=Hit)
+	Sprite : ^/0/Sprite {}
+}

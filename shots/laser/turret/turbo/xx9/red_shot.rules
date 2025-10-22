@@ -1,0 +1,106 @@
+// LOCATION: shots/laser/turret/turbo/xx9/red_shot.rules
+// USED IN: ships/terran/weapons/turbolasers/Turbolasers_Octuple_Barbette/octuple_barbette_turbolaser.rules, ships/terran/weapons/turbolasers/Turbolasers_Octuple_Barbette/quad_barbette_turbolaser.rules,
+// BASE IS: &<base_shot.rules>
+// STRINGKEY: NONE
+BASESHOT = &<base_shot.rules>
+
+DAMAGE_SHIELD_BASE = (&BASESHOT/DAMAGE_SHIELD_BASE)
+DAMAGE_BASE = (&BASESHOT/DAMAGE_BASE)
+DAMAGE_STRUCT_BASE = (&BASESHOT/DAMAGE_STRUCT_BASE)
+DAMAGE_EXPLOSIVE_BASE = (&BASESHOT/DAMAGE_EXPLOSIVE_BASE)
+AREA_DAMAGE_BASE = (&BASESHOT/AREA_DAMAGE_BASE)
+DAMAGE_POOL_BASE = (&BASESHOT/DAMAGE_POOL_BASE)
+IMPULSE_BASE = (&BASESHOT/IMPULSE_BASE)
+IMPULSE_EXPLOSIVE_BASE = (&BASESHOT/IMPULSE_EXPLOSIVE_BASE)
+PENETRATION_DAMAGE_BASE = (&BASESHOT/PENETRATION_DAMAGE_BASE)
+PENETRATION_BASE = (&BASESHOT/PENETRATION_BASE)
+PENETRATION_SPEED_BASE = (&BASESHOT/PENETRATION_SPEED_BASE)
+ARMOR_PENETRATION_FACTOR_BASE = (&BASESHOT/ARMOR_PENETRATION_FACTOR_BASE)
+DRAIN_DURATION_BASE = (&BASESHOT/DRAIN_DURATION_BASE)
+DRAIN_PER_SECOND_BASE = (&BASESHOT/DRAIN_PER_SECOND_BASE)
+SHIELD_DRAIN_PER_SECOND_BASE = (&BASESHOT/SHIELD_DRAIN_PER_SECOND_BASE)
+DAMAGE_RADIUS_BASE = (&BASESHOT/DAMAGE_RADIUS_BASE)
+DAMAGE_SLICES_BASE = (&BASESHOT/DAMAGE_SLICES_BASE)
+
+
+ID = SW.turbolaser_turret_xx9_laser_red_shot //TURRET WEAPONSHOT
+// OtherIDs = ["red_xx9_laser_shot""]
+Range = &BASESHOT/Range
+IdealRange =  &BASESHOT/IdealRange
+IdealRadius = &BASESHOT/IdealRadius
+Speed = &BASESHOT/Speed
+ReceivableBuffs = &BASESHOT/ReceivableBuffs
+
+Components : &BASESHOT/Components
+{
+	Hit : ^/0/Hit
+	{
+		HitCrew = &HitOperational
+		HitShield = &HitOperational
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Hit/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .1
+					Duration = .4
+				}
+			]
+		}
+
+		HitStructural : ^/0/HitStructural
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/HitStruct/Med/Red
+
+				&/SW_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+			]
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	Sprite : ^/0/Sprite
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture : ^/0/Texture
+				{
+					File = "particles/xx9_blast_red_shot.png"
+				}
+			}
+		}
+	}
+	GlowSprite : ^/0/GlowSprite
+	{
+		Sprite : ^/0/Sprite
+		{
+			VertexColor = [255, 0, 0]
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
+	}
+}
