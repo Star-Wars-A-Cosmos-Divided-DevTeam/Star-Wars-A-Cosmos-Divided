@@ -25,25 +25,55 @@ Components : &BASE_OC/Components
 	// Re-apply GREEN hit/flash/sparks media (keep OC damage model)
 	Hit : ^/0/Hit
 	{
-		HitShield : ^/0/HitShield
-		{
-			//MediaEffects = &~/BLUE/Components/Hit/HitOperational/MediaEffects
-		}
 		HitOperational : ^/0/HitOperational
 		{
-			/*MediaEffects
+
+
+			HitEffects
+			[
+				: ../^/0/HitEffects/0 {}
+				: ../^/0/HitEffects/1
+				{
+					MediaEffects
+					[
+						&<particles/StaticCharge_overclock_lightning_hit_green.rules>
+						&<particles/StaticCharge_overclock_flash.rules>
+						&<particles/StaticCharge_hit_sparks_green.rules>
+					]
+					ChainMediaEffects
+					[
+						&<particles/StaticCharge_overclock_lightning_chain_green.rules>
+						&<particles/StaticCharge_overclock_flash.rules>
+						&<particles/StaticCharge_hit_sparks_green.rules>
+					]
+				}
+				: ../^/0/HitEffects/2 {}
+			]
+			MediaEffects
 			[
 				&<particles/laser_bolt_large_overclock_hit_green.rules>
-				&<particles/laser_bolt_large_overclock_flash.rules>
 				&<particles/laser_bolt_large_overclock_sparks.rules>
-				
+				&<particles/laser_bolt_large_overclock_flash.rules>
+
 				: /BASE_SOUNDS/AudioExterior
 				{
-					RandomSounds = ["sounds/xx9_laser_overclocked_impact_01.wav",
-									"sounds/xx9_laser_overclocked_impact_02.wav",
-									"sounds/xx9_laser_overclocked_impact_03.wav"]
-					Volume = 1
-					SpeedVariation = .05
+					Sound = "sounds/sw_ion_impact.wav"
+					Volume = .4
+					SpeedVariation = .4
+				}
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["sounds/ion_lightning_strike_01.wav",
+									"sounds/ion_lightning_strike_02.wav",
+									"sounds/ion_lightning_strike_03.wav",
+									"sounds/ion_lightning_strike_04.wav",
+									"sounds/ion_lightning_strike_05.wav",
+									"sounds/ion_lightning_strike_06.wav",
+									"sounds/ion_lightning_strike_07.wav"]
+					Volume = 0.75
+					Speed = .5
+					SpeedVariation = .15
 				}
 
 				: /BASE_SHAKE
@@ -51,19 +81,72 @@ Components : &BASE_OC/Components
 					ShakeAmount = .06
 					Duration = .3
 				}
-			]*/
-		}
-		HitStructural : ^/0/HitStructural
-		{
-			//MediaEffects = &~/GREEN/Components/Hit/HitStructural/MediaEffects
-		}
-		PenetratingOperational : ^/0/PenetratingOperational
-		{
-			//MediaEffects = &~/GREEN/Components/Hit/PenetratingOperational/MediaEffects
-		}
-		FinishedPenetratingStructural : ^/0/FinishedPenetratingStructural
-		{
-			//MediaEffects = &~/GREEN/Components/Hit/PenetratingOperational/MediaEffects
+
+				: <particles/StaticCharge_overclock_spikes_green.rules>
+				{
+					Filter
+					{
+					}
+				}
+
+				: <particles/StaticCharge_overclock_sparks_radial_green.rules>
+				{
+					Filter
+					{
+					}
+				}
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/sw_ion_impact.wav"
+					Db = 2
+					MaxConcurrent = 1
+					MaxConcurrentVolume = 1
+					RampUpTime = 0.75
+					RampDownTime = 0.75
+					Filter
+					{
+					}
+				}
+				{
+					Type = Quad
+					Bucket = IonHitSpikes
+					IntensityScaleFactor = 1
+					IntensityScaleExponent = 0.5
+					FadeInTime = 0.2
+					FadeOutTime = 0.2
+					Sprite
+					{
+						Color = [255, 255, 255, 255]
+						Size = [24, 24]
+						Shader = particles/ion_storm.shader
+						Texture
+						{
+							File = ./Data/common_effects/particles/noise_voronoi.png
+							SampleMode = Linear
+							MipLevels = max
+							UMode = Wrap
+							VMode = Wrap
+						}
+						_noiseTex1
+						{
+							File = ./Data/common_effects/particles/noise_cracks.png
+							SampleMode = Linear
+							MipLevels = max
+							UMode = Wrap
+							VMode = Wrap
+						}
+						_color1 = [0, 255, 0, 255]
+						_color2 = [255 * 0.8, 255, 255 * 0.8, 255]
+						_noise1ScrollSpeed = [-0.03, -0.3]
+						_noise2ScrollSpeed = [0.04, -0.34]
+						TargetBlendMode = Add
+					}
+					Filter
+					{
+					}
+				}
+			]
 		}
 	}
 

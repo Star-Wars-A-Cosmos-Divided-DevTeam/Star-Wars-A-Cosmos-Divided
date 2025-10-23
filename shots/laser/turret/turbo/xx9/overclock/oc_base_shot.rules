@@ -8,7 +8,7 @@ ID = "SW.turbolaser_turret_xx9_laser_base_overclock"
 
 // OC scalars (match base values but keep hooks for tuning)
 DAMAGE_SHIELD   			= 200% * (&BASE/DAMAGE_SHIELD_BASE)
-DAMAGE    					= 85% * (&BASE/DAMAGE_BASE)
+DAMAGE    					= 75% * (&BASE/DAMAGE_BASE)
 DAMAGE_STRUCT   			= 100% * (&BASE/DAMAGE_STRUCT_BASE)
 DAMAGE_EXPLOSIVE			= (&BASE/DAMAGE_EXPLOSIVE_BASE)
 AREA_DAMAGE					= (&BASE/AREA_DAMAGE_BASE)
@@ -43,7 +43,7 @@ MODIFIABLE_DAMAGE
 }
 
 // Top-level properties tied to OC scalars
-Range           = 125% * (&BASE/Range)
+Range           = 150% * (&BASE/Range)
 IdealRange      = [120, &~/Range]
 IdealRadius     = &BASE/IdealRadius
 Speed           = 175% * (&BASE/Speed)
@@ -72,7 +72,7 @@ Components : &BASE/Components
                     ExpandStartRadius = 2
                     ExpandLoss = 100%
                     ImpulsePerNDamage = 10
-                    NDamage = 10000
+                    NDamage = 5000
 					Filter
 					{
 						OperationalHealth = true
@@ -92,11 +92,12 @@ Components : &BASE/Components
 
 	Hit : ^/0/Hit
 	{
+		FactorEffectsWith = Targetable
 		Penetration      = &~/PENETRATION
 		PenetrationSpeed = &~/PENETRATION_SPEED
 		// Keep same structure & media; only scale values via variables above
 		HitShield = &HitOperational
-		HitOperational : ^/0/HitOperational
+		HitOperational //: ^/0/HitOperational
 		{
 			Offset = [-0.15, 0]
 
@@ -123,7 +124,7 @@ Components : &BASE/Components
 						{	Type = Damage; Damage : ~/MODIFIABLE_DAMAGE	{	BaseValue = 150;	}; Filter	{	Self = false;	};	}
 						{
 							Type = ExplosiveDamage
-							TotalDamage = { BaseValue = 15; EffectScaleExponent = 1 }
+							TotalDamage = { BaseValue = 25; EffectScaleExponent = 1 }
 							Radius = 3
 							ExpandDuration = 1
 							ExpandStartRadius = 2
@@ -137,20 +138,19 @@ Components : &BASE/Components
 								Friendlies = false
 							}
 						}
-
 					]
-					MediaEffects
-					[
-						&<particles/StaticCharge_overclock_lightning_hit.rules>
-						&<particles/StaticCharge_overclock_flash.rules>
-						&<particles/StaticCharge_hit_sparks.rules>
-					]
-					ChainMediaEffects
-					[
-						&<particles/StaticCharge_overclock_lightning_chain.rules>
-						&<particles/StaticCharge_overclock_flash.rules>
-						&<particles/StaticCharge_hit_sparks.rules>
-					]
+					//MediaEffects
+					//[
+					//	&<particles/StaticCharge_overclock_lightning_hit_blue.rules>
+					//	&<particles/StaticCharge_overclock_flash.rules>
+					//	&<particles/StaticCharge_hit_sparks.rules>
+					//]
+					//ChainMediaEffects
+					//[
+					//	&<particles/StaticCharge_overclock_lightning_chain_blue.rules>
+					//	&<particles/StaticCharge_overclock_flash.rules>
+					//	&<particles/StaticCharge_hit_sparks.rules>
+					//]					
 					HitFilter
 					{
 						Self = false
@@ -178,13 +178,11 @@ Components : &BASE/Components
 					Impulse = { BaseValue = 10; EffectScaleExponent = 1 }
 				}
 			]
-
-			MediaEffects
+/*			MediaEffects
 			[
-				&<particles/laser_bolt_large_overclock_hit_red.rules>
-				&<particles/laser_bolt_large_overclock_sparks.rules>
-				&<particles/laser_bolt_large_overclock_flash.rules>
-
+				//&<particles/laser_bolt_large_overclock_hit_blue.rules>
+				//&<particles/laser_bolt_large_overclock_sparks.rules>
+				//&<particles/laser_bolt_large_overclock_flash.rules>
 
 				: /BASE_SOUNDS/AudioExterior
 				{
@@ -192,7 +190,7 @@ Components : &BASE/Components
 					Volume = .4
 					SpeedVariation = .4
 				}
-				
+
 				: /BASE_SOUNDS/AudioExterior
 				{
 					RandomSounds = ["sounds/ion_lightning_strike_01.wav",
@@ -212,21 +210,21 @@ Components : &BASE/Components
 					ShakeAmount = .06
 					Duration = .3
 				}
-				
+
 				: <particles/StaticCharge_overclock_spikes.rules>
 				{
 					Filter
 					{
 					}
 				}
-				
+
 				: <particles/StaticCharge_overclock_sparks_radial.rules>
 				{
 					Filter
 					{
 					}
 				}
-		
+
 				: /BASE_SOUNDS/AudioExterior
 				{
 					Sound = "sounds/sw_ion_impact.wav"
@@ -267,8 +265,8 @@ Components : &BASE/Components
 							UMode = Wrap
 							VMode = Wrap
 						}
-						_color1 = [255 * 0.9, 0, 0, 255]
-						_color2 = [255, 255 * 0.8, 255 * 0.8, 255]
+						_color1 = [0, 255 * 0.85, 255, 255]
+						_color2 = [255 * 0.6, 255 * 0.9, 255, 255]
 						_noise1ScrollSpeed = [-0.03, -0.3]
 						_noise2ScrollSpeed = [0.04, -0.34]
 						TargetBlendMode = Add
@@ -277,7 +275,8 @@ Components : &BASE/Components
 					{
 					}
 				}
-			]
+			]*/
+			// MediaEffects provided by color-specific OC variants.
 		}
 
 		HitStructural = &HitOperational
