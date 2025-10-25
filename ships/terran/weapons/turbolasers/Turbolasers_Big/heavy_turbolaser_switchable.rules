@@ -1,4 +1,36 @@
-Part : &<../base_part_terran_turbolasers.rules>/Part
+OVERCLOCK
+{
+	BULLET  = &<../../../../../shots/laser/turret/turbo/heavy/overclock/oc_base_shot.rules>
+
+	BLUEBULLET  = &<../../../../../shots/laser/turret/turbo/heavy/overclock/oc_blue_shot.rules>
+	GREENBULLET = &<../../../../../shots/laser/turret/turbo/heavy/overclock/oc_green_shot.rules>
+	REDBULLET   = &<../../../../../shots/laser/turret/turbo/heavy/overclock/oc_red_shot.rules>
+
+	// Rate-of-fire scaler (2 = twice as fast)
+	FIRE_RATE_FACTOR = 85%
+	POWER_USE_FACTOR = 250%
+
+	// OC spread/recoil modifiers
+	HALF_SPREAD   = (&~/Part/Components/WeaponEmitterBase/Spread/1) * 2
+	RECOIL_FACTOR = 150%
+
+	// Heat hookup
+	HEAT_PER_SHOT   = 650
+	HEAT_PER_SECOND = 100
+
+	// Stun scaling
+	//CREW_STUN_DURATION = ((&~/Part/Components/StunEffect/HitEffects/0/Duration/BaseValue) * 3)
+	//CREW_STUN_RADIUS   = ((&~/Part/Components/StunEffect/HitEffects/0/Radius/BaseValue) * 3)
+}
+
+// Heat Producers
+HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
+HEAT_TO_STATUS   = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
+
+// Resources Used
+RESOURCES_USED = 1000
+
+Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 {	
 	
 	//IDs
@@ -13,7 +45,8 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 
 	//Groups&Categories
 	EditorGroups : ^/0/EditorGroups ["WeaponsEnergy", SWTechIII]
-	TypeCategories : ^/0/TypeCategories [weapon, uses_power,  is_crewed]
+	TypeCategories : ^/0/TypeCategories [weapon, uses_power, is_crewed]
+	SignificanceToggle = ScorchedToggle
 	//RequiresCategories = []
 
 	//Resources&Size&Health
@@ -37,30 +70,21 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 	InitialPenetrationResistance = 5
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs []
-	//ProhibitedBy : ^/0/ProhibitedBy [tall]
+	ReceivableBuffs : ^/0/ReceivableBuffs [ElectronBuff]
 
 	//Doors&Etc	
 	AutoDoorMaxPathLength = 8
 	MaxDoors = 4
 	AllowedDoorLocations
 	[
-		//[-1, 0]
-		//[-1, 1]
 		[-1, 2]
+		[4, 2]
 		[-1, 3]
+		[4, 3]
 		[0, 4]
 		[1, 4]
 		[2, 4]
 		[3, 4]
-		[4, 3]
-		[4, 2]
-		//[4, 1]
-		//[4, 0]
-		//[3, -1]
-		//[2, -1]
-		//[1, -1]
-		//[0, -1]
 	]
 
 	//Editor
@@ -81,7 +105,14 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles : ^/0/Toggles [PowerToggle, BatteryStorage, PartCrew]
+			Toggles : ^/0/Toggles [PowerToggle, PartCrew, BatteryStorage, ScorchedToggle, &~/Part/^/0/OVERCLOCK_OPERATIONAL]
+			Mode = All
+		}
+
+		CommandConsumptionToggle
+		{
+			Type = MultiToggle
+			Toggles = [PowerToggle, ScorchedToggle]
 			Mode = All
 		}
 
@@ -93,11 +124,115 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			RequiresCommand = false
 		}
 
+		ScorchedToggle
+		{
+			Type = StatusToggle
+			StatusType = cosmoteer.scorched
+			MinStatusValue = 1
+			Invert = true
+		}
+
 		CommandConsumer
 		{
 			Type = CommandConsumer
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 			CommandPoints = 12 //cannon_deck takes 8???
+		}
+
+		//OverclockSettings
+		OverclockStateValue
+		{
+			Type = ToggleValueSelector
+			Toggle = OverclockModeToggle
+			ToggleOffValue = Zero
+			ToggleOnValue = One
+		}
+
+		Zero { Type = StaticValue; Value = 0; }
+		One { Type = StaticValue; Value = 1; }
+
+		OverheatEffects : ^/0/OverheatEffects
+		{
+			Location = [2, 2]
+		}
+
+		WeaponEmitterProxy
+		{
+			Type = EmitterProxy
+			ComponentID = WeaponEmitter
+			ChainedTo = Turret
+		}
+		WeaponEmitter2Proxy : WeaponEmitterProxy
+		{
+			ComponentID = WeaponEmitter2
+		}
+
+		Overclock_EmissionTriggered
+		{
+			Type = MultiTrigger
+			OperationalToggle = IsOverclocked
+			Triggers = [ WeaponEmitterProxy, WeaponEmitter2Proxy ]
+		}
+		Overclock_ConstantHeatProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperationalOverclocked
+			HEAT_PER_INTERVAL = ceil((&~/OVERCLOCK/HEAT_PER_SECOND) * (&Interval))
+			ToQuantity = (&HEAT_PER_INTERVAL) * (&~/HEAT_TO_RESOURCE)
+			ToStorage  = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Interval = 0.5
+		}
+		Overclock_ShotHeatProducer
+		{
+			Type = ResourceChange
+			ResourceStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Trigger = Overclock_EmissionTriggered
+			Amount = (&~/OVERCLOCK/HEAT_PER_SHOT) * (&~/HEAT_TO_RESOURCE)
+		}
+
+
+		Port_Thermal_TopLeft : ~/Part/^/0/BASE_THERMAL_PORT
+		{
+			Location = [0, 0]
+			Direction = Left
+		}
+
+		Port_Thermal_LeftUp : Port_Thermal_TopLeft
+		{
+			Direction = Up
+		}
+
+		Port_Thermal_TopRight : Port_Thermal_LeftUp
+		{
+			Location = [3, 0]
+			Direction = Right
+		}
+
+		Port_Thermal_RightUp : Port_Thermal_TopRight
+		{
+			Direction = Up
+		}
+
+		Port_Thermal_MidUp1 : Port_Thermal_RightUp
+		{
+			Location = [1, 0]
+		}
+
+		Port_Thermal_MidUp2 : Port_Thermal_MidUp1
+		{
+			Location = [2, 0]
+		}
+
+		Port_Thermal_MidRight1 : Port_Thermal_MidUp2
+		{
+			Location = [3, 1]
+			Direction = Right
+		}
+
+		Port_Thermal_MidLeft1 : Port_Thermal_MidRight1
+		{
+			Location = [0, 1]
+			Direction = Left
 		}
 
 		FireModeToggle
@@ -105,29 +240,30 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			Type = UIToggle
 			ToggleID = "fire_mode"
 			Default = 1
-			AvailableChoices = [-1, 0, 1, 2] // REVIEW: Is this needed? Not in Vanilla Cannon Deck or Laser Blaser
 			ToggledOnChoices = [0, 1, 2]
 		}
+
 		AutoTargetToggle
 		{
 			Type = ModeToggle
 			Mode = FireModeToggle
 			OnModes = [1, 2]
 		}
+
 		AutoFireToggle
 		{
 			Type = ModeToggle
 			Mode = FireModeToggle
 			OnMode = 2
 		}
-		FireAlternatingToggle //REVIEW: Should this be cleaned up if unused?
+
+		FireAlternatingToggle
 		{
 			Type = UIToggle
 			ToggleID = "fire_alternating"
 			Default = 0
-			AvailableChoices = [0] //REVIEW: Vanilla does not use AvailableChoices
 		}
-
+/*
 		CommonReloadTimer
 		{
 			Type = Timer
@@ -147,7 +283,7 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			Type = TriggerProxy
 			ComponentID = CommonReloadResetTrigger
 		}
-
+*/
 //		SwitchWeaponCooldownProgressBar
 //		{
 //			Type = ProgressBar
@@ -183,47 +319,160 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
-
 		RedMunitionToggle
 		{
 			Type = ModeToggle
 			Mode = MunitionType
 			OnMode = 0
 		}
-		RedMunitionComponents
-		{
-			Type = ToggledComponents
-			Toggle = RedMunitionToggle
-			IncludeInBlueprints = false
-			Components = &<heavy/heavy_turbolaser_red.rules>/Components
-		}
-
 		BlueMunitionToggle
 		{
 			Type = ModeToggle
 			Mode = MunitionType
 			OnMode = 1
 		}
-		BlueMunitionComponents
-		{
-			Type = ToggledComponents
-			Toggle = BlueMunitionToggle
-			IncludeInBlueprints = false
-			Components = &<heavy/heavy_turbolaser_blue.rules>/Components
-		}
-
 		GreenMunitionToggle
 		{
 			Type = ModeToggle
 			Mode = MunitionType
 			OnMode = 2
 		}
-		GreenMunitionComponents
+		// ---- RED: Non-OC ----
+		RedMunitionNonOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ RedMunitionToggle, {Toggle=IsOverclocked; Invert=true} ]
+			Mode = All
+		}
+		RedMunitionComponents_NonOverclocked
 		{
 			Type = ToggledComponents
-			Toggle = GreenMunitionToggle
+			Toggle = RedMunitionNonOC_Toggle
+			IncludeInBlueprints = false
+			Components = &<heavy/heavy_turbolaser_red.rules>/Components
+		}
+
+		RedMunitionOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ RedMunitionToggle, IsOverclocked ]
+			Mode = All
+		}
+		RedMunitionComponents_Overclocked
+		{
+			Type = ToggledComponents
+			Toggle = RedMunitionOC_Toggle
+			IncludeInBlueprints = false
+			Components : &<heavy/heavy_turbolaser_red.rules>/Components
+			{
+				WeaponEmitter  : ^/0/WeaponEmitter
+				{
+					Bullet  		= &~/OVERCLOCK/REDBULLET
+					Spread  		= [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  		= (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed 	= floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
+				}
+				WeaponEmitter2 : ^/0/WeaponEmitter2
+				{
+					Bullet  		= &~/OVERCLOCK/REDBULLET
+					Spread  		= [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  		= (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed 	= floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
+				}
+			}
+		}
+
+
+		// ---- BLUE: Non-OC ----
+		BlueMunitionNonOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ BlueMunitionToggle, {Toggle=IsOverclocked; Invert=true} ]
+			Mode = All
+		}
+		BlueMunitionComponents_NonOverclocked
+		{
+			Type = ToggledComponents
+			Toggle = BlueMunitionNonOC_Toggle
+			IncludeInBlueprints = false
+			Components = &<heavy/heavy_turbolaser_blue.rules>/Components
+		}
+
+		// ---- BLUE: OC ----
+		BlueMunitionOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ BlueMunitionToggle, IsOverclocked ]
+			Mode = All
+		}
+		BlueMunitionComponents_Overclocked
+		{
+			Type = ToggledComponents
+			Toggle = BlueMunitionOC_Toggle
+			IncludeInBlueprints = false
+			Components : &<heavy/heavy_turbolaser_blue.rules>/Components
+			{
+				WeaponEmitter  : ^/0/WeaponEmitter
+				{
+					Bullet  		= &~/OVERCLOCK/BLUEBULLET
+					Spread  		= [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  		= (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed 	= floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
+				}
+				WeaponEmitter2 : ^/0/WeaponEmitter2
+				{
+					Bullet  		= &~/OVERCLOCK/BLUEBULLET
+					Spread  		= [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  		= (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed 	= floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
+				}
+			}
+		}
+
+
+		// ---- GREEN: Non-OC ----
+		GreenMunitionNonOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ GreenMunitionToggle, {Toggle=IsOverclocked; Invert=true} ]
+			Mode = All
+		}
+		GreenMunitionComponents_NonOverclocked
+		{
+			Type = ToggledComponents
+			Toggle = GreenMunitionNonOC_Toggle
 			IncludeInBlueprints = false
 			Components = &<heavy/heavy_turbolaser_green.rules>/Components
+		}
+
+		GreenMunitionOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ GreenMunitionToggle, IsOverclocked ]
+			Mode = All
+		}
+		GreenMunitionComponents_Overclocked
+		{
+			Type = ToggledComponents
+			Toggle = GreenMunitionOC_Toggle
+			IncludeInBlueprints = false
+			Components : &<heavy/heavy_turbolaser_green.rules>/Components
+			{
+				WeaponEmitter  : ^/0/WeaponEmitter
+				{
+					Bullet  		= &~/OVERCLOCK/GREENBULLET
+					Spread  		= [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  		= (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed 	= floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
+				}
+				WeaponEmitter2 : ^/0/WeaponEmitter2
+				{
+					Bullet  		= &~/OVERCLOCK/GREENBULLET
+					Spread  		= [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
+					Recoil  		= (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed 	= floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
+				}
+			}
 		}
 
 		ExteriorType
@@ -231,9 +480,7 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			Type = UIToggle
 			ToggleID = "SW.exterior_type"
 			Default = 0
-			AvailableChoices = [0, 1]
-			AlwaysAllowInBuildMode = true
-			RequiresCommand = false
+			ToggledOnChoices = [0,1]
 		}
 
 		WhiteExteriorToggle
@@ -247,22 +494,20 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 		{
 			Type = ToggledComponents
 			Toggle = WhiteExteriorToggle
-			IncludeInBlueprints = false
+			//IncludeInBlueprints = false
 			Components = &<heavy/heavy_turbolaser_white.rules>/Components
 		}
-
 		GreyExteriorToggle
 		{
 			Type = ModeToggle
 			Mode = ExteriorType
 			OnMode = 1
 		}
-
 		GreyExteriorComponents
 		{
 			Type = ToggledComponents
 			Toggle = GreyExteriorToggle
-			IncludeInBlueprints = false
+			//IncludeInBlueprints = false
 			Components = &<heavy/heavy_turbolaser_grey.rules>/Components
 		}
 
@@ -271,7 +516,7 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			Type = ResourceStorage
 			ResourceType = battery
 			MaxResources = 20000
-			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver //REVIEW: This tends to be in Batter Consumer which is unlike vanilla should be moved to Battery Storage 
+			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
 		{
@@ -279,9 +524,10 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			ResourceType = battery
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Weapon_Supply
-			ResupplyThreshold = 1000
-			OperationalToggle = PowerToggle
+			ResupplyThreshold = 2000
+			OperationalToggle = CommandConsumptionToggle
 		}
+/*
 		BatteryStorageBar
 		{
 			Type = ProgressBar
@@ -291,7 +537,7 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			HighColor = [250, 250, 0]
 			FullColor = [255, 255, 0]
 		}
-
+*/
 		Graphics
 		{
 			Type = Graphics
@@ -368,22 +614,6 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 					}
 				]
 			}
-			/*
-			OperationalRoofLighting
-			{
-				Layer = "roof_lights_fancy"
-				//Offset = [0, 0]
-				DamageLevels
-				[
-					{
-						File = "./Data/ships/common/light_blob.png"
-						Size = [4, 4]
-						Z = 1.45 // Controls the "height" of the light for the purposes of normal mapping.
-						VertexColor = [16, 120, 255]
-					}
-				]
-			}
-			*/
 		}
 
 		TurretInsideGraphics
@@ -434,130 +664,326 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			}
 		}
 
-		FirePermissionToggle
+		Turret
 		{
-			Type = MultiToggle
-			Toggles = [CommonReloadTimer, FireModeToggle] //, SwitchWeaponCooldownTimer
-			Mode = All
-		}
-
-		Turret : &~/TurretBase
-		{
-
-		}
-
-		BulletEmitterBase : &~/BulletEmitterBase
-		{
-			FireTrigger
-			MinResourcesUsed = ceil((&~/BulletEmitterBase/ResourcesUsed) * (&~/TurretStats/Stats/Barrels))
-		}
-
-		TurretCollider
-		{
-			Type = PolygonCollider
-			Vertices
-			[
-				[-1.0, -1.2]
-				[1.0, -1.2]
-				[0.9, 1.4]
-				[-0.9, 1.4]
-			]
-			Location = &../Turret/Location
-			Density = .75
-			//IsHigh = true
-			//InitialPenetrationResistance = 5
-		}
-
-		CommonReloadResetTrigger
-		{
-			Type = MultiTrigger
-			Triggers = [Turret]
-		}
-
-		ChargeEffectSound
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Trigger = Turret
-			AnchorMediaEffects = true
-		
-			MediaEffects
-			[
-				&/SW_SOUNDS/LaserReCharge
-			]
-		}
-
-		FireEffectSound
-		{
-			Type = TriggeredEffects
-			ChainedTo = Turret
-			Location = [1, 0]
-			Trigger = Turret
-			AnchorMediaEffects = true
-	
-			MediaEffects
-			[
-				&/SW_SOUNDS/TurbolaserSFX
-			]
-		}
-
-		TurretLocationProxy
-		{
-			Type = ChainableProxy
-			ComponentID = Turret
-		}
-
-		TurretGhostGraphics
-		{
-			Type = Graphics
+			Type = TurretWeapon
+			Location = [2, 2]
+			Rotation = -90d// Relative to unrotated part.
 			OperationalToggle = IsOperational
-			Location = [1, 0]
-			ChainedTo = Turret
-			Rotation = 90d
-			Floor
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 0 // Uses separate fire timer.
+			FiringArc = 210d
+			RotateSpeed = 16d
+			FireThresholdAngle = 2d
+			HoldTargetAfterCancel = 0.15
+			AIFirepowerRating = &~/Part/StatsByCategory/1/Stats/DamagePerSecond //6400
+			FirePermissionToggle = FirePermissionToggle
+			IgnoreSourceShipLOSChecks = true
+			IgnoreSourceShipLowLOSChecks = true
+			AllowFireWithBlockedLOS = false
+			//AutoTargetCrewSafetyDist = 8
+			Emitter = WeaponEmitterBase
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
 			{
-				Layer = "doodads_high"
-				DamageLevels
-				[
-					{
-						File = "Heavy/barrel_shadow.png"
-						Size = [4, 5]
-					}
-				]
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
 			}
 		}
 
-		CrewLocation1
+		IsFireSynchronised_NonOverclock
 		{
-			Type = CrewLocation
-			Location = [0.4, 0.45] //Location = [1.55, 1.6]
-			ChainedTo = Turret
-			Rotation = 90d
+			Type = MultiToggle
+			Toggles = [ FireAlternatingToggle, IsOverclocked ]
+			// ON when Alternating is OFF and Overclock is OFF
+			Mode = None
 		}
-		CrewLocation2
+		IsFireSynchronised_Overclock
 		{
-			Type = CrewLocation
-			Location = [0.4, -0.45] //Location = [2.45, 1.6]
-			ChainedTo = Turret
-			Rotation = 90d
+			Type = MultiToggle
+			Toggles = [ {Toggle=FireAlternatingToggle; Invert=true}, IsOverclocked ]
+			// ON when Alternating is OFF and Overclock is ON
+			Mode = All
 		}
-		PartCrew
+		IsFireAlternating_NonOverclock
 		{
-			Type = PartCrew
-			Crew = 2
-			DefaultPriority = &/PRIORITIES/Weapon_Crew
-			PrerequisitesBeforeCrewing = [PowerToggle]
-			HighPriorityPrerequisites = [BatteryStorage]
-			CrewDestinations
-			[
-				[1.55, 1.6]
-				[2.45, 1.6]
-			]
-			CrewLocations
-			[
-				CrewLocation1
-				CrewLocation2
-			]
+			Type = MultiToggle
+			Toggles = [ FireAlternatingToggle, {Toggle=IsOverclocked; Invert=true} ]
+			// ON when Alternating is ON and Overclock is OFF
+			Mode = All
+		}
+		IsFireAlternating_Overclock
+		{
+			Type = MultiToggle
+			Toggles = [ FireAlternatingToggle, IsOverclocked ]
+			// ON when Alternating is ON and Overclock is ON
+			Mode = All
+		}
+
+		// Synchronized (both barrels) — Overclocked
+		ShootSynchronizedComponents_Overclocked
+		{
+			Type = ToggledComponents
+			Toggle = IsFireSynchronised_Overclock
+			Components
+			{
+				FireTimer
+				{
+					Type = Timer
+					OperationalToggle = IsOperational
+					DURATION_BASE = (&~/Part/Components/ShootSynchronizedComponents/Components/FireTimer/Duration)
+					Duration = (&DURATION_BASE) / (&~/OVERCLOCK/FIRE_RATE_FACTOR)
+					AutoStart = true
+					StartTrigger = Turret
+				}
+				ReloadProgressBar
+				{
+					Type = ProgressBar
+					OperationalToggle = IsOperational
+					ShowProgressFor = FireTimer
+					Invert = true
+				}
+
+				// Add these so the emitters actually fire in OC
+				ShootLeftTrigger
+				{
+					Type = TriggerProxy
+					ComponentID = Turret
+				}
+				ShootRightTrigger
+				{
+					Type = TriggerProxy
+					ComponentID = Turret
+				}
+			}
+		}
+
+
+		// Alternating (per barrel) — Overclocked
+		ShootAlternatingComponents_Overclocked
+		{
+			Type = ToggledComponents
+			Toggle = IsFireAlternating_Overclock
+			Components
+			{
+				FireTimer
+				{
+					Type = Timer
+					OperationalToggle = IsOperational
+					DURATION_BASE = (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration)
+					Duration = (&DURATION_BASE) / (&~/OVERCLOCK/FIRE_RATE_FACTOR)
+					AutoStart = true
+					StartTrigger = Turret
+				}
+				ReloadProgressBar
+				{
+					Type = ProgressBar
+					OperationalToggle = IsOperational
+					ShowProgressFor = FireTimer
+					Invert = true
+				}
+
+				// Add these so alternating works in OC
+				ShootCycle
+				{
+					Type = ModeCycle
+					ModeRange = [0, 1]
+					IncrementTrigger = Turret
+					StartingMode = 1
+				}
+				ShootLeftTrigger
+				{
+					Type = ModeTrigger
+					Mode = ShootCycle
+					TriggerInModes = [0]
+				}
+				ShootRightTrigger
+				{
+					Type = ModeTrigger
+					Mode = ShootCycle
+					TriggerInModes = [1]
+				}
+			}
+		}
+
+		//Non-OC
+		ShootSynchronizedComponents
+		{
+			Type = ToggledComponents
+			Toggle = IsFireSynchronised_NonOverclock
+			//Invert = true
+			Components
+			{
+				FireTimer
+				{
+					Type = Timer
+					OperationalToggle = IsOperational
+					Duration = 2.25*2  //2.25*2
+					AutoStart = true
+					StartTrigger = Turret
+				}
+
+				ReloadProgressBar
+				{
+					Type = ProgressBar
+					OperationalToggle = IsOperational
+					ShowProgressFor = FireTimer
+					Invert = true
+				}
+
+				ShootLeftTrigger
+				{
+					Type = TriggerProxy
+					ComponentID = Turret
+				}
+
+				ShootRightTrigger
+				{
+					Type = TriggerProxy
+					ComponentID = Turret
+				}
+			}
+		}
+
+		ShootAlternatingComponents
+		{
+			Type = ToggledComponents
+			Toggle = IsFireAlternating_NonOverclock
+			Components
+			{
+				FireTimer
+				{
+					Type = Timer
+					OperationalToggle = IsOperational
+					Duration = 2.25 //2.25
+					AutoStart = true
+					StartTrigger = Turret
+				}
+
+				ReloadProgressBar
+				{
+					Type = ProgressBar
+					OperationalToggle = IsOperational
+					ShowProgressFor = FireTimer
+					Invert = true
+				}
+
+				ShootCycle
+				{
+					Type = ModeCycle
+					ModeRange = [0, 1]
+					IncrementTrigger = Turret
+					StartingMode = 1 // First shot will switch to mode 0.
+				}
+
+				ShootLeftTrigger
+				{
+					Type = ModeTrigger
+					Mode = ShootCycle
+					TriggerInModes = [0]
+				}
+
+				ShootRightTrigger
+				{
+					Type = ModeTrigger
+					Mode = ShootCycle
+					TriggerInModes = [1]
+					OperationalToggle = FireAlternatingToggle
+				}
+			}
+		}
+
+		FireTimerProxy
+		{
+			Type = ToggleProxy
+			ComponentID = FireTimer
+		}
+		FirePermissionToggle
+		{
+			Type = MultiToggle
+			Toggles = [FireTimerProxy, FireModeToggle]
+			Mode = All
+		}
+
+		ShootLeftTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = ShootLeftTrigger
+		}
+		ShootLeftTriggerProxy_Overclocked : ShootLeftTriggerProxy
+		{
+			ProxyToggle = IsOverclocked
+		}
+		ShootLeftTriggerProxy_NonOverclocked : ShootLeftTriggerProxy_Overclocked
+		{
+			InvertProxyToggle = true
+		}
+
+		ShootRightTriggerProxy
+		{
+			Type = TriggerProxy
+			ComponentID = ShootRightTrigger
+		}
+		ShootRightTriggerProxy_Overclocked : ShootRightTriggerProxy
+		{
+			ProxyToggle = IsOverclocked
+		}
+		ShootRightTriggerProxy_NonOverclocked : ShootRightTriggerProxy_Overclocked
+		{
+			InvertProxyToggle = true
+		}
+
+		ShootTrigger1
+		{
+			Type = TriggerProxy
+			ComponentID = ShootLeftTriggerProxy
+		}
+		ShootTrigger2
+		{
+			Type = TriggerProxy
+			ComponentID = ShootRightTriggerProxy
+		}
+
+		WeaponEmitterBase
+		{
+			Type = BulletEmitter
+			//No Location is dual barrel
+			ChainedTo = Turret
+			FireTrigger //= Turret
+			GetTargetFrom = Turret
+			Location = [0, 0]
+			OperationalToggle = IsOperational
+			FireDelay = 0.18
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Heavy/Red
+			SourceShipCollisions = false
+			TargetLeadPrediction = false
+			ResourceStorage = BatteryStorage
+			ResourcesUsed = &~/RESOURCES_USED
+			//Burst = 2
+			//BurstDelay = 0.06666
+			//UseAmmoPerShotInBurst = true
+			MinResourcesUsed = 1
+			Recoil = 150
+			AntiPhasingRaycastDistance = 2
+			Spread = [-1d, 1d]
 		}
 
 		BatterySprites
@@ -614,6 +1040,114 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			]
 		}
 
+		TurretCollider
+		{
+			Type = PolygonCollider
+			Vertices
+			[
+				[-1.0, -1.2]
+				[1.0, -1.2]
+				[0.9, 1.4]
+				[-0.9, 1.4]
+			]
+			Location = &../Turret/Location
+			Density = .75
+			//IsHigh = true
+			InitialPenetrationResistance = 5
+		}
+/*
+		CommonReloadResetTrigger
+		{
+			Type = MultiTrigger
+			Triggers = [Turret]
+		}
+*/
+		ChargeEffectSound
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Trigger = Turret
+			AnchorMediaEffects = true
+		
+			MediaEffects
+			[
+				&/SW_SOUNDS/LaserReCharge
+			]
+		}
+
+		FireEffectSound
+		{
+			Type = TriggeredEffects
+			ChainedTo = Turret
+			Location = [1, 0]
+			Trigger = Turret
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/SW_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		TurretLocationProxy
+		{
+			Type = ChainableProxy
+			ComponentID = Turret
+		}
+
+		TurretGhostGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			Location = [1, 0]
+			Rotation = 90d
+			OperationalToggle = IsOperational
+			Floor
+			{
+				Layer = "doodads_high"
+				DamageLevels
+				[
+					{
+						File = "Heavy/barrel_shadow.png"
+						Size = [4, 5]
+					}
+				]
+			}
+		}
+
+		CrewLocation1
+		{
+			Type = CrewLocation
+			Location = [0.4, 0.45]
+			ChainedTo = Turret
+			Rotation = 90d
+		}
+		CrewLocation2
+		{
+			Type = CrewLocation
+			Location = [0.4, -0.45]
+			ChainedTo = Turret
+			Rotation = 90d
+		}
+		PartCrew
+		{
+			Type = PartCrew
+			Crew = 2
+			DefaultPriority = &/PRIORITIES/Weapon_Crew
+			PrerequisitesBeforeCrewing = [PowerToggle]
+			HighPriorityPrerequisites = [BatteryStorage]
+			CrewDestinations
+			[
+				[1.55, 1.6]
+				[2.45, 1.6]
+			]
+			CrewLocations
+			[
+				CrewLocation1
+				CrewLocation2
+			]
+		}
+
 		OperationEffects
 		{
 			Type = ToggleEffects
@@ -623,6 +1157,20 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			ToggledOffMediaEffects = &/COMMON_EFFECTS/MachinesOff
 		}
 
+		ScorchedTrigger
+		{
+			Type = ToggleTrigger
+			Toggle = ScorchedToggle
+			TriggerWhenOn = false
+		}
+
+		ScorchedEffects
+		{
+			Type = TriggeredEffects
+			Trigger = ScorchedTrigger
+			Location = &../DestroyedEffects/Location
+			MediaEffects = &/COMMON_EFFECTS/BigPartScorched
+		}
 
 		DestroyedEffects
 		{
@@ -637,38 +1185,52 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			Location = [2, 2]
 			Indicators
 			[
-				// Turned off.
+				// 0 Scorched
+				{
+					Toggle = ScorchedToggle
+					AtlasSprite = &/INDICATORS/Scorched
+					HidesIndicators = [1,2,3,4]
+				}
+				// 1 Turned off.
 				{
 					Toggle = PowerToggle
 					AtlasSprite
 					{
 						File = &/INDICATORS/PowerOff
-						Size = [3, 3]
+						Size = [1, 1]
 					}
-					HidesIndicators = [1,2]
+					HidesIndicators = [2,3,4]
 				}
-
-				// Out of power.
+				// 2 Out of power.
 				{
 					Toggle = BatteryStorage
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [3, 3]
+						Size = [1, 1]
 					}
 				}
-
-				// No crew.
+				// 3 Resetting from overclock
+				{
+					Toggle = &~/Part/^/0/OVERCLOCK_OPERATIONAL
+					AtlasSprite : /INDICATORS/OverclockReset
+					{
+						Size = [1, 1]
+					}
+					HidesIndicators = [4]
+				}
+				// 4 No crew.
 				{
 					Toggle = PartCrew
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoCrew
-						Size = [3, 3]
+						Size = [1, 1]
 					}
 				}
 			]
 		}
+
 		Blueprints
 		{
 			Type = BlueprintSprite
@@ -676,67 +1238,97 @@ Part : &<../base_part_terran_turbolasers.rules>/Part
 			Size = [4, 4]
 		}
 	}
-	
-	//Stats 
+
+   //Stats
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
 		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
-		//TurretPenResist = &~/Part/Components/TurretCollider/InitialPenetrationResistance
+		TurretPenResist = &~/Part/InitialPenetrationResistance
 
-		RecPower = (&~/TurretStats/Stats/PowerPerSecond) * 1
+		RecPower = &../StatsByCategory/1/Stats/PowerPerSecond
 		RecCrew = (&CrewRequired) + (&RecPower) * 4
 	}
 	StatsByCategory
 	[
 		&~/TurretStats
-		&<heavy/heavy_turbolaser_red.rules>/LaserStats
-		&<heavy/heavy_turbolaser_blue.rules>/LaserStats
-		&<heavy/heavy_turbolaser_green.rules>/LaserStats
+		{
+			NameKey = "StatCategories/HeavyTurbolasershot"
+			Stats
+			{
+					DamagePerShot = &~/EMITTER_BASE/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
+					DamagePerSecond = (&DamagePerShot) * (&ROF)
+					Damage = [&../DamagePerShot, &../DamagePerSecond]
+					ShieldDamagePerShot = &~/EMITTER_BASE/Bullet/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
+					ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
+					ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+					ROF = 1 / (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration)
+					PowerPerSecond = (&PowerPerShot) * (&ROF)
+					ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+					ShotSpeed = &~/EMITTER_BASE/Bullet/Speed
+					ShotHP = &~/EMITTER_BASE/Bullet/Components/Targetable/Health
+					PowerPerShot = (&~/EMITTER_BASE/ResourcesUsed) / 1000
+			}
+		}
 	]
-	
+	SecondaryToolTip
+	{
+		TitleKey = "StatCategories/Overclocked"
+		DescriptionKey = "Parts/HeavyturbolaserswitchableOverclockDesc"
+		StatsByCategory
+		[
+			{
+				NameKey = "StatCategories/HeavyTurbolasershotOverclocked"
+				Stats
+				{
+					DamagePerShot = &~/OVERCLOCK/BULLET/DAMAGE
+					DamagePerSecond = (&DamagePerShot) * (&ROF)
+					Damage = [&../DamagePerShot, &../DamagePerSecond]
+					ShieldDamagePerShot = &~/OVERCLOCK/BULLET/DAMAGE_SHIELD
+					ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
+					ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+					DamageArea = &~/OVERCLOCK/BULLET/DAMAGE_RADIUS
+					ROF = (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration) * (&~/OVERCLOCK/FIRE_RATE_FACTOR)
+					HeatPerShot = (&~/OVERCLOCK/HEAT_PER_SHOT)
+					PowerPerShot = (&~/EMITTER_BASE_OVERCLOCK/ResourcesUsed) / 1000
+					PowerPerSecond = (&PowerPerShot) * (&ROF)
+					ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+					ShotHP = &~/OVERCLOCK/BULLET/HEALTH
+				}
+			}
+		]
+	}
 }
+
 TurretStats
 {
 	NameKey = "StatCategories/Turret"
 	Stats
 	{
 		Barrels = 2
-		ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
-		Salvo = [&../Barrels, &../ReloadTime]
-		ROF = (&Barrels) / (&~/Part/Components/CommonReloadTimer/Duration)
-		Range = &~/BulletEmitterBase/Bullet/Range
-		Arc = deg(&~/TurretBase/FiringArc)
-		TurretSpeed = deg(&~/TurretBase/RotateSpeed)
-		PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
-		PowerPerSecond = (&PowerPerShot) * (&ROF)
-		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
-		Spread = deg(&~/BulletEmitterBase/Spread/1)
+		//ReloadTime = &~/Part/Components/CommonReloadTimer/Duration
+		//Salvo = [&../Barrels, &../ReloadTime]
+		ROF = 1 / (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration)
+		Range = &~/EMITTER_BASE/Bullet/Range
+		Arc = deg(&~/Part/Components/Turret/FiringArc)
+		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
+		//PowerPerShot = (&~/BulletEmitterBase/ResourcesUsed) / 1000
+		//PowerPerSecond = (&PowerPerShot) * (&ROF)
+		//ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
+		//Spread = deg(&~/BulletEmitterBase/Spread/1)
 		//ShotSpeed = &~/Components/BulletEmitterBase/Bullet/Speed
 	}
 }
+EMITTER_BASE =  &~/Part/Components/WeaponEmitterBase
+EMITTER_BASE_OVERCLOCK = &~/Part/Components/WeaponEmitterBase
+
+/*
 OperationalRoofLightingBase
 {
 	Size = [2.4, 3.55] //X+1,15(Distance between Barrels)=Y
 	Z = 1.65 // Controls the "height" of the light for the purposes of normal mapping.
 }
-BulletEmitterBase
-{
-	Type = BulletEmitter
-	OperationalToggle = IsOperational
-	ChainedTo = Turret
-	FireTrigger = Turret
-	GetTargetFrom = Turret
-	//No Location is dual barrel
-	FireDelay = 0.18
-	ResourceStorage = BatteryStorage
-	ResourcesUsed = 480
-	Bullet = &/SW_SHOTS/turretturbolaserheavylaserredshot
-	Recoil = 150
-	AntiPhasingRaycastDistance = 2
-	Spread = [-1d, 1d]
-	TargetLeadPrediction = false
-}
+
 ReloadProgressBarBase
 {
 	Type = ProgressBar
@@ -744,47 +1336,4 @@ ReloadProgressBarBase
 	ShowProgressFor = CommonReloadTimer
 	Invert = true
 }
-TurretBase
-		{
-			Type = TurretWeapon
-			Location = [2, 2]
-			Rotation = -90d// Relative to unrotated part.
-			Emitter = BulletEmitterBase
-			OperationalToggle = IsOperational
-			AutoFireToggle = AutoFireToggle
-			FireInterval = 0 // Uses separate fire timer.
-			FirePermissionToggle = FirePermissionToggle
-			FiringArc = 210d
-			RotateSpeed = 16d
-			FireThresholdAngle = 2d
-			AIFirepowerRating = 6400
-			HoldTargetAfterCancel = 0.15
-			AutoTargetCrewSafetyDist = 8
-			IgnoreSourceShipLOSChecks = false
-			IgnoreSourceShipLowLOSChecks = true
-			AllowFireWithBlockedLOS = false
-
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
-		}
+*/

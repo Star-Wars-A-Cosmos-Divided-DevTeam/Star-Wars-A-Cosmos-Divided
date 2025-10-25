@@ -1,0 +1,91 @@
+// LOCATION: shots/laser/turret/turbo/Imperial/green_shot.rules
+// BASE IS: &<base_shot.rules>
+// STRINGKEY: NONE
+BASE = &<base_shot.rules>
+
+ID = SW.turbolaser_turret_Imperial_laser_green_shot //TURRET WEAPONSHOT
+OtherIDs = ["green_imperial_laser_shot"]
+Range = &BASE/Range
+IdealRange = &BASE/IdealRange
+IdealRadius = &BASE/IdealRadius
+Speed = &BASE/Speed
+ReceivableBuffs = &BASE/ReceivableBuffs
+
+Components : &BASE/Components
+{
+	Hit : ^/0/Hit
+	{
+		HitCrew = &HitOperational
+
+		HitShield : ^/0/HitShield
+		{
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Hit/Med/Green
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Green
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Green
+
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .12
+					Duration = .5
+				}
+			]
+		}
+
+		HitStructural : ^/0/HitStructural
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/HitStruct/Med/Green
+
+				&/SW_SOUNDS/SmallLaserHit
+			]
+		}
+
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			//MediaEffects
+			//[
+			//	&/SW_PARTICLES/Shot/Laser/Flash/Med/Green
+			//	&/SW_PARTICLES/Shot/Laser/Sparks/Med/Green
+			//]
+		}
+
+		PenetratingStructural : ^/0/PenetratingStructural
+		{
+			// No effect.
+		}
+	}
+
+	Sprite : ^/0/Sprite
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture : ^/0/Texture
+				{
+					File = "particles/green_laser.png"
+				}
+			}
+		}
+	}
+	GlowSprite : ^/0/GlowSprite
+	{
+		Sprite : ^/0/Sprite
+		{
+			VertexColor = [0, 255, 0]
+			_litReflectiveStrength = 6
+			_litAdditiveStrength = 0.02
+			_unlitAdditiveStrength = 0.1
+		}
+	}
+}

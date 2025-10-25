@@ -1,0 +1,334 @@
+ID = "sw.disruptor_bolt_debug"
+Range = 500
+IdealRange = [200, 500]
+IdealRadius = [5, 50]
+Speed = 70
+ReceivableBuffs = [ElectronBuff]
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 4000
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		Penetration = 50 // Enough to get through one shield and lose half penetration.
+		PenetratesOperational = false
+		FactorEffectsWith = Targetable
+
+		CrewCollisions = {Enemies=true; Junk=true}
+		SourceShipLowCollisions = false
+		PenetratesCrew = true
+
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				: ../../HitOperational/HitEffects/0
+				{
+					Amount = { BaseValue = 4800; EffectScaleExponent = 1 }
+					TreatShieldAsPart = true
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+		HitOperational
+		{
+			Offset = [-0.15, 0]
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = ResourceDrain
+					ResourceType = battery
+					Amount = { BaseValue = 2400; EffectScaleExponent = 1 }
+
+					MediaEffectsOnDrain
+					[
+						&<particles/ship_drain.rules>
+						&<particles/disruptor_bolt_hit_center_bounce.rules>
+						&<particles/disruptor_bolt_hit_center_bounce2.rules>
+						&<particles/disruptor_bolt_hit_sizzle.rules>
+
+						: /BASE_SOUNDS/AudioExterior
+						{
+							RandomSounds = ["sounds/disruptor_discharge_01.wav",
+											"sounds/disruptor_discharge_02.wav",
+											"sounds/disruptor_discharge_03.wav",
+											"sounds/disruptor_discharge_04.wav"]
+							Volume = 1
+							SpeedVariation = .15
+						}
+					]
+				}
+				{
+					Type = Damage
+					Damage = { BaseValue = 1500; EffectScaleExponent = 1 }
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/disruptor_bolt_hit_lightning.rules>
+				&<particles/disruptor_bolt_hit_orb.rules>
+				&<particles/disruptor_bolt_hit_bolts.rules>
+				&<particles/disruptor_bolt_flash.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["sounds/disruptor_impact_01.wav",
+									"sounds/disruptor_impact_02.wav",
+									"sounds/disruptor_impact_03.wav",
+									"sounds/disruptor_impact_04.wav"]
+					Volume = 1
+					SpeedVariation = .15
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .06
+					Duration = .3
+				}
+
+				: <particles/StaticCharge_overclock_spikes_cyan.rules>
+				{
+					Filter
+					{
+					}
+				}
+
+				: <particles/StaticCharge_overclock_sparks_radial_cyan.rules>
+				{
+					Filter
+					{
+					}
+				}
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/sw_ion_impact.wav"
+					Db = 2
+					MaxConcurrent = 1
+					MaxConcurrentVolume = 1
+					RampUpTime = 0.1
+					RampDownTime = 0.1
+					Filter
+					{
+					}
+				}
+				{
+					Type = Quad
+					Bucket = IonHitSpikes
+					IntensityScaleFactor = 1
+					IntensityScaleExponent = 0.5
+					FadeInTime = 0.2
+					FadeOutTime = 0.2
+					Sprite
+					{
+						Color = [255, 255, 255, 255]
+						Size = [24, 24]
+						Shader = particles/ion_storm.shader
+						Texture
+						{
+							File = ./Data/common_effects/particles/noise_voronoi.png
+							SampleMode = Linear
+							MipLevels = max
+							UMode = Wrap
+							VMode = Wrap
+						}
+						_noiseTex1
+						{
+							File = ./Data/common_effects/particles/noise_cracks.png
+							SampleMode = Linear
+							MipLevels = max
+							UMode = Wrap
+							VMode = Wrap
+						}
+						_color1 = [0, 255 * 0.85, 255, 255]
+						_color2 = [255 * 0.6, 255 * 0.9, 255, 255]
+						_noise1ScrollSpeed = [-0.03, -0.3]
+						_noise2ScrollSpeed = [0.04, -0.34]
+						TargetBlendMode = Add
+					}
+					Filter
+					{
+					}
+				}
+
+
+			]
+		}
+		HitStructural
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = { BaseValue = 2250; EffectScaleExponent = 1 }
+				}
+			]
+
+			MediaEffects
+			[
+				&<particles/disruptor_bolt_hit_struct_lightning.rules>
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["sounds/disruptor_impact_01.wav",
+									"sounds/disruptor_impact_02.wav",
+									"sounds/disruptor_impact_03.wav",
+									"sounds/disruptor_impact_04.wav"]
+					Volume = 1
+					SpeedVariation = .15
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .06
+					Duration = .3
+				}
+
+				: <particles/StaticCharge_overclock_spikes_cyan.rules>
+				{
+					Filter
+					{
+					}
+				}
+
+				: <particles/StaticCharge_overclock_sparks_radial_cyan.rules>
+				{
+					Filter
+					{
+					}
+				}
+
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/sw_ion_impact.wav"
+					Db = 2
+					MaxConcurrent = 1
+					MaxConcurrentVolume = 1
+					RampUpTime = 0.1
+					RampDownTime = 0.1
+					Filter
+					{
+					}
+				}
+				{
+					Type = Quad
+					Bucket = IonHitSpikes
+					IntensityScaleFactor = 1
+					IntensityScaleExponent = 0.5
+					FadeInTime = 0.2
+					FadeOutTime = 0.2
+					Sprite
+					{
+						Color = [255, 255, 255, 255]
+						Size = [24, 24]
+						Shader = particles/ion_storm.shader
+						Texture
+						{
+							File = ./Data/common_effects/particles/noise_voronoi.png
+							SampleMode = Linear
+							MipLevels = max
+							UMode = Wrap
+							VMode = Wrap
+						}
+						_noiseTex1
+						{
+							File = ./Data/common_effects/particles/noise_cracks.png
+							SampleMode = Linear
+							MipLevels = max
+							UMode = Wrap
+							VMode = Wrap
+						}
+						_color1 = [0, 255 * 0.85, 255, 255]
+						_color2 = [255 * 0.6, 255 * 0.9, 255, 255]
+						_noise1ScrollSpeed = [-0.03, -0.3]
+						_noise2ScrollSpeed = [0.04, -0.34]
+						TargetBlendMode = Add
+					}
+					Filter
+					{
+					}
+				}
+
+			]
+
+		}
+		PenetratingOperational
+		{
+			// No effect.
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+				Size = [6, 6]
+				// Bright cyan glow (RGBA)
+				VertexColor = [0, 0, 255, 255]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_z = 1
+            _nrmlStrengthLimit = 1
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&<particles/disruptor_bolt_lightning.rules>
+		]
+	}
+}

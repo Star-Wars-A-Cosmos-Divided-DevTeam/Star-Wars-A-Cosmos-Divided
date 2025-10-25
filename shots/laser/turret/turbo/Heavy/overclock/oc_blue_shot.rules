@@ -1,0 +1,108 @@
+// LOCATION: shots/laser/turret/turbo/heavy/overclock/oc_blue_shot.rules
+// PURPOSE: Overclocked Blue variant (OC stats/behavior from oc_base_shot; visuals from non-OC blue)
+
+BASE_OC = &<oc_base_shot.rules>
+BLUE    = &<../blue_shot.rules>
+
+ID           = SW.turbolaser_turret_heavy_laser_blue_shot_overclock
+Range        = &BASE_OC/Range
+IdealRange   = &BASE_OC/IdealRange
+IdealRadius  = &BASE_OC/IdealRadius
+Speed        = &BASE_OC/Speed
+ReceivableBuffs = &BASE_OC/ReceivableBuffs
+
+Components : &BASE_OC/Components
+{
+
+	Death : ^/0/Death
+	{
+        OnDeath : ^/0/OnDeath
+        {
+			MediaEffects = &~/Components/Hit/HitOperational/MediaEffects
+        }
+	}
+
+	// Re-apply BLUE hit/flash/sparks media (keep OC damage model)
+	Hit : ^/0/Hit
+	{
+		HitShield : ^/0/HitShield
+		{
+			MediaEffects = &~/BLUE/Components/Hit/HitOperational/MediaEffects
+		}
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects
+			[
+				&<particles/laser_bolt_large_overclock_hit_blue.rules>
+				&<particles/laser_bolt_large_overclock_flash.rules>
+				&<particles/laser_bolt_large_overclock_sparks.rules>
+				
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["sounds/heavy_laser_overclocked_impact_01.wav",
+									"sounds/heavy_laser_overclocked_impact_02.wav",
+									"sounds/heavy_laser_overclocked_impact_03.wav"]
+					Volume = 1
+					SpeedVariation = .05
+				}
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .06
+					Duration = .3
+				}
+			]
+		}
+		HitStructural : ^/0/HitStructural
+		{
+			MediaEffects = &~/BLUE/Components/Hit/HitStructural/MediaEffects
+		}
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			MediaEffects = &~/BLUE/Components/Hit/PenetratingOperational/MediaEffects
+		}
+		FinishedPenetratingStructural : ^/0/FinishedPenetratingStructural
+		{
+			MediaEffects = &~/BLUE/Components/Hit/PenetratingOperational/MediaEffects
+		}
+	}
+
+	// Reuse the BLUE textures & glow tuning
+	Sprite : ^/0/Sprite
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture : ^/0/Texture
+				{
+					File = &~/BLUE/Components/Sprite/Animation/AtlasSprite/Texture/File
+				}
+			}
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		//Offset = [-0.5, 0]
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&<particles/laser_bolt_large_overclock_lightning_blue.rules>
+		]
+	}
+
+	GlowSprite : ^/0/GlowSprite
+	{
+		Sprite : ^/0/Sprite
+		{
+			VertexColor            = &~/BLUE/Components/GlowSprite/Sprite/VertexColor
+			_litReflectiveStrength = &~/BLUE/Components/GlowSprite/Sprite/_litReflectiveStrength
+			_litAdditiveStrength   = &~/BLUE/Components/GlowSprite/Sprite/_litAdditiveStrength
+			_unlitAdditiveStrength = &~/BLUE/Components/GlowSprite/Sprite/_unlitAdditiveStrength
+		}
+	}
+
+}

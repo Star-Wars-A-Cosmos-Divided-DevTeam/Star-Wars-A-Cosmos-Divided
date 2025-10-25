@@ -1,0 +1,88 @@
+Part : &<../../base_part_terran_sw_structure.rules>/Part
+{
+	EditorGroups : ^/0/EditorGroups [  ]
+	DescriptionKey = "Parts/DurasteelStructureDesc"
+	EditorReplacementPartID = ""
+	EditorParentParts = [ "SW.durasteel_structure" ]
+	DontStackInEditorGroups = ["Structure"]
+	Resources
+	[
+		[&~/DefaultResource, ceil((&~/Cost)*(&~/Scale))]
+	]
+	AIValueFactor = 0 //removes AI targetting //shared across all
+	Size = [1, 1]
+	SelectionTypeID = "structure"
+	Density = (&~/DefaultDensity)
+	MaxHealth = 1000 //v:4000
+	ConstructionWork = 0.25
+	WorkPerRepairedHealth = 0.25 / 1000
+	HealthType = Structural
+	ExplosiveDamageAbsorption = 100%
+	DamageResistances = { thermal=60% }
+	TypeCategories : ^/0/TypeCategories [durasteel_structure]
+	Flammable = false
+	ReceivableBuffs : ^/0/ReceivableBuffs []
+	UnderlyingPartPerTile = ""
+	CreatePartPerTileWhenGrabbed = ""
+	InitialPenetrationResistance = 0
+	ContinuingPenetrationResistance = &InitialPenetrationResistance
+	CrewSpeedFactor = 0 //no crew movement wanted
+	AllowedDoorLocations = []
+	CellOccupancyFactor = 0.25
+	IsExternal = true
+	ExternalWalls = [None]
+	InternalWalls = [All]
+	IsRotateable = false
+	IsFlippable = true
+	IsWalled = false
+	IsSelfDestructible = false
+	GeneratorRequiresDoor = false
+	NoAutoDoors = true
+	IgnoreRotationForMirroredSelection = true
+
+	Components : ^/0/Components
+	{
+		ConstructionEffects
+		{
+			Type = Sprite
+			IncludeWhenUnderConstruction = true
+			IncludeWhenNotUnderConstruction = false
+			GetColorFrom = ConstructionTracker
+			Location = [.5, .5]
+			//AtlasSprite
+			//{
+			//	File = "structure_mask_combined.png"
+			//	NormalsFile = "structure_normals.png"
+			//	Size = [1, 1]
+			//	//VertexColor = [255, 0, 0, 255]
+			//}
+			RandomUVRotation = false
+			Layer = "structure_construction"
+			UseConstructionProgressAsDamage = true
+		}
+
+		DestroyedEffects
+		{
+			Type = DeathEffects
+			MediaEffects = &/COMMON_EFFECTS/StructureDestroyed
+			Location = [.5, .5]
+		}
+
+		Blueprints
+		{
+			Type = BlueprintSprite
+			File = "blueprints.png"
+			Size = [1, 1]
+		}
+	}
+}
+
+DefaultHealth = (&<../../base_part_terran_sw_structure.rules>/MAXHEALTH) * (&~/HP_MULTIPLIKATOR)
+DefaultDensity = (&<../../base_part_terran_sw_structure.rules>/DENSITY) * (&~/DN_MULTIPLIKATOR)
+DefaultInitialPenetrationResistance = 0
+Cost = (&<../../base_part_terran_sw_structure.rules>/COST) * (&~/CT_MULTIPLIKATOR)
+Scale = (1)
+HP_MULTIPLIKATOR = 1.5
+DN_MULTIPLIKATOR = 0.5
+CT_MULTIPLIKATOR = 1.2
+DefaultResource = "SW.durasteel"

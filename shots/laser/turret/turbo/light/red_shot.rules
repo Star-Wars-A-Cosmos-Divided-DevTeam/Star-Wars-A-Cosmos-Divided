@@ -1,0 +1,84 @@
+// LOCATION: shots/laser/turret/turbo/light/red_shot.rules
+// USED IN: ships/terran/weapons/turbolasers/Turbolasers_Octuple_Barbette/octuple_barbette_turbolaser.rules, ships/terran/weapons/turbolasers/Turbolasers_Octuple_Barbette/quad_barbette_turbolaser.rules,
+// BASE IS: &<base_shot.rules>
+// STRINGKEY: NONE
+ID = SW.turbolaser_turret_light_laser_red_shot //TURRET WEAPONSHOT
+Range = &<base_shot.rules>/Range
+IdealRange =  &<base_shot.rules>/IdealRange
+IdealRadius = &<base_shot.rules>/IdealRadius
+Speed = &<base_shot.rules>/Speed
+ReceivableBuffs = &<base_shot.rules>/ReceivableBuffs
+
+Components : &<base_shot.rules>/Components
+{
+	Hit : ^/0/Hit
+	{
+		HitCrew = &HitOperational
+		HitShield = &HitOperational
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Hit/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .2
+				}
+			]
+		}
+
+		HitStructural : ^/0/HitStructural
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/HitStruct/Med/Red
+
+				&/SW_SOUNDS/SmallLaserHit
+			]
+		}
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+			]
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	Sprite : ^/0/Sprite
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture : ^/0/Texture
+				{
+					File = "particles/red_laser.png"
+				}
+			}
+		}
+	}
+	GlowSprite : ^/0/GlowSprite
+	{
+		Sprite : ^/0/Sprite
+		{
+			VertexColor = [255, 0, 0]
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
+	}
+}

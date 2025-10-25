@@ -1,0 +1,138 @@
+// LOCATION: shots/laser/turret/turbo/Republic/base_shot.rules
+// BASE FOR: Republic turbolaser turret shots (shared stats & damage profile)
+// STRINGKEY: NONE
+ID = "SW.turbolaser_turret_Republic_laser_base"
+Range = 500
+IdealRange = [200, 500]
+IdealRadius = [5, 50]
+Speed = 70
+ReceivableBuffs = [ElectronBuff]
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.2
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 4000
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+
+		CrewCollisions = { Enemies = true; Junk = true }
+		SourceShipLowCollisions = false
+		PenetratesCrew = true
+
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = { BaseValue = 2400; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
+				{ Type = Impulse; Impulse = { BaseValue = 1 } }
+			]
+
+			//MediaEffects[]
+		}
+		HitOperational
+		{
+			HitEffects
+			[
+				{ Type = Damage;        	Damage  = { BaseValue = 4200; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
+				{ Type = ExplosiveDamage; TotalDamage = { BaseValue = 2500; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; }; Radius = 4; Filter = { Friendlies = false } }
+				{ Type = Impulse;       	Impulse = { BaseValue = 10 } }
+			]
+
+			//MediaEffects[]
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{ Type = Damage; 			Damage  = { BaseValue = 2250; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
+				{ Type = ExplosiveDamage; TotalDamage = { BaseValue = 500; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; }; Radius = 4; Filter = { Friendlies = false } }
+				{ Type = Impulse; 			Impulse = { BaseValue = 5.25 } }
+			]
+
+			//MediaEffects[]
+		}
+		PenetratingOperational
+		{
+			//ReduceEffectsByPenetration = true
+			//HitEffects[]
+			//MediaEffects[]
+		}
+		PenetratingStructural
+		{
+			//HitEffects[]
+			//MediaEffects[]
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [1.75, 1.75]
+			}
+			FrameCount = 8
+			FrameSize = [128, 128]
+			FramesPerRow = 2
+			FramesPerSecond = 64
+		}
+		DiffuseShader = "./Data/default.shader"
+		NormalsShader = "./Data/no_normals.shader"
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [6, 6]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+		}
+	}
+
+}
+

@@ -1,0 +1,137 @@
+// LOCATION: shots/laser/turret/turbo/light/base_shot.rules
+// USED IN: shots/laser/turret/turbo/light/blue_shot.rules, shots/laser/turret/turbo/light/red_shot.rules, shots/laser/turret/turbo/light/green_shot.rules
+// BASE FOR: Turbolaser Light Turret Shots
+// STRINGKEY: NONE
+ID = "SW.turbolaser_turret_light_laser_base" 
+// OtherIDs = [""]
+Range = 400
+IdealRange = [120, &~/Range]
+IdealRadius = [5, 50]
+Speed = 140
+ReceivableBuffs = [ElectronBuff]
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.2
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime will be auto-calculated based on range and speed.
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = 1000
+		TargetCategory = "laser"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		FactorEffectsWith = Targetable
+
+		FriendlyShipLowCollisions = false
+		CrewCollisions = {Enemies=true; Junk=true}
+		HitCrew = &HitOperational
+
+		HitShield = &HitOperational
+		HitOperational
+		{
+			Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = { BaseValue = 1000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue =   15; EffectScaleExponent = 1 } }
+			]
+
+		}
+		HitStructural
+		{
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = { BaseValue = 500; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue =   5; EffectScaleExponent = 1 } }
+			]
+		}
+
+		PenetratingOperational
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = { BaseValue = 500; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue =   5; EffectScaleExponent = 1 } }
+			]
+
+			/*MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Blue
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Blue
+			]*/
+		}
+		PenetratingStructural
+		{
+			// No effect.
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [0.64, 0.64]
+			}
+			FrameCount = 8
+			FrameSize = [128, 128]
+			FramesPerRow = 2
+			FramesPerSecond = 32
+		}
+		// Vanilla norm map passthrough:
+		//NormalsTexture = &Animation/AtlasSprite/Texture
+		//DiffuseShader  = "./Data/default.shader"
+		//NormalsShader  = "./Data/no_normals.shader"
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [3, 3]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+		}
+	}
+
+}

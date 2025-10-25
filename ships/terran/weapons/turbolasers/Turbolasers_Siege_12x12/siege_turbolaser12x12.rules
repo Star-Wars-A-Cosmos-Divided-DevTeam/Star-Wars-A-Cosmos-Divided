@@ -8,6 +8,7 @@ OVERCLOCK
 
 	// Rate-of-fire scaler (2 = twice as fast)
 	FIRE_RATE_FACTOR = 2
+	POWER_USE_FACTOR = 150%
 
 	// OC spread/recoil modifiers
 	HALF_SPREAD   = (&~/Part/Components/WeaponEmitterBase/Spread/1) / 2
@@ -26,6 +27,7 @@ OVERCLOCK
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS   = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
 
+RESOURCES_USED = 3000
 
 Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 {
@@ -45,6 +47,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 	//Resources&Size&Health
 	Resources
 	[
+		[steel, 288]
 		[SW.durasteel, 1200]
 		[SW.doonium_ingot, 1000]
 		[coil2, 175]
@@ -61,10 +64,10 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 	//SelectionTypeByRotation = true
 
 	//PartSpecific
-	AIValueFactor = 1
+	AIValueFactor = 4
 	InitialPenetrationResistance = 15
 	//	Density = 1 + (&~/Part/TurretDensity)
-	TurretDensity = 3
+	TurretDensity = 5
 	SignificanceToggle = ScorchedToggle
 
 	//ReceivableBuffs&ProhibitedBy
@@ -124,6 +127,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 	//	[5, 8]
 	//	[6, 8]
 	//]
+	/*
 	BlockedTravelCellDirections
 	[
 		{
@@ -190,7 +194,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Key = [6, 0]
 			Value = [Down]
 		}
-	]
+	]*/
 
 	//Editor
 	EditorIcon
@@ -223,7 +227,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		CommandConsumer
 		{
 			Type = CommandConsumer
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 			CommandPoints = 20
 		}
 		//OverclockSettings
@@ -459,12 +463,14 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					Bullet  = &~/OVERCLOCK/REDBULLET
 					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
 					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed = floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
 				}
 				WeaponEmitter2 : ^/0/WeaponEmitter2
 				{
 					Bullet  = &~/OVERCLOCK/REDBULLET
 					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
 					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed = floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
 				}
 			}
 		}
@@ -504,12 +510,14 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					Bullet  = &~/OVERCLOCK/BLUEBULLET
 					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
 					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed = floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
 				}
 				WeaponEmitter2 : ^/0/WeaponEmitter2
 				{
 					Bullet  = &~/OVERCLOCK/BLUEBULLET
 					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
 					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed = floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
 				}
 			}
 		}
@@ -547,16 +555,17 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					Bullet  = &~/OVERCLOCK/GREENBULLET
 					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
 					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed = floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
 				}
 				WeaponEmitter2 : ^/0/WeaponEmitter2
 				{
 					Bullet  = &~/OVERCLOCK/GREENBULLET
 					Spread  = [-(&~/OVERCLOCK/HALF_SPREAD), (&~/OVERCLOCK/HALF_SPREAD)]
 					Recoil  = (&^/0/Recoil) * (&~/OVERCLOCK/RECOIL_FACTOR)
+        			ResourcesUsed = floor((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR))
 				}
 			}
 		}
-
 
 		ExteriorType
 		{
@@ -904,7 +913,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			SourceShipCollisions = false
 			TargetLeadPrediction = false
 			ResourceStorage = BatteryStorage
-			ResourcesUsed = 3000
+			ResourcesUsed = &~/RESOURCES_USED
 			Recoil = 750
 			AntiPhasingRaycastDistance = 5
 			Spread = [-1.5d, 1.5d]
@@ -1362,15 +1371,30 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 	StatsByCategory
 	[
 		&~/TurretStats
-		&<siege12x12red.rules>/LaserStats
-		&<siege12x12blue.rules>/LaserStats
-		&<siege12x12green.rules>/LaserStats
+		{
+			NameKey = "StatCategories/SiegeTurbolaserLasershot"
+			Stats
+			{
+
+				ShieldDamagePerShot   	= &~/EMITTER_BASE/Bullet/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
+				ShieldDamagePerSecond 	= (&ShieldDamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+				ShieldDamage          	= [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+			
+				DamagePerShot   		= &~/EMITTER_BASE/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
+				DamagePerSecond 		= (&DamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+				Damage          		= [&../DamagePerShot, &../DamagePerSecond]
+			
+				ShotSpeed 				= &~/EMITTER_BASE/Bullet/Speed
+				ShotHP    				= &~/EMITTER_BASE/Bullet/Components/Targetable/Health
+
+			}
+		}
 	]
 
 	SecondaryToolTip
 	{
 		TitleKey = "StatCategories/Overclocked"
-		DescriptionKey = "Parts/CannonDeckOverclockDesc"
+		DescriptionKey = "Parts/SiegeTurbolaser12x12OverclockDesc"
 		Stats
 		{
 			CrewStunDuration = [0, &~/OVERCLOCK/CREW_STUN_DURATION]
@@ -1379,13 +1403,14 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		StatsByCategory
 		[
 			{
-				NameKey = "StatCategories/Overclocked"
+				NameKey = "StatCategories/HeavyConcussiveBlastLasershotOverclocked"
 				Stats
 				{
-					DamagePerShot = &~/OVERCLOCK/BULLET/DAMAGE_POOL
+					DamagePerShot = &~/OVERCLOCK/BULLET/Components/DeathbyDamagePool/OnDeath/HitEffects/0/TotalDamage/BaseValue
 					DamagePerSecond = (&DamagePerShot) * (&ROF)
 					Damage = [&../DamagePerShot, &../DamagePerSecond]
 					PenetrationDamagePool = [infinity, &../DamagePerShot]
+					DamageArea = &~/OVERCLOCK/BULLET/Components/DeathbyDamagePool/OnDeath/HitEffects/0/Radius
 					HeatPerShot = (&~/OVERCLOCK/HEAT_PER_SHOT)
 					HeatGeneration = (&~/OVERCLOCK/HEAT_PER_SECOND)
 					FIRE_INTERVAL = ((&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration) / (&~/OVERCLOCK/FIRE_RATE_FACTOR))
@@ -1410,10 +1435,10 @@ TurretStats
 		//ReloadTime = &~/Part/Components/WeaponTimerBuffProvider/BuffAmount
 		Salvo = [&../Barrels, &../ROF]
 		ROF = 1 / (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration)
-		Range = &~/Part/Components/WeaponEmitterBase/Bullet/Range
+		Range = &~/EMITTER_BASE/Bullet/Range
 		Arc = deg(&~/Part/Components/Turret/FiringArc)
 		TurretSpeed = deg(&~/Part/Components/Turret/RotateSpeed)
-		PowerPerShot = (&~/Part/Components/WeaponEmitterBase/ResourcesUsed) / 1000
+		PowerPerShot = (&~/EMITTER_BASE/ResourcesUsed) / 1000
 		PowerPerSecond = (&PowerPerShot) * (&ROF)
 		ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 		//Spread = deg(&~/BulletEmitterBase/Spread/1)
@@ -1421,3 +1446,25 @@ TurretStats
 	}
 }
 
+EMITTER_BASE =  &~/Part/Components/WeaponEmitterBase
+EMITTER_BASE_OVERCLOCK = &~/Part/Components/WeaponEmitterBase
+
+LaserStats
+{
+	NameKey = "StatCategories/SiegeTurbolaserLasershot"
+	Stats
+	{
+
+		ShieldDamagePerShot   	= &~/EMITTER_BASE/Bullet/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
+		ShieldDamagePerSecond 	= (&ShieldDamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+		ShieldDamage          	= [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+	
+		DamagePerShot   		= &~/EMITTER_BASE/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
+		DamagePerSecond 		= (&DamagePerShot) * (&<siege_turbolaser12x12.rules>/TurretStats/Stats/ROF)
+		Damage          		= [&../DamagePerShot, &../DamagePerSecond]
+	
+		ShotSpeed 				= &~/EMITTER_BASE/Bullet/Speed
+		ShotHP    				= &~/EMITTER_BASE/Bullet/Components/Targetable/Health
+
+	}
+}

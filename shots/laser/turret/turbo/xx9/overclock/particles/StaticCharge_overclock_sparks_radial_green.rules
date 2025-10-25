@@ -1,0 +1,395 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = scale
+			ScaleOut = baseScale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = index
+			ValueType = Int
+			FromValue = 0
+			ToValue = 15
+			Name = "random sprite index"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.8
+			ToValue = 1.2
+			Name = "random lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0
+					Gf = 0.12156863
+					Bf = 0.03137255
+					Af = 1
+				}
+				{
+					Rf = 0.10196079
+					Gf = 0.65490198
+					Bf = 0.21568628
+					Af = 0.78431374
+				}
+				{
+					Rf = 0.16862746
+					Gf = 0.90196085
+					Bf = 0.35686275
+					Af = 0.5882353
+				}
+				{
+					Rf = 0.07450981
+					Gf = 0.5529412
+					Bf = 0.18431373
+					Af = 0.3529412
+				}
+				{
+					Rf = 0.03529412
+					Gf = 0.22352941
+					Bf = 0.078431375
+					Af = 0.039215688
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 1
+			ToValue = 5
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = baseScale
+			BIn = scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "apply base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = frameAdd
+			Invert = false
+			ValueType = Int
+			FromValue = 0
+			ToValue = 12
+			Name = "add frames over life"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Int
+			AIn = index
+			BIn = frameAdd
+			ResultOut = newIndex
+			Operator = Add
+			Name = "combine new frames with index"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvSprites
+			SpriteIndexIn = newIndex
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 1024
+				Y = 1024
+			}
+			SpriteSize
+			{
+				X = 256
+				Y = 256
+			}
+			SpriteCount = 16
+			SpritesPerRow = 4
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = true
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0
+					Gf = 0
+					Bf = 0
+					Af = 1
+				}
+				{
+					Rf = 0.23137255
+					Gf = 0.90588236
+					Bf = 0.35686275
+					Af = 1
+				}
+				{
+					Rf = 0.43529412
+					Gf = 1
+					Bf = 0.5019608
+					Af = 0
+				}
+				{
+					Rf = 0.32941177
+					Gf = 0.85490197
+					Bf = 0.36078432
+					Af = 0
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn = uv_rect
+		BaseSize
+		{
+			X = 1
+			Y = 1
+		}
+		Offset
+		{
+			X = 0
+			Y = 0.4
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
+			File = ./Data/shots/disruptor_bolt/particles/particle_lightning.shader
+		}
+		_centerColor
+		{
+			Rf = 0.8
+			Gf = 1
+			Bf = 0.75
+			Af = 1
+		}
+		_outerColor
+		{
+			Rf = 0.25
+			Gf = 0.9
+			Bf = 0.35
+			Af = 1
+		}
+		_bloomColor
+		{
+			Rf = 0.45
+			Gf = 1
+			Bf = 0.55
+			Af = 1
+		}
+		Texture
+		{
+			File = electron_reactor_sizzle_green.png
+			MipLevels = max
+			FixTransparentColors = true
+			SampleMode = Linear
+			UMode = Wrap
+			VMode = Wrap
+		}
+		TargetBlendMode
+		{
+			SourceRgbFactor = One
+			DestRgbFactor = One
+			RgbOperator = Add
+			SourceAlphaFactor = InverseDestAlpha
+			DestAlphaFactor = One
+			AlphaOperator = Add
+		}
+	}
+	DeleteMode = Fast
+	FpsCompensation = None
+	FpsCompensationStrength = 1
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 20
+	EmitPerOneShot
+	{
+		Min = 0
+		Max = 0
+	}
+	PreInitializers
+	[
+		{
+			Type = SetRandom
+			DataOut = scale
+			ValueType = Float
+			FromValue = 3
+			ToValue = 4
+			Name = "random base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandomCircle
+			LocationOut = location
+			Circle
+			{
+				Center
+				{
+					X = 0
+					Y = 0
+				}
+				Radius = 0.25
+			}
+			Perimeter = true
+			Name = "Set Location"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ParticleRotationFromNormal
+			NormalIn = location
+			RotationOut = rot
+			Name = "Align From Circle Location"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = OperatorConst
+			AIn = rot
+			ResultOut = rot
+			Operator = Add
+			ValueType = Angle
+			Value = -90d
+			Name = "Rotate To Face Outwards"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Convert Location To World"
+			Enabled = false
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = DisruptorLightningUpper
+UseRealTime = false
+PenetratingBucket
+MinIntensity = 0
+IsFancy = false
+IsFancyLight = false
+IsSimpleLight = false
+IsSimple = false
+ToggleWithRoofOpacity = false
+Sharing = None
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 5
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 30
+MaxParticleCount = 2147483647
+ScaleEmissionWithIntensity = true
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	OnlyStatuses
+	ExcludeStatuses
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Neutrals = true
+	TargetedNeutrals
+	Junk = true
+	TargetedJunk
+	Deconstruction
+}
+Delay
+{
+	BaseValue = 0.1
+	Modifiers
+	MinValue = -1.7976931348623157E+308
+	MaxValue = 1.7976931348623157E+308
+}
+IgnoreIntensity = false

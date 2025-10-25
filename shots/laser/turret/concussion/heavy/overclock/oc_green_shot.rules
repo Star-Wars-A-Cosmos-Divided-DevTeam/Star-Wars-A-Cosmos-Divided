@@ -1,56 +1,76 @@
 // LOCATION: shots\laser\turret\concussion\heavy\overclock\oc_green_shot.rules
 // PURPOSE: Overclocked Green variant (stats from OC base, visuals from non-OC green)
 
-ID = "SW.concussion_turret_heavy_laser_green_shot_overclock"
+BASE_OC = &<oc_base_shot.rules>
+GREEN = &<../green_shot.rules>
 
-Range       = &<../green_shot.rules>/Range
-IdealRange  = &<../green_shot.rules>/IdealRange
-IdealRadius = &<../green_shot.rules>/IdealRadius
-Speed       = &<../green_shot.rules>/Speed
+ID = "SW.concussion_turret_heavy_laser_green_shot_overclock"
+Range       = &BASE_OC/Range
+IdealRange  = &BASE_OC/IdealRange
+IdealRadius = &BASE_OC/IdealRadius
+Speed       = &BASE_OC/Speed
+ReceivableBuffs = &BASE_OC/ReceivableBuffs
 
 // Bring in OC stats (which already override base behavior to DamagePool model)
-Components : &<../base_shot.rules>/Components
+Components : &BASE_OC/Components
 {
-	// On-death media: use non-OC green’s operational media for consistency.
+	// On-death media: use non-OC green's operational media for consistency.
 	Targetable : ^/0/Targetable
 	{
 		OnDeath : ^/0/OnDeath
 		{
-			MediaEffects = &<../green_shot.rules>/Components/Hit/HitOperational/MediaEffects
+			MediaEffects = &~/GREEN/Components/Hit/HitOperational/MediaEffects
 		}
 	}
 
-	// Re-attach all BLUE media from the non-OC file.
+	// Re-attach all GREEN media from the non-OC file.
 	Hit : ^/0/Hit
 	{
 		HitShield : ^/0/HitShield
 		{
-			MediaEffects = &<../green_shot.rules>/Components/Hit/HitShield/MediaEffects
+			MediaEffects = &~/GREEN/Components/Hit/HitShield/MediaEffects
 		}
 		HitOperational : ^/0/HitOperational
 		{
-			MediaEffects = &<../green_shot.rules>/Components/Hit/HitOperational/MediaEffects
+			MediaEffects : &~/GREEN/Components/Hit/HitOperational/MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/deck_cannon_overclocked_impact.wav"
+					Volume = 1
+					SpeedVariation = .1
+				}
+			]
 		}
 		PenetratingOperational : ^/0/PenetratingOperational
 		{
-			MediaEffects = &<../green_shot.rules>/Components/Hit/PenetratingOperational/MediaEffects
+			MediaEffects = &~/GREEN/Components/Hit/PenetratingOperational/MediaEffects
 		}
 		FinishedPenetratingStructural : ^/0/FinishedPenetratingStructural
 		{
-			MediaEffects = &<../green_shot.rules>/Components/Hit/FinishedPenetratingStructural/MediaEffects
+			MediaEffects : &~/GREEN/Components/Hit/HitOperational/MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/deck_cannon_overclocked_impact.wav"
+					Volume = 1
+					SpeedVariation = .1
+				}
+			]
 		}
 	}
 
 	// Re-apply the Green texture & glow settings.
 	Sprite : ^/0/Sprite
 	{
+		ReduceScaleWith = DamagePool
 		Animation : ^/0/Animation
 		{
 			AtlasSprite : ^/0/AtlasSprite
 			{
 				Texture : ^/0/Texture
 				{
-					File = &<../green_shot.rules>/Components/Sprite/Animation/AtlasSprite/Texture/File
+					File = &~/GREEN/Components/Sprite/Animation/AtlasSprite/Texture/File
 				}
 			}
 		}
@@ -60,15 +80,32 @@ Components : &<../base_shot.rules>/Components
 	{
 		Sprite : ^/0/Sprite
 		{
-			VertexColor            = &<../green_shot.rules>/Components/GlowSprite/Sprite/VertexColor
-			_litReflectiveStrength = &<../green_shot.rules>/Components/GlowSprite/Sprite/_litReflectiveStrength
-			_litAdditiveStrength   = &<../green_shot.rules>/Components/GlowSprite/Sprite/_litAdditiveStrength
-			_unlitAdditiveStrength = &<../green_shot.rules>/Components/GlowSprite/Sprite/_unlitAdditiveStrength
+			VertexColor            = &~/GREEN/Components/GlowSprite/Sprite/VertexColor
+			_litReflectiveStrength = &~/GREEN/Components/GlowSprite/Sprite/_litReflectiveStrength
+			_litAdditiveStrength   = &~/GREEN/Components/GlowSprite/Sprite/_litAdditiveStrength
+			_unlitAdditiveStrength = &~/GREEN/Components/GlowSprite/Sprite/_unlitAdditiveStrength
+		}
+	}
+
+	GlowSprite2 : ^/0/GlowSprite2
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture : ^/0/Texture
+				{
+					File = "particles/bullet_large_oc_light_green.png"
+				}
+				_litReflectiveStrength 	= &~/GREEN/Components/GlowSprite/Sprite/_litReflectiveStrength
+				_litAdditiveStrength 	= &~/GREEN/Components/GlowSprite/Sprite/_litAdditiveStrength
+				_unlitAdditiveStrength 	= &~/GREEN/Components/GlowSprite/Sprite/_unlitAdditiveStrength
+			}
 		}
 	}
 
 	MediaEffects : ^/0/MediaEffects
 	{
-		MediaEffects = &<../green_shot.rules>/Components/MediaEffects/MediaEffects
+		MediaEffects = &~/GREEN/Components/MediaEffects/MediaEffects
 	}
 }

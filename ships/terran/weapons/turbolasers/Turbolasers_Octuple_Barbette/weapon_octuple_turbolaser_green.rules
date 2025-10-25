@@ -1,118 +1,64 @@
 Components
 {
-		
-
-		Turret
-		{
-			Type = TurretWeapon
-			Location = [4, 4] // Relative to upper-left corner of unrotated part.
-			Rotation = -90d // Relative to unrotated part.
-			OperationalToggle = IsOperational
-			AutoFireToggle = AutoFireToggle
-			FireInterval = 0 // Uses separate fire timer.
-			FiringArc = 160d
-			RotateSpeed = 13d
-			FireThresholdAngle = 1d
-			HoldTargetAfterCancel = 0.5
-			AIFirepowerRating = 6400
-			FirePermissionToggle = FirePermissionToggle
-			IgnoreSourceShipLOSChecks = true
-			IgnoreSourceShipLowLOSChecks = true
-			AllowFireWithBlockedLOS = false
-			Emitter = WeaponEmitter
-
-			AutoTargets
-			[
-				{
-					TargetType = ShipParts
-					Toggle = AutoTargetToggle
-				}
-			]
-
-			BlueprintArcSprite
-			{
-				Texture = &/INDICATORS/WeaponArc
-				Size = [0, 1.5]
-				Color = [255, 0, 0, 63]
-			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
-
-			CoverageSectorArc
-			{
-				Texture = &/INDICATORS/VerticalGradient
-				VertexColor = [255, 255, 255, 51]
-				QuadCount = 64
-			}
-		}
-
-		ReloadProgressBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = Turret
-		}
-
-		WeaponEmitter
+		WeaponEmitter : &<octuple_barbette_turbolaser.rules>/Part/Components/WeaponEmitterBase
 		{
 			Type = BulletEmitter
 			ChainedTo = Turret
-			FireTrigger = ShootLeftTriggerProxy
+			FireTrigger = ShootTrigger1
 			GetTargetFrom = Turret
 			Location = [4.21875, 1.40625]  //-90,-266:126;153;199
 			OperationalToggle = IsOperational
-			Bullet = &/SW_SHOTS/turretturbolaserlightlasergreenshot
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Light/Green
 			SourceShipCollisions = false
-			//Spread = [-2.5d, 2.5d]
+			TargetLeadPrediction = false
 			ResourceStorage = BatteryStorage
-			ResourcesUsed = 200 //250-350?
+			MinResourcesUsed = 1
 			Recoil = 350
 			AntiPhasingRaycastDistance = 4
-			TargetLeadPrediction = false
+			Spread = [-0.2d, 0.2d]
 		}
 		WeaponEmitter2 : WeaponEmitter
 		{
 			Location = [4.21875, 2.5]  //-160,-266
-			FireTrigger = ShootRightTriggerProxy
+			FireTrigger = ShootTrigger2
 			ResourceStorage = BatteryStorage
 		}
 		WeaponEmitter3 : WeaponEmitter
 		{
 			Location = [4.21875, 1.96875]  //-126,-266
-			FireTrigger = ShootLeftTriggerProxy
+			FireTrigger = ShootTrigger1
 			ResourceStorage = BatteryStorage
 		}
 		WeaponEmitter4 : WeaponEmitter
 		{
 			Location = [4.21875, 3.109375]  //-199,-266
-			FireTrigger = ShootRightTriggerProxy
+			FireTrigger = ShootTrigger2
 			ResourceStorage = BatteryStorage
 		}
 		WeaponEmitter5 : WeaponEmitter
 		{
 			Location = [4.21875, -1.40625]  //90,-266
-			FireTrigger = ShootLeftTriggerProxy
+			FireTrigger = ShootTrigger1
 			ResourceStorage = BatteryStorage
 		}
 		WeaponEmitter6 : WeaponEmitter
 		{
 			Location = [4.21875, -1.96875]  //126,-266
-			FireTrigger = ShootLeftTriggerProxy
+			FireTrigger = ShootTrigger1
 			ResourceStorage = BatteryStorage
 		}
 		WeaponEmitter7 : WeaponEmitter
 		{
 			Location = [4.21875, -2.5]  //160,-266
-			FireTrigger = ShootRightTriggerProxy
+			FireTrigger = ShootTrigger2
 			ResourceStorage = BatteryStorage
 		}
 		WeaponEmitter8 : WeaponEmitter
 		{
 			Location = [4.21875, -3.109375]  //199,-266
-			FireTrigger = ShootRightTriggerProxy
+			FireTrigger = ShootTrigger2
 			ResourceStorage = BatteryStorage
 		}
-
 
 		FireEffect
 		{
@@ -162,40 +108,6 @@ Components
 		{
 			ChainedTo = WeaponEmitter8
 			Trigger = WeaponEmitter8
-		}
-		BarrelGraphics
-		{
-			Type = Graphics
-			ChainedTo = Turret
-			//Location = [0, 0]
-			Rotation = 90d
-			Floor
-			{
-				Layer = "roof_turrets"
-				Offset = [-143/64, -123/64] //-143,-123
-				DamageLevels
-				[
-					{
-						File = "barrels01[3,5]10quad.png"
-						NormalsFile = "barrels01[3,5]10quad_normals.png"
-						Size = [3, 5]
-					}
-				]
-			}
-			Walls
-			{
-				Layer = "roof_turrets"
-				Offset = [143/64, -123/64] //-143,-123
-				DamageLevels
-				[
-					{
-						File = "barrels01[3,5]10quad.png"
-						NormalsFile = "barrels01[3,5]10quad_normals.png"
-						Size = [3, 5]
-						MirrorU = true
-					}
-				]
-			}
 		}
 
 }

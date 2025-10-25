@@ -1,0 +1,158 @@
+Components
+{
+/*
+		Turret
+		{
+			Type = TurretWeapon
+			Location = [4, 4] // Relative to upper-left corner of unrotated part.
+			Rotation = -90d // Relative to unrotated part.
+			OperationalToggle = IsOperational
+			AutoFireToggle = AutoFireToggle
+			FireInterval = 0 // Uses separate fire timer.
+			FiringArc = 180d
+			RotateSpeed = 15d
+			FireThresholdAngle = 1d
+			HoldTargetAfterCancel = 0.5
+			AIFirepowerRating = 6400
+			FirePermissionToggle = FirePermissionToggle
+			IgnoreSourceShipLOSChecks = false
+			IgnoreSourceShipLowLOSChecks = true
+			AllowFireWithBlockedLOS = false
+
+			Emitter = WeaponEmitter
+
+			AutoTargets
+			[
+				{
+					TargetType = ShipParts
+					Toggle = AutoTargetToggle
+				}
+			]
+
+			BlueprintArcSprite
+			{
+				Texture = &/INDICATORS/WeaponArc
+				Size = [0, 1.5]
+				Color = [255, 0, 0, 63]
+			}
+			BlueprintArcRadius = 10
+			BlueprintArcSpriteSegments = 64
+
+			CoverageSectorArc
+			{
+				Texture = &/INDICATORS/VerticalGradient
+				VertexColor = [255, 255, 255, 51]
+				QuadCount = 64
+			}
+		}
+
+		ReloadProgressBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = Turret
+		}
+*/
+		WeaponEmitter : &<quad_barbette_turbolaser.rules>/Part/Components/WeaponEmitterBase
+		{
+			Type = BulletEmitter
+			ChainedTo = Turret
+			FireTrigger = ShootTrigger1
+			GetTargetFrom = Turret
+			Location = [4.21875, 1.96875]  //-126,-266
+			OperationalToggle = IsOperational
+			FireDelay = .6
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Light/Red
+			SourceShipCollisions = false
+			TargetLeadPrediction = false
+			ResourceStorage = BatteryStorage
+			MinResourcesUsed = 1
+			Recoil = 350
+			AntiPhasingRaycastDistance = 4
+			Spread = [-0.2d, 0.2d]
+		}
+		WeaponEmitter2 : WeaponEmitter
+		{
+			Location = [4.21875, 2.546875]  //-163,-266
+			FireTrigger = ShootTrigger2
+			ResourceStorage = BatteryStorage
+		}
+		WeaponEmitter3 : WeaponEmitter
+		{
+			Location = [4.21875, -1.96875]  //126,-266
+			FireTrigger = ShootTrigger1
+			ResourceStorage = BatteryStorage
+		}
+		WeaponEmitter4 : WeaponEmitter
+		{
+			Location = [4.21875, -2.546875]  //163,-266
+			FireTrigger = ShootTrigger2
+			ResourceStorage = BatteryStorage
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = WeaponEmitter
+			Trigger = WeaponEmitter
+			AnchorMediaEffects = true
+
+			MediaEffects
+
+			[
+				&/SW_SOUNDS/TurbolaserSFX
+				&/SW_PARTICLES/Shot/Laser/Shoot/Small/Red
+			] 
+		}
+		FireEffect2 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = WeaponEmitter2
+		}
+		FireEffect3 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter3
+			Trigger = WeaponEmitter3
+		}
+		FireEffect4 : &FireEffect
+		{
+			ChainedTo = WeaponEmitter4
+			Trigger = WeaponEmitter4
+		}
+/*
+		BarrelGraphics
+		{
+			Type = Graphics
+			ChainedTo = Turret
+			//Location = [0, 0]
+			Rotation = 90d
+			Floor
+			{
+				Layer = "roof_turrets"
+				Offset = [-143/64, -123/64] //-145,-124
+				DamageLevels
+				[
+					{
+						File = "barrels01[2,5]10dual.png"
+						NormalsFile = "barrels01[2,5]10dual_normals.png"
+						Size = [2, 5]
+					}
+				]
+			}
+			Walls
+			{
+				Layer = "roof_turrets"
+				Offset = [143/64, -123/64] //-145,-124
+				DamageLevels
+				[
+					{
+						File = "barrels01[2,5]10dual.png"
+						NormalsFile = "barrels01[2,5]10dual_normals.png"
+						Size = [2, 5]
+						MirrorU = true
+					}
+				]
+			}
+		}
+*/
+}

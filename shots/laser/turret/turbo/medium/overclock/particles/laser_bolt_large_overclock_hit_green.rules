@@ -1,0 +1,354 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = "Convert location to world space."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = AddFrameOfReference
+			VelocityInOut = velocity
+			Name = "Add frame of reference"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = base_scale
+			ValueType = Float
+			FromValue = 5
+			ToValue = 7
+			Name = "random base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = base_scale
+			ScaleOut = base_scale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rot
+			RotationOut = rot
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = flip_xy
+			ValueType = Vector2
+			FromValue
+			{
+				X = 0
+				Y = 0
+			}
+			ToValue
+			{
+				X = 1
+				Y = 1
+			}
+			Name = "random flip"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = Lifetime
+			LifeInOut = life
+			Lifetime = 0.5
+			Name = Lifetime
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "Apply velocity."
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvAnimation
+			TimeIn = life
+			UvRectOut = uv_rect
+			Framerate = 32
+			TextureSize
+			{
+				X = 1024
+				Y = 2048
+			}
+			FrameSize
+			{
+				X = 256
+				Y = 256
+			}
+			FrameCount = 32
+			FramesPerRow = 4
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = false
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 1
+					Bf = 1
+					Af = 0.5882353
+				}
+				{
+					Rf = 0.39215687
+					Gf = 0
+					Bf = 0
+					Af = 0.19607843
+				}
+				{
+					Rf = 0
+					Gf = 0
+					Bf = 0
+					Af = 0
+				}
+			]
+			Name = "Color ramp"
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 0.7
+			ToValue = 1.3
+			Name = "scale lerp"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ParticleLightNormal
+			LocationIn = location
+			LightNormalOut = light_normal
+			Name = "Light normal"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = base_scale
+			BIn = scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "apply scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvFlip
+			FlipXYIn = flip_xy
+			UvRectInOut = uv_rect
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = LitQuadRenderer
+		LightNormalIn = light_normal
+		DiffuseShader
+		NormalsShader
+		{
+			File = ./Data/common_effects/particles/particle_normals.shader
+		}
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn = uv_rect
+		BaseSize
+		{
+			X = 1
+			Y = 1
+		}
+		Offset
+		{
+			X = 0
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
+			File = ./Data/common_effects/particles/particle_lit_additive.shader
+		}
+		_normalsTexture
+		{
+			File = oc_heavy_laser_hit_normals.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+		Texture
+		{
+			File = oc_heavy_laser_hit_green.png
+			MipLevels = max
+			SampleMode = Linear
+		}
+	}
+	DeleteMode = KeepOrder
+	FpsCompensation = None
+	FpsCompensationStrength = 1
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 0
+	EmitPerOneShot
+	{
+		Min = 2
+		Max = 2
+	}
+	PreInitializers
+	[
+		{
+			Type = AssignIndex
+			IndexOut = index
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RandomRotationByIndex
+			RotationInOut = rot
+			SafetyMargin = 30d
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = location
+			ValueType = Vector2
+			FromValue
+			{
+				X = -0.1
+				Y = -0.1
+			}
+			ToValue
+			{
+				X = 0.1
+				Y = 0.1
+			}
+			Name = "Random Position"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = OCHeavyLaserHit
+UseRealTime = false
+EmitImmediately = false
+PenetratingBucket = Middle2
+MinIntensity = 0
+IsFancy = false
+IsFancyLight = false
+IsSimpleLight = false
+IsSimple = false
+ToggleWithRoofOpacity = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = false
+DontEmitWhenOffScreenSizeInflate = 3
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 3.4028235E+38
+MaxParticleCount = 2147483647
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	OnlyStatuses
+	ExcludeStatuses
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Neutrals = true
+	TargetedNeutrals
+	Junk = true
+	TargetedJunk
+	Deconstruction
+}
+Delay
+{
+	BaseValue = 0
+	Modifiers
+	MinValue = -1.7976931348623157E+308
+	MaxValue = 1.7976931348623157E+308
+}
+IgnoreIntensity = false

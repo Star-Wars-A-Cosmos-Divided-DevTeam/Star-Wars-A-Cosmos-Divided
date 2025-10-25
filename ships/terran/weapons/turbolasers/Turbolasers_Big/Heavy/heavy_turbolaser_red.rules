@@ -1,3 +1,43 @@
+	Components
+	{
+
+		WeaponEmitter : &<../heavy_turbolaser_switchable.rules>/Part/Components/WeaponEmitterBase
+		{
+			FireTrigger = ShootTrigger1
+			Type = BulletEmitter
+			Location = [3.425, -0.575]
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Heavy/Red
+		}
+
+		WeaponEmitter2 : WeaponEmitter
+		{
+			FireTrigger = ShootTrigger2
+			Type = BulletEmitter
+			Location = [3.425, 0.575]
+		}
+
+		FireEffect
+		{
+			Type = TriggeredEffects
+			ChainedTo = WeaponEmitter
+			Trigger = ShootTrigger1
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Large/Red
+			]
+		}
+
+		FireEffect2 : FireEffect
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = ShootTrigger2
+		}
+
+	}
+
+/*
 Components
 	{
 		ReloadProgressBar : &<../heavy_turbolaser_switchable.rules>/ReloadProgressBarBase
@@ -10,7 +50,7 @@ Components
 		{
 			Type = BulletEmitter
 			Location = [3.425, -0.575]
-			Bullet = &/SW_SHOTS/turretturbolaserheavylaserredshot
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Heavy/Red
 		}
 
 		BulletEmitterRight : BulletEmitterLeft
@@ -66,13 +106,14 @@ LaserStats
 	NameKey = "StatCategories/HeavyRedTurbolasershot"
 	Stats
 	{
-		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
 		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<../heavy_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
 		DamagePerSecond = (&DamagePerShot) * (&<../heavy_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 		//ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
 		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
 	}
 }
+*/

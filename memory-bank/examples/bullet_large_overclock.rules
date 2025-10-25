@@ -1,0 +1,138 @@
+BASE = &<./Data/shots/bullet_large/bullet_large.rules>
+
+ID = "cosmoteer.bullet_large_overclock"
+Range = &BASE/Range
+IdealRange = &BASE/IdealRange
+IdealRadius = &BASE/IdealRadius
+Speed = (&~/BASE/Speed) * 130%
+
+HEALTH = (&~/BASE/Components/Targetable/Health) * 0.5
+
+SHRAPNEL_EFFECT
+{
+	Type = SpawnBullets
+	Bullet = &<bullet_large_overclock_shrapnel.rules>
+	Count = 20
+	Arc = [-40d, 80d]
+	Spread = [-5d, 5d]
+//	InheritVelocity = true
+}
+
+Components : &BASE/Components
+{
+	Targetable : ^/0/Targetable
+	{
+		Health = &~/HEALTH
+		
+		OnDeath : ^/0/OnDeath
+		{
+			HitEffects
+			[
+				&~/SHRAPNEL_EFFECT
+			]
+		}
+	}
+	
+	Hit
+	{
+		Type = SimpleHit
+		
+		CrewCollisions = {Enemies=true; Junk=true}
+		PenetratesCrew = true
+		HitCrew = &~/BASE/Components/Hit/HitCrew
+		HitShield = &HitOperational
+		HitOperational : &~/BASE/Components/Hit/HitOperational
+		{
+			HitEffects
+			[
+				// Impulse effect
+				&../^/0/HitEffects/1
+				&~/SHRAPNEL_EFFECT
+			]
+			
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["sounds/large_cannon_overclocked_impact_01.wav",
+									"sounds/large_cannon_overclocked_impact_02.wav",
+									"sounds/large_cannon_overclocked_impact_03.wav"]
+					Volume = 1
+					SpeedVariation = .1
+				}
+			]
+		}
+		HitStructural : &~/BASE/Components/Hit/HitStructural
+		{
+			MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					RandomSounds = ["sounds/large_cannon_overclocked_impact_01.wav",
+									"sounds/large_cannon_overclocked_impact_02.wav",
+									"sounds/large_cannon_overclocked_impact_03.wav"]
+					Volume = 1
+					SpeedVariation = .1
+				}
+			]
+		}
+	}
+	
+	Sprite
+	{
+		Type = AnimatedSprite
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "../bullet_large_cracked.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [0.7, 0.7] //130% larger than 0.7
+			}
+			FrameCount = 16
+			FrameSize = [256, 256]
+			FramesPerRow = 4
+			FramesPerSecond = 120
+		}
+	}
+	
+	GlowSprite2
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Offset = [0, 0]
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "../bullet_large_oc_light.png"
+					MipLevels = max
+					SampleMode = Linear
+				}
+				Size = [18.2, 18.2]
+				//VertexColor = [255, 255, 255]
+				TargetBlendMode = Add
+				Shader = "./Data/common_effects/fancy_light.shader"
+				_z = 1
+				_nrmlStrengthLimit = 1
+				_litReflectiveStrength = 24
+				_litAdditiveStrength = 0
+				_unlitAdditiveStrength = 1
+			}
+		FrameCount = 16
+		FrameSize = [512, 512]
+		FramesPerRow = 4
+		FramesPerSecond = 120
+		}
+	}
+}

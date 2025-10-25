@@ -1,31 +1,31 @@
-Components
+	Components
 	{
 		//ReloadProgressBar : &<light_turbolaser_switchable.rules>/ReloadProgressBarBase
 		//{
-		//	LowColor = [0, 64, 0]
-		//	HighColor = [0, 255, 0]
+		//	LowColor = [0, 0, 64]
+		//	HighColor = [0, 0, 255]
 		//}
 	
-		BulletEmitterLeft : &<light_turbolaser_switchable.rules>/Part/Components/BulletEmitterBase
+		WeaponEmitter : &<light_turbolaser_switchable.rules>/Part/Components/WeaponEmitterBase
 		{
-			FireTrigger = ShootLeftTriggerProxy
+			FireTrigger = ShootTrigger1
 			Type = BulletEmitter
 			Location = [1.18, 0.405]
-			Bullet = &/SW_SHOTS/turretturbolaserlightlasergreenshot		// greenmedlasershot
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Light/Green
 		}
 
-		BulletEmitterRight : BulletEmitterLeft
+		WeaponEmitter2 : WeaponEmitter
 		{
-			FireTrigger = ShootRightTriggerProxy
+			FireTrigger = ShootTrigger2
 			Type = BulletEmitter
 			Location = [1.18, -0.405]
 		}
 
-		FireEffectLeft
+		FireEffect1
 		{
 			Type = TriggeredEffects
-			ChainedTo = BulletEmitterLeft
-			Trigger = BulletEmitterLeft
+			ChainedTo = WeaponEmitter
+			Trigger = ShootTrigger1
 			AnchorMediaEffects = true
 	
 			MediaEffects
@@ -34,13 +34,13 @@ Components
 			]
 		}
 
-		FireEffectRight : FireEffectLeft
+		FireEffect2 : FireEffect1
 		{
-			ChainedTo = BulletEmitterRight
-			Trigger = BulletEmitterRight
+			ChainedTo = WeaponEmitter2
+			Trigger = ShootTrigger2
 		}
 
-		LightGraphics
+		/*LightGraphics
 		{
 			Type = Graphics
 			OperationalToggle = FireTimerProxy
@@ -62,24 +62,9 @@ Components
 					}
 				]
 			}
-		}
+		}*/
 	}
 
-LaserStats
-{
-	NameKey = "StatCategories/LightGreenTurbolasershot"
-	Stats
-	{
-		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<light_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
-		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-		DamagePerSecond = (&DamagePerShot) * (&<light_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
-		Damage = [&../DamagePerShot, &../DamagePerSecond]
-		//ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
-		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
-	}
-}
 
 
 /*
@@ -138,14 +123,14 @@ Components
 				}
 			]
 
-			BlueprintArcSprite
+			GreenprintArcSprite
 			{
 				Texture = &/INDICATORS/WeaponArc
 				Size = [0, 1.5]
 				Color = [255, 0, 0, 63]
 			}
-			BlueprintArcRadius = 10
-			BlueprintArcSpriteSegments = 64
+			GreenprintArcRadius = 10
+			GreenprintArcSpriteSegments = 64
 
 			CoverageSectorArc
 			{
@@ -179,14 +164,14 @@ Components
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.48, -0.505]
+			Location = [1.475, -0.46]
 		}
 
-		BulletEmitterRight : BulletEmitterBase
+		BulletEmitter2 : BulletEmitterBase
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
-			Location = [1.48, 0.505]
+			Location = [1.475, 0.46]
 		}
 
 		ChargeEffectBase
@@ -228,10 +213,10 @@ Components
 			]
 		}
 
-		FireEffectRight : FireEffectLeft
+		FireEffect2 : FireEffectLeft
 		{
-			ChainedTo = BulletEmitterRight
-			Trigger = BulletEmitterRight
+			ChainedTo = BulletEmitter2
+			Trigger = BulletEmitter2
 		}
 
 		TurretCollider
@@ -255,7 +240,7 @@ Components
 			{
 				AnimationFiles
 				[
-					"icon2.png"
+					"icon.png"
 				]
 				Size = [2.5, 2.5]
 				AnimationInterval = 0.0625
@@ -277,4 +262,5 @@ LaserStats
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 	}
 }
+
 */

@@ -1,6 +1,5 @@
 // LOCATION: shots\laser\turret\concussion\heavy\overclock\oc_base_shot.rules
 // PURPOSE: Overclock stats layer for all heavy concussion laser shots
-// NOTE: Media is intentionally not set here; color OC files will reference non-OC color media.
 
 BASE = &<../base_shot.rules>
 
@@ -9,11 +8,12 @@ Range       = (&BASE/Range) * 2
 Speed       = (&BASE/Speed) * 3
 IdealRange  = [200, &~/Range]
 IdealRadius = &BASE/IdealRadius
+ReceivableBuffs = &BASE/ReceivableBuffs
 
 // ---- Tunables (defaults; adjustable) ----
-DAMAGE_POOL = 100000
+DAMAGE_POOL = 30000
 // Uses the OC impulse pattern like deck cannon: 200% of base operational impulse.
-IMPULSE     = (&BASE/Components/Hit/HitOperational/HitEffects/2/Impulse/BaseValue) * 200%
+IMPULSE     = (&BASE/Components/Hit/HitOperational/HitEffects/1/Impulse/BaseValue) * 200%
 // Keep same targetable health unless you want OC to be sturdier in-flight.
 HEALTH      = (&BASE/Components/Targetable/Health) * 200%
 
@@ -23,12 +23,35 @@ Components : BASE/Components
 	DamagePool
 	{
 		Type   = DamagePool
-		Damage = { BaseValue = &~/DAMAGE_POOL; EffectScaleExponent = 1 }
+		Damage = { BaseValue = &~/DAMAGE_POOL; EffectScaleExponent = 1; }
 	}
 	DeathByDamagePool
 	{
 		Type       = DeathByDamagePool
 		DamagePool = DamagePool
+        OnDeath
+        {
+            HitEffects
+            [
+                {
+                    Type = ExplosiveDamage
+                    TotalDamage = { BaseValue = 75000; EffectScaleExponent = 1 }
+                    Radius = 10
+                    ExpandDuration = 0.9
+                    ExpandStartRadius = 2
+                    ExpandLoss = 100%
+                    ImpulsePerNDamage = 10
+                    NDamage = 10000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = true
+						Friendlies = true
+					}
+                }
+            ]
+            MediaEffects = &<./Data/shots/missile_nuke/missile_nuke_stage1.rules>/Components/Hit/HitOperational/MediaEffects //TODO: Implement Custom Graphics
+        }
 	}
 
 	Targetable : ^/0/Targetable
@@ -40,11 +63,9 @@ Components : BASE/Components
 	{
 		Penetration = infinity
 		FactorHitEffectsWith = DamagePool
-
 		// make all actual damage draw from the pool.
 		HitCrew     = &HitOperational
 		HitShield   = &HitOperational
-
 		HitOperational : ^/0/HitOperational
 		{
 			ReduceEffectsByPenetration = false
@@ -52,8 +73,8 @@ Components : BASE/Components
 			HitEffects
 			[
 				// Convert to pool-based damage.
-				{ Type = Damage;  Damage  = 0; DamagePool = DamagePool }
-				{ Type = Impulse; Impulse = &~/IMPULSE }
+				{ Type = Damage;  Damage  = 0; DamagePool = DamagePool; }
+				{ Type = Impulse; Impulse = &~/IMPULSE }             
 			]
 
 			// No media (see color OC files)
@@ -71,7 +92,17 @@ Components : BASE/Components
 
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = 0; DamagePool = DamagePool }
+				{ Type = Damage;  Damage  = 0; DamagePool = DamagePool; }
+				//{
+				//	Type = ExplosiveDamage
+				//	TotalDamage       = 10000
+				//	Radius            = 10
+				//	ExpandDuration    = 0.9
+				//	ExpandStartRadius = 1
+				//	ExpandLoss        = 100%
+				//	ImpulsePerNDamage = 10
+				//	NDamage           = 10000
+				//}
 				{ Type = Impulse; Impulse = &~/IMPULSE }
 			]
 		}
@@ -85,6 +116,39 @@ Components : BASE/Components
 	{
 		ReduceScaleWith = DamagePool
 		Animation : ^/0/Animation {}
+	}
+
+	GlowSprite2
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper4
+		Z = 0.5
+		IsLight = true
+		Offset = [1, 0]
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					MipLevels = max
+					SampleMode = Linear
+				}
+				Size = [20, 20]
+				//VertexColor = [255, 255, 255]
+				TargetBlendMode = Add
+				Shader = "./Data/common_effects/fancy_light.shader"
+				_z = 1
+				_nrmlStrengthLimit = 1
+				//_litReflectiveStrength = 24
+				//_litAdditiveStrength = 0
+				//_unlitAdditiveStrength = 1
+			}
+		FrameCount = 16
+		FrameSize = [512, 512]
+		FramesPerRow = 4
+		FramesPerSecond = 120
+		}
 	}
 
 	// Leave MediaEffects (trail) untouched here; color OC files will borrow theirs.

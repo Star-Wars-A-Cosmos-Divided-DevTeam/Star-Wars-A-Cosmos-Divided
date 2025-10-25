@@ -7,13 +7,14 @@ Range = 550
 IdealRange = [200, &~/Range]
 IdealRadius = [5, 50]
 Speed = 80
+ReceivableBuffs = [ElectronBuff]
 
 Components
 {
 	Physics
 	{
 		Type = CirclePhysics
-		Radius = 0.01
+		Radius = 0.45
 		Density = 0.0001
 	}
 
@@ -30,6 +31,7 @@ Components
 
 		OnDeath
 		{
+
 		}
 	}
 
@@ -37,7 +39,7 @@ Components
 	{
 		Type = PenetratingHit
 		Penetration = 200.0
-		PenetrationSpeed = 25
+		PenetrationSpeed = 26
 
 		CrewCollisions = { Enemies=true; Junk=true }
 		FriendlyShipLowCollisions = false
@@ -51,8 +53,8 @@ Components
 
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = { BaseValue = 20000; EffectScaleExponent = 1 } }  // was 20000
-				{ Type = Impulse; Impulse = { BaseValue =   300; EffectScaleExponent = 1 } }
+				{ Type = Damage;  Damage  = { BaseValue = 20000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue =   300; EffectScaleExponent = 1; } }
 			]
 
 		}
@@ -64,23 +66,28 @@ Components
 
 			HitEffects
 			[
-				{
-					Type = ExplosiveDamage
-					TotalDamage       = 50000
-					Radius            = 10
-					ExpandDuration    = 0.9
-					ExpandStartRadius = 1
-					ExpandLoss        = 100%
-					ImpulsePerNDamage = 10
-					NDamage           = 10000
-				}
-				{ Type = Damage;  Damage  = { BaseValue = 15000; EffectScaleExponent = 1 } }
-				{ Type = Impulse; Impulse = { BaseValue =   400; EffectScaleExponent = 1 } }
+
+				{ Type = Damage;  Damage  = { BaseValue = 30000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; } }
+				{ Type = Impulse; Impulse = { BaseValue = 400; EffectScaleExponent = 1; } }
 			]
 
 		}
 
-		HitStructural = &HitOperational
+		HitStructural
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [0.5, 0]
+
+			HitEffects
+			[
+				{
+					Type = Damage;	Damage = { BaseValue = 10000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; }
+				}
+				{
+					Type = Impulse;	Impulse = { BaseValue = 90; EffectScaleExponent = 1; }
+				}
+			]
+		}
 
 		PenetratingOperational
 		{
@@ -89,42 +96,28 @@ Components
 			HitEffects
 			[
 				{
-					Type = ExplosiveDamage
-					TotalDamage       = 10000
-					Radius            = 5
-					ExpandDuration    = 0.9
-					ExpandStartRadius = 1
-					ExpandLoss        = 100%
-					ImpulsePerNDamage = 10
-					NDamage           = 10000
+					Type = Damage;	Damage = { BaseValue = 15000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; }
 				}
-				{ Type = Impulse; Impulse = { BaseValue = 100; EffectScaleExponent = 1 } }
-			]
-
-		}
-
-		PenetratingStructural          = &PenetratingOperational
-		FinishedPenetratingOperational = &PenetratingOperational
-
-		FinishedPenetratingStructural
-		{
-			ReduceEffectsByPenetration = true
-
-			HitEffects
-			[
 				{
-					Type = ExplosiveDamage
-					TotalDamage       = 10000
-					Radius            = 9
-					ExpandDuration    = 0.9
-					ExpandStartRadius = 1
-					ExpandLoss        = 100%
-					ImpulsePerNDamage = 10
-					NDamage           = 10000
+					Type = StatusApplication
+					StatusType = cosmoteer.fire
+					StatusChance = { BaseValue = .4; EffectScaleExponent = 1 }
+					ValueType = Interpolated
+				}
+				{
+					Type = Impulse
+					Impulse = { BaseValue = 180; EffectScaleExponent = 1 }
 				}
 			]
 
 		}
+
+		PenetratingStructural
+		{
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+
 	}
 
 	Sprite
@@ -170,15 +163,27 @@ Components
 				MipLevels = max
 				SampleMode = Linear
 			}
-			Size = [18, 9]
+			Size = [16, 9]
 			TargetBlendMode = Add
 			Shader = "./Data/common_effects/fancy_light.shader"
+			_z = 1
+            _nrmlStrengthLimit = 1
 		}
 	}
 
 	MediaEffects // Trail
 	{
 		Type = MediaEffects
-		Offset = [1.5, 0]
+		Offset = [2, 0]
 	}
 }
+				//{
+				//	Type = ExplosiveDamage
+				//	TotalDamage       = 50000
+				//	Radius            = 10
+				//	ExpandDuration    = 0.9
+				//	ExpandStartRadius = 1
+				//	ExpandLoss        = 100%
+				//	ImpulsePerNDamage = 10
+				//	NDamage           = 10000
+				//}

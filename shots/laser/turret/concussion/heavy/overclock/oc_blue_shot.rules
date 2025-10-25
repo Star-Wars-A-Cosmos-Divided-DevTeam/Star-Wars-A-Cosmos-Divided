@@ -1,22 +1,25 @@
 // LOCATION: shots\laser\turret\concussion\heavy\overclock\oc_blue_shot.rules
 // PURPOSE: Overclocked Blue variant (stats from OC base, visuals from non-OC blue)
 
-ID = "SW.concussion_turret_heavy_laser_blue_shot_overclock"
+BASE_OC = &<oc_base_shot.rules>
+BLUE = &<../blue_shot.rules>
 
-Range       = &<../blue_shot.rules>/Range
-IdealRange  = &<../blue_shot.rules>/IdealRange
-IdealRadius = &<../blue_shot.rules>/IdealRadius
-Speed       = &<../blue_shot.rules>/Speed
+ID = "SW.concussion_turret_heavy_laser_blue_shot_overclock"
+Range       = &BASE_OC/Range
+IdealRange  = &BASE_OC/IdealRange
+IdealRadius = &BASE_OC/IdealRadius
+Speed       = &BASE_OC/Speed
+ReceivableBuffs = &BASE_OC/ReceivableBuffs
 
 // Bring in OC stats (which already override base behavior to DamagePool model)
-Components : &<../base_shot.rules>/Components
+Components : &BASE_OC/Components
 {
-	// On-death media: use non-OC blue’s operational media for consistency.
+	// On-death media: use non-OC blue's operational media for consistency.
 	Targetable : ^/0/Targetable
 	{
 		OnDeath : ^/0/OnDeath
 		{
-			MediaEffects = &<../blue_shot.rules>/Components/Hit/HitOperational/MediaEffects
+			MediaEffects = &~/BLUE/Components/Hit/HitOperational/MediaEffects
 		}
 	}
 
@@ -25,32 +28,49 @@ Components : &<../base_shot.rules>/Components
 	{
 		HitShield : ^/0/HitShield
 		{
-			MediaEffects = &<../blue_shot.rules>/Components/Hit/HitShield/MediaEffects
+			MediaEffects = &~/BLUE/Components/Hit/HitShield/MediaEffects
 		}
 		HitOperational : ^/0/HitOperational
 		{
-			MediaEffects = &<../blue_shot.rules>/Components/Hit/HitOperational/MediaEffects
+			MediaEffects : &~/BLUE/Components/Hit/HitOperational/MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/deck_cannon_overclocked_impact.wav"
+					Volume = 1
+					SpeedVariation = .1
+				}
+			]
 		}
 		PenetratingOperational : ^/0/PenetratingOperational
 		{
-			MediaEffects = &<../blue_shot.rules>/Components/Hit/PenetratingOperational/MediaEffects
+			MediaEffects = &~/BLUE/Components/Hit/PenetratingOperational/MediaEffects
 		}
 		FinishedPenetratingStructural : ^/0/FinishedPenetratingStructural
 		{
-			MediaEffects = &<../blue_shot.rules>/Components/Hit/FinishedPenetratingStructural/MediaEffects
+			MediaEffects : &~/BLUE/Components/Hit/FinishedPenetratingStructural/MediaEffects
+			[
+				: /BASE_SOUNDS/AudioExterior
+				{
+					Sound = "sounds/deck_cannon_overclocked_impact.wav"
+					Volume = 1
+					SpeedVariation = .1
+				}
+			]
 		}
 	}
 
 	// Re-apply the Blue texture & glow settings.
 	Sprite : ^/0/Sprite
 	{
+		ReduceScaleWith = DamagePool
 		Animation : ^/0/Animation
 		{
 			AtlasSprite : ^/0/AtlasSprite
 			{
 				Texture : ^/0/Texture
 				{
-					File = &<../blue_shot.rules>/Components/Sprite/Animation/AtlasSprite/Texture/File
+					File = &~/BLUE/Components/Sprite/Animation/AtlasSprite/Texture/File
 				}
 			}
 		}
@@ -60,15 +80,32 @@ Components : &<../base_shot.rules>/Components
 	{
 		Sprite : ^/0/Sprite
 		{
-			VertexColor            = &<../blue_shot.rules>/Components/GlowSprite/Sprite/VertexColor
-			_litReflectiveStrength = &<../blue_shot.rules>/Components/GlowSprite/Sprite/_litReflectiveStrength
-			_litAdditiveStrength   = &<../blue_shot.rules>/Components/GlowSprite/Sprite/_litAdditiveStrength
-			_unlitAdditiveStrength = &<../blue_shot.rules>/Components/GlowSprite/Sprite/_unlitAdditiveStrength
+			VertexColor            = &~/BLUE/Components/GlowSprite/Sprite/VertexColor
+			_litReflectiveStrength = &~/BLUE/Components/GlowSprite/Sprite/_litReflectiveStrength
+			_litAdditiveStrength   = &~/BLUE/Components/GlowSprite/Sprite/_litAdditiveStrength
+			_unlitAdditiveStrength = &~/BLUE/Components/GlowSprite/Sprite/_unlitAdditiveStrength
+		}
+	}
+
+	GlowSprite2 : ^/0/GlowSprite2
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture : ^/0/Texture
+				{
+					File = "particles/bullet_large_oc_light_blue.png"
+				}
+				_litReflectiveStrength 	= &~/BLUE/Components/GlowSprite/Sprite/_litReflectiveStrength
+				_litAdditiveStrength 	= &~/BLUE/Components/GlowSprite/Sprite/_litAdditiveStrength
+				_unlitAdditiveStrength 	= &~/BLUE/Components/GlowSprite/Sprite/_unlitAdditiveStrength
+			}
 		}
 	}
 
 	MediaEffects : ^/0/MediaEffects
 	{
-		MediaEffects = &<../blue_shot.rules>/Components/MediaEffects/MediaEffects
+		MediaEffects = &~/BLUE/Components/MediaEffects/MediaEffects
 	}
 }

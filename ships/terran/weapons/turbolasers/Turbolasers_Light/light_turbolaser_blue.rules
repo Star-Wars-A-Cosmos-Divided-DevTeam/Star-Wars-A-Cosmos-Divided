@@ -1,4 +1,4 @@
-Components
+	Components
 	{
 		//ReloadProgressBar : &<light_turbolaser_switchable.rules>/ReloadProgressBarBase
 		//{
@@ -6,26 +6,26 @@ Components
 		//	HighColor = [0, 0, 255]
 		//}
 	
-		BulletEmitterLeft : &<light_turbolaser_switchable.rules>/Part/Components/BulletEmitterBase
+		WeaponEmitter : &<light_turbolaser_switchable.rules>/Part/Components/WeaponEmitterBase
 		{
-			FireTrigger = ShootLeftTriggerProxy
+			FireTrigger = ShootTrigger1
 			Type = BulletEmitter
 			Location = [1.18, 0.405]
-			Bullet = &/SW_SHOTS/turretturbolaserlightlaserblueshot
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Light/Blue
 		}
 
-		BulletEmitterRight : BulletEmitterLeft
+		WeaponEmitter2 : WeaponEmitter
 		{
-			FireTrigger = ShootRightTriggerProxy
+			FireTrigger = ShootTrigger2
 			Type = BulletEmitter
 			Location = [1.18, -0.405]
 		}
 
-		FireEffectLeft
+		FireEffect1
 		{
 			Type = TriggeredEffects
-			ChainedTo = BulletEmitterLeft
-			Trigger = BulletEmitterLeft
+			ChainedTo = WeaponEmitter
+			Trigger = ShootTrigger1
 			AnchorMediaEffects = true
 	
 			MediaEffects
@@ -34,13 +34,13 @@ Components
 			]
 		}
 
-		FireEffectRight : FireEffectLeft
+		FireEffect2 : FireEffect1
 		{
-			ChainedTo = BulletEmitterRight
-			Trigger = BulletEmitterRight
+			ChainedTo = WeaponEmitter2
+			Trigger = ShootTrigger2
 		}
-
-		LightGraphics
+		
+		/*LightGraphics
 		{
 			Type = Graphics
 			OperationalToggle = FireTimerProxy
@@ -62,24 +62,11 @@ Components
 					}
 				]
 			}
-		}
+		}*/
+		
 	}
 
-LaserStats
-{
-	NameKey = "StatCategories/LightBlueTurbolasershot"
-	Stats
-	{
-		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
-		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<light_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
-		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
-		DamagePerSecond = (&DamagePerShot) * (&<light_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
-		Damage = [&../DamagePerShot, &../DamagePerSecond]
-		//ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
-		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
-	}
-}
+
 
 /*
 Components
@@ -181,7 +168,7 @@ Components
 			Location = [1.475, -0.46]
 		}
 
-		BulletEmitterRight : BulletEmitterBase
+		BulletEmitter2 : BulletEmitterBase
 		{
 			Type = BulletEmitter
 			FireTrigger = Turret
@@ -227,10 +214,10 @@ Components
 			]
 		}
 
-		FireEffectRight : FireEffectLeft
+		FireEffect2 : FireEffectLeft
 		{
-			ChainedTo = BulletEmitterRight
-			Trigger = BulletEmitterRight
+			ChainedTo = BulletEmitter2
+			Trigger = BulletEmitter2
 		}
 
 		TurretCollider
