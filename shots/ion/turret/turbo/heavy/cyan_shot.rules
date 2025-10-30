@@ -1,0 +1,123 @@
+// LOCATION: shots/ion/turret/turbo/heavy/cyan_shot.rules
+// PURPOSE : Applies cyan color media & legacy IDs on top of the heavy ion base shot.
+BASESHOT = &<base_shot.rules>
+
+ID = SW.cyan_heavy_ion_cannon_shot // Legacy ID retained for compatibility
+OtherIDs = ["heavy_ion_cannon_shot", "SW.blue_heavy_ion_cannon_shot"]
+Range = &BASESHOT/Range
+IdealRange = &BASESHOT/IdealRange
+IdealRadius = &BASESHOT/IdealRadius
+Speed = &BASESHOT/Speed
+ReceivableBuffs = &BASESHOT/ReceivableBuffs
+
+Components : &BASESHOT/Components
+{
+
+	Hit : ^/0/Hit
+	{
+		HitShield : ^/0/HitShield
+		{
+			HitEffects
+			[
+				: ../^/0/HitEffects/0
+				{
+					MediaEffectsOnDrain
+					[
+						&/SW_PARTICLES/Shot/Ion/Drain/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Sizzle/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+						&/SW_SOUNDS/IonDischarge
+					]
+				}
+			]
+
+			MediaEffects = &../HitOperational/MediaEffects
+		}
+
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Ion/Hit/Small/Cyan
+				&/SW_PARTICLES/Shot/Ion/Flash/Small/Cyan
+				&/SW_PARTICLES/Shot/Ion/Sparks/Small/Cyan
+
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+
+		HitStructural : ^/0/HitStructural
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Ion/Hit/Med/Cyan
+				&/SW_SOUNDS/SmallLaserHit
+			]
+		}
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					File = "particles/shot_cyan.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [1.75, 0.81]
+			}
+			FrameCount = 1
+			FrameSize = [128, 64]
+			FramesPerRow = 1
+			FramesPerSecond = 32
+		}
+	}
+
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [2.5, 1.2]
+			VertexColor = [0, 240, 240]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
+	}
+
+	TrailEffects
+	{
+		Type = MediaEffects
+		Offset = [45/64, 0]
+		MediaEffects
+		[
+			&/SW_PARTICLES/Shot/Ion/Trail/Med/Cyan
+		]
+	}
+}

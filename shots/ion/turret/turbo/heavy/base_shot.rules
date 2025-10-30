@@ -1,0 +1,191 @@
+// LOCATION: shots/ion/turret/turbo/heavy/base_shot.rules
+// PURPOSE : Shared stats & behavior for heavy ion turret shots (color-less foundation)
+// NOTES   : Color-specific particles/sounds are layered in the wrapper (e.g. cyan_shot.rules).
+
+// Base scalars (sourced from legacy SW.cyan_heavy_ion_cannon_shot)
+DRAIN_SHIELD_BASE       = 6000        // Immediate power siphon vs shields
+DAMAGE_SHIELD_BASE      = 6000        // Shield damage portion
+DAMAGE_BASE             = 300         // Direct hull damage
+DAMAGE_STRUCT_BASE      = 200         // Structural damage
+IMPULSE_BASE            = 2.5         // Knockback applied to shields/hull
+IMPULSE_STRUCT_RATIO    = 0.5         // Structural impulse uses half strength
+PENETRATION_BASE        = 40
+HEALTH_BASE             = 4000
+RANGE_BASE              = 400
+SPEED_BASE              = 100
+IDEAL_RADIUS_BASE       = [5, 50]
+
+ID = "SW.ion_heavy_cannon_shot_base"
+Range = &~/RANGE_BASE
+IdealRange = [150, &~/RANGE_BASE]
+IdealRadius = &~/IDEAL_RADIUS_BASE
+Speed = &~/SPEED_BASE
+ReceivableBuffs = [ElectronBuff]
+
+Components
+{
+	Physics
+	{
+		Type = CirclePhysics
+		Radius = 0.01
+		Density = 0.0001
+	}
+
+	Death
+	{
+		Type = DeathByLifetime
+		// Lifetime auto-calculated from range & speed
+	}
+
+	Targetable
+	{
+		Type = Targetable
+		Health = &~/HEALTH_BASE
+		TargetCategory = "ion_shot"
+	}
+
+	Hit
+	{
+		Type = PenetratingHit
+		Penetration = &~/PENETRATION_BASE
+		PenetratesOperational = false
+		FactorEffectsWith = Targetable
+
+		CrewCollisions = { Enemies = true; Junk = true }
+		SourceShipLowCollisions = false
+
+		PenetratesCrew = true
+		HitCrew = &HitOperational
+
+		HitShield
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				: ../../HitOperational/HitEffects/0
+				{
+					Amount = { BaseValue = &~/DAMAGE_SHIELD_BASE; EffectScaleExponent = 1 }
+					TreatShieldAsPart = true
+				}
+			]
+		}
+
+		HitOperational
+		{
+			Offset = [-0.15, 0]
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = ResourceDrain
+					ResourceType = battery
+					Amount = { BaseValue = &~/DRAIN_SHIELD_BASE; EffectScaleExponent = 1 }
+
+					MediaEffectsOnDrain
+					[
+						&/SW_PARTICLES/Shot/Ion/Drain/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Sizzle/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+						&/SW_SOUNDS/IonDischarge
+					]
+
+				}
+				{
+					Type = Damage
+					Damage = { BaseValue = &~/DAMAGE_BASE; EffectScaleExponent = 1 }
+				}
+			]
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Ion/Hit/Small/Cyan
+				&/SW_PARTICLES/Shot/Ion/Flash/Small/Cyan
+				&/SW_PARTICLES/Shot/Ion/Sparks/Small/Cyan
+
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .03
+					Duration = .3
+				}
+			]
+		}
+
+		HitStructural
+		{
+			ReduceEffectsByPenetration = true
+
+			HitEffects
+			[
+				{
+					Type = Damage
+					Damage = { BaseValue = &~/DAMAGE_STRUCT_BASE; EffectScaleExponent = 1 }
+				}
+			]
+		}
+
+		PenetratingOperational
+		{
+			// No additional over-penetration effects in base form.
+		}
+
+		PenetratingStructural
+		{
+			// No additional over-penetration effects in base form.
+		}
+
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+
+	Sprite
+	{
+		Type = AnimatedSprite
+		RenderBucket = BulletUpper3
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Animation
+		{
+			AtlasSprite
+			{
+				Texture
+				{
+					// Overridden in color wrapper (defaults to cyan legacy texture)
+					File = "particles/shot_cyan.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+				Size = [1.75, 0.81]
+			}
+			FrameCount = 1
+			FrameSize = [128, 64]
+			FramesPerRow = 1
+			FramesPerSecond = 32
+		}
+	}
+	GlowSprite
+	{
+		Type = Sprite
+		RenderBucket = BulletUpper2
+		Z = 0
+		IsLight = true
+		Sprite
+		{
+			Texture
+			{
+				File = "./Data/common_effects/particles/blob.png"
+				MipLevels = max
+				SampleMode = Linear
+			}
+			Size = [2.5, 1.2]
+			VertexColor = [255, 255, 255]
+			TargetBlendMode = Add
+			Shader = "./Data/common_effects/fancy_light.shader"
+			_litReflectiveStrength = 24
+			_litAdditiveStrength = 0.05
+			_unlitAdditiveStrength = 0.25
+		}
+	}
+}

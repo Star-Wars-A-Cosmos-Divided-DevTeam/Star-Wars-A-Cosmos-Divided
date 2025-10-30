@@ -1,0 +1,111 @@
+// LOCATION: shots/ion/turret/turbo/heavy/overclock/oc_cyan_shot.rules
+// PURPOSE : Cyan media & audio for overclocked heavy ion shots.
+OC_BASE = &<oc_base_shot.rules>
+
+ID = SW.cyan_heavy_ion_cannon_shot_overclock
+OtherIDs = ["heavy_ion_cannon_shot_overclock"]
+Range = &OC_BASE/Range
+IdealRange = &OC_BASE/IdealRange
+IdealRadius = &OC_BASE/IdealRadius
+Speed = &OC_BASE/Speed
+ReceivableBuffs = &OC_BASE/ReceivableBuffs
+
+Components : &OC_BASE/Components
+{
+
+	Hit : ^/0/Hit
+	{
+		HitShield : ^/0/HitShield
+		{
+			HitEffects
+			[
+				: ../^/0/HitEffects/0
+				{
+					MediaEffectsOnDrain
+					[
+						&/SW_PARTICLES/Shot/Ion/Drain/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Sizzle/Med/Cyan
+						&/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+						&/SW_SOUNDS/IonDischarge
+					]
+				}
+			]
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Ion/Hit/Med/Cyan
+				&/SW_PARTICLES/Shot/Ion/Flash/Med/Cyan
+				&/SW_PARTICLES/Shot/Ion/Sparks/Med/Cyan
+				&/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+
+				&/SW_SOUNDS/IonDischarge
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .05
+					Duration = .35
+				}
+			]
+		}
+
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Ion/Hit/Small/Cyan
+				&/SW_PARTICLES/Shot/Ion/Flash/Small/Cyan
+				&/SW_PARTICLES/Shot/Ion/Sparks/Small/Cyan
+				&/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .04
+					Duration = .35
+				}
+			]
+		}
+
+		HitStructural : ^/0/HitStructural
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Ion/Hit/Med/Cyan
+				&/SW_PARTICLES/Shot/Ion/Lightning/Med/Cyan
+				&/SW_SOUNDS/SmallLaserHit
+			]
+		}
+	}
+	GlowSprite : ^/0/GlowSprite
+	{
+		Sprite
+		{
+			VertexColor = [0, 255, 255]
+			Size = [3.2, 1.5]
+		}
+	}
+
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&/SW_PARTICLES/Shot/Ion/Glow/Med/Cyan
+			&/SW_PARTICLES/Shot/Ion/Sparks/Med/Cyan
+			&<particles/disruptor_bolt_oc_lightning.rules>
+		]
+	}
+	TrailEffects
+	{
+		Type = MediaEffects
+		Offset = [45/64, 0]
+		MediaEffects
+		[
+			&/SW_PARTICLES/Shot/Ion/Trail/Med/Cyan
+			&/SW_PARTICLES/Shot/Ion/Trail/Med/Cyan
+		]
+	}
+}

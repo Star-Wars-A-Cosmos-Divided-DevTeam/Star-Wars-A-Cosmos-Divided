@@ -1,0 +1,369 @@
+Type = Particles
+Def
+{
+	EmitPerSecond = 0
+	EmitPerOneShot = 0
+	Initializers
+	[
+		{
+			Type = LocationToWorldSpace
+			LocationIn = location
+			LocationOut = location
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = RotationToWorldSpace
+			RotationIn = rot
+			RotationOut = rot
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleToWorldSpace
+			ScaleIn = baseScale
+			ScaleOut = baseScale
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = index
+			ValueType = Int
+			FromValue = 0
+			ToValue = 3
+			Name = "random sprite index"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = UvSprites
+			SpriteIndexIn = index
+			UvRectOut = uv_rect
+			TextureSize
+			{
+				X = 1024
+				Y = 512
+			}
+			SpriteSize
+			{
+				X = 512
+				Y = 256
+			}
+			SpriteCount = 4
+			SpritesPerRow = 2
+			PixelOffset
+			{
+				X = 0
+				Y = 0
+			}
+			Looping = false
+			Name = "Random Sprite"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = lifetime
+			ValueType = Float
+			FromValue = 0.1
+			ToValue = 0.2
+			Name = "random lifetime"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = InheritVelocity
+			VelocityInOut = velocity
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetBulletBarrierID
+			BarrierIDOut = barrier
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Updaters
+	[
+		{
+			Type = VariableLifetime
+			LifeInOut = life
+			LifetimeIn = lifetime
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ColorRamp
+			LerpIn = life
+			ColorOut = color
+			Invert = false
+			Colors
+			[
+				{
+					Rf = 0.4862745
+					Gf = 1
+					Bf = 1
+					Af = 1
+				}
+				{
+					Rf = 0.8627451
+					Gf = 0
+					Bf = 0.19607843
+					Af = 1
+				}
+				{
+					Rf = 1
+					Gf = 0
+					Bf = 0
+					Af = 1
+				}
+			]
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = true
+		}
+		{
+			Type = Lerp
+			LerpIn = life
+			DataOut = scale
+			Invert = false
+			ValueType = Float
+			FromValue = 2
+			ToValue = 3
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = baseScale
+			BIn = scale
+			ResultOut = scale
+			Operator = Multiply
+			Name = "apply base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Vector2
+			AIn = location
+			BIn = velocity
+			ResultOut = location
+			Operator = AddDt
+			Name = "apply velocity"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Barrier
+			BarrierIDIn = barrier
+			LocationIn = location
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	Renderer
+	{
+		Type = StandardQuadRenderer
+		LocationIn = location
+		ScaleIn = scale
+		Scale2In
+		RotationIn = rot
+		ColorIn = color
+		UvRectIn = uv_rect
+		BaseSize
+		{
+			X = 1
+			Y = 0.5
+		}
+		Offset
+		{
+			X = 0
+			Y = 0
+		}
+		Name = ""
+	}
+	Material
+	{
+		Shader
+		{
+			File = particle_lightning.shader
+		}
+		_centerColor
+		{
+			Rf = 1
+			Gf = 0.9882353
+			Bf = 0
+			Af = 1
+		}
+		_outerColor
+		{
+			Rf = 0.7490196
+			Gf = 1
+			Bf = 0.3529412
+			Af = 1
+		}
+		_bloomColor
+		{
+			Rf = 0.89411765
+			Gf = 1
+			Bf = 0.37254903
+			Af = 1
+		}
+		Texture
+		{
+			File = disruptor_bolt_lightning.png
+			MipLevels = max
+			FixTransparentColors = true
+			SampleMode = Linear
+			UMode = Wrap
+			VMode = Wrap
+		}
+		TargetBlendMode
+		{
+			SourceRgbFactor = One
+			DestRgbFactor = One
+			RgbOperator = Add
+			SourceAlphaFactor = InverseDestAlpha
+			DestAlphaFactor = One
+			AlphaOperator = Add
+		}
+	}
+	DeleteMode = Fast
+	FpsCompensation = None
+	FpsCompensationStrength = 1
+	EnableMultithreading = false
+	InitCapacity = 256
+}
+EmitterDef
+{
+	EmitPerSecond = 60
+	EmitPerOneShot
+	{
+		Min = 0
+		Max = 0
+	}
+	PreInitializers
+	[
+		{
+			Type = SetValue
+			DataOut = scale
+			ValueType = Float
+			Value = 0.5
+			Name = "Base Scale"
+			Enabled = false
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = rot
+			ValueType = Angle
+			FromValue = -15d
+			ToValue = 15d
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = SetRandom
+			DataOut = baseScale
+			ValueType = Float
+			FromValue = 0.4
+			ToValue = 0.6
+			Name = "random base scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = ScaleFromIntensity
+			ScaleOut = intensityScale
+			ScaleFactor = 1
+			IntensityExponent = 1
+			Name = ""
+			Enabled = true
+			UpdateAfterInit = false
+		}
+		{
+			Type = Operator
+			DataType = Float
+			AIn = baseScale
+			BIn = intensityScale
+			ResultOut = baseScale
+			Operator = Multiply
+			Name = "combine base and intensity scale"
+			Enabled = true
+			UpdateAfterInit = false
+		}
+	]
+	PostInitializers[]
+}
+Bucket = DisruptorLightningBullet
+UseRealTime = false
+EmitImmediately = false
+PenetratingBucket
+MinIntensity = 0
+IsFancy = false
+IsFancyLight = false
+IsSimpleLight = false
+IsSimple = false
+ToggleWithRoofOpacity = false
+Sharing = Global
+UnsharedRenderInWorldSpace = false
+DontEmitWhenOffScreen = true
+DontEmitWhenOffScreenSizeInflate = 5
+UseCustomShapeForOffScreenCheck = false
+MaxEmissionZoom = 30
+MaxParticleCount = 2147483647
+ScaleEmissionWithIntensity = false
+ScaleEmissionWithBeamLength = false
+ScaleEmissionWithWorldVelocity = false
+ScaleEmissionWithPartSize = false
+ScaleEmissionWithPartPhysicalSize = false
+CaptureBackBuffer = false
+Filter
+{
+	Ships = true
+	OperationalHealth = true
+	StructuralHealth = true
+	OnlyPartCategories
+	ExcludePartCategories
+	Shields = true
+	Bullets = true
+	OnlyBulletCategories
+	ExcludeBulletCategories
+	OnlyStatuses
+	ExcludeStatuses
+	Crew = true
+	Nuggets = true
+	IgnoreInvulnerability = true
+	Self
+	TargetedSelf
+	Friendlies = true
+	TargetedFriendlies
+	Enemies = true
+	TargetedEnemies
+	Neutrals = true
+	TargetedNeutrals
+	Junk = true
+	TargetedJunk
+	Deconstruction
+}
+Delay
+{
+	BaseValue = 0
+	Modifiers
+	MinValue = -1.7976931348623157E+308
+	MaxValue = 1.7976931348623157E+308
+}
+IgnoreIntensity = false
