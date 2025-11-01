@@ -3,17 +3,18 @@
 // NOTES   : Color-specific particles/sounds are layered in the wrapper (e.g. cyan_shot.rules).
 
 // Base scalars (sourced from legacy SW.cyan_heavy_ion_cannon_shot)
-DRAIN_SHIELD_BASE       = 6000        // Immediate power siphon vs shields
-DAMAGE_SHIELD_BASE      = 6000        // Shield damage portion
-DAMAGE_BASE             = 300         // Direct hull damage
-DAMAGE_STRUCT_BASE      = 200         // Structural damage
-IMPULSE_BASE            = 2.5         // Knockback applied to shields/hull
-IMPULSE_STRUCT_RATIO    = 0.5         // Structural impulse uses half strength
-PENETRATION_BASE        = 40
-HEALTH_BASE             = 4000
-RANGE_BASE              = 400
-SPEED_BASE              = 100
-IDEAL_RADIUS_BASE       = [5, 50]
+DRAIN_BATTERY_BASE      		= 6000        
+DAMAGE_SHIELD_BASE      		= 6000        
+DAMAGE_BASE             		= 300         
+DAMAGE_STRUCT_BASE      		= 200         
+IMPULSE_BASE 					= 2.5						// &~/IMPULSE_BASE 
+IMPULSE_SHIELD_BASE 			= (&~/IMPULSE_BASE)*75% 	// &~/IMPULSE_SHIELD_BASE
+IMPULSE_STRUCT_BASE 			= (&~/IMPULSE_BASE)/2		// &~/IMPULSE_STRUCT_BASE
+PENETRATION_BASE        		= 40
+HEALTH_BASE             		= 4000
+RANGE_BASE              		= 400
+SPEED_BASE              		= 100 //*2
+IDEAL_RADIUS_BASE       		= [5, 50]
 
 ID = "SW.ion_heavy_cannon_shot_base"
 Range = &~/RANGE_BASE
@@ -81,7 +82,7 @@ Components
 				{
 					Type = ResourceDrain
 					ResourceType = battery
-					Amount = { BaseValue = &~/DRAIN_SHIELD_BASE; EffectScaleExponent = 1 }
+					Amount = { BaseValue = &~/DRAIN_BATTERY_BASE; EffectScaleExponent = 1 }
 
 					MediaEffectsOnDrain
 					[

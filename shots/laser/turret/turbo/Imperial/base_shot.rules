@@ -1,12 +1,39 @@
 // LOCATION: shots/laser/turret/turbo/Imperial/base_shot.rules
 // BASE FOR: Imperial turbolaser turret shots (shared stats & damage profile)
 // STRINGKEY: NONE
+
+//Base Stats
+DAMAGE_SHIELD_BASE 				= 2400						// &~/DAMAGE_SHIELD_BASE
+DAMAGE_BASE 					= 5500 						// &~/DAMAGE_BASE
+DAMAGE_STRUCT_BASE 				= (&~/DAMAGE_BASE)/2 		// &~/DAMAGE_STRUCT_BASE
+DAMAGE_EXPLOSIVE_BASE 			= 1000						// &~/DAMAGE_EXPLOSIVE_BASE
+AREA_DAMAGE_BASE 				= 0 						// &~/AREA_DAMAGE_BASE 
+DAMAGE_POOL_BASE 				= 0 						// &~/DAMAGE_POOL_BASE 
+IMPULSE_BASE 					= 10 						// &~/IMPULSE_BASE 
+IMPULSE_SHIELD_BASE 			= (&~/IMPULSE_BASE)*10% 	// &~/IMPULSE_SHIELD_BASE
+IMPULSE_STRUCT_BASE 			= (&~/IMPULSE_BASE)/2		// &~/IMPULSE_STRUCT_BASE
+IMPULSE_EXPLOSIVE_BASE 			= 0							// &~/IMPULSE_EXPLOSIVE_BASE
+PENETRATION_DAMAGE_BASE 		= (&~/DAMAGE_STRUCT_BASE)	// &~/PENETRATION_DAMAGE_BASE
+PENETRATION_BASE 				= 0							// &~/PENETRATION_BASE
+PENETRATION_SPEED_BASE 			= 0							// &~/PENETRATION_SPEED_BASE					
+ARMOR_PENETRATION_FACTOR_BASE 	= 0							// &~/ARMOR_PENETRATION_FACTOR_BASE
+DRAIN_BATTERY_BASE      		= 0							// &~/DRAIN_BATTERY_BASE      
+DRAIN_DURATION_BASE 			= 0							// &~/DRAIN_DURATION_BASEDRAIN_DURATION_BASE
+DRAIN_PER_SECOND_BASE 			= 0							// &~/DRAIN_DURATION_BASEDRAIN_DURATION_BASE
+SHIELD_DRAIN_PER_SECOND_BASE 	= 0							// &~/SHIELD_DRAIN_PER_SECOND_BASE
+DAMAGE_RADIUS_BASE				= 3							// &~/DAMAGE_RADIUS_BASE
+DAMAGE_SLICES_BASE 				= 0							// &~/DAMAGE_SLICES_BASE
+HEALTH_BASE 					= 4000						// &~/HEALTH_BASE
+RANGE_BASE						= 500						// &~/RANGE_BASE
+SPEED_BASE						= 80 //*2						// &~/SPEED_BASE
+IDEAL_RADIUS_BASE				= [5, 50]					// &~/IDEAL_RADIUS_BASE 
+
 ID = "SW.turbolaser_turret_Imperial_laser_base"
 OtherIDs = ["green_imperial_laser_shot", "SW.green_imperial_laser_shot_common"]
-Range = 500
-IdealRange = [200, 500]
-IdealRadius = [5, 50]
-Speed = 80
+Range = &~/RANGE_BASE
+IdealRange = [200, &~/RANGE_BASE]
+IdealRadius = &~/IDEAL_RADIUS_BASE
+Speed = &~/SPEED_BASE
 ReceivableBuffs = [ElectronBuff]
 
 Components
@@ -27,7 +54,7 @@ Components
 	Targetable
 	{
 		Type = Targetable
-		Health = 4000
+		Health = &~/HEALTH_BASE
 		TargetCategory = "laser"
 	}
 
@@ -47,8 +74,8 @@ Components
 		{
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = { BaseValue = 2400; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
-				{ Type = Impulse; Impulse = { BaseValue = 1 } }
+				{ Type = Damage;  Damage  = { BaseValue = &~/DAMAGE_SHIELD_BASE; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
+				{ Type = Impulse; Impulse = { BaseValue = &~/IMPULSE_SHIELD_BASE; } }
 			]
 
 			//MediaEffects[]
@@ -57,9 +84,9 @@ Components
 		{
 			HitEffects
 			[
-				{ Type = Damage;        	Damage  = { BaseValue = 5500; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
-				{ Type = ExplosiveDamage; TotalDamage = { BaseValue = 1000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; }; Radius = 2; Filter = { Friendlies = false } }
-				{ Type = Impulse;       	Impulse = { BaseValue = 10 } }
+				{ Type = Damage;        	Damage  = { BaseValue = &~/DAMAGE_BASE; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
+				{ Type = ExplosiveDamage; 	TotalDamage = { BaseValue = &~/DAMAGE_EXPLOSIVE_BASE; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; }; Radius = &~/DAMAGE_RADIUS_BASE; Filter = { Friendlies = false } }
+				{ Type = Impulse;       	Impulse = { BaseValue = &~/IMPULSE_BASE; } }
 			]
 
 			//MediaEffects[]
@@ -68,9 +95,9 @@ Components
 		{
 			HitEffects
 			[
-				{ Type = Damage; 			Damage  = { BaseValue = 2250; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
-				{ Type = ExplosiveDamage; TotalDamage = { BaseValue = 500; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; }; Radius = 3; Filter = { Friendlies = false } }
-				{ Type = Impulse; 			Impulse = { BaseValue = 5.25 } }
+				{ Type = Damage; 			Damage  = { BaseValue = &~/DAMAGE_STRUCT_BASE; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }
+				{ Type = ExplosiveDamage; 	TotalDamage = { BaseValue = (&~/DAMAGE_EXPLOSIVE_BASE)/2; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; }; Radius = &~/DAMAGE_RADIUS_BASE; Filter = { Friendlies = false } }
+				{ Type = Impulse; 			Impulse = { BaseValue = &~/IMPULSE_STRUCT_BASE; } }
 			]
 
 			//MediaEffects[]
