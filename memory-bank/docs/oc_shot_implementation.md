@@ -1,221 +1,92 @@
-﻿# Overclock Shot Implementation & Legacy Conversion Guide
+﻿# Overclock Shot Standards & Conversion Workflow
 
-This guide explains how to **convert a legacy shot into the modern overclockable format** used in *Star Wars: A Cosmos Divided* and other advanced Cosmoteer mods.  
-You will create a clean inheritance chain (`base_shot` → color variants → overclock base → overclock color variants) that allows reusability, visual consistency, and overclock scaling.
-
-The reusable snippet file at  
-`memory-bank/docs/oc_overclock_shot_template.rules`  
-contains example blocks for behaviors (e.g., EMP, status effects, drain, media overrides) — but it should be used **only as a reference**, *not as a template to copy wholesale*.
+This document defines how Star Wars: A Cosmos Divided standardizes projectile shots in the modern overclock (OC) format. Use it when building a brand-new shot, converting a legacy single-file shot, or auditing existing files to ensure they follow the same naming, inheritance, and variable patterns.
 
 ---
 
-## When to Use
-- You are **upgrading a legacy shot** (e.g., an old single `.rules` projectile) into the new modular format.
-- You want to **add overclock functionality** with inherited behavior and clean color separation.
-- You want to keep visuals consistent while scaling damage, impulse, and health for OC variants.
+## Reference Materials at a Glance
+- `memory-bank/examples/swacd_shot/` - working SW-ACD example that demonstrates the expected structure (`base_shot.rules`, color files, `overclock/`). Use this as the primary reference for variable placement and how OC files inherit.
+- `memory-bank/docs/oc_overclock_shot_template.rules` - snippet library only. Copy *individual* behaviors (EMP, drain, etc.), not entire blocks.
+- `memory-bank/examples/` - additional vanilla-aligned reference shots (flak, missiles, rails, etc.) for special behaviors.
+- Vanilla OC shots under `./Data/shots/*/overclock/` - use these to confirm how the base game handles the mechanic you are mirroring.
 
 ---
 
-## Recommended Workflow
-
-### 1. Copy the Existing Light Turbolaser Folder
-Use `shots/laser/turret/turbo/heavy/` as your **base template** — this includes a complete inheritance-ready structure:
-- `base_shot.rules` → shared projectile stats  
-- `red_shot.rules`, `blue_shot.rules`, `green_shot.rules` → color-specific visuals  
-- `overclock/` → contains `oc_base_shot.rules` and the OC color variants  
-
-> 💡 *Do not copy `memory-bank/docs/oc_overclock_shot_template.rules` directly.*  
-> Use it **only** to borrow snippets for special features (EMP, status, resource drain, etc.).
+## Workflow Overview
+1. **Collect source data** from the legacy or target shot so you understand its damage model, visuals, and special mechanics.
+2. **Pick comparison references** instead of duplicating folders. Start with the SW-ACD example, then the closest in-mod shot, then a vanilla OC shot.
+3. **Establish the base/variant/OC inheritance chain**, keeping shared values at the top of `base_shot.rules` and overriding only what each layer needs.
+4. **Tune OC behavior and visuals** by reusing data from the non-OC files and scaling via variables, not magic numbers.
+5. **Validate naming, references, and part hooks** so the new IDs match the standards and existing parts point to the updated shots.
 
 ---
 
-### 2. Create the Target Folder
-Copy the contents of `heavy` folder from `shots/laser/turret/turbo/` (and its `overclock/` subfolder) into your new path, for example:
+## Step-by-Step Details
 
-```
+### 1. Gather the Legacy Intent
+- Export the legacy shot's current values (damage, impulse, resource drain, visuals, etc.).
+- Identify unique mechanics (EMP, battery drain, AoE, PD traits) that need to persist.
+- Note any existing IDs that players might still reference so you can preserve them in `OtherIDs` later.
 
-shots/laser/turret/turbo/CIS/
+### 2. Choose Comparison References (No Copy-Paste Folders)
+- Begin with `memory-bank/examples/swacd_shot/base_shot.rules` to understand the expected variable block at the top and how components reference those variables.
+- Locate the closest existing SW-ACD shot that behaves similarly and open it side-by-side. Pull ideas, but *do not duplicate its files*.
+- Open the nearest **vanilla** OC shot (`Data/shots/.../overclock/...`) to see how Cosmoteer themselves solved the mechanic.
+- Use the snippet library only to lift individual effect definitions you explicitly need.
 
-````
+### 3. Build or Update `base_shot.rules`
+- Keep all editable constants (damage, impulse, drain, ranges, etc.) at the top, mirroring the SW-ACD example. Name variables clearly (`DAMAGE_BASE`, `IMPULSE_BASE`, etc.).
+- Ensure the base file contains the complete physics, hit logic, sprites, and general behavior for the *non-overclocked* shot.
+- Follow the naming scheme: `ID = "SW.<family>_<size>_<type>_<color>_shot"`. If migrating, list the previous ID(s) in `OtherIDs` for backward compatibility.
 
-Then rename file names and internal `ID` strings accordingly.
+### 4. Configure Color Variants
+- One file per color (`blue_shot.rules`, `red_shot.rules`, etc.), inheriting from the base via `BASE = &<../base_shot.rules>` or inline `Components : &<../base_shot.rules>/Components` as needed.
+- Limit overrides to visuals (media effects, sprites, glow), or behavior differences that truly are color-specific.
+- For multi-color sets, the light turbolaser family in SW-ACD shows the intended organization and naming patterns.
 
----
+### 5. Create `overclock/oc_base_shot.rules`
+- Point `BASE = &<../base_shot.rules>` and expose OC tuning variables (`DAMAGE`, `IMPULSE`, `HEALTH`, etc.) using scalar math against the base variables.
+- Inherit the `Components` block and override only the `BaseValue` fields that scale in OC mode. Avoid copying entire hit/visual blocks; reuse the base structure just like the example file does.
+- Include any new OC-only mechanics (AoE damage, additional drain, Death triggers) here so that color variants do not duplicate logic.
 
-### 3. Update IDs & Backward Compatibility
-Inside each `.rules` file:
+### 6. Build OC Color Files (`oc_<color>_shot.rules`)
+- Each file should set `BASE`, `OC_BASE`, and `COLOR_BASE` (mirroring the pattern in `memory-bank/examples/swacd_shot/oc_blue_shot.rules`).
+- Reapply or override color-specific media references here. Keep them in sync with their non-OC counterpart to prevent drift.
+- Do not introduce new stats in the color files; if the OC color needs unique numbers, add scalars to `oc_base_shot.rules` instead and reference them.
 
-// Old (legacy)
-ID = "SW.red_cis_laser_shot_common"
+### 7. Finalize Naming and Compatibility
+- IDs for OC files should use the `_overclock` suffix (e.g., `SW.turbolaser_turret_xx9_laser_base_overclock`).
+- Retain any legacy IDs inside `OtherIDs` arrays so existing blueprints keep working.
+- Verify every `&<...>` reference resolves to an existing file. Pay special attention to media paths, since OC variants re-point to base visuals.
 
-// New (modern)
-ID = "SW.oc_red_cis_laser_shot_common"
-OtherIDs = ["SW.red_cis_laser_shot_common_oc"] // for backwards compatibility
-````
-
-* Use the new naming convention `SW.turbolaser_turret_<size>_laser_<color>_shot[_overclock]`.
-* Always add old IDs to `OtherIDs` if migrating legacy assets.
-
----
-
-### 4. Set Up Inheritance References
-
-Inside each overclock file (`oc_red_shot.rules`, etc.):
-
-| Variable     | Purpose            | Typical Reference                    |
-| ------------ | ------------------ | ------------------------------------ |
-| `BASE`       | Core stats/physics | `&<../base_shot.rules>`              |
-| `OC_BASE`    | Shared OC behavior | `&<../overclock/oc_base_shot.rules>` |
-| `COLOR_BASE` | Visual variant     | `&<../red_shot.rules>`               |
-
-Each OC color file inherits stats from `OC_BASE`, and reuses media/visuals from its `COLOR_BASE`.
-
----
-
-### 5. Rebuild Legacy Shots into the New Format
-
-If you’re starting from a single legacy `.rules` file (like the original *blue laser* example):
-
-1. **Extract the universal data** (Range, Speed, BaseValue, Buffs, Sprite setup) → put this in `base_shot.rules`.
-2. **Move color-specific MediaEffects and texture references** into each color file (e.g., `blue_shot.rules`).
-3. **Create an `overclock/` folder** with:
-
-   * `oc_base_shot.rules` → shared OC logic (AoE + scaling)
-   * `oc_color_shot.rules` files → reapply visuals from the color variants
+### 8. Hook Up Parts and Test
+- Update the relevant part files (e.g., switchable turrets) so `Shot` and `OverclockedShot` point to the new IDs.
+- In game, confirm health, damage, impulse, and AoE values match the OC scalars, visuals trigger correctly, and console logs show no missing asset errors.
 
 ---
 
-### 6. Understand the OC Behavior Model
-
-The overclocked base (`oc_base_shot.rules`) switches from a **direct Damage hit model** to an **AoE AreaDamage** model for operational hits.
-
-**Key changes vs. legacy:**
-
-* Uses `Type = AreaDamage` with `Radius = DAMAGE_RADIUS`.
-* Adds a shield-only mirror block (`: 0 { ... }`).
-* Structural damage is automatically halved (`floor(DAMAGE / 2)`).
-* `PenetratingOperational` removes direct damage and applies only impulse (to avoid double-hits).
-* `ReduceEffectsByPenetration` is set to `false`.
-
-> ⚠️ If you reorder the `HitEffects` list in the base shot, **update the index references** in the OC file (`: 0`, `../^/0/HitEffects/1`, etc.) so they align correctly.
+## Scenario-Specific Guidance
+- **Multi-color projectile sets** - use the SW-ACD light turbolaser files as the comparison sample. Keep shared logic in the base/OC base, and isolate color media in the individual files.
+- **Ion / drain-focused single-color shots** - compare against the heavy ion cannon shot and its vanilla OC counterpart to validate drain timing and status applications.
+- **Form-factor changes (projectile -> beam, etc.)** - start from the vanilla small laser OC implementation to see how the base game handles beam transitions, then adapt the SW-ACD structure.
+- **Point-defense / flak mechanics** - review vanilla PD or flak OC shots to match projectile lifetimes, AoE slices, and media expectations before layering in SW-ACD-specific variables.
 
 ---
 
-### 7. Tune Scalars and Scaling Logic
-
-In `oc_base_shot.rules`, tweak only the constants:
-
-
-DAMAGE        = 175% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
-DAMAGE_SHIELD = 150% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
-IMPULSE       = 200% * (&BASE/Components/Hit/HitOperational/HitEffects/1/Impulse/BaseValue)
-HEALTH        = 175% * (&BASE/Components/Targetable/Health)
-DAMAGE_RADIUS = 3
-
-> 💡 Adjust ratios if your base shot used a different operational–structural ratio.
+## Variable & Media Organization Checklist
+- Shared values live at the top of `base_shot.rules` and `oc_base_shot.rules`; lower files reference them through variables instead of hard-coded numbers.
+- OC files inherit component trees wherever possible (`Components : &BASE/Components { ... }`). Override minimal leaf nodes to avoid drift.
+- Color files only override visuals unless a mechanic is truly color-dependent.
+- Whenever you reorder arrays (e.g., `HitEffects`), update any OC indices (`: ../^/0/HitEffects/0`) that rely on their position.
 
 ---
 
-### 8. Reapply Color-Specific Media in OC Color Files
-
-In each `oc_<color>_shot.rules`, reapply the color’s hit/flash/sparks effects:
-
-HitOperational : ^/0/HitOperational
-{
-  MediaEffects
-  [
-    &<particles/laser_bolt_large_overclock_hit_blue.rules>
-    &<particles/laser_bolt_large_overclock_flash.rules>
-    &<particles/laser_bolt_large_overclock_sparks.rules>
-  ]
-}
-
-* Keep color visuals isolated — only override what’s necessary.
-* Most OC visual changes belong in these files, not in `oc_base_shot.rules`.
+## Quick Validation
+- `OtherIDs` include every legacy ID you replaced.
+- All `&<...>` references resolve (run a console check if unsure).
+- OC scalars are expressed as percentages or formulas, never raw duplicates.
+- Part files reference the new shot IDs for both standard and OC firing modes.
 
 ---
 
-### 9. Validate Buffs and Assets
-
-* Confirm `ReceivableBuffs = [ElectronBuff]` points to an actual buff in your mod.
-  If not, replace or remove it.
-* Ensure all referenced files exist:
-
-  * `particles/*.rules`
-  * `sounds/*.wav`
-* Verify texture and shader paths (especially in Sprite and GlowSprite blocks).
-
----
-
-### 10. Verify Inherited Visuals
-
-Each OC color shot should copy textures and glow data from its color parent:
-
-Sprite : ^/0/Sprite
-{
-  Animation : ^/0/Animation
-  {
-    AtlasSprite : ^/0/AtlasSprite
-    {
-      Texture : ^/0/Texture
-      {
-        File = &~/BLUE/Components/Sprite/Animation/AtlasSprite/Texture/File
-      }
-    }
-  }
-}
-
-Keep `ReduceScaleWith = Hit` active unless you adjust `FactorEffectsWith` on `MediaEffects`.
-
----
-
-### 11. Hook the New Shots to Weapon Parts
-
-Update your part files (e.g., `cis_turbolaser_switchable.rules`) to point to your new overclocked IDs under `OverclockedShot` or equivalent fields.
-
----
-
-## Folder Layout (Reference)
-
-```
-shots/
-└── laser/
-    └── turret/
-        └── turbo/
-            └── CIS/
-                ├── base_shot.rules
-                ├── blue_shot.rules
-                ├── red_shot.rules
-                ├── green_shot.rules
-                └── overclock/
-                    ├── oc_base_shot.rules
-                    ├── oc_blue_shot.rules
-                    ├── oc_red_shot.rules
-                    └── oc_green_shot.rules
-```
-
----
-
-## Testing & Validation Checklist
-
-✅ Load the weapon in-game and inspect the projectile:
-
-* `Health`, `Damage`, `Impulse`, and `Radius` reflect the OC multipliers.
-* Shield vs hull impacts trigger the correct visuals.
-* Penetration works as intended (AoE damage applies only once).
-* No missing particle/sound path errors in the console.
-* Structural impacts deal reduced damage (~50% of operational).
-
----
-
-## Related References
-
-* Snippet reference: `memory-bank/docs/oc_overclock_shot_template.rules`
-* Example baseline: `shots/laser/turret/turbo/heavy/`
-* Vanilla comparison: `./Data/shots/laser_bolt_large_overclock.rules`
-
----
-
-```
-
----
+Following this workflow keeps every shot consistent with the SW-ACD overclock standards while avoiding copy/paste errors and redundant maintenance.
