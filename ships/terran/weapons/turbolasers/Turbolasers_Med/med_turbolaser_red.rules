@@ -1,5 +1,44 @@
 	Components
 	{
+
+		WeaponEmitter : &<med_turbolaser_switchable.rules>/Part/Components/WeaponEmitterBase
+		{
+			FireTrigger = ShootTrigger1
+			Type = BulletEmitter
+			Location = [1.9, 0.3]
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Medium/Red
+		}
+
+		WeaponEmitter2 : WeaponEmitter
+		{
+			FireTrigger = ShootTrigger2
+			Type = BulletEmitter
+			Location = [1.9, -0.3]
+		}
+
+		FireEffect1
+		{
+			Type = TriggeredEffects
+			ChainedTo = WeaponEmitter
+			Trigger = ShootTrigger1
+			AnchorMediaEffects = true
+	
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Med/Red
+			]
+		}
+
+		FireEffect2 : FireEffect1
+		{
+			ChainedTo = WeaponEmitter2
+			Trigger = ShootTrigger2
+		}
+
+	}
+/*
+	Components
+	{
 		ReloadProgressBar : &<med_turbolaser_switchable.rules>/ReloadProgressBarBase
 		{
 			LowColor = [64, 0, 0]
@@ -10,7 +49,7 @@
 		{
 			Type = BulletEmitter
 			Location = [1.9, 0.3]
-			Bullet = &/SW_SHOTS/turretturbolasermediumlaserredshot
+			Bullet = &/SW_SHOTS/Laser/Turret/Turbo/Medium/Red
 		}
 
 		BulletEmitterRight : BulletEmitterLeft
@@ -66,13 +105,14 @@ LaserStats
 	NameKey = "StatCategories/MedRedTurbolasershot"
 	Stats
 	{
-		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage
+		ShieldDamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
 		ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&<med_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
 		ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
-		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage
+		DamagePerShot = &~/Components/BulletEmitterLeft/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
 		DamagePerSecond = (&DamagePerShot) * (&<med_turbolaser_switchable.rules>/TurretStats/Stats/ROF)
 		Damage = [&../DamagePerShot, &../DamagePerSecond]
 		//ShotSpeed = &~/Components/BulletEmitterLeft/Bullet/Speed
 		//ShotHP = &~/Components/BulletEmitterLeft/Bullet/Components/Targetable/Health
 	}
 }
+*/

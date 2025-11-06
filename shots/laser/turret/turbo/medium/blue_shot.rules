@@ -1,5 +1,5 @@
 // LOCATION: shots/laser/turret/turbo/medium/blue_shot.rules
-// USED IN: ships/terran/weapons/turbolasers/Turbolasers_Octuple_Barbette/octuple_barbette_turbolaser.rules, ships/terran/weapons/turbolasers/Turbolasers_Octuple_Barbette/quad_barbette_turbolaser.rules,
+// USED IN: ships\terran\weapons\turbolasers\Turbolasers_Med\med_turbolaser_blue.rules, ships\terran\weapons\turbolasers\Turbolasers_Med\med_turbolaser_switchable.rules
 // BASE IS: &<base_shot.rules>
 // STRINGKEY: NONE
 ID = SW.turbolaser_turret_medium_laser_blue_shot //TURRET WEAPONSHOT
@@ -14,7 +14,10 @@ Components : &<base_shot.rules>/Components
 	Hit : ^/0/Hit
 	{
 		HitCrew = &HitOperational
-		HitShield = &HitOperational
+		HitShield : ^/0/HitShield
+		{
+			MediaEffects = &../HitOperational/MediaEffects 
+		}
 		HitOperational : ^/0/HitOperational
 		{
 			MediaEffects
@@ -22,13 +25,13 @@ Components : &<base_shot.rules>/Components
 				&/SW_PARTICLES/Shot/Laser/Hit/Med/Blue
 				&/SW_PARTICLES/Shot/Laser/Flash/Med/Blue
 				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Blue
-
+	
 				&/SW_SOUNDS/SmallLaserHit
 
 				: /BASE_SHAKE
 				{
-					ShakeAmount = .03
-					Duration = .2
+					ShakeAmount = .1
+					Duration = .4
 				}
 			]
 		}
@@ -66,7 +69,7 @@ Components : &<base_shot.rules>/Components
 			{
 				Texture : ^/0/Texture
 				{
-					File = "particles/blue_laser.png"
+					File = "particles/lasershotblue.png"
 				}
 			}
 		}
@@ -78,7 +81,7 @@ Components : &<base_shot.rules>/Components
 			VertexColor = [0, 0, 255]
 			_litReflectiveStrength = 24
 			_litAdditiveStrength = 0.05
-			_unlitAdditiveStrength = 0.125
+			_unlitAdditiveStrength = 0.25
 		}
 	}
 }
