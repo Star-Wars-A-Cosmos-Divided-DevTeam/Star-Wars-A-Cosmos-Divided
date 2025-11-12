@@ -30,6 +30,12 @@ HEAT_TO_STATUS   = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
 // Resources Used
 RESOURCES_USED = 350
 
+// Max Resources
+BASE_MAX_RESOURCES = 10000 //(&~/BASE_MAX_RESOURCES)
+
+// Shot Timer
+BASE_SHOT_INTERVAL = 1.10 // (&~/BASE_SHOT_INTERVAL)
+
 Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 {	
 	//IDs
@@ -497,7 +503,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 10000 //7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
+			MaxResources = (&~/BASE_MAX_RESOURCES) //7680 //for 12 times firing(24shots) //1x2 has 4000 //2x3 has 10000
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
@@ -826,7 +832,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 				{
 					Type = Timer
 					OperationalToggle = IsOperational
-					Duration = 1.05*2  //2.25*2
+					Duration = (&~/BASE_SHOT_INTERVAL)*2  //1.05*2
 					AutoStart = true
 					StartTrigger = Turret
 				}
@@ -863,7 +869,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 				{
 					Type = Timer
 					OperationalToggle = IsOperational
-					Duration = 1.05 //2.25
+					Duration = (&~/BASE_SHOT_INTERVAL) //1.05
 					AutoStart = true
 					StartTrigger = Turret
 				}
