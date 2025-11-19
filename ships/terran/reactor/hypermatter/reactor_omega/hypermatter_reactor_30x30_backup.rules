@@ -1,15 +1,3 @@
-OVERCLOCK
-{
-	BATTERY_PER_INTERVAL = 1500*6
-	BATTERY_INTERVAL = 2/27
-	HEAT_PER_SECOND = 2750*3
-
-	BATTERY_PER_SEC = (&BATTERY_PER_INTERVAL) / (&BATTERY_INTERVAL)
-	HEAT_PER_BATTERY = (&HEAT_PER_SECOND) / (&BATTERY_PER_SEC)
-}
-HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
-HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
-
 Part : &<../base_part_terran_hypermatter.rules>/Part
 {
 	//IDs
@@ -29,11 +17,10 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 	Resources
 	[
 		[steel, 2300]
-		[SW.doonium_ingot, 2600]
 		[coil, 1300]
 		[coil2, 130]
-		[tristeel, 430]
-		[processor, 333]
+		[tristeel, 230]
+		[processor, 111]
 	]  //Cost = 9550000
 	Size = [30, 30]
 	MaxHealth = 1000000
@@ -49,7 +36,6 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 	IsRotateable = false
 	AutoDoorMaxPathLength = 5
 	CreateUnderlyingWhenDestroyed = false
-	SignificanceToggle = ScorchedToggle
 
 	//Crew
 	CrewSpeedFactor = 1
@@ -269,70 +255,14 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 		IsOperational : ^/0/IsOperational
 		{
 			Type = MultiToggle
-			Toggles = [NonJunkToggle, ScorchedToggle, &~/Part/^/0/OVERCLOCK_OPERATIONAL]
+			Toggles : ^/0/Toggles [True, PowerToggle]
 			Mode = All
 		}
-
-		NonJunkToggle
-		{
-			Type = JunkToggle
-			OnWhenJunk = false
-		}
-
-		ScorchedToggle
-		{
-			Type = StatusToggle
-			StatusType = cosmoteer.scorched
-			MinStatusValue = 1
-			Invert = true
-		}
-/*
-		PowerToggle
-		{
-			Type = UIToggle
-			ToggleID = "on_off"
-			Default = 1
-			RequiresCommand = false
-		}
-*/
-		HasPowerNonOverclocked
-		{
-			Type = MultiToggle
-			Toggles = [HypermatterStorage, IsNonOverclocked]
-			Mode = All
-		}
-		HasPowerOverclocked
-		{
-			Type = MultiToggle
-			Toggles = [Overclock_CombinedBatteryStorage, IsOverclocked]
-			Mode = All
-		}
-		HasPower
-		{
-			Type = MultiToggle
-			Toggles = [ HasPowerNonOverclocked, HasPowerOverclocked]
-			Mode = Any
-		}
-
 		True
 		{
 			Type = StaticToggle
 			ToggleOn = "true"
 		}
-
-		IsOperationalNonOverclocked
-		{
-			Type = MultiToggle
-			Toggles = [ IsOperational, { Toggle=IsOverclocked; Invert=true } ]
-			Mode = All
-		}
-		IsNonOverclocked
-		{
-			Type = MultiToggle
-			Toggles = [ IsOverclocked ]
-			Mode = None
-		}
-
 		ColorPicker
 		{
 			Type = UIColor
@@ -340,42 +270,6 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 			Default = [128, 128, 128, 255]//.85 saturation
 			RequiresCommand = false
 		}
-
-		HypermatterStorage
-		{
-			Type = ResourceStorage
-			ResourceType = SW.hypermatter
-			MaxResources = 128000
-			StartingResources = 0
-			SuppliesResourcesToggle = IsNonOverclocked
-			SuppliesResources = true
-			MinResourcesPickUp = 1000
-			MaxResourcesPickUp = 3000
-			InitPickUp = 1000
-			PickUpRate = 1000
-			ExpectedResourceGenerationToggle = IsOperationalNonOverclocked
-			ExpectedResourceGenerationRate = { BaseValue = (&../../HypermatterProducer/ToQuantity) / (&../../HypermatterProducer/Interval/BaseValue); BuffType=ElectronDebuff; BuffMode=Multiply; }
-			ToggleOnResources = 1000
-			ToggleOffResources = (&ToggleOnResources) -1
-		}
-		HypermatterProducer
-		{
-			Type = ResourceConverter
-			OperationalToggle = IsOperationalNonOverclocked
-			ToStorage = HypermatterStorage
-			ToQuantity = 1000
-			Interval =  { BaseValue=1; BuffType=ElectronDebuff; BuffMode=Divide; } //1
-		}
-		HypermatterStorageBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperationalNonOverclocked
-			ShowProgressFor = HypermatterStorage
-			LowColor = [0, 32, 64]
-			HighColor = [0, 250, 250]
-			FullColor = [0, 255, 255]
-		}
-
 		PowerToggle
 		{
 			Type = UIToggle
@@ -388,55 +282,111 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 432000
-			StartingResources = &MaxResources
+			MaxResources = 2000000
+			StartingResources = 0
 			SuppliesResources = true
-			SuppliesResourcesToggle = IsOverclocked
-			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
+			MinResourcesPickUp = 3000
+			MaxResourcesPickUp = 3000
+			InitPickUp = 3000
+			PickUpRate = 100000
+			ExpectedResourceGenerationRate = { BaseValue = (&../../BatteryProducer/ToQuantity) / (&../../BatteryProducer/Interval/BaseValue) / 4; BuffType=ElectronDebuff; BuffMode=Multiply; }
+			ToggleOnResources = 3000
+			ToggleOffResources = (&ToggleOnResources)-1
 		}
 		BatteryProducer
 		{
 			Type = ResourceConverter
-			OperationalToggle = IsOperationalOverclocked
+			OperationalToggle = IsOperationalAndHypermatterReactorToggle
+			From
+			[
+				{
+					Storage = HypermatterStorage
+					Quantity = 10
+				}
+			]
 			ToStorage = BatteryStorage
-			ToQuantity
-			{
-				BaseValue = (&~/OVERCLOCK/BATTERY_PER_INTERVAL)
-			}
-			Interval = (&~/OVERCLOCK/BATTERY_INTERVAL)
+			ToQuantity = 2000
+			Interval =  { BaseValue=(1/30); BuffType=ElectronDebuff; BuffMode=Divide; }//1/30
+			//CheckResourceLimits = true
 		}
-		FusionGridStorageBar
+		BatteryStorageBar
 		{
 			Type = ProgressBar
-			OperationalToggle = IsOperationalOverclocked
-			ShowProgressFor = Overclock_CombinedBatteryStorage
+			OperationalToggle = True
+			ShowProgressFor = BatteryStorage
+			LowColor = [64, 64, 0]
+			HighColor = [250, 250, 0]
+			FullColor = [255, 255, 0]
+		}
+
+		HypermatterStorage
+		{
+			Type = ResourceStorage
+			ResourceType = SW.hypermatter
+			MaxResources = 45000
+			StartingResources = 0
+			//SuppliesResources = true
+			MinResourcesPickUp = 1000
+			MaxResourcesPickUp = 3000
+			ExpectedResourceGenerationRate = { BaseValue = (&../../HypermatterProducer/ToQuantity) / (&../../HypermatterProducer/Interval/BaseValue); BuffType=ElectronDebuff; BuffMode=Multiply; }
+			ToggleOnResources = 1000
+			ToggleOffResources = (&ToggleOnResources) -1
+		}
+		HypermatterProducer
+		{
+			Type = ResourceConverter
+			OperationalToggle = IsOperational
+			ToStorage = HypermatterStorage
+			ToQuantity = 20
+			Interval = { BaseValue=(1/30); BuffType=ElectronDebuff; BuffMode=Divide; } //1/10
+		}
+		HypermatterConsumer
+		{
+			Type = ResourceConsumer
+			ResourceType = SW.hypermatter
+			Storage = HypermatterStorage
+			DefaultPriority = &/PRIORITIES/Defense_Supply
+			ResupplyThreshold = 0
+			OperationalToggle = PowerToggle
+		}
+		HypermatterStorageBar
+		{
+			Type = ProgressBar
+			OperationalToggle = IsOperational
+			ShowProgressFor = HypermatterStorage
 			LowColor = [0, 32, 64]
 			HighColor = [0, 250, 250]
 			FullColor = [0, 255, 255]
 		}
 
-		OverclockStateValue
+		IsOperationalAndHypermatterReactorToggle
 		{
-			Type = ToggleValueSelector
-			Toggle = OverclockModeToggle
-			ToggleOffValue = Zero
-			ToggleOnValue = One
+			Type = MultiToggle
+			Toggles = [IsOperational, HypermatterReactorToggle]
+			Mode = All
 		}
 
-		Zero { Type = StaticValue; Value = 0; }
-		One { Type = StaticValue; Value = 1; }
-
-		Overclock_GenerationHeatProducer
+		HypermatterReactorToggle
 		{
-			Type = ResourceConverter
-			OperationalToggle = IsOverclocked
-			Interval = 0.5
-			HEAT_PER_INTERVAL = ceil((&~/OVERCLOCK/HEAT_PER_SECOND) * (&Interval))
-			ToQuantity = (&HEAT_PER_INTERVAL) * (&~/HEAT_TO_RESOURCE)
-			ToStorage = &~/Part/^/0/HEAT_TARGET_STORAGE
+			Type = TriggeredToggle
+			OperationalToggle = IsOperational
+			OnTrigger = BatteryStorageTurnsReactorOn
+			OffTrigger = BatteryStorageTurnsReactorOff
+		}
+		BatteryStorageTurnsReactorOn
+		{
+			Type = ThresholdTrigger
+			AmountFrom = BatteryStorage
+			MaxAmount = 10%
+		}
+		BatteryStorageTurnsReactorOff
+		{
+			Type = ThresholdTrigger
+			AmountFrom = BatteryStorage
+			MinAmount = 100%
 		}
 
-
+/*
 		Port_Thermal_TopLeft : ~/Part/^/0/BASE_THERMAL_PORT
 		{
 			Location = [0, 0]
@@ -1044,45 +994,7 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 		{
 			Location = [0, 1]
 		}
-
-		Overclock_CombinedBatteryStorage : BatteryStorage
-		{
-			Type = MultiResourceStorage
-			ResourceType = battery
-			ResourceStorages = [ BatteryStorage ]
-			OperationalToggle = IsOverclocked
-			SuppliesResources = true
-			SuppliesResourcesToggle = IsOverclocked
-			ViaBuffs
-			{
-				OutgoingBuffProviders = [Overclock_WirelessPowerProvider]
-				ComponentID = BatteryStorage
-			}
-			AddMode = PrioritizeLeastResources
-			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
-		}
-		Overclock_PowerConversion
-		{
-			Type = ResourceConverter
-			OperationalToggle = IsOverclocked
-			FromStorage = BatteryStorage
-			FromQuantity = (&~/OVERCLOCK/BATTERY_PER_INTERVAL) * 0.7
-			ToStorage = Overclock_CombinedBatteryStorage
-			ToQuantity = (&FromQuantity)
-			Interval = (&~/OVERCLOCK/BATTERY_INTERVAL) * 1.25
-			MinFromQuantityForConversion = (&FromQuantity)
-		}
-		Overclock_WirelessPowerProvider
-		{
-			Type = GridBuffProvider
-			OperationalToggle = IsOverclocked
-			BuffMultiplier = OverclockStateValue
-			BuffType = SW_Fusion_Energy_Grid
-			BuffAmount = 100%
-			GridDistance = 120
-			BuffsSelf = true
-		}
-
+*/
 		InternalDoodadOptionToggle
 		{
 			Type = UIToggle
@@ -1220,33 +1132,30 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 			[
 				// Turned off.
 				{
-					Toggle = ScorchedToggle
-					AtlasSprite = &/INDICATORS/Scorched
-					HidesIndicators = [1,2,3]
+					Toggle = PowerToggle
+					AtlasSprite
+					{
+						File = &/INDICATORS/PowerOff
+						Size = [5, 5]
+					}
+					HidesIndicators = [1,2]
 				}
 				// Out of power.
 				{
-					Toggle = HasPower
+					Toggle = BatteryStorage
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [1, 1]
+						Size = [3, 3]
 					}
 				}
-				// Resetting from overclock
-				{
-					Toggle = &~/Part/^/0/OVERCLOCK_OPERATIONAL
-					AtlasSprite : /INDICATORS/OverclockReset
-					{
-						Size = [1, 1]
-					}
-				}
+				// Out of power.
 				{
 					Toggle = HypermatterStorage
 					AtlasSprite
 					{
 						File = &/INDICATORS/NoPower
-						Size = [1, 1]
+						Size = [3, 3]
 					}
 				}
 			]
@@ -1277,22 +1186,18 @@ Part : &<../base_part_terran_hypermatter.rules>/Part
 
 	Stats
 	{
+		PowerGeneration = (&~/Part/Components/BatteryProducer/ToQuantity) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
+		BatterySize = (&~/Part/Components/BatteryStorage/MaxResourcesPickUp) / 1000
+		BatteryFillTime = 1000 / (&~/Part/Components/BatteryStorage/PickUpRate)
+		PowerCapacity = (&~/Part/Components/BatteryStorage/MaxResources) / 1000
+	
 		HypermatterGeneration = (&~/Part/Components/HypermatterProducer/ToQuantity) / (&~/Part/Components/HypermatterProducer/Interval/BaseValue) / 1000
 		HypermatterSize = (&~/Part/Components/HypermatterStorage/MaxResourcesPickUp) / 1000
-		HypermatterFillTime = 0 / (&~/Part/Components/HypermatterStorage/PickUpRate)
+		HypermatterFillTime = 0
 		HypermatterCapacity = (&~/Part/Components/HypermatterStorage/MaxResources) / 1000
-	}
-	SecondaryToolTip
-	{
-		TitleKey = "StatCategories/Overclocked"
-		DescriptionKey = "Parts/HypermatterReactor12x12OverclockDesc"
-		Stats
-		{
-			//BatterySize = (&~/Part/Stats/BatterySize) + (&~/OVERCLOCK/BONUS_BATTERY_SIZE)
-			PowerGeneration = (&~/OVERCLOCK/BATTERY_PER_INTERVAL)
-			PowerHeatGeneration = [&~/OVERCLOCK/HEAT_PER_BATTERY, &~/OVERCLOCK/HEAT_PER_SECOND]
-		}
+		HypermatterPerSecond = (&~/Part/Components/BatteryProducer/From/0/Quantity) / (&~/Part/Components/BatteryProducer/Interval/BaseValue) / 1000
+
+		RecHypermatter = &HypermatterPerSecond
+		RecCrew = (&RecHypermatter) * 2
 	}
 }
-CLASSIFICATION = Omega
-Scale = (1/1*3)
