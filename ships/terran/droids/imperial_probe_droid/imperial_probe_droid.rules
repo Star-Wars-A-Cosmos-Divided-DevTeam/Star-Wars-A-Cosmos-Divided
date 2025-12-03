@@ -312,20 +312,9 @@ Part : &<../base_part_terran_droids.rules>/Part
 					Bucket = Lower1
 				}
 
-				: /BASE_SOUNDS/AudioExteriorDetail
-				{
-					Sound = "./Data/ships/terran/shield_gen_small/shield_loop.wav"
-					Volume = .15
-					Speed = .5
-					MaxConcurrent = 1
-					MaxConcurrentVolume = .3
-					DynamicVolume : ^/0/DynamicVolume
-					{
-						MinDistance = .75
-						MaxDistance = 1.5
-					}
-					IgnoreIntensity = true
-				}
+				// Non-Overclocked
+				&/SW_SOUNDS/SW_Small_Shield_Energy_Idle
+				
 			]
 
 			HitMediaEffects
@@ -532,5 +521,21 @@ Part : &<../base_part_terran_droids.rules>/Part
 			File = "blueprints.png"
 			Size = [1, 1]
 		}
+	}
+}
+
+MODIFIERS
+{
+	OVERCLOCK_TO_ONE
+	{
+		Type = BuffRemap
+		BuffType = Overclock
+		RemapFrom = [0, 1]
+		RemapTo = [0, 1]
+		ModificationMode = Replace
+	}
+	OVERCLOCK_TO_ZERO : OVERCLOCK_TO_ONE
+	{
+		RemapTo = [1, 0]
 	}
 }

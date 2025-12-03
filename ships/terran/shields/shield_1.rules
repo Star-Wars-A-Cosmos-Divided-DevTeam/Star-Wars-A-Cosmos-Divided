@@ -450,21 +450,24 @@ Part : <base_part_terran_shields.rules>/Part
 		{
 			Type = ContinuousEffects
 			Location = [0.5, 0.5]
-			OperationalToggle = IsOperational
+			OperationalToggle = IsOperationalNonOverclocked
 			FactorMediaEffectsIntensityWith = BatteryStorage
 			MaxMediaEffectsZoom = 12
-			//ParentToShip = true
+			ParentToShip = true
 			MediaEffects
 			[
-				: /BASE_SOUNDS/AudioExteriorDetail
-				{
-					Sound = "./Data/Ships/terran/shield_gen_small/shield_emitter_loop.wav"
-					Volume = .2
-					Speed = 1
-					MaxConcurrent = 1
-					MaxConcurrentVolume = .4
-					IgnoreIntensity = true
-				}
+				// Non-Overclocked
+				&/SW_SOUNDS/SW_Small_Shield_Module_Idle
+			]
+		}
+
+		ShieldEmitterLoopOC : ShieldEmitterLoop
+		{
+			OperationalToggle = IsOperationalOverclocked
+			MediaEffects
+			[
+				// Overclocked
+				&/SW_SOUNDS/SW_Small_Shield_Module_Idle_OC
 			]
 		}
 
@@ -475,23 +478,11 @@ Part : <base_part_terran_shields.rules>/Part
 			Toggle = IsOperational
 			ToggledOnMediaEffects
 			[
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/Ships/terran/shield_gen_small/activate.wav"
-					Volume = .5
-					Speed = 1.2
-					IgnoreIntensity = true
-				}
+				&/SW_SOUNDS/SW_Small_Shield_Start
 			]
 			ToggledOffMediaEffects
 			[
-				: /BASE_SOUNDS/AudioExterior
-				{
-					Sound = "./Data/Ships/terran/shield_gen_small/deactivate.wav"
-					Volume = .5
-					Speed = 1.2
-					IgnoreIntensity = true
-				}
+				&/SW_SOUNDS/SW_Small_Shield_Stop
 			]
 		}
 
@@ -820,3 +811,19 @@ ShieldStatBase
 }
 CLASSIFICATION = Small
 MaxResources = 2000
+
+MODIFIERS
+{
+	OVERCLOCK_TO_ONE
+	{
+		Type = BuffRemap
+		BuffType = Overclock
+		RemapFrom = [0, 1]
+		RemapTo = [0, 1]
+		ModificationMode = Replace
+	}
+	OVERCLOCK_TO_ZERO : OVERCLOCK_TO_ONE
+	{
+		RemapTo = [1, 0]
+	}
+}

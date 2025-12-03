@@ -1,4 +1,4 @@
-Part : &<../base_part_terran_sw_overclock.rules>/Part
+Part :  &<../base_part_terran_sw_overclock.rules>/Part /* &<./Data/ships/base_part_overclock.rules>*/
 {
 	TypeCategories : ^/0/TypeCategories []
 
@@ -10,6 +10,18 @@ Part : &<../base_part_terran_sw_overclock.rules>/Part
 		{
 			Type = BuffToggle
 			BuffType = SW_Fusion_Energy_Grid
+		}
+		IsOperationalOverclocked
+		{
+			Type = MultiToggle
+			Toggles = [ IsOperational, IsOverclocked ]
+			Mode = All
+		}
+		IsOperationalNonOverclocked
+		{
+			Type = MultiToggle
+			Toggles = [ IsOperational, { Toggle=IsOverclocked; Invert=true } ]
+			Mode = All
 		}
 	}
 }
