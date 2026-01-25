@@ -6,8 +6,11 @@ OVERCLOCK
 	GREENBULLET = &<../../../../../shots/laser/turret/turbo/Imperial/overclock/oc_green_shot.rules>
 	//REDBULLET   = &<../../../../../shots/laser/turret/turbo/Imperial/overclock/oc_red_shot.rules>
 
-	// Rate-of-fire scaler (2 = twice as fast)
-	FIRE_RATE_FACTOR = 220%
+	// Rate-of-fire scaler
+	// Overclock rate-of-fire multiplier applied by *dividing* timer Duration.
+	// Example: 220% = 2.2x faster -> Duration / 2.2 -> ROF * 2.2.
+	// (CIS uses 125% and Republic uses 50% for the same mechanic.)
+	FIRE_RATE_FACTOR = 50%
 	POWER_USE_FACTOR = 200%
 
 	// OC spread/recoil modifiers
@@ -28,12 +31,14 @@ HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS   = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
 
 // Resources Used
-RESOURCES_USED 	= 1000
+RESOURCES_USED 	= 2000
 
 // Max Resources
 BASE_MAX_RESOURCES = 10000 //(&~/BASE_MAX_RESOURCES)
 
-// Shot Timer
+// Shot Timer (base interval used by non-OC FireTimers below)
+// Alternating (per-barrel) uses BASE_SHOT_INTERVAL directly.
+// Synchronized (both barrels at once) uses BASE_SHOT_INTERVAL * 2.
 BASE_SHOT_INTERVAL = 1.15 // (&~/BASE_SHOT_INTERVAL)
 
 Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
@@ -745,6 +750,8 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					Type = Timer
 					OperationalToggle = IsOperational
 					DURATION_BASE = (&~/Part/Components/ShootSynchronizedComponents/Components/FireTimer/Duration)
+					// Overclocked sync fire: base Duration (non-OC sync) divided by FIRE_RATE_FACTOR.
+					// Non-OC sync Duration = BASE_SHOT_INTERVAL * 2 (see below).
 					Duration = (&DURATION_BASE) / (&~/OVERCLOCK/FIRE_RATE_FACTOR)
 					AutoStart = true
 					StartTrigger = Turret
@@ -784,6 +791,8 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					Type = Timer
 					OperationalToggle = IsOperational
 					DURATION_BASE = (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration)
+					// Overclocked alternating: base Duration (non-OC alternating) divided by FIRE_RATE_FACTOR.
+					// Non-OC alternating Duration = BASE_SHOT_INTERVAL (see below).
 					Duration = (&DURATION_BASE) / (&~/OVERCLOCK/FIRE_RATE_FACTOR)
 					AutoStart = true
 					StartTrigger = Turret
@@ -831,6 +840,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 				{
 					Type = Timer
 					OperationalToggle = IsOperational
+					// Non-OC synchronized: both barrels fire together once every 2 * BASE_SHOT_INTERVAL.
 					Duration = (&~/BASE_SHOT_INTERVAL)*2  //1.15*2
 					AutoStart = true
 					StartTrigger = Turret
@@ -868,6 +878,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 				{
 					Type = Timer
 					OperationalToggle = IsOperational
+					// Non-OC alternating: each barrel fires every BASE_SHOT_INTERVAL (barrels alternate).
 					Duration = (&~/BASE_SHOT_INTERVAL) //1.15
 					AutoStart = true
 					StartTrigger = Turret
@@ -1236,6 +1247,8 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					ShieldDamagePerShot = &~/EMITTER_BASE/Bullet/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue
 					ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
 					ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
+					// ROF in stats is derived from the non-OC alternating timer:
+					// ROF = 1 / BASE_SHOT_INTERVAL (shots/sec per barrel).
 					ROF = 1 / (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration)
 					PowerPerSecond = (&PowerPerShot) * (&ROF)
 					ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
@@ -1262,6 +1275,8 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					ShieldDamagePerSecond = (&ShieldDamagePerShot) * (&ROF)
 					ShieldDamage = [&../ShieldDamagePerShot, &../ShieldDamagePerSecond]
 					DamageArea = &~/OVERCLOCK/BULLET/DAMAGE_RADIUS
+					// Overclock stat uses the same base alternating timer scaled by FIRE_RATE_FACTOR.
+					// Timer Duration is divided by FIRE_RATE_FACTOR in the OC FireTimer blocks above.
 					ROF = (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration) * (&~/OVERCLOCK/FIRE_RATE_FACTOR)
 					HeatPerShot = (&~/OVERCLOCK/HEAT_PER_SHOT)
 					PowerPerShot = ((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR)) / 1000 // (&~/EMITTER_BASE_OVERCLOCK/ResourcesUsed) / 1000
@@ -1279,6 +1294,7 @@ TurretStats
 	Stats
 	{
 		Barrels = 2
+		// TurretStats ROF mirrors the non-OC alternating timer (same as main stats block).
 		ROF = 1 / (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration)
 		Range = &~/EMITTER_BASE/Bullet/Range
 		Arc = deg(&~/Part/Components/Turret/FiringArc)
