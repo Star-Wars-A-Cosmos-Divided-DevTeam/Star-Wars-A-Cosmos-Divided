@@ -5,21 +5,71 @@
 BASE = &<../base_shot.rules>
 
 ID = "SW.turbolaser_turret_medium_laser_base_overclock"
-Range        = &BASE/Range
-IdealRange   = &BASE/IdealRange
-IdealRadius  = &BASE/IdealRadius
-Speed        = &BASE/Speed
-ReceivableBuffs = &BASE/ReceivableBuffs
 
-// OC scalars
-DAMAGE         = 175% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
-DAMAGE_SHIELD  = 150% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
-DAMAGE_RADIUS  = 3
-IMPULSE        = 200% * (&BASE/Components/Hit/HitOperational/HitEffects/1/Impulse/BaseValue)
-HEALTH         = 175% * (&BASE/Components/Targetable/Health)
+// Overclock scalars
+DAMAGE_SHIELD   			= 200% * (&BASE/DAMAGE_SHIELD_BASE) // &~/DAMAGE_SHIELD
+DAMAGE    					= 125% * (&BASE/DAMAGE_BASE) // &~/DAMAGE
+DAMAGE_STRUCT   			= 100% * (&BASE/DAMAGE_STRUCT_BASE) // &~/DAMAGE_STRUCT
+//DAMAGE_EXPLOSIVE			= 0 // &~/DAMAGE_EXPLOSIVE
+//AREA_DAMAGE					= 0 // &~/AREA_DAMAGE
+PENETRATION  				= 200% * (&BASE/PENETRATION_BASE) // &~/PENETRATION
+PENETRATION_DAMAGE   		= 85% * (&BASE/PENETRATION_DAMAGE_BASE) // &~/PENETRATION_DAMAGE
+PENETRATION_SPEED  	 		= 175% * (&BASE/PENETRATION_SPEED_BASE) // &~/PENETRATION_SPEED
+//ARMOR_PENETRATION_FACTOR	= 0 // &~/ARMOR_PENETRATION_FACTOR
+IMPULSE      				= 100% * (&BASE/IMPULSE_BASE) // &~/IMPULSE
+//IMPULSE_EXPLOSIVE			= 0 // &~/IMPULSE_EXPLOSIVE
+//DRAIN_DURATION				= 0 // &~/DRAIN_DURATION
+HEALTH       				= 200% * (&BASE/HEALTH_BASE) // &~/HEALTH
+DAMAGE_RADIUS				= 100% * (&BASE/DAMAGE_RADIUS_BASE) //&~/DAMAGE_RADIUS
+//DAMAGE_SLICES				= 0 // &~/DAMAGE_SLICES
+DAMAGE_POOL 				= &~/DAMAGE // &~/DAMAGE_POOL
+//TOTAL_DRAIN 				= 0 // &~/TOTAL_DRAIN
+//TOTAL_SHIELD_DRAIN 			= 0 // &~/TOTAL_SHIELD_DRAIN
+//DRAIN_PER_SECOND            = 0 // &~/DRAIN_PER_SECOND
+//SHIELD_DRAIN_PER_SECOND     = 0 // &~/SHIELD_DRAIN_PER_SECOND
+
+// Top-level properties tied to OC scalars
+Range           = 125% * (&BASE/Range)
+IdealRange      = [120, &~/Range]
+IdealRadius     = &BASE/IdealRadius
+Speed           = 175% * (&BASE/Speed)
+ReceivableBuffs = &BASE/ReceivableBuffs
 
 Components : &BASE/Components
 {
+
+	DamagePool
+	{
+		Type   = DamagePool
+		Damage = { BaseValue = &~/DAMAGE_POOL; EffectScaleExponent = 1; }
+	}
+	Death : ^/0/Death
+	{
+        OnDeath
+        {
+            HitEffects
+            [
+                {
+                    Type = ExplosiveDamage
+                    TotalDamage = { BaseValue = &~/DAMAGE_POOL; EffectScaleExponent = 1 }
+                    Radius = &~/DAMAGE_RADIUS
+                    ExpandDuration = 0.9
+                    ExpandStartRadius = 2
+                    ExpandLoss = 100%
+                    ImpulsePerNDamage = 10
+                    NDamage = 5000
+					Filter
+					{
+						OperationalHealth = true
+						StructuralHealth = true
+						Friendlies = true
+					}
+                }
+            ]
+            //MediaEffects = &<./Data/shots/missile_nuke/missile_nuke_stage1.rules>/Components/Hit/HitOperational/MediaEffects //TODO: Implement Custom Graphics
+        }
+	}
+
 	Targetable : ^/0/Targetable
 	{
 		Health = &~/HEALTH
@@ -27,58 +77,43 @@ Components : &BASE/Components
 
 	Hit : ^/0/Hit
 	{
-		
-		HitCrew   = &HitOperational
-		HitShield = &HitOperational
+		Penetration      = &~/PENETRATION
+		PenetrationSpeed = &~/PENETRATION_SPEED
+
+		HitShield : ^/0/HitShield
+		{
+			HitEffects
+			[
+				: ../^/0/HitEffects/0 { Damage  : ^/0/Damage  { BaseValue = &~/DAMAGE_SHIELD } }
+				: ../^/0/HitEffects/1 { Impulse : ^/0/Impulse { BaseValue = &~/IMPULSE } }
+			]
+		}
 
 		HitOperational : ^/0/HitOperational
 		{
 			HitEffects
 			[
-				//Non-shield area damage
-				{
-					Type = AreaDamage
-					Damage : ~/BASE/Components/Hit/HitOperational/HitEffects/0/Damage { BaseValue = &~/DAMAGE }
-					Radius = &~/DAMAGE_RADIUS
-					RectType = Normal
-					Falloff = 0.5
-					Filter { Shields = false }
-				}
-				//Shield-only damage
-				: 0 {
-					Damage : ^/0/Damage { BaseValue = &~/DAMAGE_SHIELD }
-					Filter
-					{
-						Shields = true
-						OperationalHealth = false
-						StructuralHealth  = false
-					}
-				}
-				//Impulse (scaled)
-				: ../^/0/HitEffects/1 {
-					Impulse : ^/0/Impulse { BaseValue = &~/IMPULSE }
-				}
+				// Inherit full base entries to avoid self-references
+				: ../^/0/HitEffects/0 { Damage  : ^/0/Damage  { BaseValue = &~/DAMAGE } }
+				: ../^/0/HitEffects/1 { Impulse : ^/0/Impulse { BaseValue = &~/IMPULSE } }
 			]
-			//No media here — letting color OC files decide.
-		}
-
-		PenetratingOperational : ^/0/PenetratingOperational
-		{
-			ReduceEffectsByPenetration = false
-			HitEffects
-			[
-				{ Type = Damage;  Damage  = 0 }         //OC model uses AoE above
-				{ Type = Impulse; Impulse = &~/IMPULSE }
-			]
-			//No media here — let color OC files decide.
 		}
 
 		HitStructural : ^/0/HitStructural
 		{
 			HitEffects
 			[
-				: ../^/0/HitEffects/0 { Damage  : ^/0/Damage  { BaseValue = floor((&~/DAMAGE)  / 2) } }
-				: ../^/0/HitEffects/1 { Impulse : ^/0/Impulse { BaseValue = floor((&~/IMPULSE) / 2) } }
+				: ../^/0/HitEffects/0 { Damage  : ^/0/Damage  { BaseValue = &~/DAMAGE_STRUCT } }
+				: ../^/0/HitEffects/1 { Impulse : ^/0/Impulse { BaseValue = (&~/IMPULSE) / 2 } }
+			]
+		}
+
+		PenetratingOperational : ^/0/PenetratingOperational
+		{
+			HitEffects
+			[
+				: ../^/0/HitEffects/0 { Damage  : ^/0/Damage  { BaseValue = &~/PENETRATION_DAMAGE } }
+				: ../^/0/HitEffects/1 { Impulse : ^/0/Impulse { BaseValue = &~/IMPULSE } }
 			]
 		}
 

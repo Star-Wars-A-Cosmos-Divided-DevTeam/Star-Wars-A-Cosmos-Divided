@@ -2,11 +2,38 @@
 // USED IN: shots/laser/turret/turbo/medium/blue_shot.rules, shots/laser/turret/turbo/medium/red_shot.rules, shots/laser/turret/turbo/medium/green_shot.rules
 // BASE FOR: Turbolaser Light Turret Shots
 // STRINGKEY: NONE
+
+//Base Stats
+DAMAGE_SHIELD_BASE 				= 2000 						// &~/DAMAGE_SHIELD_BASE
+DAMAGE_BASE 					= 2000 						// &~/DAMAGE_BASE
+DAMAGE_STRUCT_BASE 				= (&~/DAMAGE_BASE)/2 		// &~/DAMAGE_STRUCT_BASE
+//DAMAGE_EXPLOSIVE_BASE 		= 0 						// &~/DAMAGE_EXPLOSIVE_BASE
+//AREA_DAMAGE_BASE 				= 0 						// &~/AREA_DAMAGE_BASE 
+//DAMAGE_POOL_BASE 				= 0 						// &~/DAMAGE_POOL_BASE 
+IMPULSE_BASE 					= 50 						// &~/IMPULSE_BASE 
+IMPULSE_SHIELD_BASE 			= (&~/IMPULSE_BASE)*10% 	// &~/IMPULSE_SHIELD_BASE
+IMPULSE_STRUCT_BASE 			= (&~/IMPULSE_BASE)/2		// &~/IMPULSE_STRUCT_BASE
+//IMPULSE_EXPLOSIVE_BASE 		= 0							// &~/IMPULSE_EXPLOSIVE_BASE
+PENETRATION_DAMAGE_BASE 		= (&~/DAMAGE_STRUCT_BASE)	// &~/PENETRATION_DAMAGE_BASE
+PENETRATION_BASE 				= 5							// &~/PENETRATION_BASE
+PENETRATION_SPEED_BASE 			= 20						// &~/PENETRATION_SPEED_BASE					
+//ARMOR_PENETRATION_FACTOR_BASE = 0							// &~/ARMOR_PENETRATION_FACTOR_BASE
+//DRAIN_BATTERY_BASE      		= 0							// &~/DRAIN_BATTERY_BASE      
+//DRAIN_DURATION_BASE 			= 0							// &~/DRAIN_DURATION_BASEDRAIN_DURATION_BASE
+//DRAIN_PER_SECOND_BASE 		= 0							// &~/DRAIN_DURATION_BASEDRAIN_DURATION_BASE
+//SHIELD_DRAIN_PER_SECOND_BASE 	= 0							// &~/SHIELD_DRAIN_PER_SECOND_BASE
+DAMAGE_RADIUS_BASE 				= 3							// &~/DAMAGE_RADIUS_BASE
+//DAMAGE_SLICES_BASE 			= 0							// &~/DAMAGE_SLICES_BASE
+HEALTH_BASE 					= 2000						// &~/HEALTH_BASE
+RANGE_BASE						= 400						// &~/RANGE_BASE
+SPEED_BASE						= 140 //*2						// &~/SPEED_BASE
+IDEAL_RADIUS_BASE				= [5, 50]					// &~/IDEAL_RADIUS_BASE 
+
 ID = "SW.turbolaser_turret_medium_laser_base" 
-Range = 400
-IdealRange = [120, &~/Range]
-IdealRadius = [5, 50]
-Speed = 140
+Range = &~/RANGE_BASE
+IdealRange = [120, &~/RANGE_BASE]
+IdealRadius = &~/IDEAL_RADIUS_BASE
+Speed = &~/SPEED_BASE
 ReceivableBuffs = [ElectronBuff]
 
 Components
@@ -14,7 +41,7 @@ Components
 	Physics
 	{
 		Type = CirclePhysics
-		Radius = 0.2
+		Radius = 0.01
 		Density = 0.0001
 	}
 
@@ -27,7 +54,7 @@ Components
 	Targetable
 	{
 		Type = Targetable
-		Health = 1000
+		Health = &~/HEALTH_BASE
 		TargetCategory = "laser"
 	}
 
@@ -35,29 +62,46 @@ Components
 	{
 		Type = PenetratingHit
 		FactorEffectsWith = Targetable
+		Penetration = &~/PENETRATION_BASE
+		PenetrationSpeed = &~/PENETRATION_SPEED_BASE
 
 		FriendlyShipLowCollisions = false
+		PenetratesCrew = true
 		CrewCollisions = {Enemies=true; Junk=true}
 		HitCrew = &HitOperational
 
-		HitShield = &HitOperational
-		HitOperational
+		HitShield : HitOperational
 		{
+			ReduceEffectsByPenetration = true
 			Offset = [-0.15, 0]
 
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = { BaseValue = 1000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
-				{ Type = Impulse; Impulse = { BaseValue =   15; EffectScaleExponent = 1 } }
+					{ Type = Damage;  Damage  = { BaseValue = &~/DAMAGE_SHIELD_BASE; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+					{ Type = Impulse; Impulse = { BaseValue = &~/IMPULSE_SHIELD_BASE; EffectScaleExponent = 1 } }
+			]
+		}
+		HitOperational
+		{
+			ReduceEffectsByPenetration = true
+			Offset = [-0.15, 0]
+
+			HitEffects
+			[
+				{ Type = Damage;  Damage  = { BaseValue = &~/DAMAGE_BASE; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue = &~/IMPULSE_BASE; EffectScaleExponent = 1 } }
 			]
 
 		}
 		HitStructural
 		{
+			ReduceEffectsByPenetration = true
+			Offset = [0.5, 0]
+
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = { BaseValue = 500; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
-				{ Type = Impulse; Impulse = { BaseValue =   5; EffectScaleExponent = 1 } }
+					{ Type = Damage;  Damage  = { BaseValue = &~/DAMAGE_STRUCT_BASE; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+					{ Type = Impulse; Impulse = { BaseValue = &~/IMPULSE_STRUCT_BASE; EffectScaleExponent = 1 } }
 			]
 		}
 
@@ -67,15 +111,10 @@ Components
 
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = { BaseValue = 500; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
-				{ Type = Impulse; Impulse = { BaseValue =   5; EffectScaleExponent = 1 } }
+				{ Type = Damage;  Damage  = { BaseValue = &~/PENETRATION_DAMAGE_BASE; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent=1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue = &~/IMPULSE_STRUCT_BASE; EffectScaleExponent = 1 } }
 			]
 
-			/*MediaEffects
-			[
-				&/SW_PARTICLES/Shot/Laser/Flash/Med/Blue
-				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Blue
-			]*/
 		}
 		PenetratingStructural
 		{
@@ -100,12 +139,12 @@ Components
 					SampleMode = Linear
 					MipLevels = max
 				}
-				Size = [0.64, 0.64]
+				Size = [2.1, 1.05]//2.4 1.2
 			}
-			FrameCount = 8
-			FrameSize = [128, 128]
-			FramesPerRow = 2
-			FramesPerSecond = 32
+			FrameCount = 2
+			FrameSize = [64, 32]
+			FramesPerRow = 1
+			FramesPerSecond = 24
 		}
 		// Vanilla norm map passthrough:
 		//NormalsTexture = &Animation/AtlasSprite/Texture
@@ -127,7 +166,7 @@ Components
 				MipLevels = max
 				SampleMode = Linear
 			}
-			Size = [3, 3]
+			Size = [6, 6]
 			TargetBlendMode = Add
 			Shader = "./Data/common_effects/fancy_light.shader"
 		}

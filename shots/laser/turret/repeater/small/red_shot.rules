@@ -1,0 +1,65 @@
+BASE = &<base_shot.rules>
+
+ID = "SW.repeater_turret_small_laser_red_shot"
+// OtherIDs = [""]
+Range = &BASE/Range
+IdealRange = &BASE/IdealRange
+IdealRadius = &BASE/IdealRadius
+Speed = &BASE/Speed
+ReceivableBuffs = &BASE/ReceivableBuffs
+
+Components : &BASE/Components
+{
+	Hit : ^/0/Hit
+	{
+		HitOperational : ^/0/HitOperational
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Hit/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Sparks/Med/Red
+				&/SW_SOUNDS/SmallLaserHit
+
+				: /BASE_SHAKE
+				{
+					ShakeAmount = .01
+					Duration = .1
+				}
+			]
+		}
+
+		HitStructural : ^/0/HitStructural
+		{
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/HitStruct/Med/Red
+				&/SW_SOUNDS/SmallLaserHit
+			]
+		}
+	}
+
+	Sprite : ^/0/Sprite
+	{
+		Animation : ^/0/Animation
+		{
+			AtlasSprite : ^/0/AtlasSprite
+			{
+				Texture
+				{
+					File = "red_laser.png"
+					SampleMode = Linear
+					MipLevels = max
+				}
+			}
+		}
+	}
+
+	GlowSprite : ^/0/GlowSprite
+	{
+		Sprite : ^/0/Sprite
+		{
+			VertexColor = [255, 0, 0]
+		}
+	}
+}

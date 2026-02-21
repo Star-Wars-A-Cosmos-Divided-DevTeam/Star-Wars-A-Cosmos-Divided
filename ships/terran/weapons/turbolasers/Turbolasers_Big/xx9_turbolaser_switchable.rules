@@ -30,6 +30,12 @@ HEAT_TO_STATUS   = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
 // Resources Used
 RESOURCES_USED = 1500
 
+// Max Resources
+BASE_MAX_RESOURCES = 16000 //(&~/BASE_MAX_RESOURCES)
+
+// Shot Timer
+BASE_SHOT_INTERVAL = 2.35 // (&~/BASE_SHOT_INTERVAL)
+
 Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 {	
 	//IDs
@@ -530,7 +536,6 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Mode = ExteriorType
 			OnMode = 0
 		}
-
 		WhiteExteriorComponents
 		{
 			Type = ToggledComponents
@@ -556,7 +561,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 16000 //for 16 times firing in 72 secs(32shots) 
+			MaxResources = (&~/BASE_MAX_RESOURCES) //for 16 times firing in 72 secs(32shots) 
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
@@ -568,17 +573,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			ResupplyThreshold = 1600
 			OperationalToggle = CommandConsumptionToggle
 		}
-/*
-		BatteryStorageBar
-		{
-			Type = ProgressBar
-			OperationalToggle = IsOperational
-			ShowProgressFor = BatteryStorage
-			LowColor = [64, 64, 0]
-			HighColor = [250, 250, 0]
-			FullColor = [255, 255, 0]
-		}
-*/
+
 		Graphics
 		{
 			Type = Graphics
@@ -894,7 +889,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 				{
 					Type = Timer
 					OperationalToggle = IsOperational
-					Duration = 2.25*2  //2.25*2
+					Duration = (&~/BASE_SHOT_INTERVAL)*2  //2.35*2
 					AutoStart = true
 					StartTrigger = Turret
 				}
@@ -931,7 +926,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 				{
 					Type = Timer
 					OperationalToggle = IsOperational
-					Duration = 2.25 //2.25
+					Duration = (&~/BASE_SHOT_INTERVAL) //2.35
 					AutoStart = true
 					StartTrigger = Turret
 				}
@@ -1100,17 +1095,10 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 
 		TurretCollider
 		{
-			Type = PolygonCollider
-			Vertices
-			[
-				[1.1, 1.1]
-				[1.1, -1.1]
-				[-1.1, -1.1]
-				[-1.1, 1.1]
-			]
+			Type = CircleCollider
 			Location = &../Turret/Location
-			Density = .75
-			//IsHigh = true
+			Radius = 1.5
+			Density = 1.5
 			InitialPenetrationResistance = 5
 		}
 
@@ -1313,7 +1301,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 	[
 		&~/TurretStats
 		{
-			NameKey = "StatCategories/HeavyTurbolasershot"
+			NameKey = "StatCategories/XX9Lasershot"
 			Stats
 			{
 					DamagePerShot = &~/EMITTER_BASE/Bullet/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue
@@ -1334,11 +1322,11 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 	SecondaryToolTip
 	{
 		TitleKey = "StatCategories/Overclocked"
-		DescriptionKey = "Parts/HeavyturbolaserswitchableOverclockDesc"
+		DescriptionKey = "Parts/XX9turbolaserswitchableOverclockDesc"
 		StatsByCategory
 		[
 			{
-				NameKey = "StatCategories/HeavyTurbolasershotOverclocked"
+				NameKey = "StatCategories/XX9LasershotOverclocked"
 				Stats
 				{
 					DamagePerShot = &~/OVERCLOCK/BULLET/DAMAGE
@@ -1350,7 +1338,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					DamageArea = &~/OVERCLOCK/BULLET/DAMAGE_RADIUS
 					ROF = (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration) * (&~/OVERCLOCK/FIRE_RATE_FACTOR)
 					HeatPerShot = (&~/OVERCLOCK/HEAT_PER_SHOT)
-					PowerPerShot = (&~/EMITTER_BASE_OVERCLOCK/ResourcesUsed) / 1000
+					PowerPerShot = ((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR)) / 1000 // (&~/EMITTER_BASE_OVERCLOCK/ResourcesUsed) / 1000
 					PowerPerSecond = (&PowerPerShot) * (&ROF)
 					ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 					ShotHP = &~/OVERCLOCK/BULLET/HEALTH

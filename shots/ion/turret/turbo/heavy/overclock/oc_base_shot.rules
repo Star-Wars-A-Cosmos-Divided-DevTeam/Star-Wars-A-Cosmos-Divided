@@ -1,0 +1,117 @@
+// LOCATION: shots/ion/turret/turbo/heavy/overclock/oc_base_shot.rules
+// PURPOSE : Overclock stats/behavior for heavy ion turret shots (color-agnostic).
+BASE = &<../base_shot.rules>
+
+// OC tuning scalars
+TOTAL_POWER_DRAIN           = 250% * (&BASE/DRAIN_BATTERY_BASE)
+TOTAL_SHIELD_DRAIN          = 250% * (&BASE/DAMAGE_SHIELD_BASE)
+DRAIN_DURATION              = 15
+DRAIN_PER_SECOND            = (&TOTAL_POWER_DRAIN) / (&DRAIN_DURATION)
+SHIELD_DRAIN_PER_SECOND     = (&TOTAL_SHIELD_DRAIN) / (&DRAIN_DURATION)
+DAMAGE                      = 200% * (&BASE/DAMAGE_BASE)
+DAMAGE_SHIELD               = 125% * (&BASE/DAMAGE_SHIELD_BASE)
+DAMAGE_STRUCT               = 150% * (&BASE/DAMAGE_STRUCT_BASE)
+IMPULSE 					= (&BASE/IMPULSE_BASE)					// &~/IMPULSE_BASE 
+IMPULSE_SHIELD				= (&BASE/IMPULSE_SHIELD_BASE)			// &~/IMPULSE_SHIELD_BASE
+IMPULSE_STRUCT				= (&BASE/IMPULSE_STRUCT_BASE)			// &~/IMPULSE_STRUCT_BASE
+PENETRATION                 = (&BASE/PENETRATION_BASE) 
+ARMOR_PENETRATION_FACTOR    = 0.6
+HEALTH                      = 150% * (&BASE/HEALTH_BASE)
+
+ID = "SW.ion_heavy_cannon_shot_base_overclock"
+Range           = 150% * (&BASE/Range)
+IdealRange      = [120, &~/Range]
+IdealRadius     = &BASE/IdealRadius
+Speed           = 175% * (&BASE/SPEED_BASE)
+ReceivableBuffs = &BASE/ReceivableBuffs
+
+Components : &BASE/Components
+{
+	Targetable : ^/0/Targetable
+	{
+		Health = &~/HEALTH
+	}
+
+	Hit : ^/0/Hit
+	{
+		Penetration = &~/PENETRATION
+		PenetratesOperational = true
+		PartCategoryPenetrationFactors
+		{
+			armor = &~/ARMOR_PENETRATION_FACTOR
+		}
+
+		HitShield : ^/0/HitShield
+		{
+			HitEffects
+			[
+				: ../../PenetratingOperational/HitEffects/0
+				{
+					StatusValue = { BaseValue = (&~/SHIELD_DRAIN_PER_SECOND) / 1000; EffectScaleExponent = 1 }
+				}
+			]
+		}
+
+		HitOperational : ^/0/HitOperational
+		{
+			HitEffects : ^/0/HitEffects
+			[
+				&~/BASE/Components/Hit/HitOperational/HitEffects/1
+			]
+		}
+
+		HitStructural : ^/0/HitStructural
+		{
+			HitEffects
+			[
+				: ../^/0/HitEffects/0
+				{
+					Damage = &~/DAMAGE_STRUCT
+				}
+			]
+		}
+
+		PenetratingOperational : ^/0/HitOperational
+		{
+			HitEffects
+			[
+				{
+					Type = StatusApplication
+					StatusType = cosmoteer.disruptor_drain
+					StatusDuration = &~/DRAIN_DURATION
+					StatusValue = { BaseValue = (&~/DRAIN_PER_SECOND) / 1000; EffectScaleExponent = 1 }
+				}
+			]
+		}
+		FinishedPenetratingOperational = &PenetratingOperational
+		FinishedPenetratingStructural = &PenetratingStructural
+	}
+	MediaEffects
+	{
+		Type = MediaEffects
+		FactorEffectsWith = Hit
+		FactorEffectsExponent = 0.5
+		MediaEffects
+		[
+			&<particles/disruptor_bolt_oc_lightning.rules>
+		]
+	}
+
+	Sprite
+	{
+		Type = Sprite
+		ReduceScaleWith = Hit
+		ReduceScaleExponent = 0.5
+		Sprite
+		{
+			Texture
+			{
+				File = "particles/disruptor_bolt_hit_orb.png"
+				SampleMode = Linear
+				MipLevels = max
+			}
+			VertexColor = [0, 240, 240, 255]
+			Size = [3.5, 3.5] //0.35
+		}
+	}
+}

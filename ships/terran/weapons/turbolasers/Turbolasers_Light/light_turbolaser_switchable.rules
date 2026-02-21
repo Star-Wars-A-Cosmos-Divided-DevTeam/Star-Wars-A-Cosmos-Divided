@@ -15,8 +15,8 @@ OVERCLOCK
 	RECOIL_FACTOR = 150%
 
 	// Heat hookup
-	HEAT_PER_SHOT   = 650
-	HEAT_PER_SECOND = 100
+	HEAT_PER_SHOT   = 450
+	HEAT_PER_SECOND = 50
 
 	// Stun scaling
 	//CREW_STUN_DURATION = ((&~/Part/Components/StunEffect/HitEffects/0/Duration/BaseValue) * 3)
@@ -29,6 +29,12 @@ HEAT_TO_STATUS   = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
 
 // Resources Used
 RESOURCES_USED = 250
+
+// Max Resources
+BASE_MAX_RESOURCES = 8000 //(&~/BASE_MAX_RESOURCES)
+
+// Shot Timer
+BASE_SHOT_INTERVAL = 0.95 // (&~/BASE_SHOT_INTERVAL)
 
 Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 {	
@@ -396,7 +402,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		{
 			Type = ResourceStorage
 			ResourceType = battery
-			MaxResources = 8000
+			MaxResources = (&~/BASE_MAX_RESOURCES)
 			ReceiveResourceMediaEffects = &/COMMON_EFFECTS/PowerDeliver
 		}
 		BatteryConsumer
@@ -751,7 +757,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 				{
 					Type = Timer
 					OperationalToggle = IsOperational
-					Duration = 1.15*2  //2.25*2
+					Duration = (&~/BASE_SHOT_INTERVAL)*2  //0.95*2
 					AutoStart = true
 					StartTrigger = Turret
 				}
@@ -788,7 +794,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 				{
 					Type = Timer
 					OperationalToggle = IsOperational
-					Duration = 1.15 //2.25
+					Duration = (&~/BASE_SHOT_INTERVAL) //0.95
 					AutoStart = true
 					StartTrigger = Turret
 				}
@@ -966,7 +972,6 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Density = .75
 			InitialPenetrationResistance = 5
 			//IsHigh = true
-
 		}
 
 		BatterySprites
@@ -1160,7 +1165,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 					DamageArea = &~/OVERCLOCK/BULLET/DAMAGE_RADIUS
 					ROF = (&~/Part/Components/ShootAlternatingComponents/Components/FireTimer/Duration) * (&~/OVERCLOCK/FIRE_RATE_FACTOR)
 					HeatPerShot = (&~/OVERCLOCK/HEAT_PER_SHOT)
-					PowerPerShot = (&~/EMITTER_BASE_OVERCLOCK/ResourcesUsed) / 1000
+					PowerPerShot = ((&~/RESOURCES_USED) * (&~/OVERCLOCK/POWER_USE_FACTOR)) / 1000
 					PowerPerSecond = (&PowerPerShot) * (&ROF)
 					ShotPowerUsage = [&../PowerPerShot, &../PowerPerSecond]
 					ShotHP = &~/OVERCLOCK/BULLET/HEALTH

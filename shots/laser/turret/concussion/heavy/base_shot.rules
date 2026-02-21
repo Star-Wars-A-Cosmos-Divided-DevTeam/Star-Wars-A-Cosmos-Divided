@@ -2,11 +2,34 @@
 // USED IN: shots/laser/turret/concussion/heavy/red_shot.rules, shots/laser/turret/concussion/heavy/green_shot.rules, shots/laser/turret/concussion/heavy/blue_shot.rules
 // BASE FOR: Heavy Concussive Blast Laser Shots
 // STRINGKEY: NONE
+
+//Base Stats
+DAMAGE_SHIELD_BASE = 20000 
+DAMAGE_BASE = 30000
+DAMAGE_STRUCT_BASE = (&~/DAMAGE_BASE)/2
+DAMAGE_EXPLOSIVE_BASE = 0
+AREA_DAMAGE_BASE = 0
+DAMAGE_POOL_BASE = 0
+IMPULSE_BASE = 400
+IMPULSE_SHIELD_BASE = (&~/IMPULSE_BASE)*75%
+IMPULSE_STRUCT_BASE = (&~/IMPULSE_BASE)/2
+IMPULSE_EXPLOSIVE_BASE = 0
+PENETRATION_DAMAGE_BASE = (&~/DAMAGE_STRUCT_BASE)
+PENETRATION_BASE = 200
+PENETRATION_SPEED_BASE = 26 //*2
+ARMOR_PENETRATION_FACTOR_BASE = 0
+DRAIN_DURATION_BASE = 0
+DRAIN_PER_SECOND_BASE = 0
+SHIELD_DRAIN_PER_SECOND_BASE = 0
+DAMAGE_RADIUS_BASE = 0
+DAMAGE_SLICES_BASE = 0
+HEALTH_BASE = 20000
+
 ID = "SW.concussion_turret_heavy_laser_base" 
 Range = 550
 IdealRange = [200, &~/Range]
 IdealRadius = [5, 50]
-Speed = 80
+Speed = 80 //*2
 ReceivableBuffs = [ElectronBuff]
 
 Components
@@ -26,7 +49,7 @@ Components
 	Targetable
 	{
 		Type = Targetable
-		Health = 20000
+		Health = (&~/HEALTH_BASE)
 		TargetCategory = "laser"
 
 		OnDeath
@@ -38,8 +61,8 @@ Components
 	Hit
 	{
 		Type = PenetratingHit
-		Penetration = 200.0
-		PenetrationSpeed = 26
+		Penetration = &~/PENETRATION_BASE
+		PenetrationSpeed = &~/PENETRATION_SPEED_BASE
 
 		CrewCollisions = { Enemies=true; Junk=true }
 		FriendlyShipLowCollisions = false
@@ -53,8 +76,8 @@ Components
 
 			HitEffects
 			[
-				{ Type = Damage;  Damage  = { BaseValue = 20000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; } }  // was 20000
-				{ Type = Impulse; Impulse = { BaseValue =   300; EffectScaleExponent = 1; } }
+				{ Type = Damage;  Damage  = { BaseValue = (&~/DAMAGE_SHIELD_BASE); BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; } }  // was 20000
+				{ Type = Impulse; Impulse = { BaseValue =   (&~/IMPULSE_SHIELD_BASE); EffectScaleExponent = 1; } }
 			]
 
 		}
@@ -67,8 +90,8 @@ Components
 			HitEffects
 			[
 
-				{ Type = Damage;  Damage  = { BaseValue = 30000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; } }
-				{ Type = Impulse; Impulse = { BaseValue = 400; EffectScaleExponent = 1; } }
+				{ Type = Damage;  Damage  = { BaseValue =  (&~/DAMAGE_BASE); BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; } }
+				{ Type = Impulse; Impulse = { BaseValue = (&~/IMPULSE_BASE); EffectScaleExponent = 1; } }
 			]
 
 		}
@@ -80,12 +103,8 @@ Components
 
 			HitEffects
 			[
-				{
-					Type = Damage;	Damage = { BaseValue = 10000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; }
-				}
-				{
-					Type = Impulse;	Impulse = { BaseValue = 90; EffectScaleExponent = 1; }
-				}
+				{ Type = Damage;	Damage = { BaseValue = (&~/DAMAGE_STRUCT_BASE); BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; } }
+				{ Type = Impulse;	Impulse = { BaseValue = (&~/IMPULSE_STRUCT_BASE); EffectScaleExponent = 1; } }
 			]
 		}
 
@@ -96,7 +115,7 @@ Components
 			HitEffects
 			[
 				{
-					Type = Damage;	Damage = { BaseValue = 15000; BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; }
+					Type = Damage;	Damage = { BaseValue = (&~/PENETRATION_DAMAGE_BASE); BuffType=ElectronBuff; BuffMode=Multiply; EffectScaleExponent = 1; }
 				}
 				{
 					Type = StatusApplication
@@ -104,16 +123,14 @@ Components
 					StatusChance = { BaseValue = .4; EffectScaleExponent = 1 }
 					ValueType = Interpolated
 				}
-				{
-					Type = Impulse
-					Impulse = { BaseValue = 180; EffectScaleExponent = 1 }
-				}
+				{ Type = Impulse; Impulse = { BaseValue = (&~/IMPULSE_STRUCT_BASE); EffectScaleExponent = 1; } }
 			]
 
 		}
 
 		PenetratingStructural
 		{
+			//Nothing
 		}
 		FinishedPenetratingOperational = &PenetratingOperational
 		FinishedPenetratingStructural = &PenetratingStructural
@@ -177,13 +194,3 @@ Components
 		Offset = [2, 0]
 	}
 }
-				//{
-				//	Type = ExplosiveDamage
-				//	TotalDamage       = 50000
-				//	Radius            = 10
-				//	ExpandDuration    = 0.9
-				//	ExpandStartRadius = 1
-				//	ExpandLoss        = 100%
-				//	ImpulsePerNDamage = 10
-				//	NDamage           = 10000
-				//}

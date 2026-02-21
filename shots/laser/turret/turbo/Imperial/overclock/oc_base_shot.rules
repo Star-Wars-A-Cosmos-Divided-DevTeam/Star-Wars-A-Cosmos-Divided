@@ -8,21 +8,21 @@ ID = "SW.turbolaser_turret_Imperial_laser_base_overclock"
 Range        = (&~/BASE/Range) * 2
 IdealRange   = [200, (&~/BASE/Range) * 2]
 IdealRadius  = &BASE/IdealRadius
-Speed        = (&~/BASE/Speed) * 130%
+Speed        = (&~/BASE/SPEED_BASE) * 150%
 ReceivableBuffs = &BASE/ReceivableBuffs
 
 // OC scalars
-DAMAGE             = 50% * (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
-DAMAGE_SHIELD      = 150% * (&BASE/Components/Hit/HitShield/HitEffects/0/Damage/BaseValue)
-DAMAGE_RADIUS      = 6
-EXPLOSIVE_DAMAGE   = 400% * (&BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage/BaseValue)
+DAMAGE             = 50% * (&BASE/DAMAGE_BASE)
+DAMAGE_SHIELD      = 150% * (&BASE/DAMAGE_SHIELD_BASE)
+DAMAGE_RADIUS      = 200% * (&BASE/DAMAGE_RADIUS_BASE) 	
+DAMAGE_EXPLOSIVE   = 400% * (&BASE/DAMAGE_EXPLOSIVE_BASE)
 EXPLOSIVE_RADIUS   = 200% * (&BASE/Components/Hit/HitOperational/HitEffects/1/Radius)
-IMPULSE            = 200% * (&BASE/Components/Hit/HitOperational/HitEffects/2/Impulse/BaseValue)
-IMPULSE_SHIELD     = 100% * (&BASE/Components/Hit/HitShield/HitEffects/1/Impulse/BaseValue)
-HEALTH             = 175% * (&BASE/Components/Targetable/Health)
+IMPULSE            = 200% * (&BASE/IMPULSE_BASE)
+IMPULSE_SHIELD     = 100% * (&BASE/IMPULSE_SHIELD_BASE)
+HEALTH             = 175% * (&BASE/HEALTH_BASE)
 STRUCT_RATIO_PRIMARY   = (&BASE/Components/Hit/HitStructural/HitEffects/1/TotalDamage/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage/BaseValue)
 STRUCT_RATIO_SECONDARY = (&BASE/Components/Hit/HitStructural/HitEffects/0/Damage/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/0/Damage/BaseValue)
-STRUCT_DAMAGE_PRIMARY   = ceil((&~/EXPLOSIVE_DAMAGE) * (&~/STRUCT_RATIO_PRIMARY))
+STRUCT_DAMAGE_PRIMARY   = ceil((&~/DAMAGE_EXPLOSIVE) * (&~/STRUCT_RATIO_PRIMARY))
 STRUCT_DAMAGE_SECONDARY = ceil((&~/DAMAGE) * (&~/STRUCT_RATIO_SECONDARY))
 STRUCT_IMPULSE_RATIO    = (&BASE/Components/Hit/HitStructural/HitEffects/2/Impulse/BaseValue) / (&BASE/Components/Hit/HitOperational/HitEffects/2/Impulse/BaseValue)
 STRUCT_IMPULSE          = floor((&~/IMPULSE) * (&~/STRUCT_IMPULSE_RATIO))
@@ -66,8 +66,8 @@ Components : &BASE/Components
 				// Explosive payload (scaled)
 				{
 					Type = ExplosiveDamage
-					TotalDamage : ~/BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage { BaseValue = &~/EXPLOSIVE_DAMAGE }
-					Radius = &~/EXPLOSIVE_RADIUS
+					TotalDamage : ~/BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage { BaseValue = &~/DAMAGE_EXPLOSIVE }
+					Radius = &~/DAMAGE_RADIUS
 					Filter { Friendlies = false }
 				}
 				// Impulse (scaled)
@@ -105,8 +105,8 @@ Components : &BASE/Components
 				// Explosive payload (scaled)
 				{
 					Type = ExplosiveDamage
-					TotalDamage : ~/BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage { BaseValue = &~/EXPLOSIVE_DAMAGE }
-					Radius = &~/EXPLOSIVE_RADIUS
+					TotalDamage : ~/BASE/Components/Hit/HitOperational/HitEffects/1/TotalDamage { BaseValue = &~/DAMAGE_EXPLOSIVE }
+					Radius = &~/DAMAGE_RADIUS
 					Filter { Friendlies = false }
 				}
 				// Impulse (scaled)
