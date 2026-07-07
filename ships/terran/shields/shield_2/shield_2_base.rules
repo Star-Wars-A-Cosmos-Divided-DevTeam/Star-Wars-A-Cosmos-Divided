@@ -1,0 +1,573 @@
+Components
+	{
+		ArcShield
+		{
+			Type = ArcShield
+			BlockedByOperationalParts = &<../ShieldTuner.rules>/All/BlockedByOperationalParts
+			Radius
+			{
+				BaseValue = &<../ShieldTuner.rules>/Med/Radius
+				Modifiers
+				[
+					{
+						Type = BuffRemap
+						BuffType = ShieldOverclockExtended
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, &<../shield_2.rules>/OVERCLOCK/EXTENDED/ARC_RADIUS_FACTOR ]
+					}
+				]
+			}
+			Arc
+			{
+				BaseValue = &<../ShieldTuner.rules>/All/Arc
+				Modifiers
+				[
+					{
+						Type = BuffRemap
+						BuffType = ShieldOverclockExtended
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, &<../shield_2.rules>/OVERCLOCK/EXTENDED/ARC_FACTOR ]
+					}
+					{
+						Type = BuffRemap
+						BuffType = ShieldOverclockReinforced
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, &<../shield_2.rules>/OVERCLOCK/REINFORCED/ARC_FACTOR ]
+					}
+				]
+			}
+			OperationalToggle = IsOperational
+			PenetrationResistance = &<../ShieldTuner.rules>/Med/PenetrationResistance
+			DrainResourcesFrom = BatteryStorage
+			ResourceDrainPerDamage = &<../ShieldTuner.rules>/All/ResourceDrainPerDamage
+			Rotation = -90d
+			Location = &<../ShieldTuner.rules>/Med/Location
+
+			BlueprintArcToggle = OverclockModeToggle
+			InvertBlueprintToggle = true
+
+			BlueprintArcSprite
+			{
+				Texture
+				{
+					File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
+					UVMode = Wrap
+					SampleMode = Linear
+					MipLevels = 1
+				}
+				_xScale = &<ShieldTuner.rules>/Med/_xScale
+				Size = &<../ShieldTuner.rules>/Med/Size
+				Color = [0, 0, 255, 127]
+			}
+			BlueprintArcSpriteSegments = 64
+
+			CoverageArcSprite
+			{
+				Texture
+				{
+					File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+					UVMode = Wrap
+					SampleMode = Linear
+					MipLevels = 1
+				}
+				Size = &<../ShieldTuner.rules>/Med/Size
+				Color = [255, 255, 255, 127]
+			}
+			CoverageArcSpriteSegments = 64
+
+			ShieldMediaEffects
+			[
+				{
+					Type = ArcShield
+					Radius = &<../ShieldTuner.rules>/Med/Radius
+					Arc = &<../ShieldTuner.rules>/All/Arc
+					FadeInTime = .25
+					FadeOutTime = .25
+					FadeFromScale = .8
+					//ArcAngleAffectsUVs = true
+					UPerNinetyDegrees = 1
+					ArcSprite
+					{
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
+						_waveTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_maskTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_mask.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						_waveSpeed = &<../ShieldTuner.rules>/Med/_waveSpeed
+						_waveAlpha = &<../ShieldTuner.rules>/All/_waveAlpha
+						_waveCurveInterval = &<../ShieldTuner.rules>/Med/_waveCurveInterval
+						_waveCurveMagnitude = &<../ShieldTuner.rules>/Med/_waveCurveMagnitude
+						_waveCurveUOffsetPerSecond = &<../ShieldTuner.rules>/Med/_waveCurveUOffsetPerSecond
+						_fullPowerColor1 = &<../ShieldTuner.rules>/White/_fullPowerColor1
+						_lowPowerColor1 = &<../ShieldTuner.rules>/White/_lowPowerColor1
+						_fullPowerColor2 = &<../ShieldTuner.rules>/White/_fullPowerColor2
+						_lowPowerColor2 = &<../ShieldTuner.rules>/White/_lowPowerColor2
+						_lowPowerThicknessExponent = &<../ShieldTuner.rules>/All/_lowPowerThicknessExponent
+						_xScale = &<../ShieldTuner.rules>/Med/_xScale
+						_hexDamageIntensity = 0.5
+						TargetBlendMode = Add
+						Size = &<../ShieldTuner.rules>/Med/Size
+					}
+					ArcSpriteSegments = 64
+					Bucket = Lower2
+				}
+
+/*
+				: /BASE_SOUNDS/AudioExteriorDetail
+				{
+					Sound = "./Data/ships/terran/shield_gen_small/sounds/shield_emitter_loop.wav"
+					Volume = .15
+					Speed = .5
+					MaxConcurrent = 1
+					MaxConcurrentVolume = .3
+					DynamicVolume : ^/0/DynamicVolume
+					{
+						MinDistance = .75
+						MaxDistance = 1.5
+					}
+					IgnoreIntensity = true
+				}
+*/
+			]
+
+			HitMediaEffects
+			[
+				{
+					Type = ArcShield
+					FadeInTime = .1
+					FadeOutTime = .5
+					Radius = &<../ShieldTuner.rules>/Med/Radius
+					Arc = &<../ShieldTuner.rules>/All/HitArc
+					ArcSprite
+					{
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_original.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
+						_waveTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_maskTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_original.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_waveSpeed = -2*(&<../ShieldTuner.rules>/Med/_waveSpeed)
+						_waveAlpha = 0.75*(&<../ShieldTuner.rules>/All/_waveAlpha)
+						_waveCurveInterval = &<../ShieldTuner.rules>/Med/_waveCurveInterval
+						_waveCurveMagnitude = (5/7)*(&<../ShieldTuner.rules>/Med/_waveCurveMagnitude)
+						_waveCurveUOffsetPerSecond = 0
+						_fullPowerColor1 = &<../ShieldTuner.rules>/White/_fullPowerColor1
+						_lowPowerColor1 = &<../ShieldTuner.rules>/White/_lowPowerColor1
+						_fullPowerColor2 = &<../ShieldTuner.rules>/White/_fullPowerColor2
+						_lowPowerColor2 = &<../ShieldTuner.rules>/White/_lowPowerColor2
+						_lowPowerThicknessExponent = &<../ShieldTuner.rules>/All/_lowPowerThicknessExponent
+						_xScale = &<../ShieldTuner.rules>/Med/_xScale
+						Size = &<../ShieldTuner.rules>/Med/Size
+						_hexDamageIntensity = &<../ShieldTuner.rules>/All/_hexDamageIntensity/Base
+						TargetBlendMode = Add
+					}
+					ArcSpriteSegments = 6
+					Bucket = Upper3
+				}
+				&/SW_SOUNDS/ShieldHit
+			]
+		}
+
+		Overclock_ExtendedBlueprintArc
+		{
+			Type = ArcSprite
+			ChainedTo = ArcShield
+			VisibilityToggle = Overclock_ExtendedAndOverclockedModeToggle
+			Radius = (&../ArcShield/Radius/BaseValue) * (&<../shield_2.rules>/OVERCLOCK/EXTENDED/ARC_RADIUS_FACTOR)
+			Arc = (&../ArcShield/Arc/BaseValue) * (&<../shield_2.rules>/OVERCLOCK/EXTENDED/ARC_FACTOR)
+			SpriteSegments = (&../ArcShield/BlueprintArcSpriteSegments)
+			Sprite
+			{
+				Texture
+				{
+					File = "./Data/ships/terran/shield_gen_small/shield_energy_oc.png"
+					UVMode = Wrap
+					SampleMode = Linear
+					MipLevels = 1
+				}
+				Size = [0, 1.5]
+				Color = [36, 255, 244, 64]
+			}
+		}
+		Overclock_ReinforcedBlueprintArc : Overclock_ExtendedBlueprintArc
+		{
+			Type = ArcSprite
+			ChainedTo = ArcShield
+			VisibilityToggle = Overclock_ReinforcedAndOverclockedModeToggle
+			Radius = (&../ArcShield/Radius/BaseValue)
+			Arc = (&../ArcShield/Arc/BaseValue) * (&<../shield_2.rules>/OVERCLOCK/REINFORCED/ARC_FACTOR)
+			SpriteSegments = (&../ArcShield/BlueprintArcSpriteSegments)
+			Sprite
+			{
+				Texture
+				{
+					File = "./Data/ships/terran/shield_gen_small/shield_energy_oc.png"
+					UVMode = Wrap
+					SampleMode = Linear
+					MipLevels = 1
+				}
+				Size = [0, 1.5]
+				Color = [255, 134, 36, 127]
+			}
+		}
+
+		Overclock_ExtendedEffect
+		{
+			Type = ShieldArcsMimic
+			Shield = ArcShield
+			ChainedTo = ArcShield
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			MimicFadeInStartTime = false
+			OperationalToggle = OverclockedEffectToggle
+			ContinuousEffects
+			[
+				{
+					Type = ArcShield
+					Radius = &~/Components/ArcShield/Radius
+					Arc = &~/Components/ArcShield/Arc
+					FadeInTime = .25
+					FadeOutTime = .25
+					FadeFromScale = 1.025
+					ArcSprite
+					{
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_oc.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
+						_waveTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_maskTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_mask_oc.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						_waveSpeed = 1*(&<../ShieldTuner.rules>/Med/_waveSpeed)
+						_waveAlpha = 1*(&<../ShieldTuner.rules>/All/_waveAlpha)
+						_waveCurveInterval = &<../ShieldTuner.rules>/Med/_waveCurveInterval
+						_waveCurveMagnitude = (5/7)*(&<../ShieldTuner.rules>/Med/_waveCurveMagnitude)
+						_waveCurveUOffsetPerSecond = .2
+						_fullPowerColor1 = [203, 80, 33, 127]
+						_lowPowerColor1 = [255, 0, 0, 127]
+						_fullPowerColor2 = [255, 134, 36, 255]
+						_lowPowerColor2 = [255, 50, 0, 127]
+						_lowPowerThicknessExponent = &<../ShieldTuner.rules>/All/_lowPowerThicknessExponent
+						_xScale = &<../ShieldTuner.rules>/Med/_xScale
+						Size = &<../ShieldTuner.rules>/Med/Size
+						_hexDamageIntensity = &<../ShieldTuner.rules>/All/_hexDamageIntensity/EX
+						TargetBlendMode = Add
+					}
+					ArcSpriteSegments = 64
+					Bucket = Lower1
+				}
+			]
+		}
+		Overclock_ReinforcedEffect : Overclock_ExtendedEffect
+		{
+			OperationalToggle = Overclock_ReinforcedEffectToggle
+			ContinuousEffects
+			[
+				: ../^/0/ContinuousEffects/0
+				{
+					ArcSprite : ^/0/ArcSprite
+					{
+						_fullPowerColor1 = [203, 80, 33, 127]
+						_lowPowerColor1 = [255, 0, 0, 127]
+						_fullPowerColor2 = [255, 134, 36, 255]
+						_lowPowerColor2 = [255, 50, 0, 127]
+						_xScale = 1
+					}
+				}
+			]
+		}
+		
+		OverloadEffect
+		{
+			Type = ShieldArcsMimic
+			Shield = ArcShield
+			ChainedTo = ArcShield
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			FactorRedVertexColorWith = OverloadValue
+			OperationalToggle = IsOperationalOverloaded
+			ContinuousEffects
+			[
+				{
+					Type = ArcShield
+					Radius = &~/Components/ArcShield/Radius
+					Arc = &~/Components/ArcShield/Arc
+					FadeInTime = 0.5
+					FadeOutTime = 0.5
+					FadeFromScale = .8
+					//ArcAngleAffectsUVs = true
+					//UPerNinetyDegrees = 1
+					ArcSprite
+					{
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_overload.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						Shader = "./Data/ships/terran/shield_gen_small/shield_overload.shader"
+						_noiseTex1
+						{
+							File = "./Data/statuses/fire/particles/fire_noise.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_noiseTex2
+						{
+							File = "./Data/statuses/fire/particles/fire_noise.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_baseShieldTex
+						{
+							File = ./Data/ships/terran/shield_gen_small/shield_mask.png
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						_waveSpeed = 1*(&<../ShieldTuner.rules>/Med/_waveSpeed)
+						_waveAlpha = 1*(&<../ShieldTuner.rules>/All/_waveAlpha)
+						_waveCurveInterval = &<../ShieldTuner.rules>/Med/_waveCurveInterval
+						_waveCurveMagnitude = &<../ShieldTuner.rules>/Med/_waveCurveMagnitude
+						_waveCurveUOffsetPerSecond = .2
+						
+						_color1 = [255, 0, 255 * 0.31, 0]
+						_color2 = [255, 255 * 0.41, 0, 0]
+						_maxGreen = 0.9
+						
+						_xScale = &<../ShieldTuner.rules>/Med/_xScale
+						Size = &<../ShieldTuner.rules>/Med/Size
+						_gradientXWidth = 1.05
+						_hexDamageIntensity = &<../ShieldTuner.rules>/All/_hexDamageIntensity/OL
+						_thermalIntensityExponent = 0.25
+						TargetBlendMode = Add
+					}
+					ArcSpriteSegments = 64
+					Bucket = Lower1
+				}
+			]
+		}
+
+		Overclock_OverloadEffect_Extended
+		{
+			Type = ShieldArcsMimic
+			Shield = ArcShield
+			ChainedTo = ArcShield
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			FactorRedVertexColorWith = OverloadValue
+			OperationalToggle = IsOperationalOverloaded_Extended
+			ContinuousEffects
+			[
+				{
+					Type = ArcShield
+					Radius = &~/Part/Components/ArcShield/Radius
+					Arc = &~/Part/Components/ArcShield/Arc
+					FadeInTime = .25
+					FadeOutTime = .25
+					FadeFromScale = 1.025
+					ArcSprite
+					{
+						Texture
+						{
+							File = "shield_overload_oc.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						Shader = "shield_overload.shader"
+						_noiseTex1
+						{
+							File = "./Data/statuses/fire/particles/fire_noise.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_noiseTex2
+						{
+							File = "./Data/statuses/fire/particles/fire_noise.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_baseShieldTex
+						{
+							File = shield_mask_oc.png
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						_waveSpeed = 1
+						_waveAlpha = 1
+						_waveCurveInterval = .5
+						_waveCurveMagnitude = .35
+						_waveCurveUOffsetPerSecond = .2
+
+						_color1 = [255, 0, 255 * 0.31, 0]
+						_color2 = [255, 255 * 0.41, 0, 0]
+						_maxGreen = 0.9
+
+						_xScale = 3
+						_hexDamageIntensity = 0.8
+						_thermalIntensityExponent = 0.25
+						TargetBlendMode = Add
+						Size = [0, 1.5]
+					}
+					ArcSpriteSegments = 64
+					Bucket = Lower1
+				}
+			]
+		}
+		Overclock_OverloadEffect_Reinforced : Overclock_OverloadEffect_Extended
+		{
+			OperationalToggle = IsOperationalOverloaded_Reinforced
+			ContinuousEffects
+			[
+				: ../^/0/ContinuousEffects/0
+				{
+					ArcSprite : ^/0/ArcSprite
+					{
+						_xScale = 1
+					}
+				}
+			]
+		}
+
+		EmitterEffect
+		{
+			Type = ContinuousEffects
+			ChainedTo = ArcShield
+			Rotation = 90d
+			FactorMediaEffectsIntensityWith = BatteryStorage
+			MaxMediaEffectsZoom = 12
+			Location = [0, (&<../ShieldTuner.rules>/Med/Size/1)/2]
+			OperationalToggle = ShieldEmitterEffectToggleAndIsOperational
+			//BlockedByOperationalParts = &<../ShieldTuner.rules>/All/BlockedByOperationalParts
+			ParentToShip = true
+			MediaEffects
+			[
+				{
+					Type = ArcShield
+					Radius = (&<../ShieldTuner.rules>/Med/Size/1)/2
+					Arc = &<../ShieldTuner.rules>/All/Arc
+					FadeInTime = .25
+					FadeOutTime = .25
+					ArcSprite
+					{
+						Texture
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						UVRect = [0, 1, 1, -1]
+						Shader = "./Data/ships/terran/shield_gen_small/shield.shader"
+						_waveTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_energy_wave.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = max
+						}
+						_maskTex
+						{
+							File = "./Data/ships/terran/shield_gen_small/shield_mask.png"
+							UVMode = Wrap
+							SampleMode = Linear
+							MipLevels = 1
+						}
+						_waveSpeed = -1*(&<../ShieldTuner.rules>/Med/_waveSpeed)
+						_waveAlpha = &<../ShieldTuner.rules>/All/_waveAlpha
+						_waveCurveInterval = &<../ShieldTuner.rules>/Med/_waveCurveInterval
+						_waveCurveMagnitude = &<../ShieldTuner.rules>/Med/_waveCurveMagnitude
+						_waveCurveUOffsetPerSecond = &<../ShieldTuner.rules>/Med/_waveCurveUOffsetPerSecond
+						_fullPowerColor1 = &<../ShieldTuner.rules>/White/_fullPowerColor1
+						_lowPowerColor1 = &<../ShieldTuner.rules>/White/_lowPowerColor1
+						_fullPowerColor2 = &<../ShieldTuner.rules>/White/_fullPowerColor2
+						_lowPowerColor2 = &<../ShieldTuner.rules>/White/_lowPowerColor2
+						_lowPowerThicknessExponent = &<../ShieldTuner.rules>/All/_lowPowerThicknessExponent
+						_hexDamageIntensity = 0.5
+						TargetBlendMode = Add
+						_xScale = (&<../ShieldTuner.rules>/Med/_xScale)/8
+						Size = [0, (&<../ShieldTuner.rules>/Med/Size/1)/2]
+					}
+					ArcSpriteSegments = 12
+					Bucket = Upper1
+				}
+			]
+		}
+
+		ArcShield90 : ArcShield
+		{
+			Rotation = 90d
+		}
+
+		Overclock_ExtendedEffect90 : Overclock_ExtendedEffect
+		{
+			Shield = ArcShield90
+			ChainedTo = ArcShield90
+		}
+
+		OverloadEffect90 : OverloadEffect
+		{
+			Shield = ArcShield90
+			ChainedTo = ArcShield90
+		}
+
+		EmitterEffect90 : EmitterEffect
+		{
+			ChainedTo = ArcShield90
+		}
+	}

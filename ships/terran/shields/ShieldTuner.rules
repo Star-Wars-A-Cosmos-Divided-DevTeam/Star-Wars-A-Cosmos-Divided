@@ -1,10 +1,43 @@
+OVERCLOCK
+{
+	HEAT_PER_SECOND = 20
+	MODE_SWITCH_TIME = 1
+	EXTENDED
+	{
+		ARC_FACTOR = 150%
+		DAMAGE_DRAIN_FACTOR = 1.25
+		ARC_RADIUS_FACTOR = 150%
+		HEAT_PER_DAMAGE = 0.5
+	}
+	REINFORCED
+	{
+		ARC_FACTOR = 55%
+		SHIELD_HEALTH = 39000
+		DAMAGE_DRAIN_FACTOR = 0.384615
+		EMP_RESIST = 33%
+		HEAT_PER_DAMAGE = 0.6
+	}
+	ARC_FACTOR = 100%
+	DAMAGE_DRAIN_FACTOR = 1 / 3
+	EMP_RESIST = 33%
+	HEAT_PER_DAMAGE = 0.56
+}
+
 All
 {
 	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
 	HitArc = 18.6d // The Arc Hit Effects will be visible on the shields
 	BlockedByOperationalParts = false
+	BlueprintArcSpriteSegments = 64
 	_waveAlpha = 1
 	_lowPowerThicknessExponent = 0.6
+	_hexDamageIntensity
+	{
+		Base = 0.5
+		EX = 0.8
+		OL = 0.8
+	}
+
 			ResourceDrainPerDamage
 			{
 				BaseValue = .4
@@ -18,10 +51,17 @@ All
 					}
 					{
 						Type = BuffRemap
-						BuffType = Overclock
+						BuffType = ShieldOverclockReinforced
 						ModificationMode = Multiply
 						RemapFrom = [0, 1]
-						RemapTo = [1, (&<./Data/ships/terran/shield_gen_large/shield_gen_large.rules>/OVERCLOCK/DAMAGE_DRAIN_FACTOR) ]
+						RemapTo = [1, &~/OVERCLOCK/REINFORCED/DAMAGE_DRAIN_FACTOR ]
+					}
+					{
+						Type = BuffRemap
+						BuffType = ShieldOverclockExtended
+						ModificationMode = Multiply
+						RemapFrom = [0, 1]
+						RemapTo = [1, &~/OVERCLOCK/EXTENDED/DAMAGE_DRAIN_FACTOR ]
 					}
 				]
 			}

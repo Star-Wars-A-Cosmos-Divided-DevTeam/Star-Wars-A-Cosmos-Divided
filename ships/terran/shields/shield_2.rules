@@ -1,10 +1,14 @@
 OVERCLOCK
 {
-	ARC_FACTOR = 1
-	DAMAGE_DRAIN_FACTOR = 1 / 3
-	EMP_RESIST = 50%
-	HEAT_PER_SECOND = 20
-	HEAT_PER_DAMAGE = 0.5
+	HEAT_PER_SECOND = 40
+	MODE_SWITCH_TIME = 1
+	REINFORCED
+	{
+		ARC_FACTOR = 100%
+		DAMAGE_DRAIN_FACTOR = &<./Data/ships/terran/shield_gen_small/shield_gen_small.rules>/OVERCLOCK/REINFORCED/DAMAGE_DRAIN_FACTOR
+		EMP_RESIST = 33%
+		HEAT_PER_DAMAGE = 0.6
+	}
 }
 HEAT_TO_RESOURCE = &<./Data/statuses/heat/heat.rules>/STATUS_TO_RESOURCE_RATIO
 HEAT_TO_STATUS = &<./Data/statuses/heat/heat.rules>/RESOURCE_TO_STATUS_RATIO
@@ -47,7 +51,7 @@ Part : <base_part_terran_shields.rules>/Part
 	AIValueFactor = 3		//equals ~100k ai value
 
 	//ReceivableBuffs&Prohibits
-	ReceivableBuffs : ^/0/ReceivableBuffs [ElectronDebuff]
+	ReceivableBuffs : ^/0/ReceivableBuffs []
 
 	//Doors&Etc
 	ForceManhattanPathInPart = true
@@ -124,6 +128,41 @@ Part : <base_part_terran_shields.rules>/Part
 			Mode = All
 		}
 
+		Overclock_ShieldModeToggle
+		{
+			Type = UIToggle
+			ToggleID = "overclock_shield"
+			Default = 1
+			AvailableChoices = [1]
+			VisibilityToggle = OverclockModeToggle
+		}
+		Overclock_ReinforcedModeToggle
+		{
+			Type = ModeToggle
+			Mode = Overclock_ShieldModeToggle
+			OnModes = [ 1 ]
+		}
+		Overclock_ReinforcedModeRawValue
+		{
+			Type = ValueTween
+			IsOnToggle = Overclock_ReinforcedModeToggle
+			OnTweenDuration = &~/OVERCLOCK/MODE_SWITCH_TIME
+			OffTweenDuration = &OnTweenDuration
+		}
+		Overclock_ReinforcedModeValue
+		{
+			Type = MultiValue
+			Values = [ Overclock_ReinforcedModeRawValue, OverclockStateValue ]
+			Mode = Min
+		}
+		Overclock_ReinforcedModeBuff
+		{
+			Type = SelfBuffProvider
+			OperationalToggle = IsOverclocked
+			BuffType = ShieldOverclockReinforced
+			BuffMultiplier = Overclock_ReinforcedModeValue
+		}
+
 		BatteryStorage
 		{
 			Type = ResourceStorage
@@ -134,6 +173,25 @@ Part : <base_part_terran_shields.rules>/Part
 			DrainOnFtlJump = true
 			DeliveryLocation = [1, 1.5]
 			ReceiveResourceMediaEffects = &/SW_SOUNDS/PowerDeliver
+			DrainResistance
+			{
+				BaseValue = 0
+				Modifiers
+				[
+					{
+						Type = BuffRemap
+						BuffType = ShieldOverclockReinforced
+						ModificationMode = Add
+						RemapFrom = [0, 1]
+						RemapTo = [0, (&~/OVERCLOCK/REINFORCED/EMP_RESIST)]
+					}
+					{
+						Type = Status
+						StatusType = cosmoteer.shield_overload
+						ModificationMode = Subtract
+					}
+				]
+			}
 		}
 		BatteryConsumer
 		{
@@ -142,9 +200,9 @@ Part : <base_part_terran_shields.rules>/Part
 			Storage = BatteryStorage
 			DefaultPriority = &/PRIORITIES/Defense_Supply
 			ResupplyThreshold = 0
-			OperationalToggle = PowerToggle
+			OperationalToggle = CommandConsumptionToggle
 		}
-		BatteryStorageBar
+		BatteryStorageBar //ProgressBar
 		{
 			Type = ProgressBar
 			OperationalToggle = BatteryStorage
@@ -169,8 +227,8 @@ Part : <base_part_terran_shields.rules>/Part
 		PowerDrain
 		{
 			Type = ResourceConverter
-			FromStorage = BatteryStorage
 			OperationalToggle = IsOperational
+			FromStorage = BatteryStorage
 			FromQuantity = 200
 			MinFromQuantityForConversion = 1
 			Interval = 1
@@ -325,31 +383,34 @@ Part : <base_part_terran_shields.rules>/Part
 			Components = &<shield_2/shield_2_pink.rules>/Components
 		}
 
+		Overclock_ReinforcedModeTweenToggle
+		{
+			Type = ThresholdToggle
+			ValueFrom = Overclock_ReinforcedModeValue
+			MinAmount = 1
+		}
+		Overclock_ReinforcedEffectToggle
+		{
+			Type = MultiToggle
+			Toggles = [Overclock_ReinforcedModeTweenToggle, IsOperationalOverclocked]
+			Mode = All
+		}
+		Overclock_ReinforcedAndOverclockedModeToggle
+		{
+			Type = MultiToggle
+			Toggles = [ OverclockModeToggle, Overclock_ReinforcedModeToggle ]
+			Mode = All
+		}
 		OverclockTweenToggle
 		{
 			Type = ThresholdToggle
 			ValueFrom = OverclockStateValue
 			MinAmount = 1
 		}
-		
 		OverclockedEffectToggle
 		{
 			Type = MultiToggle
 			Toggles = [OverclockTweenToggle, IsOperationalOverclocked]
-			Mode = All
-		}
-		
-		IsOperationalOverloaded
-		{
-			Type = MultiToggle
-			Toggles = [ IsOperational, IsOverloaded ]
-			Mode = All
-		}
-		
-		IsOperationalOverclockedOverloaded
-		{
-			Type = MultiToggle
-			Toggles = [ IsOperational, IsOverloaded, OverclockedEffectToggle ]
 			Mode = All
 		}
 
@@ -370,12 +431,31 @@ Part : <base_part_terran_shields.rules>/Part
 				]
 			}
 		}
-		
+
 		IsOverloaded
 		{
 			Type = ThresholdToggle
 			ValueFrom = OverloadValue
 			MinAmount = 0.01
+		}
+
+		IsOperationalOverloaded
+		{
+			Type = MultiToggle
+			Toggles = [ IsOperational, IsOverloaded ]
+			Mode = All
+		}
+		IsOperationalOverloaded_Reinforced
+		{
+			Type = MultiToggle
+			Toggles = [ IsOperationalOverloaded, Overclock_ReinforcedEffectToggle ]
+			Mode = All
+		}
+		IsOperationalOverclockedOverloaded
+		{
+			Type = MultiToggle
+			Toggles = [ IsOperational, IsOverloaded, OverclockedEffectToggle ]
+			Mode = All
 		}
 
 		// Overclock / Thermal network
@@ -396,9 +476,18 @@ Part : <base_part_terran_shields.rules>/Part
 			Trigger = Overclock_ArcShieldProxy
 			Amount
 			{
-				BaseValue = "round((&~/OVERCLOCK/HEAT_PER_DAMAGE) * (&~/HEAT_TO_RESOURCE), 0)"
+				BaseValue = 0
+				// Negative damage removing heat causes a crash
+				MinValue = 0
 				Modifiers
 				[
+					{
+						Type = BuffRemap
+						BuffType = ShieldOverclockReinforced
+						ModificationMode = Add
+						RemapFrom = [0, 1]
+						RemapTo = [0, (&~/OVERCLOCK/REINFORCED/HEAT_PER_DAMAGE) * (&~/HEAT_TO_RESOURCE)]
+					}
 					{
 						Type = EffectScale
 						ModificationMode = Multiply
@@ -408,11 +497,6 @@ Part : <base_part_terran_shields.rules>/Part
 						StatusType = cosmoteer.shield_overload
 						ModificationMode = Multiply
 						BaseStatusValue = 1
-					}
-					{
-						Type = Buff
-						BuffType = Overclock
-						ModificationMode = Multiply
 					}
 				]
 			}
@@ -428,7 +512,7 @@ Part : <base_part_terran_shields.rules>/Part
 			Location = [0.5, 0.5]
 		}
 
-		Router
+		Router //TURD PUMPING
 		{
 			Type = NetworkRouter
 			RouteGenerators
@@ -443,11 +527,11 @@ Part : <base_part_terran_shields.rules>/Part
 						[&../../HEAT_INPUT, Port_Thermal_RightUp, 0]
 						[&../../HEAT_INPUT, Port_Thermal_TopRight, 0]
 						[&../../HEAT_INPUT, Port_Thermal_BottomRight, 0]
-						[&../../HEAT_INPUT, Port_Thermal_BottomLeft, 0]					]
+						[&../../HEAT_INPUT, Port_Thermal_BottomLeft, 0]
+					]
 				}
 			]
 		}
-
 
 		Port_Thermal_TopLeft : ~/Part/^/0/BASE_THERMAL_PORT
 		{
@@ -485,7 +569,7 @@ Part : <base_part_terran_shields.rules>/Part
 		{
 			Type = ContinuousEffects
 			Location = [1, 1]
-			OperationalToggle = IsOperationalNonOverclocked
+			OperationalToggle = IsOperational
 			FactorMediaEffectsIntensityWith = BatteryStorage
 			MaxMediaEffectsZoom = 12
 			ParentToShip = true
@@ -519,6 +603,29 @@ Part : <base_part_terran_shields.rules>/Part
 			[
 				&/SW_SOUNDS/SW_Small_Shield_Stop
 			]
+		}
+
+		Overclock_ReinforcedModeTweenMinToggle
+		{
+			Type = ThresholdToggle
+			ValueFrom = Overclock_ReinforcedModeValue
+			MaxAmount = 0
+			Invert = true
+		}
+		Overclock_ReinforcingEffectToggle
+		{
+			Type = MultiToggle
+			Toggles = [Overclock_ReinforcedModeTweenMinToggle, IsOperationalOverclocked]
+			Mode = All
+		}
+		Overclock_ShieldReinforcedEffects : ShieldOperationEffects
+		{
+			Toggle = Overclock_ReinforcingEffectToggle
+			ToggledOnMediaEffects
+			[
+				&/SW_SOUNDS/SW_Small_Shield_Overclock_Reinforced
+			]
+			ToggledOffMediaEffects
 		}
 
 		Graphics
@@ -803,7 +910,7 @@ Part : <base_part_terran_shields.rules>/Part
 			Arc = &<ShieldTuner.rules>/All/Arc
 			Rotation = -90d
 			Location = &<ShieldTuner.rules>/Med/Location
-			SpriteSegments = &~/ShieldStatBase/BlueprintArcSpriteSegments
+			SpriteSegments = &<ShieldTuner.rules>/All/BlueprintArcSpriteSegments
 			Sprite
 			{
 				Texture
@@ -829,8 +936,8 @@ Part : <base_part_terran_shields.rules>/Part
 	{
 		PowerCapacity = (&~/MaxResources) / 1000
 
-		RecPower =  (&../StatsByCategory/0/Stats/PowerUsageContinuous) + (&PowerCapacity) * (&~/ShieldStatBase/ResourceDrainPerDamage)
-		RecCrew = (&RecPower)
+		RecPower = (&../StatsByCategory/0/Stats/PowerUsageContinuous) + (&PowerCapacity) * (&<ShieldTuner.rules>/All/ResourceDrainPerDamage/BaseValue)
+		RecCrew = (&RecPower) * 4
 	}
 	StatsByCategory
 	[
@@ -838,66 +945,36 @@ Part : <base_part_terran_shields.rules>/Part
 			NameKey = "StatCategories/SWBubbleShield"
 			Stats
 			{
-				ShieldHP = (&~/MaxResources) / (&~/ShieldStatBase/ResourceDrainPerDamage)
-				ShieldPenResist = &~/ShieldStatBase/PenetrationResistance/0
+				ShieldHP = (&~/MaxResources) / (&<ShieldTuner.rules>/All/ResourceDrainPerDamage/BaseValue)
+				ShieldPenResist = &<ShieldTuner.rules>/Med/PenetrationResistance/0
 				ShieldArc = deg(360d)
-				ShieldDist = (&~/ShieldStatBase/Radius)
+				ShieldDist = (&<ShieldTuner.rules>/Med/Radius)
 				PowerUsageContinuous = (&~/Part/Components/PowerDrain/FromQuantity) / (&~/Part/Components/PowerDrain/Interval) / 1000
 			}
 		}
-		{
-			NameKey = "StatCategories/Overclocked"
-			Stats
-			{
-				ShieldHP = (&~/Part/StatsByCategory/0/Stats/ShieldHP) / (&~/OVERCLOCK/DAMAGE_DRAIN_FACTOR)
-				EMPResistPercentage = (&~/OVERCLOCK/EMP_RESIST) * 100
-				HeatGeneration = (&~/OVERCLOCK/HEAT_PER_SECOND)
-				HeatPerDamage = (&~/OVERCLOCK/HEAT_PER_DAMAGE)
-			}
-		}
 	]
-}
-ShieldStatBase
-{
-	Type = ArcShield
-	OperationalToggle = IsOperational
-	BlockedByOperationalParts = false
-	Radius = 20
-	Arc = 186d // 2 Halfs so the Texture doesn't get Strechted
-	DrainResourcesFrom = BatteryStorage
-	Location = [1, 45/64]
-	PenetrationResistance = [16, 0]
-	ResourceDrainPerDamage = 0.4
 
-	BlueprintArcSprite
+	SecondaryToolTip
 	{
-		Texture
+		TitleKey = "StatCategories/Overclocked"
+		DescriptionKey = "Parts/ShieldGenSmallOverclockDesc"
+		Stats
 		{
-			File =	"./Data/ships/terran/shield_gen_small/shield_energy.png"
-			UVMode = Wrap
-			SampleMode = Linear
-			MipLevels = 1
+			HeatGeneration = (&~/OVERCLOCK/HEAT_PER_SECOND)
 		}
-		_xScale = &<ShieldTuner.rules>/Med/_xScale
-		Size = &<ShieldTuner.rules>/Med/Size
-		Color = [50, 50, 255, 127]
+		StatsByCategory
+		[
+			{
+				NameKey = "StatCategories/ShieldReinforced"
+				Stats
+				{
+					ShieldHP = (&~/Part/StatsByCategory/0/Stats/ShieldHP) / (&~/OVERCLOCK/REINFORCED/DAMAGE_DRAIN_FACTOR)
+					EMPResistPercentage = (&~/OVERCLOCK/REINFORCED/EMP_RESIST) * 100
+					HeatPerDamage = (&~/OVERCLOCK/REINFORCED/HEAT_PER_DAMAGE)
+				}
+			}
+		]
 	}
-	BlueprintArcSpriteSegments = 64
-
-	CoverageArcSprite
-	{
-		Texture
-		{
-			File = "./Data/ships/terran/shield_gen_small/shield_energy.png"
-			UVMode = Wrap
-			SampleMode = Linear
-			MipLevels = 1
-		}
-		_xScale = &<ShieldTuner.rules>/Med/_xScale
-		Size = &<ShieldTuner.rules>/Med/Size
-		Color = [255, 255, 255, 127]
-	}
-	CoverageArcSpriteSegments = 64
 }
 CLASSIFICATION = Med
 MaxResources = 8000
