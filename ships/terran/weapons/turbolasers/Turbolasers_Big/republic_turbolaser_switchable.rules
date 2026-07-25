@@ -304,12 +304,69 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			AlwaysAllowInBuildMode = true
 			RequiresCommand = false
 		}
+/*		RedMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 0
+		}		*/
 		BlueMunitionToggle
 		{
 			Type = ModeToggle
 			Mode = MunitionType
 			OnMode = 1
 		}
+/*		GreenMunitionToggle
+		{
+			Type = ModeToggle
+			Mode = MunitionType
+			OnMode = 2
+		}		*/
+
+/*		// ---- RED: Non-OC ----
+		RedMunitionNonOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ RedMunitionToggle, {Toggle=IsOverclocked; Invert=true} ]
+			Mode = All
+		}
+
+		RedMunitionOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ RedMunitionToggle, IsOverclocked ]
+			Mode = All
+		}		*/
+
+		// ---- BLUE: Non-OC ----
+		BlueMunitionNonOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ BlueMunitionToggle, {Toggle=IsOverclocked; Invert=true} ]
+			Mode = All
+		}
+
+		// ---- BLUE: OC ----
+		BlueMunitionOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ BlueMunitionToggle, IsOverclocked ]
+			Mode = All
+		}
+/*		// ---- GREEN: Non-OC ----
+		GreenMunitionNonOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ GreenMunitionToggle, {Toggle=IsOverclocked; Invert=true} ]
+			Mode = All
+		}
+
+		GreenMunitionOC_Toggle
+		{
+			Type = MultiToggle
+			Toggles = [ GreenMunitionToggle, IsOverclocked ]
+			Mode = All
+		}		*/
 
 		ExteriorType
 		{
@@ -410,7 +467,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		Graphics
 		{
 			Type = Graphics
-			Location = [2,2]
+			Location = [2, 2]
 			OperationalToggle = IsOperational
 			Floor
 			{
@@ -489,7 +546,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		{
 			Type = Graphics
 			OperationalToggle = IsOperational
-			Location = [0,0]
+			//Location = [0, 0]
 			ChainedTo = Turret
 			Rotation = 90d
 			OperationalLighting
@@ -569,8 +626,10 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			Emitter = EmitterBaseProxy												// Doesn't actually fire; only used for targeting.
 			HoldTargetAfterCancel = &../NonOverclockedComponents/Components/EmitterBase/FireDelay
 			AutoTargetCrewSafetyDist = 8
+			IgnoreSourceShipLOSChecks = true
 			IgnoreSourceShipLowLOSChecks = true
 			IgnoreFriendlyShipLowLOSChecks = true
+			AllowFireWithBlockedLOS = false
 
 			AutoTargets
 			[
@@ -931,7 +990,51 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			MediaEffects = &~/Part/Components/ChargeEffectLeft_Overclocked/MediaEffects
 		}
 
-		FireEffectLeft
+/*		FireEffectLeftRed_NonOverclocked
+		{
+			Type = TriggeredEffects
+			ChainedTo = EmitterLeftProxy_NonOverclocked
+			Trigger = EmitterLeftProxy_NonOverclocked
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Med/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Red
+
+				&/SW_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		FireEffectRightRed_NonOverclocked : FireEffectLeftRed_NonOverclocked
+		{
+			ChainedTo = EmitterRightProxy_NonOverclocked
+			Trigger = EmitterRightProxy_NonOverclocked
+		}
+
+		OverclockFireEffectLeftRed
+		{
+			Type = TriggeredEffects
+			ChainedTo = EmitterLeftProxy_Overclocked
+			Trigger = EmitterLeftProxy_Overclocked
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Large/Red
+				&/SW_PARTICLES/Shot/Laser/Flash/Large/Red
+
+				&/SW_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		OverclockFireEffectRightRed : OverclockFireEffectLeftRed
+		{
+			ChainedTo = EmitterRightProxy_Overclocked
+			Trigger = EmitterRightProxy_Overclocked
+		}		*/
+
+		FireEffectLeftBlue_NonOverclocked
 		{
 			Type = TriggeredEffects
 			ChainedTo = EmitterLeftProxy_NonOverclocked
@@ -947,13 +1050,13 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			]
 		}
 
-		FireEffectRight : FireEffectLeft
+		FireEffectRightBlue_NonOverclocked : FireEffectLeftBlue_NonOverclocked
 		{
 			ChainedTo = EmitterRightProxy_NonOverclocked
 			Trigger = EmitterRightProxy_NonOverclocked
 		}
 
-		OverclockFireEffectLeft
+		OverclockFireEffectLeftBlue
 		{
 			Type = TriggeredEffects
 			ChainedTo = EmitterLeftProxy_Overclocked
@@ -969,11 +1072,55 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 			]
 		}
 
-		OverclockFireEffectRight : OverclockFireEffectLeft
+		OverclockFireEffectRightBlue : OverclockFireEffectLeftBlue
 		{
 			ChainedTo = EmitterRightProxy_Overclocked
 			Trigger = EmitterRightProxy_Overclocked
 		}
+
+/*		FireEffectLeftGreen_NonOverclocked
+		{
+			Type = TriggeredEffects
+			ChainedTo = EmitterLeftProxy_NonOverclocked
+			Trigger = EmitterLeftProxy_NonOverclocked
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Med/Green
+				&/SW_PARTICLES/Shot/Laser/Flash/Med/Green
+
+				&/SW_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		FireEffectRightGreen_NonOverclocked : FireEffectLeftGreen_NonOverclocked
+		{
+			ChainedTo = EmitterRightProxy_NonOverclocked
+			Trigger = EmitterRightProxy_NonOverclocked
+		}
+
+		OverclockFireEffectLeftGreen
+		{
+			Type = TriggeredEffects
+			ChainedTo = EmitterLeftProxy_Overclocked
+			Trigger = EmitterLeftProxy_Overclocked
+			AnchorMediaEffects = true
+
+			MediaEffects
+			[
+				&/SW_PARTICLES/Shot/Laser/Shoot/Large/Green
+				&/SW_PARTICLES/Shot/Laser/Flash/Large/Green
+
+				&/SW_SOUNDS/TurbolaserSFX
+			]
+		}
+
+		OverclockFireEffectRightGreen : OverclockFireEffectLeftGreen
+		{
+			ChainedTo = EmitterRightProxy_Overclocked
+			Trigger = EmitterRightProxy_Overclocked
+		}		*/
 
 		CrewLocation1
 		{
@@ -1178,7 +1325,7 @@ Part : &<../base_part_terran_turbolasers_overclock.rules>/Part
 		}
 	}
 
-   //Stats 
+   //Stats
 	Stats
 	{
 		CrewRequired = &~/Part/Components/PartCrew/Crew
