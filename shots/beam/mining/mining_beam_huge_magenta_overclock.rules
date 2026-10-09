@@ -5,13 +5,47 @@ RADIUS = 2
 DAMAGE_FACTOR = 75%
 SHIELD_DAMAGE_FACTOR = 200% / ((&RADIUS) * 2)
 RADIUS_FALLOFF = 0 
+BEAM_VISUAL_WIDTH_FACTOR = 250%
 
 Beam : BASE
 {
 	Range = &~/Range
 	IdealRange = ((&Range)*4/5)
+
+	BeamMediaEffects
+	[
+		: ~/BASE/BeamMediaEffects/0
+		{
+			Sprite : ^/0/Sprite
+			{
+				_noiseTexture : ^/0/_noiseTexture
+				{
+					File = "./Data/common_effects/particles/noise_distorted_voronoi.png"
+				}
+				_startCapSize = &_endCapSize
+				Size = [100%, (&~/BASE/BeamMediaEffects/0/Sprite/Size/1) * (&~/BEAM_VISUAL_WIDTH_FACTOR)]
+			}
+		}
+		: ~/BASE/BeamMediaEffects/1
+		{
+			Sprite : ^/0/Sprite
+			{
+				Size = [100%, (&~/BASE/BeamMediaEffects/1/Sprite/Size/1) * (&~/BEAM_VISUAL_WIDTH_FACTOR)]
+			}
+		}
+		&~/BASE/BeamMediaEffects/2
+		&~/BASE/BeamMediaEffects/3
+	]
+
+	AttenuationLimit : HitOperational/HitEffects/0/Damage
+	{
+		BaseValue = (&^/0/BaseValue) * (&~/RADIUS)
+	}
+	HitAttenuator
+	{
+		MediaEffects = &~/Beam/HitOperational/MediaEffects
+	}
 	
-	HitShield = &HitOperational
 	HitStructural = &HitOperational
 	HitOperational : ^/0/HitOperational
 	{
@@ -82,6 +116,14 @@ Beam : BASE
 			//&<../../../common_effects/particles/beam/mining/sparks/mining_beam_radial_hit_sparks.rules>
 
 			//&<./Data/shots/mining_beam_small/particles/mining_beam_hit_sparks.rules>
+		]
+	}
+	HitShield : HitOperational
+	{
+		HitEffects
+		[
+			// Only damage shields, not the parts behind them.
+			&../^/0/HitEffects/1
 		]
 	}
 }
